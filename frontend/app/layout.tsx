@@ -1,0 +1,31 @@
+// Metadata — тип Next.js для описания meta-информации страницы.
+import type { Metadata } from "next";
+
+// Подключаем глобальные стили один раз на все приложение.
+import "./globals.css";
+
+// Metadata используется Next.js для title/description.
+export const metadata: Metadata = {
+  // Заголовок вкладки браузера.
+  title: "Course Archive",
+  // Описание сайта для SEO/preview.
+  description: "Premium tech education platform"
+};
+
+// RootLayout — корневой layout для всех страниц внутри app router.
+export default function RootLayout({
+  // children — текущая страница, которую Next подставляет внутрь layout.
+  children
+}: Readonly<{
+  // Тип children: любой React-узел.
+  children: React.ReactNode;
+}>) {
+  // Возвращаем HTML-обертку всего приложения.
+  return (
+    // lang="ru" говорит браузеру и screen reader, что основной язык русский.
+    <html lang="ru">
+      {/* В body рендерится конкретная страница. */}
+      <body>{children}</body>
+    </html>
+  );
+}
