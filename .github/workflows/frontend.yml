@@ -1,0 +1,32 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ "develop" ]
+    paths:
+      - 'frontend/**' # Запускать только если изменился код в папке фронтенда
+  pull_request:
+    branches: [ "develop" ]
+    paths:
+      - 'frontend/**'
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20' # Актуальная LTS версия Node
+        # Кеширование npm/yarn включается здесь, когда появится package-lock.json
+
+    - name: Install & Build Frontend
+      run: |
+        echo "Фронтенд пока пуст. Пайплайн активируется, когда здесь появятся исходники."
+        cd frontend
+        npm ci
+        npm run build

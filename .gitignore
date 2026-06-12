@@ -3,16 +3,19 @@
 .envrc
 *.env.[a-zA-Z]*
 !*.env.example
+*.env.local
+*.env.*.local
 
-#IDE 
+# IDE 
 .idea/
 *.iml
 .classpath
 .project
 .settings/
 .factorypath
+.vscode/
 
-# Java and Gradle
+# Java and Gradle (Backend)
 .gradle/
 build/
 out/
@@ -23,6 +26,14 @@ bin/
 *.tar
 *.log
 logs/
+
+# Frontend (Node / React / Next.js)
+node_modules/
+.next/
+out/
+dist/
+.cache/
+.npm/
 
 # Neovim and Vim
 *.swp
