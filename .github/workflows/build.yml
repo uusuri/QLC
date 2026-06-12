@@ -22,7 +22,9 @@ jobs:
         cache: 'gradle' # Автоматическое кеширование зависимостей
 
     - name: Grant execute permission for gradlew
+      working-directory: ./backend
       run: chmod +x gradlew
 
     - name: Build project
+      working-directory: ./backend
       run: ./gradlew build -x test --no-daemon
