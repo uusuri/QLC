@@ -21,6 +21,7 @@ build/
 out/
 bin/
 *.jar
+!**/gradle-wrapper.jar
 *.war
 *.zip
 *.tar
