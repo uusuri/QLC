@@ -1,0 +1,45 @@
+# Secrets and environment
+.env
+.envrc
+*.env.[a-zA-Z]*
+!*.env.example
+
+#IDE 
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.factorypath
+
+# Java and Gradle
+.gradle/
+build/
+out/
+bin/
+*.jar
+*.war
+*.zip
+*.tar
+*.log
+logs/
+
+# Neovim and Vim
+*.swp
+*.swo
+.netrwhist
+.nvim/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Docker and local data
+*postgres_data/
+*redis_data/
+
+# Sandbox C++ temporary files
+/tmp/sandbox/
+*.o
+*.out
+*.exe

@@ -1,0 +1,22 @@
+stages:
+  - build
+
+variables:
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .gradle/caches/
+    - .gradle/wrapper/
+
+build_job:
+  stage: build
+  image: eclipse-temurin:21-jdk-alpine
+  before_script:
+    - chmod +x ./backend/gradlew
+  script:
+    - cd backend && ./gradlew build -x test --no-daemon
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "develop"'
