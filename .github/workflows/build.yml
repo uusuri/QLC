@@ -1,0 +1,28 @@
+name: Build Check
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'gradle' # Автоматическое кеширование зависимостей
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build project
+      run: ./gradlew build -x test --no-daemon
