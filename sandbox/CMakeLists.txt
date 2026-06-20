@@ -6,6 +6,12 @@ project(sandbox
     LANGUAGES CXX
 )
 
+option(
+    SANDBOX_BUILD_RESOURCE_TESTS
+    "Build resource-limit test fixtures"
+    OFF
+)
+
 add_executable(sandbox
     src/main.cpp
     src/sandbox.cpp
@@ -35,8 +41,10 @@ target_compile_options(sandbox
         -Wshadow
 )
 
+if(SANDBOX_BUILD_RESOURCE_TESTS)
+    add_subdirectory(tests)
+endif()
+
 # TODO: позже добавим отдельную библиотеку sandbox_core,
 # чтобы main.cpp был тонким CLI-слоем, а логика жила в src/.
-#
-# TODO: позже подключим tests/ через enable_testing()
-# и add_subdirectory(tests).
+# enable_testing() после того, как защиту реализую
