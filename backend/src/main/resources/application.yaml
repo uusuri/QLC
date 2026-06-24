@@ -6,3 +6,7 @@ spring:
 
   jackson:
     default-property-inclusion: non_null
+
+app:
+  submission:
+    max-source-size: 50000

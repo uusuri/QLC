@@ -18,37 +18,111 @@ public class CourseController {
     this.courseService = courseService;
   }
 
-  // 1. Получить все курсы (возвращаем список DTO)
+  // ==== COURSES ====
   @GetMapping("/courses")
   public ResponseEntity<List<CourseDTO>> getAllCourses() {
     return ResponseEntity.ok(courseService.getAllCourses());
   }
 
-  // 2. Получить все модули конкретного курса (Вложенный путь)
-  // URL: /api/courses/1/modules
+  @GetMapping("/courses/{id}")
+  public ResponseEntity<CourseDTO> getCourseById(@PathVariable Long id) {
+    return ResponseEntity.ok(courseService.getCourseById(id));
+  }
+
+  @PostMapping("/courses")
+  public ResponseEntity<CourseDTO> createCourse(@RequestBody CourseDTO courseDTO) {
+    return ResponseEntity.ok(courseService.createCourse(courseDTO));
+  }
+
+  @PutMapping("/courses/{id}")
+  public ResponseEntity<CourseDTO> updateCourse(@PathVariable Long id, @RequestBody CourseDTO courseDTO) {
+    return ResponseEntity.ok(courseService.updateCourse(id, courseDTO));
+  }
+
+  @DeleteMapping("/courses/{id}")
+  public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
+    courseService.deleteCourse(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  // ==== MODULES ====
   @GetMapping("/courses/{courseId}/modules")
   public ResponseEntity<List<ModuleDTO>> getModulesByCourseId(@PathVariable Long courseId) {
     return ResponseEntity.ok(courseService.getModulesByCourseId(courseId));
   }
 
-  // 3. Получить все уроки конкретного модуля
-  // URL: /api/modules/1/lessons
+  @GetMapping("/modules/{id}")
+  public ResponseEntity<ModuleDTO> getModuleById(@PathVariable Long id) {
+    return ResponseEntity.ok(courseService.getModuleById(id));
+  }
+
+  @PostMapping("/courses/{courseId}/modules")
+  public ResponseEntity<ModuleDTO> createModule(@PathVariable Long courseId, @RequestBody ModuleDTO moduleDTO) {
+    return ResponseEntity.ok(courseService.createModule(courseId, moduleDTO));
+  }
+
+  @PutMapping("/modules/{id}")
+  public ResponseEntity<ModuleDTO> updateModule(@PathVariable Long id, @RequestBody ModuleDTO moduleDTO) {
+    return ResponseEntity.ok(courseService.updateModule(id, moduleDTO));
+  }
+
+  @DeleteMapping("/modules/{id}")
+  public ResponseEntity<Void> deleteModule(@PathVariable Long id) {
+    courseService.deleteModule(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  // ==== LESSONS ====
   @GetMapping("/modules/{moduleId}/lessons")
   public ResponseEntity<List<LessonDTO>> getLessonsByModuleId(@PathVariable Long moduleId) {
     return ResponseEntity.ok(courseService.getLessonsByModuleId(moduleId));
   }
 
-  // 4. Получить все таски конкретного урока
-  // URL: /api/lessons/1/tasks
+  @GetMapping("/lessons/{id}")
+  public ResponseEntity<LessonDTO> getLessonById(@PathVariable Long id) {
+    return ResponseEntity.ok(courseService.getLessonById(id));
+  }
+
+  @PostMapping("/modules/{moduleId}/lessons")
+  public ResponseEntity<LessonDTO> createLesson(@PathVariable Long moduleId, @RequestBody LessonDTO lessonDTO) {
+    return ResponseEntity.ok(courseService.createLesson(moduleId, lessonDTO));
+  }
+
+  @PutMapping("/lessons/{id}")
+  public ResponseEntity<LessonDTO> updateLesson(@PathVariable Long id, @RequestBody LessonDTO lessonDTO) {
+    return ResponseEntity.ok(courseService.updateLesson(id, lessonDTO));
+  }
+
+  @DeleteMapping("/lessons/{id}")
+  public ResponseEntity<Void> deleteLesson(@PathVariable Long id) {
+    courseService.deleteLesson(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  // ==== TASKS ====
   @GetMapping("/lessons/{lessonId}/tasks")
   public ResponseEntity<List<TaskDTO>> getTasksByLessonId(@PathVariable Long lessonId) {
     return ResponseEntity.ok(courseService.getTasksByLessonId(lessonId));
   }
 
-  // 5. Получить одну конкретную таску напрямую (для страницы выполнения задачи)
-  // URL: /api/tasks/123
-  @GetMapping("/tasks/{taskId}")
-  public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long taskId) {
-    return ResponseEntity.ok(courseService.getTaskById(taskId));
+  @GetMapping("/tasks/{id}")
+  public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
+    return ResponseEntity.ok(courseService.getTaskById(id));
+  }
+
+  @PostMapping("/lessons/{lessonId}/tasks")
+  public ResponseEntity<TaskDTO> createTask(@PathVariable Long lessonId, @RequestBody TaskDTO taskDTO) {
+    return ResponseEntity.ok(courseService.createTask(lessonId, taskDTO));
+  }
+
+  @PutMapping("/tasks/{id}")
+  public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id, @RequestBody TaskDTO taskDTO) {
+    return ResponseEntity.ok(courseService.updateTask(id, taskDTO));
+  }
+
+  @DeleteMapping("/tasks/{id}")
+  public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+    courseService.deleteTask(id);
+    return ResponseEntity.noContent().build();
   }
 }
