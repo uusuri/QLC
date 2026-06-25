@@ -62,8 +62,10 @@ public class CourseService {
         .orElseThrow(() -> new RuntimeException("Course not found"));
     course.setName(dto.name());
     course.setDescription(dto.description());
-    if (dto.price() != null) course.setPrice(dto.price());
-    if (dto.priceInStars() != null) course.setPriceInStars(dto.priceInStars());
+    if (dto.price() != null)
+      course.setPrice(dto.price());
+    if (dto.priceInStars() != null)
+      course.setPriceInStars(dto.priceInStars());
     return mapToCourseDTO(courseRepository.save(course));
   }
 
@@ -187,7 +189,8 @@ public class CourseService {
   }
 
   private Task instantiateTask(String type) {
-    if (type == null) throw new IllegalArgumentException("Task type cannot be null");
+    if (type == null)
+      throw new IllegalArgumentException("Task type cannot be null");
     return switch (type.toUpperCase()) {
       case "CODE" -> new CodeTask();
       case "TEST" -> new TestTask();
@@ -235,7 +238,6 @@ public class CourseService {
         testCases,
         options,
         correctOptionIndex,
-        correctNumericAnswer
-    );
+        correctNumericAnswer);
   }
 }
