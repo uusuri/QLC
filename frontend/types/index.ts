@@ -125,3 +125,112 @@ export interface LoginNoteDto {
   // Текст тезиса.
   title: string;
 }
+
+// Тип задачи из backend enum TaskType.
+export type AdminTaskType = "TEST" | "CODE" | "NUMERIC";
+
+// DTO курса из backend CourseDTO.
+export interface AdminCourseDto {
+  // ID курса из базы.
+  id: number;
+  // Название курса.
+  name: string;
+  // Описание курса.
+  description: string;
+  // Цена в обычной валюте, backend хранит BigDecimal.
+  price: number | null;
+  // Цена в Telegram Stars, backend хранит BigDecimal.
+  priceInStars: number | null;
+}
+
+// Payload для POST /api/courses.
+export interface AdminCourseCreatePayload {
+  // Название курса.
+  name: string;
+  // Описание курса.
+  description: string;
+  // Цена в обычной валюте.
+  price: number | null;
+  // Цена в Telegram Stars.
+  priceInStars: number | null;
+}
+
+// DTO модуля из backend ModuleDTO.
+export interface AdminModuleDto {
+  // ID модуля из базы.
+  id: number;
+  // ID родительского курса.
+  courseId: number;
+  // Название модуля.
+  name: string;
+  // Описание модуля.
+  description: string;
+}
+
+// Payload для POST /api/courses/{courseId}/modules.
+export interface AdminModuleCreatePayload {
+  // Название модуля.
+  name: string;
+  // Описание модуля.
+  description: string;
+}
+
+// DTO урока из backend LessonDTO.
+export interface AdminLessonDto {
+  // ID урока из базы.
+  id: number;
+  // ID родительского модуля.
+  moduleId: number;
+  // Название урока.
+  name: string;
+  // Описание урока.
+  description: string;
+}
+
+// Payload для POST /api/modules/{moduleId}/lessons.
+export interface AdminLessonCreatePayload {
+  // Название урока.
+  name: string;
+  // Описание урока.
+  description: string;
+}
+
+// DTO задачи из backend TaskDTO.
+export interface AdminTaskDto {
+  // ID задачи из базы.
+  id: number;
+  // ID родительского урока.
+  lessonId: number;
+  // Тип задачи: CODE, TEST или NUMERIC.
+  taskType: AdminTaskType;
+  // Условие задачи.
+  taskText: string;
+  // Шаблон кода для CODE-задачи.
+  templateCode: string | null;
+  // Тест-кейсы для CODE-задачи.
+  testCases: string | null;
+  // Варианты ответа для TEST-задачи.
+  options: string[] | null;
+  // Индекс правильного варианта для TEST-задачи.
+  correctOptionIndex: number | null;
+  // Правильный числовой ответ для NUMERIC-задачи.
+  correctNumericAnswer: number | null;
+}
+
+// Payload для POST /api/lessons/{lessonId}/tasks.
+export interface AdminTaskCreatePayload {
+  // Тип задачи, в Sprint 2 UI создает CODE.
+  taskType: AdminTaskType;
+  // Условие задачи.
+  taskText: string;
+  // Шаблон кода для CODE-задачи.
+  templateCode: string | null;
+  // Тест-кейсы для CODE-задачи.
+  testCases: string | null;
+  // Варианты ответа для TEST-задачи.
+  options: string[] | null;
+  // Индекс правильного варианта для TEST-задачи.
+  correctOptionIndex: number | null;
+  // Правильный числовой ответ для NUMERIC-задачи.
+  correctNumericAnswer: number | null;
+}

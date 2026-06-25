@@ -6,20 +6,31 @@
 
 ```text
 frontend/
-  app/                 # Next.js App Router: страницы, layout и глобальные стили.
+  app/                 # Next.js App Router: страницы, admin/content, layout и глобальные стили.
   components/          # Клиентские UI-компоненты без прямых сетевых запросов.
-  services/api.ts      # Единая точка данных: будущие fetch-запросы и текущие моки.
+  services/api.ts      # Единая точка данных: backend fetch-запросы и текущие моки.
   types/index.ts       # Общие TypeScript DTO/контракты фронтенда.
   tailwind.config.ts   # Дизайн-токены Tailwind: цвета, шрифты, content-пути.
   next.config.ts       # Конфигурация Next.js.
   postcss.config.js    # Tailwind + Autoprefixer для CSS.
 ```
 
-Компоненты и страницы не должны делать прямой `fetch`/`axios`. Когда backend API появится, сетевой код добавляется только в `services/api.ts`, а страницы продолжают работать через функции сервиса.
+Компоненты и страницы не должны делать прямой `fetch`/`axios`. Сетевой код находится только в `services/api.ts`, а страницы работают через функции сервиса.
 
 ## Статус стыковки с бэкендом
 
-Сейчас в `/backend` нет продуктовых `Controller`, `Entity` или DTO для курсов, профиля, оплаты и Telegram-логина. Поэтому активный сетевой код на фронте не добавлен.
+Для внутренней панели `/admin/content` подключены текущие backend endpoints из `CourseController`:
+
+- `GET /api/courses`
+- `POST /api/courses`
+- `GET /api/courses/{courseId}/modules`
+- `POST /api/courses/{courseId}/modules`
+- `GET /api/modules/{moduleId}/lessons`
+- `POST /api/modules/{moduleId}/lessons`
+- `GET /api/lessons/{lessonId}/tasks`
+- `POST /api/lessons/{lessonId}/tasks`
+
+Публичные страницы витрины пока оставлены на моках, чтобы не менять пользовательский сценарий в рамках внутренней Sprint 2 панели.
 
 Текущие моки:
 - `getCourseCatalog()` — каталог курсов для главной и checkout.
@@ -33,7 +44,7 @@ frontend/
 // TODO: Интегрировать с бэком, когда появится эндпоинт...
 ```
 
-Как только backend добавит реальные эндпоинты, нужно заменить моки внутри `services/api.ts`, не размазывая запросы по компонентам.
+Как только backend добавит реальные эндпоинты для профиля, оплаты и публичной витрины, нужно заменить соответствующие моки внутри `services/api.ts`, не размазывая запросы по компонентам.
 
 ## Тестовая среда и CI
 
@@ -79,15 +90,17 @@ npm run start
 
 ## Переменные окружения
 
-На текущем этапе фронтенду не нужны обязательные `.env` переменные, потому что backend API еще не подключен.
+Для `/admin/content` фронтенд ходит в backend API. По умолчанию используется:
 
-Когда появятся реальные эндпоинты, локальные переменные нужно хранить в `.env.local`. Этот файл игнорируется корневым `.gitignore` и не должен попадать в Git:
+```bash
+http://127.0.0.1:8080
+```
+
+Если backend запущен на другом адресе, локальную переменную нужно хранить в `.env.local`. Этот файл игнорируется корневым `.gitignore` и не должен попадать в Git:
 
 ```bash
 NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8080
 ```
-
-До появления backend-контроллеров эту переменную не использует ни одна активная функция.
 
 ## Git ignore
 

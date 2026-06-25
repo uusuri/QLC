@@ -1,5 +1,13 @@
 // Общие типы фронтенда лежат отдельно, чтобы страницы не дублировали контракты данных.
 import type {
+  AdminCourseCreatePayload,
+  AdminCourseDto,
+  AdminLessonCreatePayload,
+  AdminLessonDto,
+  AdminModuleCreatePayload,
+  AdminModuleDto,
+  AdminTaskCreatePayload,
+  AdminTaskDto,
   CourseAccessCopyDto,
   CourseAccessStatus,
   CourseDto,
@@ -8,8 +16,80 @@ import type {
   StudentProfileDto
 } from "@/types";
 
-// TODO: Интегрировать с бэком, когда появится эндпоинт каталога курсов.
-// Пока backend не содержит CourseController/DTO, поэтому данные остаются чистым мокем без fetch.
+// Базовый URL backend API. В dev по умолчанию Spring Boot живет на 127.0.0.1:8080.
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8080").replace(
+  /\/$/,
+  ""
+);
+
+// Объектная проверка для безопасного чтения неизвестного JSON из ошибок backend.
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+// Возвращает строковое поле из JSON-ошибки, если оно реально является строкой.
+function getStringField(source: Record<string, unknown>, key: string): string | undefined {
+  const value = source[key];
+  return typeof value === "string" ? value : undefined;
+}
+
+// Достает понятный текст ошибки из ответа backend.
+async function readErrorMessage(response: Response): Promise<string> {
+  // Backend может вернуть JSON ErrorDTO, стандартную Spring-ошибку или plain text.
+  const text = await response.text();
+
+  // Пустой body тоже превращаем в читабельную ошибку.
+  if (!text) {
+    return `Backend error ${response.status} ${response.statusText}`;
+  }
+
+  try {
+    // JSON.parse возвращает unknown, поэтому ниже идут строгие проверки формы.
+    const parsed: unknown = JSON.parse(text);
+
+    if (isRecord(parsed)) {
+      return (
+        getStringField(parsed, "message") ??
+        getStringField(parsed, "error") ??
+        getStringField(parsed, "detail") ??
+        text
+      );
+    }
+  } catch {
+    // Если это не JSON, ниже вернем исходный текст.
+  }
+
+  return text;
+}
+
+// Единая обертка над fetch для admin/API-запросов.
+async function apiRequest<TResponse>(
+  path: string,
+  options: RequestInit = {}
+): Promise<TResponse> {
+  // Headers умеет принимать любые допустимые варианты RequestInit.headers.
+  const headers = new Headers(options.headers);
+
+  // JSON — общий формат текущих backend DTO.
+  headers.set("Content-Type", "application/json");
+
+  // Собираем абсолютный URL, чтобы frontend на 3000 ходил в Spring Boot на 8080.
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...options,
+    headers
+  });
+
+  // Ошибки backend превращаем в Error, чтобы UI мог показать error state.
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response));
+  }
+
+  // Для текущих GET/POST backend всегда возвращает JSON DTO.
+  return (await response.json()) as TResponse;
+}
+
+// Публичная витрина пока остается моковой, чтобы не менять пользовательский лендинг в рамках admin-задачи.
+// Реальные CourseController endpoints используются ниже в admin-функциях.
 const courseCatalogMock: CourseDto[] = [
   // Первый курс в витрине и checkout.
   {
@@ -230,4 +310,67 @@ export async function getPaymentMethods(): Promise<PaymentMethodDto[]> {
 // Возвращает тезисы для минималистичного login-экрана.
 export async function getLoginNotes(): Promise<LoginNoteDto[]> {
   return loginNotesMock;
+}
+
+// Загружает список курсов из текущего backend CourseController.
+export async function getAdminCourses(): Promise<AdminCourseDto[]> {
+  return apiRequest<AdminCourseDto[]>("/api/courses");
+}
+
+// Создает курс через POST /api/courses.
+export async function createAdminCourse(
+  payload: AdminCourseCreatePayload
+): Promise<AdminCourseDto> {
+  return apiRequest<AdminCourseDto>("/api/courses", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+// Загружает модули только для выбранного курса.
+export async function getAdminModules(courseId: number): Promise<AdminModuleDto[]> {
+  return apiRequest<AdminModuleDto[]>(`/api/courses/${courseId}/modules`);
+}
+
+// Создает модуль внутри выбранного курса.
+export async function createAdminModule(
+  courseId: number,
+  payload: AdminModuleCreatePayload
+): Promise<AdminModuleDto> {
+  return apiRequest<AdminModuleDto>(`/api/courses/${courseId}/modules`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+// Загружает уроки только для выбранного модуля.
+export async function getAdminLessons(moduleId: number): Promise<AdminLessonDto[]> {
+  return apiRequest<AdminLessonDto[]>(`/api/modules/${moduleId}/lessons`);
+}
+
+// Создает урок внутри выбранного модуля.
+export async function createAdminLesson(
+  moduleId: number,
+  payload: AdminLessonCreatePayload
+): Promise<AdminLessonDto> {
+  return apiRequest<AdminLessonDto>(`/api/modules/${moduleId}/lessons`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+// Загружает задачи только для выбранного урока.
+export async function getAdminTasks(lessonId: number): Promise<AdminTaskDto[]> {
+  return apiRequest<AdminTaskDto[]>(`/api/lessons/${lessonId}/tasks`);
+}
+
+// Создает задачу внутри выбранного урока.
+export async function createAdminTask(
+  lessonId: number,
+  payload: AdminTaskCreatePayload
+): Promise<AdminTaskDto> {
+  return apiRequest<AdminTaskDto>(`/api/lessons/${lessonId}/tasks`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
 }
