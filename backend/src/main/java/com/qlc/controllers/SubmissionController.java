@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api")
 public class SubmissionController {
 
   private final SubmissionService submissionService;
@@ -21,7 +21,6 @@ public class SubmissionController {
     this.submissionService = submissionService;
   }
 
-  // POST /api/v1/tasks/{taskId}/submissions
   @PostMapping("/tasks/{taskId}/submissions")
   public ResponseEntity<SubmissionCreatedResponse> createSubmission(
       @PathVariable Long taskId,
@@ -33,7 +32,6 @@ public class SubmissionController {
     return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
   }
 
-  // GET /api/v1/submissions/{id}
   @GetMapping("/submissions/{id}")
   public ResponseEntity<SubmissionResponse> getSubmissionById(@PathVariable UUID id) {
     SubmissionResponse response = submissionService.getSubmissionById(id);
