@@ -4,7 +4,7 @@
 // FormEvent и ReactNode нужны только на уровне типов.
 import type { FormEvent, ReactNode } from "react";
 
-// useEffect загружает зависимые списки, useMemo вычисляет выбранные сущности, useState хранит формы.
+// useEffect загружает зависимые списки, useMemo вычисляет выбранные сущности, useState хранит UI.
 import { useEffect, useMemo, useState } from "react";
 
 // Все backend-запросы идут только через сервисный слой.
@@ -28,7 +28,10 @@ import type {
   AdminTaskType
 } from "@/types";
 
-// Универсальное состояние для каждого блока страницы.
+// Четыре шага внутренней панели.
+type AdminStep = "course" | "module" | "lesson" | "task";
+
+// Универсальное состояние для каждого шага страницы.
 type PanelState = {
   // loading показывает, что идет GET или POST.
   loading: boolean;
@@ -52,15 +55,12 @@ type SimpleNestedFormState = {
   description: string;
 };
 
-// Форма создания задачи.
+// Форма создания CODE-задачи.
 type TaskFormState = {
   taskType: AdminTaskType;
   taskText: string;
   templateCode: string;
   testCases: string;
-  options: string;
-  correctOptionIndex: string;
-  correctNumericAnswer: string;
 };
 
 // Пустое состояние запроса.
@@ -84,16 +84,45 @@ const initialSimpleForm: SimpleNestedFormState = {
   description: ""
 };
 
-// Начальные значения формы задачи.
+// Начальные значения формы CODE-задачи.
 const initialTaskForm: TaskFormState = {
   taskType: "CODE",
   taskText: "",
   templateCode: "",
-  testCases: "",
-  options: "",
-  correctOptionIndex: "",
-  correctNumericAnswer: ""
+  testCases: ""
 };
+
+// Описание вкладок. blockedBy используется только для визуальной подсказки.
+const adminSteps: Array<{
+  id: AdminStep;
+  label: string;
+  subtitle: string;
+  blockedBy?: AdminStep;
+}> = [
+  {
+    id: "course",
+    label: "Course",
+    subtitle: "GET/POST /api/courses"
+  },
+  {
+    id: "module",
+    label: "Module",
+    subtitle: "GET/POST /api/courses/{courseId}/modules",
+    blockedBy: "course"
+  },
+  {
+    id: "lesson",
+    label: "Lesson",
+    subtitle: "GET/POST /api/modules/{moduleId}/lessons",
+    blockedBy: "module"
+  },
+  {
+    id: "task",
+    label: "Task",
+    subtitle: "GET/POST /api/lessons/{lessonId}/tasks",
+    blockedBy: "lesson"
+  }
+];
 
 // Превращает неизвестную ошибку в строку для UI.
 function getErrorMessage(error: unknown): string {
@@ -123,66 +152,37 @@ function optionalText(value: string): string | null {
   return trimmed ? trimmed : null;
 }
 
-// options в TaskDTO — List<String>, поэтому из textarea делаем массив строк или null.
-function parseOptions(value: string): string[] | null {
-  const options = value
-    .split("\n")
-    .map((item) => item.trim())
-    .filter(Boolean);
-
-  return options.length > 0 ? options : null;
-}
-
-// Числовое поле задачи может быть пустым.
-function parseOptionalInteger(value: string): number | null {
-  const trimmed = value.trim();
-
-  if (!trimmed) {
-    return null;
-  }
-
-  const parsed = Number.parseInt(trimmed, 10);
-
-  if (!Number.isFinite(parsed)) {
-    throw new Error("correctOptionIndex must be a valid integer.");
-  }
-
-  return parsed;
-}
-
-// Числовой ответ может быть пустым.
-function parseOptionalDecimal(value: string): number | null {
-  const trimmed = value.trim();
-
-  if (!trimmed) {
-    return null;
-  }
-
-  const parsed = Number(trimmed);
-
-  if (!Number.isFinite(parsed)) {
-    throw new Error("correctNumericAnswer must be a valid number.");
-  }
-
-  return parsed;
+// Поиск по названию/тексту без учета регистра.
+function matchesSearch(value: string, search: string): boolean {
+  return value.toLowerCase().includes(search.trim().toLowerCase());
 }
 
 // Главная страница внутренней панели контента.
 export default function AdminContentPage() {
+  // Активная вкладка определяет единственную видимую рабочую область.
+  const [activeStep, setActiveStep] = useState<AdminStep>("course");
+
   // Списки сущностей, которые приходят из backend.
   const [courses, setCourses] = useState<AdminCourseDto[]>([]);
   const [modules, setModules] = useState<AdminModuleDto[]>([]);
   const [lessons, setLessons] = useState<AdminLessonDto[]>([]);
   const [tasks, setTasks] = useState<AdminTaskDto[]>([]);
 
-  // ID выбранных сущностей задают текущий путь Course -> Module -> Lesson.
+  // ID выбранных сущностей задают текущий путь Course -> Module -> Lesson -> Task.
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
   const [selectedLessonId, setSelectedLessonId] = useState<number | null>(null);
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
 
   // Последняя созданная задача нужна для главного результата карточки.
   const [createdTaskId, setCreatedTaskId] = useState<number | null>(null);
   const [copyStatus, setCopyStatus] = useState("");
+
+  // Поиск по спискам каждого шага.
+  const [courseSearch, setCourseSearch] = useState("");
+  const [moduleSearch, setModuleSearch] = useState("");
+  const [lessonSearch, setLessonSearch] = useState("");
+  const [taskSearch, setTaskSearch] = useState("");
 
   // Формы создания сущностей.
   const [courseForm, setCourseForm] = useState<CourseFormState>(initialCourseForm);
@@ -190,7 +190,7 @@ export default function AdminContentPage() {
   const [lessonForm, setLessonForm] = useState<SimpleNestedFormState>(initialSimpleForm);
   const [taskForm, setTaskForm] = useState<TaskFormState>(initialTaskForm);
 
-  // Отдельный status на каждый блок, чтобы ошибки не перетирали друг друга.
+  // Отдельный status на каждый шаг, чтобы ошибки не перетирали друг друга.
   const [courseState, setCourseState] = useState<PanelState>(idlePanelState);
   const [moduleState, setModuleState] = useState<PanelState>(idlePanelState);
   const [lessonState, setLessonState] = useState<PanelState>(idlePanelState);
@@ -210,6 +210,32 @@ export default function AdminContentPage() {
   const selectedLesson = useMemo(
     () => lessons.find((lesson) => lesson.id === selectedLessonId) ?? null,
     [lessons, selectedLessonId]
+  );
+
+  const selectedTask = useMemo(
+    () => tasks.find((task) => task.id === selectedTaskId) ?? null,
+    [tasks, selectedTaskId]
+  );
+
+  // Фильтрованные списки не меняют исходные данные, только отображение.
+  const filteredCourses = useMemo(
+    () => courses.filter((course) => matchesSearch(course.name, courseSearch)),
+    [courses, courseSearch]
+  );
+
+  const filteredModules = useMemo(
+    () => modules.filter((moduleItem) => matchesSearch(moduleItem.name, moduleSearch)),
+    [modules, moduleSearch]
+  );
+
+  const filteredLessons = useMemo(
+    () => lessons.filter((lesson) => matchesSearch(lesson.name, lessonSearch)),
+    [lessons, lessonSearch]
+  );
+
+  const filteredTasks = useMemo(
+    () => tasks.filter((task) => matchesSearch(task.taskText, taskSearch)),
+    [tasks, taskSearch]
   );
 
   // Первичная загрузка курсов. Пустая база даст пустой список, не падение страницы.
@@ -249,7 +275,12 @@ export default function AdminContentPage() {
     setTasks([]);
     setSelectedModuleId(null);
     setSelectedLessonId(null);
+    setSelectedTaskId(null);
     setCreatedTaskId(null);
+    setCopyStatus("");
+    setModuleSearch("");
+    setLessonSearch("");
+    setTaskSearch("");
 
     if (selectedCourseId === null) {
       setModuleState(idlePanelState);
@@ -289,7 +320,11 @@ export default function AdminContentPage() {
     setLessons([]);
     setTasks([]);
     setSelectedLessonId(null);
+    setSelectedTaskId(null);
     setCreatedTaskId(null);
+    setCopyStatus("");
+    setLessonSearch("");
+    setTaskSearch("");
 
     if (selectedModuleId === null) {
       setLessonState(idlePanelState);
@@ -327,7 +362,10 @@ export default function AdminContentPage() {
     let ignore = false;
 
     setTasks([]);
+    setSelectedTaskId(null);
     setCreatedTaskId(null);
+    setCopyStatus("");
+    setTaskSearch("");
 
     if (selectedLessonId === null) {
       setTaskState(idlePanelState);
@@ -383,6 +421,8 @@ export default function AdminContentPage() {
       setCourses(nextCourses);
       setSelectedCourseId(created.id);
       setCourseForm(initialCourseForm);
+      setCourseSearch("");
+      setActiveStep("module");
       setCourseState({
         loading: false,
         error: "",
@@ -418,6 +458,8 @@ export default function AdminContentPage() {
       setModules(nextModules);
       setSelectedModuleId(created.id);
       setModuleForm(initialSimpleForm);
+      setModuleSearch("");
+      setActiveStep("lesson");
       setModuleState({
         loading: false,
         error: "",
@@ -453,6 +495,8 @@ export default function AdminContentPage() {
       setLessons(nextLessons);
       setSelectedLessonId(created.id);
       setLessonForm(initialSimpleForm);
+      setLessonSearch("");
+      setActiveStep("task");
       setLessonState({
         loading: false,
         error: "",
@@ -463,7 +507,7 @@ export default function AdminContentPage() {
     }
   }
 
-  // Создание задачи требует выбранный урок и показывает главный taskId.
+  // Создание CODE-задачи требует выбранный урок и показывает главный taskId.
   async function handleCreateTask(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -485,16 +529,18 @@ export default function AdminContentPage() {
         taskText: taskForm.taskText.trim(),
         templateCode: optionalText(taskForm.templateCode),
         testCases: optionalText(taskForm.testCases),
-        options: parseOptions(taskForm.options),
-        correctOptionIndex: parseOptionalInteger(taskForm.correctOptionIndex),
-        correctNumericAnswer: parseOptionalDecimal(taskForm.correctNumericAnswer)
+        options: null,
+        correctOptionIndex: null,
+        correctNumericAnswer: null
       });
 
       const nextTasks = await getAdminTasks(selectedLessonId);
 
       setTasks(nextTasks);
+      setSelectedTaskId(created.id);
       setCreatedTaskId(created.id);
       setTaskForm(initialTaskForm);
+      setTaskSearch("");
       setTaskState({
         loading: false,
         error: "",
@@ -520,23 +566,53 @@ export default function AdminContentPage() {
     setSelectedCourseId(courseId);
     setSelectedModuleId(null);
     setSelectedLessonId(null);
+    setSelectedTaskId(null);
     setCreatedTaskId(null);
     setCopyStatus("");
+    setActiveStep("module");
   }
 
   // Выбор модуля сбрасывает уроки/задачи.
   function handleSelectModule(moduleId: number) {
     setSelectedModuleId(moduleId);
     setSelectedLessonId(null);
+    setSelectedTaskId(null);
+    setCreatedTaskId(null);
+    setCopyStatus("");
+    setActiveStep("lesson");
+  }
+
+  // Выбор урока сбрасывает выбранную задачу.
+  function handleSelectLesson(lessonId: number) {
+    setSelectedLessonId(lessonId);
+    setSelectedTaskId(null);
+    setCreatedTaskId(null);
+    setCopyStatus("");
+    setActiveStep("task");
+  }
+
+  // Выбор задачи нужен для selected path и копирования уже существующего taskId.
+  function handleSelectTask(taskId: number) {
+    setSelectedTaskId(taskId);
     setCreatedTaskId(null);
     setCopyStatus("");
   }
 
-  // Выбор урока сбрасывает последний созданный taskId.
-  function handleSelectLesson(lessonId: number) {
-    setSelectedLessonId(lessonId);
-    setCreatedTaskId(null);
-    setCopyStatus("");
+  // Проверяет, можно ли реально работать с выбранной вкладкой.
+  function isStepReady(step: AdminStep): boolean {
+    if (step === "module") {
+      return selectedCourse !== null;
+    }
+
+    if (step === "lesson") {
+      return selectedModule !== null;
+    }
+
+    if (step === "task") {
+      return selectedLesson !== null;
+    }
+
+    return true;
   }
 
   return (
@@ -549,299 +625,424 @@ export default function AdminContentPage() {
           <h1 className="mt-3 text-4xl font-black uppercase leading-none sm:text-6xl">
             Admin Content Builder
           </h1>
-          <p className="mt-4 max-w-3xl text-sm leading-snug text-white/54">
-            Техническая панель для быстрого создания цепочки Course - Module - Lesson - Task
-            и получения taskId для POST /api/v1/tasks/{"{taskId}"}/submissions.
+          <p className="mt-4 max-w-3xl text-sm leading-snug text-white/64">
+            4-step interface для создания Course - Module - Lesson - Task и получения taskId для
+            POST /api/v1/tasks/{"{taskId}"}/submissions.
           </p>
         </header>
 
-        <section className="grid gap-px bg-line lg:grid-cols-2">
-          <EntityPanel title="Course" subtitle="GET/POST /api/courses" state={courseState}>
-            <SelectedBox
-              id={selectedCourse?.id ?? null}
-              label="Selected Course"
-              title={selectedCourse?.name ?? "No course selected"}
+        <SelectedPath
+          course={selectedCourse}
+          moduleItem={selectedModule}
+          lesson={selectedLesson}
+          task={selectedTask}
+          createdTaskId={createdTaskId}
+        />
+
+        <nav className="grid border-b border-line bg-panel/40 sm:grid-cols-4">
+          {adminSteps.map((step) => (
+            <TabButton
+              active={activeStep === step.id}
+              blocked={!isStepReady(step.id)}
+              key={step.id}
+              label={step.label}
+              subtitle={step.subtitle}
+              onClick={() => setActiveStep(step.id)}
             />
+          ))}
+        </nav>
 
-            <EntityList
-              emptyText="No courses yet. Create the first course."
-              items={courses.map((course) => ({
-                id: course.id,
-                meta: `courseId: ${course.id} / ${course.priceInStars ?? 0} stars`,
-                title: course.name
-              }))}
-              loading={courseState.loading && courses.length === 0}
-              selectedId={selectedCourseId}
-              onSelect={handleSelectCourse}
-            />
+        <section className="p-5 sm:p-7">
+          {activeStep === "course" && (
+            <WorkspacePanel
+              state={courseState}
+              subtitle="Course step"
+              title="Select or create Course"
+            >
+              <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px]">
+                <div className="grid content-start gap-4">
+                  <SearchInput
+                    label="Search courses"
+                    value={courseSearch}
+                    onChange={setCourseSearch}
+                  />
+                  <EntityList
+                    emptyText={
+                      courseSearch
+                        ? "No courses match current search."
+                        : "No courses yet. Create the first course."
+                    }
+                    items={filteredCourses.map((course) => ({
+                      id: course.id,
+                      meta: `courseId: ${course.id} / ${course.priceInStars ?? 0} stars`,
+                      title: course.name
+                    }))}
+                    loading={courseState.loading && courses.length === 0}
+                    selectedId={selectedCourseId}
+                    onSelect={handleSelectCourse}
+                  />
+                </div>
 
-            <form className="grid gap-3" onSubmit={handleCreateCourse}>
-              <TextInput
-                label="name"
-                value={courseForm.name}
-                onChange={(value) => setCourseForm((current) => ({ ...current, name: value }))}
-              />
-              <TextArea
-                label="description"
-                rows={3}
-                value={courseForm.description}
-                onChange={(value) =>
-                  setCourseForm((current) => ({ ...current, description: value }))
-                }
-              />
-              <div className="grid gap-3 sm:grid-cols-2">
-                <TextInput
-                  inputMode="decimal"
-                  label="price"
-                  value={courseForm.price}
-                  onChange={(value) =>
-                    setCourseForm((current) => ({ ...current, price: value }))
-                  }
-                />
-                <TextInput
-                  inputMode="decimal"
-                  label="priceInStars"
-                  value={courseForm.priceInStars}
-                  onChange={(value) =>
-                    setCourseForm((current) => ({ ...current, priceInStars: value }))
-                  }
-                />
-              </div>
-              <SubmitButton disabled={courseState.loading} label="Create Course" />
-            </form>
-          </EntityPanel>
-
-          <EntityPanel
-            title="Module"
-            subtitle="GET/POST /api/courses/{courseId}/modules"
-            state={moduleState}
-          >
-            <SelectedBox
-              id={selectedModule?.id ?? null}
-              label="Selected Module"
-              title={selectedModule?.name ?? "No module selected"}
-            />
-
-            {!selectedCourse ? (
-              <BlockedMessage text="Select Course before creating Module." />
-            ) : (
-              <>
-                <EntityList
-                  emptyText="No modules for selected course."
-                  items={modules.map((moduleItem) => ({
-                    id: moduleItem.id,
-                    meta: `moduleId: ${moduleItem.id} / courseId: ${moduleItem.courseId}`,
-                    title: moduleItem.name
-                  }))}
-                  loading={moduleState.loading && modules.length === 0}
-                  selectedId={selectedModuleId}
-                  onSelect={handleSelectModule}
-                />
-
-                <form className="grid gap-3" onSubmit={handleCreateModule}>
+                <form className="grid content-start gap-3 border border-line bg-panel/60 p-4" onSubmit={handleCreateCourse}>
+                  <FormTitle title="Create Course" idLabel={selectedCourseId} />
                   <TextInput
                     label="name"
-                    value={moduleForm.name}
+                    value={courseForm.name}
                     onChange={(value) =>
-                      setModuleForm((current) => ({ ...current, name: value }))
+                      setCourseForm((current) => ({ ...current, name: value }))
                     }
                   />
                   <TextArea
                     label="description"
-                    rows={3}
-                    value={moduleForm.description}
+                    rows={4}
+                    value={courseForm.description}
                     onChange={(value) =>
-                      setModuleForm((current) => ({ ...current, description: value }))
+                      setCourseForm((current) => ({ ...current, description: value }))
                     }
                   />
-                  <SubmitButton disabled={moduleState.loading} label="Create Module" />
-                </form>
-              </>
-            )}
-          </EntityPanel>
-
-          <EntityPanel
-            title="Lesson"
-            subtitle="GET/POST /api/modules/{moduleId}/lessons"
-            state={lessonState}
-          >
-            <SelectedBox
-              id={selectedLesson?.id ?? null}
-              label="Selected Lesson"
-              title={selectedLesson?.name ?? "No lesson selected"}
-            />
-
-            {!selectedModule ? (
-              <BlockedMessage text="Select Module before creating Lesson." />
-            ) : (
-              <>
-                <EntityList
-                  emptyText="No lessons for selected module."
-                  items={lessons.map((lesson) => ({
-                    id: lesson.id,
-                    meta: `lessonId: ${lesson.id} / moduleId: ${lesson.moduleId}`,
-                    title: lesson.name
-                  }))}
-                  loading={lessonState.loading && lessons.length === 0}
-                  selectedId={selectedLessonId}
-                  onSelect={handleSelectLesson}
-                />
-
-                <form className="grid gap-3" onSubmit={handleCreateLesson}>
-                  <TextInput
-                    label="name"
-                    value={lessonForm.name}
-                    onChange={(value) =>
-                      setLessonForm((current) => ({ ...current, name: value }))
-                    }
-                  />
-                  <TextArea
-                    label="description"
-                    rows={3}
-                    value={lessonForm.description}
-                    onChange={(value) =>
-                      setLessonForm((current) => ({ ...current, description: value }))
-                    }
-                  />
-                  <SubmitButton disabled={lessonState.loading} label="Create Lesson" />
-                </form>
-              </>
-            )}
-          </EntityPanel>
-
-          <EntityPanel
-            title="Task"
-            subtitle="GET/POST /api/lessons/{lessonId}/tasks"
-            state={taskState}
-          >
-            {createdTaskId !== null && (
-              <div className="border border-acid bg-acid p-4 text-ink">
-                <p className="text-sm font-black uppercase">Task created. ID: {createdTaskId}</p>
-                <p className="mt-2 text-xs font-bold uppercase">
-                  Use for POST /api/v1/tasks/{createdTaskId}/submissions
-                </p>
-                <button
-                  className="mt-4 border border-ink px-3 py-2 text-xs font-black uppercase transition hover:bg-ink hover:text-acid"
-                  onClick={() => handleCopyTaskId(createdTaskId)}
-                  type="button"
-                >
-                  Copy taskId
-                </button>
-                {copyStatus && <p className="mt-2 text-xs font-bold">{copyStatus}</p>}
-              </div>
-            )}
-
-            {!selectedLesson ? (
-              <BlockedMessage text="Select Lesson before creating Task." />
-            ) : (
-              <>
-                <EntityList
-                  emptyText="No tasks for selected lesson."
-                  items={tasks.map((task) => ({
-                    id: task.id,
-                    meta: `taskId: ${task.id} / type: ${task.taskType}`,
-                    title: task.taskText
-                  }))}
-                  loading={taskState.loading && tasks.length === 0}
-                  selectedId={createdTaskId}
-                  onSelect={(taskId) => setCreatedTaskId(taskId)}
-                />
-
-                <form className="grid gap-3" onSubmit={handleCreateTask}>
-                  <label className="grid gap-2">
-                    <span className="font-mono text-[10px] font-bold uppercase text-white/48">
-                      taskType
-                    </span>
-                    <select
-                      className="min-h-12 border border-line bg-ink px-3 text-sm font-bold text-white outline-none focus:border-acid"
-                      value={taskForm.taskType}
-                      onChange={(event) =>
-                        setTaskForm((current) => ({
-                          ...current,
-                          taskType: event.target.value as AdminTaskType
-                        }))
-                      }
-                    >
-                      <option value="CODE">CODE</option>
-                    </select>
-                  </label>
-
-                  <TextArea
-                    label="taskText"
-                    rows={5}
-                    value={taskForm.taskText}
-                    onChange={(value) =>
-                      setTaskForm((current) => ({ ...current, taskText: value }))
-                    }
-                  />
-                  <TextArea
-                    label="templateCode"
-                    rows={6}
-                    value={taskForm.templateCode}
-                    onChange={(value) =>
-                      setTaskForm((current) => ({ ...current, templateCode: value }))
-                    }
-                  />
-                  <TextArea
-                    label="testCases"
-                    rows={5}
-                    value={taskForm.testCases}
-                    onChange={(value) =>
-                      setTaskForm((current) => ({ ...current, testCases: value }))
-                    }
-                  />
-
-                  <div className="grid gap-3 border border-line p-3">
-                    <p className="font-mono text-[10px] font-bold uppercase text-white/40">
-                      Optional fields for TEST/NUMERIC task types
-                    </p>
-                    <TextArea
-                      label="options"
-                      rows={3}
-                      value={taskForm.options}
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <TextInput
+                      inputMode="decimal"
+                      label="price"
+                      value={courseForm.price}
                       onChange={(value) =>
-                        setTaskForm((current) => ({ ...current, options: value }))
+                        setCourseForm((current) => ({ ...current, price: value }))
                       }
                     />
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <TextInput
-                        inputMode="numeric"
-                        label="correctOptionIndex"
-                        value={taskForm.correctOptionIndex}
-                        onChange={(value) =>
-                          setTaskForm((current) => ({
-                            ...current,
-                            correctOptionIndex: value
-                          }))
-                        }
-                      />
-                      <TextInput
-                        inputMode="decimal"
-                        label="correctNumericAnswer"
-                        value={taskForm.correctNumericAnswer}
-                        onChange={(value) =>
-                          setTaskForm((current) => ({
-                            ...current,
-                            correctNumericAnswer: value
-                          }))
-                        }
-                      />
-                    </div>
+                    <TextInput
+                      inputMode="decimal"
+                      label="priceInStars"
+                      value={courseForm.priceInStars}
+                      onChange={(value) =>
+                        setCourseForm((current) => ({ ...current, priceInStars: value }))
+                      }
+                    />
+                  </div>
+                  <SubmitButton disabled={courseState.loading} label="Create Course" />
+                </form>
+              </div>
+            </WorkspacePanel>
+          )}
+
+          {activeStep === "module" && (
+            <WorkspacePanel state={moduleState} subtitle="Module step" title="Select or create Module">
+              {!selectedCourse ? (
+                <BlockedMessage text="Сначала выбери курс" />
+              ) : (
+                <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px]">
+                  <div className="grid content-start gap-4">
+                    <ContextNote
+                      label="Creating inside Course"
+                      title={selectedCourse.name}
+                      id={selectedCourse.id}
+                    />
+                    <SearchInput
+                      label="Search modules"
+                      value={moduleSearch}
+                      onChange={setModuleSearch}
+                    />
+                    <EntityList
+                      emptyText={
+                        moduleSearch
+                          ? "No modules match current search."
+                          : "No modules for selected course."
+                      }
+                      items={filteredModules.map((moduleItem) => ({
+                        id: moduleItem.id,
+                        meta: `moduleId: ${moduleItem.id} / courseId: ${moduleItem.courseId}`,
+                        title: moduleItem.name
+                      }))}
+                      loading={moduleState.loading && modules.length === 0}
+                      selectedId={selectedModuleId}
+                      onSelect={handleSelectModule}
+                    />
                   </div>
 
-                  <SubmitButton disabled={taskState.loading} label="Create Task" />
-                </form>
-              </>
-            )}
-          </EntityPanel>
+                  <form className="grid content-start gap-3 border border-line bg-panel/60 p-4" onSubmit={handleCreateModule}>
+                    <FormTitle title="Create Module" idLabel={selectedModuleId} />
+                    <TextInput
+                      label="name"
+                      value={moduleForm.name}
+                      onChange={(value) =>
+                        setModuleForm((current) => ({ ...current, name: value }))
+                      }
+                    />
+                    <TextArea
+                      label="description"
+                      rows={5}
+                      value={moduleForm.description}
+                      onChange={(value) =>
+                        setModuleForm((current) => ({ ...current, description: value }))
+                      }
+                    />
+                    <SubmitButton disabled={moduleState.loading} label="Create Module" />
+                  </form>
+                </div>
+              )}
+            </WorkspacePanel>
+          )}
+
+          {activeStep === "lesson" && (
+            <WorkspacePanel state={lessonState} subtitle="Lesson step" title="Select or create Lesson">
+              {!selectedModule ? (
+                <BlockedMessage text="Сначала выбери модуль" />
+              ) : (
+                <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px]">
+                  <div className="grid content-start gap-4">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {selectedCourse && (
+                        <ContextNote
+                          label="Course"
+                          title={selectedCourse.name}
+                          id={selectedCourse.id}
+                        />
+                      )}
+                      <ContextNote
+                        label="Creating inside Module"
+                        title={selectedModule.name}
+                        id={selectedModule.id}
+                      />
+                    </div>
+                    <SearchInput
+                      label="Search lessons"
+                      value={lessonSearch}
+                      onChange={setLessonSearch}
+                    />
+                    <EntityList
+                      emptyText={
+                        lessonSearch
+                          ? "No lessons match current search."
+                          : "No lessons for selected module."
+                      }
+                      items={filteredLessons.map((lesson) => ({
+                        id: lesson.id,
+                        meta: `lessonId: ${lesson.id} / moduleId: ${lesson.moduleId}`,
+                        title: lesson.name
+                      }))}
+                      loading={lessonState.loading && lessons.length === 0}
+                      selectedId={selectedLessonId}
+                      onSelect={handleSelectLesson}
+                    />
+                  </div>
+
+                  <form className="grid content-start gap-3 border border-line bg-panel/60 p-4" onSubmit={handleCreateLesson}>
+                    <FormTitle title="Create Lesson" idLabel={selectedLessonId} />
+                    <TextInput
+                      label="name"
+                      value={lessonForm.name}
+                      onChange={(value) =>
+                        setLessonForm((current) => ({ ...current, name: value }))
+                      }
+                    />
+                    <TextArea
+                      label="description"
+                      rows={5}
+                      value={lessonForm.description}
+                      onChange={(value) =>
+                        setLessonForm((current) => ({ ...current, description: value }))
+                      }
+                    />
+                    <SubmitButton disabled={lessonState.loading} label="Create Lesson" />
+                  </form>
+                </div>
+              )}
+            </WorkspacePanel>
+          )}
+
+          {activeStep === "task" && (
+            <WorkspacePanel state={taskState} subtitle="Task step" title="Create CODE Task">
+              {!selectedLesson ? (
+                <BlockedMessage text="Сначала выбери урок" />
+              ) : (
+                <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_460px]">
+                  <div className="grid content-start gap-4">
+                    <div className="grid gap-3 xl:grid-cols-3">
+                      {selectedCourse && (
+                        <ContextNote label="Course" title={selectedCourse.name} id={selectedCourse.id} />
+                      )}
+                      {selectedModule && (
+                        <ContextNote label="Module" title={selectedModule.name} id={selectedModule.id} />
+                      )}
+                      <ContextNote
+                        label="Creating inside Lesson"
+                        title={selectedLesson.name}
+                        id={selectedLesson.id}
+                      />
+                    </div>
+
+                    {createdTaskId !== null && (
+                      <TaskCreatedBlock
+                        copyStatus={copyStatus}
+                        taskId={createdTaskId}
+                        onCopy={() => handleCopyTaskId(createdTaskId)}
+                      />
+                    )}
+
+                    {selectedTaskId !== null && createdTaskId === null && (
+                      <SelectedTaskBlock
+                        copyStatus={copyStatus}
+                        taskId={selectedTaskId}
+                        onCopy={() => handleCopyTaskId(selectedTaskId)}
+                      />
+                    )}
+
+                    <SearchInput
+                      label="Search tasks"
+                      value={taskSearch}
+                      onChange={setTaskSearch}
+                    />
+                    <EntityList
+                      emptyText={
+                        taskSearch
+                          ? "No tasks match current search."
+                          : "No tasks for selected lesson."
+                      }
+                      items={filteredTasks.map((task) => ({
+                        id: task.id,
+                        meta: `taskId: ${task.id} / type: ${task.taskType}`,
+                        title: task.taskText
+                      }))}
+                      loading={taskState.loading && tasks.length === 0}
+                      selectedId={selectedTaskId}
+                      onSelect={handleSelectTask}
+                    />
+                  </div>
+
+                  <form className="grid content-start gap-3 border border-line bg-panel/60 p-4" onSubmit={handleCreateTask}>
+                    <FormTitle title="Create CODE Task" idLabel={selectedTaskId} />
+                    <div className="border border-acid/50 bg-acid/10 p-3">
+                      <p className="font-mono text-[10px] font-bold uppercase text-acid">
+                        taskType: CODE
+                      </p>
+                      <p className="mt-2 text-xs font-bold uppercase leading-snug text-white/62">
+                        Sprint 2 supports CODE task creation here. TEST/NUMERIC fields are hidden.
+                      </p>
+                    </div>
+                    <TextArea
+                      help="Условие задачи, которое увидит студент."
+                      label="taskText"
+                      rows={6}
+                      value={taskForm.taskText}
+                      onChange={(value) =>
+                        setTaskForm((current) => ({ ...current, taskText: value }))
+                      }
+                    />
+                    <TextArea
+                      help="Стартовый код для редактора. Можно оставить пустым."
+                      label="templateCode"
+                      rows={7}
+                      value={taskForm.templateCode}
+                      onChange={(value) =>
+                        setTaskForm((current) => ({ ...current, templateCode: value }))
+                      }
+                    />
+                    <TextArea
+                      help="Тесты или примеры проверки в формате, который сейчас принимает backend."
+                      label="testCases"
+                      rows={7}
+                      value={taskForm.testCases}
+                      onChange={(value) =>
+                        setTaskForm((current) => ({ ...current, testCases: value }))
+                      }
+                    />
+                    <SubmitButton disabled={taskState.loading} label="Create CODE Task" />
+                  </form>
+                </div>
+              )}
+            </WorkspacePanel>
+          )}
         </section>
       </section>
     </main>
   );
 }
 
-// Обертка одного технического блока.
-function EntityPanel({
+// Верхний selected context всегда показывает текущий путь.
+function SelectedPath({
+  course,
+  createdTaskId,
+  lesson,
+  moduleItem,
+  task
+}: {
+  course: AdminCourseDto | null;
+  createdTaskId: number | null;
+  lesson: AdminLessonDto | null;
+  moduleItem: AdminModuleDto | null;
+  task: AdminTaskDto | null;
+}) {
+  return (
+    <section className="grid gap-px border-b border-line bg-line sm:grid-cols-4">
+      <PathCell label="Course" title={course?.name ?? "Not selected"} id={course?.id ?? null} />
+      <PathCell
+        label="Module"
+        title={moduleItem?.name ?? "Not selected"}
+        id={moduleItem?.id ?? null}
+      />
+      <PathCell label="Lesson" title={lesson?.name ?? "Not selected"} id={lesson?.id ?? null} />
+      <PathCell
+        label="Task"
+        title={createdTaskId !== null ? "Created task" : task?.taskText ?? "Not selected"}
+        id={createdTaskId ?? task?.id ?? null}
+      />
+    </section>
+  );
+}
+
+// Одна ячейка selected path.
+function PathCell({ id, label, title }: { id: number | null; label: string; title: string }) {
+  return (
+    <div className="min-w-0 bg-panel/90 p-4">
+      <p className="font-mono text-[10px] font-bold uppercase text-white/50">{label}</p>
+      <p className="mt-2 line-clamp-2 min-h-10 text-sm font-black uppercase leading-tight text-white">
+        {title}
+      </p>
+      <p className="mt-3 font-mono text-xs font-bold uppercase text-acid">
+        {id === null ? "ID: none" : `ID: ${id}`}
+      </p>
+    </div>
+  );
+}
+
+// Кнопка вкладки с явным активным и blocked-состоянием.
+function TabButton({
+  active,
+  blocked,
+  label,
+  onClick,
+  subtitle
+}: {
+  active: boolean;
+  blocked: boolean;
+  label: string;
+  onClick: () => void;
+  subtitle: string;
+}) {
+  return (
+    <button
+      className={`grid gap-2 border-b p-4 text-left transition sm:border-b-0 sm:border-r ${
+        active
+          ? "border-acid bg-acid text-ink"
+          : "border-line bg-ink text-white hover:bg-white/8"
+      }`}
+      onClick={onClick}
+      type="button"
+    >
+      <span className="flex items-center justify-between gap-3">
+        <span className="text-sm font-black uppercase">{label}</span>
+        {blocked && (
+          <span className="border border-current px-2 py-1 font-mono text-[9px] font-bold uppercase opacity-70">
+            locked
+          </span>
+        )}
+      </span>
+      <span className="font-mono text-[10px] font-bold uppercase opacity-60">{subtitle}</span>
+    </button>
+  );
+}
+
+// Обертка одной активной рабочей области.
+function WorkspacePanel({
   children,
   state,
   subtitle,
@@ -853,8 +1054,8 @@ function EntityPanel({
   title: string;
 }) {
   return (
-    <section className="grid content-start gap-5 bg-ink p-5 sm:p-6">
-      <div className="flex items-start justify-between gap-4">
+    <section className="grid gap-5 border border-line bg-ink p-5">
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-4">
         <div>
           <p className="font-mono text-[10px] font-bold uppercase text-acid">{subtitle}</p>
           <h2 className="mt-2 text-3xl font-black uppercase leading-none">{title}</h2>
@@ -874,15 +1075,27 @@ function EntityPanel({
   );
 }
 
-// Компактный блок выбранной сущности.
-function SelectedBox({ id, label, title }: { id: number | null; label: string; title: string }) {
+// Заголовок формы и ID выбранной сущности этого шага.
+function FormTitle({ idLabel, title }: { idLabel: number | null; title: string }) {
   return (
-    <div className="border border-line bg-panel/80 p-4">
-      <p className="font-mono text-[10px] font-bold uppercase text-white/40">{label}</p>
-      <p className="mt-2 text-lg font-black uppercase leading-tight text-white">{title}</p>
-      <p className="mt-3 font-mono text-xs font-bold uppercase text-acid">
-        {id === null ? "id: none" : `id: ${id}`}
+    <div className="flex items-center justify-between gap-4 border-b border-line pb-3">
+      <h3 className="text-lg font-black uppercase">{title}</h3>
+      <span className="font-mono text-[10px] font-bold uppercase text-white/50">
+        {idLabel === null ? "selected: none" : `selected: ${idLabel}`}
+      </span>
+    </div>
+  );
+}
+
+// Небольшой блок контекста внутри зависимых шагов.
+function ContextNote({ id, label, title }: { id: number; label: string; title: string }) {
+  return (
+    <div className="min-w-0 border border-line bg-panel/70 p-3">
+      <p className="font-mono text-[10px] font-bold uppercase text-white/48">{label}</p>
+      <p className="mt-2 line-clamp-2 text-sm font-black uppercase leading-tight text-white">
+        {title}
       </p>
+      <p className="mt-2 font-mono text-[10px] font-bold uppercase text-acid">ID: {id}</p>
     </div>
   );
 }
@@ -890,8 +1103,11 @@ function SelectedBox({ id, label, title }: { id: number | null; label: string; t
 // Сообщение о заблокированной вложенной форме.
 function BlockedMessage({ text }: { text: string }) {
   return (
-    <div className="border border-line bg-panel/50 p-4 text-sm font-bold uppercase text-white/46">
-      {text}
+    <div className="border border-line bg-panel/60 p-6">
+      <p className="text-2xl font-black uppercase leading-tight text-white">{text}</p>
+      <p className="mt-3 max-w-xl text-sm font-bold uppercase leading-snug text-white/58">
+        Выбери родительскую сущность в предыдущей вкладке, и этот шаг станет доступен.
+      </p>
     </div>
   );
 }
@@ -906,6 +1122,62 @@ function StatusMessage({ text, tone }: { text: string; tone: "error" | "success"
   return <div className={`border p-3 text-xs font-bold uppercase ${className}`}>{text}</div>;
 }
 
+// Заметный блок с главным результатом карточки.
+function TaskCreatedBlock({
+  copyStatus,
+  onCopy,
+  taskId
+}: {
+  copyStatus: string;
+  onCopy: () => void;
+  taskId: number;
+}) {
+  return (
+    <div className="border border-acid bg-acid p-4 text-ink">
+      <p className="text-sm font-black uppercase">Task created. ID: {taskId}</p>
+      <p className="mt-2 text-xs font-bold uppercase">
+        Use for POST /api/v1/tasks/{taskId}/submissions
+      </p>
+      <button
+        className="mt-4 border border-ink px-3 py-2 text-xs font-black uppercase transition hover:bg-ink hover:text-acid"
+        onClick={onCopy}
+        type="button"
+      >
+        Copy taskId
+      </button>
+      {copyStatus && <p className="mt-2 text-xs font-bold">{copyStatus}</p>}
+    </div>
+  );
+}
+
+// Блок для выбранной уже существующей задачи.
+function SelectedTaskBlock({
+  copyStatus,
+  onCopy,
+  taskId
+}: {
+  copyStatus: string;
+  onCopy: () => void;
+  taskId: number;
+}) {
+  return (
+    <div className="border border-line bg-panel/70 p-4">
+      <p className="text-sm font-black uppercase text-white">Selected task. ID: {taskId}</p>
+      <p className="mt-2 text-xs font-bold uppercase text-white/58">
+        Use for POST /api/v1/tasks/{taskId}/submissions
+      </p>
+      <button
+        className="mt-4 border border-acid px-3 py-2 text-xs font-black uppercase text-acid transition hover:bg-acid hover:text-ink"
+        onClick={onCopy}
+        type="button"
+      >
+        Copy taskId
+      </button>
+      {copyStatus && <p className="mt-2 text-xs font-bold text-acid">{copyStatus}</p>}
+    </div>
+  );
+}
+
 // Тип одного пункта списка сущностей.
 type EntityListItem = {
   id: number;
@@ -913,7 +1185,7 @@ type EntityListItem = {
   meta: string;
 };
 
-// Список курсов/модулей/уроков/задач.
+// Список курсов/модулей/уроков/задач с ограниченной высотой и собственным scroll.
 function EntityList({
   emptyText,
   items,
@@ -929,7 +1201,7 @@ function EntityList({
 }) {
   if (loading) {
     return (
-      <div className="border border-line bg-panel/50 p-4 font-mono text-xs font-bold uppercase text-white/48">
+      <div className="border border-line bg-panel/50 p-4 font-mono text-xs font-bold uppercase text-white/58">
         Loading list...
       </div>
     );
@@ -937,14 +1209,14 @@ function EntityList({
 
   if (items.length === 0) {
     return (
-      <div className="border border-line bg-panel/50 p-4 font-mono text-xs font-bold uppercase text-white/48">
+      <div className="border border-line bg-panel/50 p-4 font-mono text-xs font-bold uppercase text-white/58">
         {emptyText}
       </div>
     );
   }
 
   return (
-    <div className="grid max-h-72 gap-px overflow-y-auto border border-line bg-line">
+    <div className="grid max-h-[340px] gap-px overflow-y-auto border border-line bg-line">
       {items.map((item) => {
         const isSelected = item.id === selectedId;
 
@@ -955,18 +1227,42 @@ function EntityList({
             }`}
             key={item.id}
             onClick={() => onSelect(item.id)}
+            title={item.title}
             type="button"
           >
             <span className="line-clamp-2 text-sm font-black uppercase leading-tight">
               {item.title}
             </span>
-            <span className="font-mono text-[10px] font-bold uppercase opacity-60">
+            <span className="font-mono text-[10px] font-bold uppercase opacity-70">
               {item.meta}
             </span>
           </button>
         );
       })}
     </div>
+  );
+}
+
+// Поле поиска для списков.
+function SearchInput({
+  label,
+  onChange,
+  value
+}: {
+  label: string;
+  onChange: (value: string) => void;
+  value: string;
+}) {
+  return (
+    <label className="grid gap-2">
+      <span className="font-mono text-[10px] font-bold uppercase text-white/58">{label}</span>
+      <input
+        className="min-h-12 border border-line bg-panel/60 px-3 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid"
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="Type to filter..."
+        value={value}
+      />
+    </label>
   );
 }
 
@@ -984,7 +1280,7 @@ function TextInput({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="font-mono text-[10px] font-bold uppercase text-white/48">{label}</span>
+      <span className="font-mono text-[10px] font-bold uppercase text-white/58">{label}</span>
       <input
         className="min-h-12 border border-line bg-ink px-3 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid"
         inputMode={inputMode}
@@ -997,11 +1293,13 @@ function TextInput({
 
 // Общая textarea для описаний, кода и testCases.
 function TextArea({
+  help,
   label,
   onChange,
   rows,
   value
 }: {
+  help?: string;
   label: string;
   onChange: (value: string) => void;
   rows: number;
@@ -1009,13 +1307,14 @@ function TextArea({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="font-mono text-[10px] font-bold uppercase text-white/48">{label}</span>
+      <span className="font-mono text-[10px] font-bold uppercase text-white/58">{label}</span>
       <textarea
         className="resize-y border border-line bg-ink px-3 py-3 font-mono text-sm text-white outline-none transition placeholder:text-white/22 focus:border-acid"
         onChange={(event) => onChange(event.target.value)}
         rows={rows}
         value={value}
       />
+      {help && <span className="text-xs font-bold uppercase leading-snug text-white/46">{help}</span>}
     </label>
   );
 }

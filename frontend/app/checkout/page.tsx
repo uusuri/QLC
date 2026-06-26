@@ -5,7 +5,7 @@ import Link from "next/link";
 import { PaymentMethodSelector } from "@/components/PaymentMethodSelector";
 
 // Checkout получает курсы, тексты доступа и методы оплаты из сервисного слоя.
-import { COURSE_ACCESS_COPY, getCourseCatalog, getPaymentMethods } from "@/services/api";
+import { COURSE_ACCESS_COPY, getPaymentMethods, getStaticCourseCatalog } from "@/services/api";
 
 // Тип состояния доступа нужен для строго типизированного компонента AccessState.
 import type { CourseAccessStatus } from "@/types";
@@ -24,11 +24,11 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
   // Дожидаемся query-параметров из URL.
   const params = await searchParams;
 
-  // Параллельно получаем каталог и методы оплаты через services/api.ts.
-  const [courses, paymentMethods] = await Promise.all([
-    getCourseCatalog(),
-    getPaymentMethods()
-  ]);
+  // Checkout пока вне S2-FE-06, поэтому берет статичный каталог и не зависит от backend.
+  const courses = getStaticCourseCatalog();
+
+  // Методы оплаты пока остаются моковыми до платежной интеграции.
+  const paymentMethods = await getPaymentMethods();
 
   // Ищем курс по slug из URL.
   const selectedCourse =

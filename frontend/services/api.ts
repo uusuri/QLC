@@ -22,6 +22,10 @@ const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:
   ""
 );
 
+// Дефолтная картинка нужна, потому что backend CourseDTO пока не содержит imageUrl.
+const DEFAULT_COURSE_IMAGE_URL =
+  "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=900&q=80";
+
 // Объектная проверка для безопасного чтения неизвестного JSON из ошибок backend.
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -76,6 +80,7 @@ async function apiRequest<TResponse>(
   // Собираем абсолютный URL, чтобы frontend на 3000 ходил в Spring Boot на 8080.
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
+    cache: "no-store",
     headers
   });
 
@@ -88,8 +93,7 @@ async function apiRequest<TResponse>(
   return (await response.json()) as TResponse;
 }
 
-// Публичная витрина пока остается моковой, чтобы не менять пользовательский лендинг в рамках admin-задачи.
-// Реальные CourseController endpoints используются ниже в admin-функциях.
+// Статичный каталог оставлен только для fallback-сценариев и экранов вне S2-FE-06.
 const courseCatalogMock: CourseDto[] = [
   // Первый курс в витрине и checkout.
   {
@@ -161,6 +165,54 @@ const courseCatalogMock: CourseDto[] = [
     access: "pending"
   }
 ];
+
+// Приводит backend BigDecimal/number к безопасной сумме для карточки.
+function normalizeMoneyAmount(value: number | string | null | undefined): number {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : 0;
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  return 0;
+}
+
+// Форматирует рублевую цену для UI-карточки.
+function formatRubPrice(value: number | string | null | undefined) {
+  const amount = normalizeMoneyAmount(value);
+
+  return {
+    amount,
+    currency: "RUB" as const,
+    formatted: new Intl.NumberFormat("ru-RU", {
+      currency: "RUB",
+      maximumFractionDigits: 0,
+      style: "currency"
+    }).format(amount)
+  };
+}
+
+// Маппит backend CourseDTO в frontend CourseDto, который ожидает главная витрина.
+function mapAdminCourseToCatalogCourse(course: AdminCourseDto): CourseDto {
+  const price = formatRubPrice(course.price);
+  const oldPrice = formatRubPrice(price.amount > 0 ? price.amount * 2 : null);
+
+  return {
+    slug: `course-${course.id}`,
+    title: course.name,
+    description: course.description || "Описание курса скоро появится.",
+    imageUrl: DEFAULT_COURSE_IMAGE_URL,
+    badge: "course",
+    lessonsCount: 0,
+    lessonsLabel: "0 уроков",
+    price,
+    oldPrice,
+    access: price.amount > 0 ? "locked" : "open"
+  };
+}
 
 // TODO: Интегрировать с бэком, когда появится эндпоинт профиля студента.
 // Профиль анонимный: без имени, фамилии, аватарки и других персональных данных.
@@ -285,14 +337,20 @@ const loginNotesMock: LoginNoteDto[] = [
 
 // Возвращает каталог курсов для главной и checkout-страницы.
 export async function getCourseCatalog(): Promise<CourseDto[]> {
-  // TODO: Интегрировать с бэком, когда появится эндпоинт GET /api/courses.
+  // Основной сценарий S2-FE-06: главная страница берет курсы из backend/БД.
+  const courses = await getAdminCourses();
+  return courses.map(mapAdminCourseToCatalogCourse);
+}
+
+// Возвращает статичный каталог для экранов, которые пока не входят в backend-интеграцию.
+export function getStaticCourseCatalog(): CourseDto[] {
   return courseCatalogMock;
 }
 
 // Возвращает курс по slug, а если slug пустой или неизвестный — первый курс каталога.
 export async function getCourseBySlug(slug?: string): Promise<CourseDto> {
-  // TODO: Интегрировать с бэком, когда появится эндпоинт GET /api/courses/{slug}.
-  return courseCatalogMock.find((course) => course.slug === slug) ?? courseCatalogMock[0];
+  const courses = await getCourseCatalog();
+  return courses.find((course) => course.slug === slug) ?? courses[0] ?? getStaticCourseCatalog()[0];
 }
 
 // Возвращает анонимный профиль студента для личного кабинета.
