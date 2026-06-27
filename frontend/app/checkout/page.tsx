@@ -4,11 +4,14 @@ import Link from "next/link";
 // Импортируем клиентский компонент выбора способа оплаты.
 import { PaymentMethodSelector } from "@/components/PaymentMethodSelector";
 
-// Checkout получает курсы, тексты доступа и методы оплаты из сервисного слоя.
-import { COURSE_ACCESS_COPY, getPaymentMethods, getStaticCourseCatalog } from "@/services/api";
+// Checkout получает реальные курсы, тексты доступа и методы оплаты из сервисного слоя.
+import { COURSE_ACCESS_COPY, getCourseCatalog, getPaymentMethods } from "@/services/api";
 
-// Тип состояния доступа нужен для строго типизированного компонента AccessState.
-import type { CourseAccessStatus } from "@/types";
+// Типы нужны для компонентов состояния и карточек.
+import type { CourseAccessStatus, CourseDto } from "@/types";
+
+// Checkout должен перечитывать backend при reload, чтобы не показывать устаревший каталог.
+export const dynamic = "force-dynamic";
 
 // Тип props страницы checkout.
 type CheckoutPageProps = {
@@ -24,16 +27,58 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
   // Дожидаемся query-параметров из URL.
   const params = await searchParams;
 
-  // Checkout пока вне S2-FE-06, поэтому берет статичный каталог и не зависит от backend.
-  const courses = getStaticCourseCatalog();
+  // Каталог приходит из backend/БД через GET /api/courses.
+  let courses: CourseDto[] = [];
+
+  // Ошибка backend не должна превращаться в stack trace на странице.
+  let loadError = "";
+
+  try {
+    courses = await getCourseCatalog();
+  } catch {
+    loadError = "Не удалось загрузить курс для оплаты. Проверь backend.";
+  }
+
+  // Если backend недоступен, показываем error state и не рисуем mock-курсы.
+  if (loadError) {
+    return (
+      <CheckoutStatePage
+        eyebrow="checkout / backend error"
+        title="Оплата недоступна."
+        text={loadError}
+      />
+    );
+  }
+
+  // Пустая БД — нормальное состояние для dev, но без fallback на mock.
+  if (courses.length === 0) {
+    return (
+      <CheckoutStatePage
+        eyebrow="checkout / empty catalog"
+        title="Курсов пока нет."
+        text="Курсов пока нет. Создай курс в /admin/content."
+        actionHref="/admin/content"
+        actionText="Перейти в админку"
+      />
+    );
+  }
+
+  // Query-параметр course должен совпасть со slug из mapper: course-{id}.
+  const selectedCourse = courses.find((course) => course.slug === params?.course) ?? null;
+
+  // Если slug не найден, показываем not-found state, а не первый курс из массива.
+  if (!selectedCourse) {
+    return (
+      <CheckoutStatePage
+        eyebrow="checkout / not found"
+        title="Курс не найден."
+        text="Курс не найден. Вернись на главную и выбери курс."
+      />
+    );
+  }
 
   // Методы оплаты пока остаются моковыми до платежной интеграции.
   const paymentMethods = await getPaymentMethods();
-
-  // Ищем курс по slug из URL.
-  const selectedCourse =
-    // Если URL: /checkout?course=web-design-system, выберется Web Design System.
-    courses.find((course) => course.slug === params?.course) ?? courses[0];
 
   // Берем тексты для текущего статуса доступа.
   const access = COURSE_ACCESS_COPY[selectedCourse.access];
@@ -122,9 +167,11 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
                     {selectedCourse.price.formatted}
                   </strong>
                   {/* Старая цена со strike-through. */}
-                  <span className="mt-2 block text-xs font-bold text-white/36 line-through">
-                    {selectedCourse.oldPrice.formatted}
-                  </span>
+                  {selectedCourse.oldPrice.amount > selectedCourse.price.amount && (
+                    <span className="mt-2 block text-xs font-bold text-white/36 line-through">
+                      {selectedCourse.oldPrice.formatted}
+                    </span>
+                  )}
                 </div>
                 {/* Ячейка состава курса. */}
                 <div className="bg-ink p-5">
@@ -170,9 +217,9 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
           </aside>
         </section>
 
-        {/* Нижний список курсов для быстрого переключения checkout-состояния. */}
+        {/* Нижний список backend-курсов для быстрого переключения checkout-состояния. */}
         <section className="grid gap-px bg-line sm:grid-cols-3">
-          {/* Рендерим ссылку для каждого курса. */}
+          {/* Рендерим ссылку для каждого курса из GET /api/courses. */}
           {courses.map((course) => (
             <Link
               // Активный курс подсвечивается кислотным цветом.
@@ -200,6 +247,57 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
               </span>
             </Link>
           ))}
+        </section>
+      </section>
+    </main>
+  );
+}
+
+// Общая страница состояния checkout: error, empty, not-found.
+function CheckoutStatePage({
+  actionHref = "/",
+  actionText = "На главную",
+  eyebrow,
+  text,
+  title
+}: {
+  actionHref?: string;
+  actionText?: string;
+  eyebrow: string;
+  text: string;
+  title: string;
+}) {
+  return (
+    <main className="min-h-screen px-4 py-4 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl border border-line bg-ink/90">
+        <header className="flex flex-wrap items-center justify-between gap-4 border-b border-line px-5 py-5 text-xs font-black uppercase sm:px-7">
+          <Link className="transition hover:text-acid" href="/">
+            Course Archive
+          </Link>
+          <nav className="flex items-center gap-5 text-white/50">
+            <Link className="transition hover:text-acid" href="/login">
+              Вход
+            </Link>
+            <Link className="transition hover:text-acid" href="/profile">
+              Профиль
+            </Link>
+          </nav>
+        </header>
+
+        <section className="grid min-h-[560px] content-center gap-6 p-5 sm:p-7">
+          <p className="font-mono text-xs font-bold uppercase text-acid">{eyebrow}</p>
+          <h1 className="max-w-4xl text-5xl font-black uppercase leading-[1.02] sm:text-7xl">
+            {title}
+          </h1>
+          <p className="max-w-2xl text-base font-bold uppercase leading-snug text-white/62">
+            {text}
+          </p>
+          <Link
+            className="inline-flex min-h-12 w-fit items-center border border-acid bg-acid px-5 text-xs font-black uppercase text-ink transition hover:bg-transparent hover:text-acid"
+            href={actionHref}
+          >
+            {actionText}
+          </Link>
         </section>
       </section>
     </main>

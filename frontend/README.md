@@ -6,10 +6,12 @@
 
 ```text
 frontend/
-  app/                 # Next.js App Router: страницы, admin/content, layout и глобальные стили.
-  components/          # Клиентские UI-компоненты без прямых сетевых запросов.
+  app/                 # Next.js App Router: витрина, checkout, course/lesson, admin/content.
+  components/          # UI-компоненты без прямых сетевых запросов.
+  components/ui/       # Shared UI-kit: Button, Panel, Alert, StatusBadge, Skeleton, Progress, Tabs.
   services/api.ts      # Единая точка данных: backend fetch-запросы и текущие моки.
   types/index.ts       # Общие TypeScript DTO/контракты фронтенда.
+  COMPONENT_GUIDE.md   # Короткий контекст для новых компонентов в текущем стиле.
   tailwind.config.ts   # Дизайн-токены Tailwind: цвета, шрифты, content-пути.
   next.config.ts       # Конфигурация Next.js.
   postcss.config.js    # Tailwind + Autoprefixer для CSS.
@@ -19,11 +21,24 @@ frontend/
 
 ## Статус стыковки с бэкендом
 
-Для главной страницы `/` подключен backend endpoint:
+Для главной страницы `/`, страницы курса `/courses/[slug]`, страницы урока `/lessons/[id]` и страницы оплаты `/checkout` подключены backend endpoints:
 
 - `GET /api/courses`
+- `GET /api/courses/{id}`
+- `GET /api/courses/{courseId}/modules`
+- `GET /api/modules/{id}`
+- `GET /api/modules/{moduleId}/lessons`
+- `GET /api/lessons/{id}`
+- `GET /api/lessons/{lessonId}/tasks`
 
-Данные из backend `CourseDTO` маппятся в frontend-карточки курса. Если backend возвращает пустой массив, главная показывает empty state и ссылку на `/admin/content`. Если backend недоступен, главная показывает понятный error state.
+Данные из backend `CourseDTO` маппятся в frontend-карточки курса. Если backend возвращает пустой массив, главная и checkout показывают empty state и ссылку на `/admin/content`. Если backend недоступен, страницы показывают понятный error state без stack trace.
+
+Learning path Sprint 2:
+- первый курс из backend-каталога считается доступным и ведет на `/courses/course-{id}`;
+- остальные курсы на витрине маркируются `Скоро` и не ведут в фиктивную оплату;
+- `/courses/[slug]` показывает модули и уроки выбранного курса;
+- `/lessons/[id]` показывает материал урока, CODE-задачу, Monaco Editor и submission lifecycle;
+- markdown-описания рендерятся ограниченным безопасным renderer без `dangerouslySetInnerHTML`.
 
 Для внутренней панели `/admin/content` подключены текущие backend endpoints из `CourseController`:
 
@@ -36,12 +51,21 @@ frontend/
 - `GET /api/lessons/{lessonId}/tasks`
 - `POST /api/lessons/{lessonId}/tasks`
 
-Checkout и платежные сценарии пока оставлены на статичном каталоге, потому что S2-FE-06 касается только главной страницы.
+Checkout больше не использует статичный каталог как основной источник. Курс выбирается по query-параметру `course`, например `/checkout?course=course-1`, где slug строится из backend `id`. Если курс не найден, checkout показывает not-found state и не fallback-ится на первый курс.
+
+Для submission UI используются фактические текущие endpoints backend `SubmissionController`:
+
+- `POST /api/tasks/{taskId}/submissions`
+- `GET /api/submissions/{id}`
+
+Если backend позже перенесет submission API на `/api/v1`, нужно поменять пути только в `services/api.ts`.
+
+Monaco Editor подключен через `@monaco-editor/react` client-only. Draft решения хранится в `localStorage` по ключу task ID, последний submission ID тоже хранится локально для повторного polling после refresh.
 
 Текущие моки:
-- `getStaticCourseCatalog()` — статичный каталог для checkout/fallback-сценариев вне текущей задачи.
+- `getStaticCourseCatalog()` — статичный каталог только для будущих локальных fallback/debug-сценариев, не основной источник для `/` и `/checkout`.
 - `getStudentProfile()` — анонимный профиль студента, прогресс и купленные/активные курсы.
-- `getPaymentMethods()` — Telegram Stars как основной метод и crypto как будущий шлюз.
+- `getPaymentMethods()` — Telegram Stars как основной метод и crypto как будущий шлюз; платежного backend endpoint пока нет.
 - `getLoginNotes()` — тезисы для минималистичного экрана входа.
 
 Все места будущей интеграции помечены комментарием:
@@ -50,7 +74,7 @@ Checkout и платежные сценарии пока оставлены на
 // TODO: Интегрировать с бэком, когда появится эндпоинт...
 ```
 
-Как только backend добавит реальные эндпоинты для профиля, оплаты и checkout, нужно заменить соответствующие моки внутри `services/api.ts`, не размазывая запросы по компонентам.
+Как только backend добавит реальные эндпоинты для профиля, оплаты и доступа к купленным курсам, нужно заменить соответствующие моки внутри `services/api.ts`, не размазывая запросы по компонентам.
 
 ## Тестовая среда и CI
 
