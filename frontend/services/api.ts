@@ -8,11 +8,16 @@ import type {
   AdminModuleDto,
   AdminTaskCreatePayload,
   AdminTaskDto,
+  CourseLearningViewDto,
   CourseAccessCopyDto,
   CourseAccessStatus,
   CourseDto,
+  LessonLearningViewDto,
   LoginNoteDto,
   PaymentMethodDto,
+  SubmissionCreatePayload,
+  SubmissionCreatedResponseDto,
+  SubmissionResponseDto,
   StudentProfileDto
 } from "@/types";
 
@@ -93,7 +98,7 @@ async function apiRequest<TResponse>(
   return (await response.json()) as TResponse;
 }
 
-// Статичный каталог оставлен только для fallback-сценариев и экранов вне S2-FE-06.
+// Статичный каталог оставлен только для будущих локальных fallback-сценариев вне основного пути.
 const courseCatalogMock: CourseDto[] = [
   // Первый курс в витрине и checkout.
   {
@@ -193,6 +198,18 @@ function formatRubPrice(value: number | string | null | undefined) {
       style: "currency"
     }).format(amount)
   };
+}
+
+// Достает backend ID из fallback slug вида course-{id}.
+function parseCourseIdFromSlug(slug: string): number | null {
+  const match = /^course-(\d+)$/.exec(slug);
+
+  if (!match) {
+    return null;
+  }
+
+  const id = Number(match[1]);
+  return Number.isSafeInteger(id) && id > 0 ? id : null;
 }
 
 // Маппит backend CourseDTO в frontend CourseDto, который ожидает главная витрина.
@@ -337,20 +354,75 @@ const loginNotesMock: LoginNoteDto[] = [
 
 // Возвращает каталог курсов для главной и checkout-страницы.
 export async function getCourseCatalog(): Promise<CourseDto[]> {
-  // Основной сценарий S2-FE-06: главная страница берет курсы из backend/БД.
+  // Основной сценарий: витрина и checkout берут курсы из backend/БД.
   const courses = await getAdminCourses();
   return courses.map(mapAdminCourseToCatalogCourse);
 }
 
-// Возвращает статичный каталог для экранов, которые пока не входят в backend-интеграцию.
+// Возвращает статичный каталог только для будущих локальных fallback/debug-сценариев.
 export function getStaticCourseCatalog(): CourseDto[] {
   return courseCatalogMock;
 }
 
-// Возвращает курс по slug, а если slug пустой или неизвестный — первый курс каталога.
-export async function getCourseBySlug(slug?: string): Promise<CourseDto> {
+// Возвращает курс по slug или null, если slug отсутствует/не найден.
+export async function getCourseBySlug(slug?: string): Promise<CourseDto | null> {
   const courses = await getCourseCatalog();
-  return courses.find((course) => course.slug === slug) ?? courses[0] ?? getStaticCourseCatalog()[0];
+  return courses.find((course) => course.slug === slug) ?? null;
+}
+
+// Собирает страницу курса: сам курс, модули, уроки и первый доступный урок.
+export async function getCourseLearningView(slug: string): Promise<CourseLearningViewDto | null> {
+  const courseId = parseCourseIdFromSlug(slug);
+
+  if (courseId === null) {
+    return null;
+  }
+
+  const courses = await getAdminCourses();
+  const courseIndex = courses.findIndex((course) => course.id === courseId);
+  const course = courseIndex >= 0 ? courses[courseIndex] : null;
+
+  if (!course) {
+    return null;
+  }
+
+  const modules = await getAdminModules(course.id);
+  const modulesWithLessons = await Promise.all(
+    modules.map(async (module) => ({
+      module,
+      lessons: await getAdminLessons(module.id)
+    }))
+  );
+  const firstLesson = modulesWithLessons.flatMap((item) => item.lessons)[0] ?? null;
+
+  return {
+    course,
+    catalogCourse: mapAdminCourseToCatalogCourse(course),
+    courseIndex,
+    isAvailable: courseIndex === 0,
+    modules: modulesWithLessons,
+    firstLesson
+  };
+}
+
+// Собирает страницу урока: урок, родительский модуль/курс и задачи урока.
+export async function getLessonLearningView(id: number): Promise<LessonLearningViewDto | null> {
+  const lesson = await getAdminLessonById(id);
+  const module = await getAdminModuleById(lesson.moduleId);
+  const course = await getAdminCourseById(module.courseId);
+  const courses = await getAdminCourses();
+  const courseIndex = courses.findIndex((item) => item.id === course.id);
+  const tasks = await getAdminTasks(lesson.id);
+
+  return {
+    course,
+    courseIndex,
+    isCourseAvailable: courseIndex === 0,
+    lesson,
+    module,
+    primaryTask: tasks[0] ?? null,
+    tasks
+  };
 }
 
 // Возвращает анонимный профиль студента для личного кабинета.
@@ -375,6 +447,11 @@ export async function getAdminCourses(): Promise<AdminCourseDto[]> {
   return apiRequest<AdminCourseDto[]>("/api/courses");
 }
 
+// Загружает один курс по backend ID.
+export async function getAdminCourseById(id: number): Promise<AdminCourseDto> {
+  return apiRequest<AdminCourseDto>(`/api/courses/${id}`);
+}
+
 // Создает курс через POST /api/courses.
 export async function createAdminCourse(
   payload: AdminCourseCreatePayload
@@ -388,6 +465,11 @@ export async function createAdminCourse(
 // Загружает модули только для выбранного курса.
 export async function getAdminModules(courseId: number): Promise<AdminModuleDto[]> {
   return apiRequest<AdminModuleDto[]>(`/api/courses/${courseId}/modules`);
+}
+
+// Загружает один модуль по backend ID.
+export async function getAdminModuleById(id: number): Promise<AdminModuleDto> {
+  return apiRequest<AdminModuleDto>(`/api/modules/${id}`);
 }
 
 // Создает модуль внутри выбранного курса.
@@ -406,6 +488,11 @@ export async function getAdminLessons(moduleId: number): Promise<AdminLessonDto[
   return apiRequest<AdminLessonDto[]>(`/api/modules/${moduleId}/lessons`);
 }
 
+// Загружает один урок по backend ID.
+export async function getAdminLessonById(id: number): Promise<AdminLessonDto> {
+  return apiRequest<AdminLessonDto>(`/api/lessons/${id}`);
+}
+
 // Создает урок внутри выбранного модуля.
 export async function createAdminLesson(
   moduleId: number,
@@ -422,6 +509,11 @@ export async function getAdminTasks(lessonId: number): Promise<AdminTaskDto[]> {
   return apiRequest<AdminTaskDto[]>(`/api/lessons/${lessonId}/tasks`);
 }
 
+// Загружает одну задачу по backend ID.
+export async function getAdminTaskById(id: number): Promise<AdminTaskDto> {
+  return apiRequest<AdminTaskDto>(`/api/tasks/${id}`);
+}
+
 // Создает задачу внутри выбранного урока.
 export async function createAdminTask(
   lessonId: number,
@@ -430,5 +522,28 @@ export async function createAdminTask(
   return apiRequest<AdminTaskDto>(`/api/lessons/${lessonId}/tasks`, {
     method: "POST",
     body: JSON.stringify(payload)
+  });
+}
+
+// Создает submission для задачи через текущий backend SubmissionController.
+export async function createSubmission(
+  taskId: number,
+  payload: SubmissionCreatePayload,
+  signal?: AbortSignal
+): Promise<SubmissionCreatedResponseDto> {
+  return apiRequest<SubmissionCreatedResponseDto>(`/api/tasks/${taskId}/submissions`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    signal
+  });
+}
+
+// Загружает состояние submission для polling.
+export async function getSubmission(
+  id: string,
+  signal?: AbortSignal
+): Promise<SubmissionResponseDto> {
+  return apiRequest<SubmissionResponseDto>(`/api/submissions/${id}`, {
+    signal
   });
 }

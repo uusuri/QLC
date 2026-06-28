@@ -5,6 +5,7 @@
     "start": "next start -H 127.0.0.1"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "next": "^15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

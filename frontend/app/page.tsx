@@ -4,6 +4,9 @@ import Link from "next/link";
 // Данные курсов приходят через сервисный слой из backend/БД.
 import { getCourseCatalog } from "@/services/api";
 
+// ButtonLink нужен для единого CTA из shared UI-kit.
+import { ButtonLink } from "@/components/ui";
+
 // Тип карточки нужен для локальной переменной courses в try/catch.
 import type { CourseDto } from "@/types";
 
@@ -136,7 +139,11 @@ export default async function HomePage() {
             // Сетка карточек курсов: на desktop 3 колонки, на mobile одна колонка.
             <div className="grid gap-px border border-line bg-line lg:grid-cols-3">
               {/* map превращает backend-курсы в набор карточек. */}
-              {courses.map((course) => (
+              {courses.map((course, courseIndex) => {
+                // В Sprint 2 пользовательский путь открыт для первого курса.
+                const isCourseAvailable = courseIndex === 0;
+
+                return (
                 // Карточка одного курса.
                 <article className="group grid bg-ink" key={course.slug}>
                   {/* Верх карточки: картинка, overlay и badge. */}
@@ -151,7 +158,7 @@ export default async function HomePage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/18 to-transparent" />
                     {/* Метка курса в левом верхнем углу изображения. */}
                     <span className="absolute left-4 top-4 border border-acid bg-ink/72 px-2 py-1 font-mono text-[10px] font-bold uppercase text-acid">
-                      {course.badge}
+                      {isCourseAvailable ? course.badge : "soon"}
                     </span>
                   </div>
 
@@ -199,17 +206,19 @@ export default async function HomePage() {
                         )}
                       </div>
 
-                      {/* Кнопка покупки ведет на checkout выбранного курса. */}
-                      <Link
-                        className="inline-flex min-h-12 items-center justify-center border border-acid bg-acid px-5 text-xs font-black uppercase text-ink transition hover:bg-transparent hover:text-acid"
-                        href={`/checkout?course=${course.slug}`}
+                      {/* Первый курс ведет в реальный learning path, остальные не ведут в фиктивную оплату. */}
+                      <ButtonLink
+                        disabled={!isCourseAvailable}
+                        href={`/courses/${course.slug}`}
+                        variant={isCourseAvailable ? "primary" : "secondary"}
                       >
-                        Купить
-                      </Link>
+                        {isCourseAvailable ? "Открыть курс" : "Скоро"}
+                      </ButtonLink>
                     </div>
                   </div>
                 </article>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
