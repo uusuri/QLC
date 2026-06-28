@@ -18,17 +18,19 @@ import java.util.UUID;
 @Transactional
 public class SubmissionService {
 
+  private final RedisQueueService redisQueueService;
   private final SubmissionRepository submissionRepository;
   private final TaskRepository taskRepository;
 
-  // Вытаскиваем максимальный размер кода из application.yaml (дефолт 65535 байт,
-  // если не задано)
+  // Вытаскиваем максимальный размер кода из application.yaml (дефолт 65535 байт)
   @Value("${app.submissions.max-size:65535}")
   private int maxSourceSize;
 
-  public SubmissionService(SubmissionRepository submissionRepository, TaskRepository taskRepository) {
+  public SubmissionService(SubmissionRepository submissionRepository, TaskRepository taskRepository,
+      RedisQueueService redisQueueService) {
     this.submissionRepository = submissionRepository;
     this.taskRepository = taskRepository;
+    this.redisQueueService = redisQueueService;
   }
 
   public SubmissionCreatedResponse createSubmission(Long taskId, SubmissionRequest request) {
@@ -47,11 +49,15 @@ public class SubmissionService {
     submission.setLanguage(request.language());
     submission.setSourceCode(request.sourceCode());
     submission.setStatus(SubmissionStatus.QUEUED);
-    // user пока не привязываем, так как авторизация out of scope
+    // TODO:
+    // Привязать юзера!!!
 
     Submission saved = submissionRepository.save(submission);
 
-    // 4. Возвращаем UUID и статус
+    // 4. Закидываем в очередь в Redis
+    redisQueueService.pushToQueue(saved.getId());
+
+    // 5. Возвращаем UUID и статус
     return new SubmissionCreatedResponse(saved.getId(), saved.getStatus().name());
   }
 

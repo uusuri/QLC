@@ -37,6 +37,9 @@ class SubmissionServiceTest {
   @Mock
   private TaskRepository taskRepository;
 
+  @Mock
+  private RedisQueueService redisQueueService;
+
   @InjectMocks
   private SubmissionService submissionService;
 
@@ -58,19 +61,24 @@ class SubmissionServiceTest {
   class CreateSubmissionTests {
 
     @Test
-    @DisplayName("Should successfully queue a valid submission")
+    @DisplayName("Should successfully queue a valid submission and push to Redis")
     void createSubmission_Success() {
       // Arrange
       Long taskId = 42L;
       SubmissionRequest request = new SubmissionRequest("CPP23", "#include <iostream>");
-
       UUID generatedId = UUID.randomUUID();
+
+      // Ставим заглушки на репозитории
       when(taskRepository.findById(taskId)).thenReturn(Optional.of(sampleTask));
       when(submissionRepository.save(any(Submission.class))).thenAnswer(invocation -> {
         Submission s = invocation.getArgument(0);
-        s.setId(generatedId); // Симулируем JPA PrePersist/генерацию ID
+        s.setId(generatedId);
         return s;
       });
+
+      // Для redisQueueService заглушку делать не обязательно, так как метод void,
+      // но Mockito должен знать про этот мок. Любой вызов void-метода на моке по
+      // дефолту просто ничего не делает.
 
       // Act
       SubmissionCreatedResponse response = submissionService.createSubmission(taskId, request);
@@ -80,15 +88,20 @@ class SubmissionServiceTest {
       assertEquals(generatedId, response.id());
       assertEquals("QUEUED", response.status());
 
-      // Дополнительно проверяем, что в репозиторий улетело именно то, что нужно
+      // 1. Проверяем, что сабмишен сохранился в базу с правильными полями
       verify(submissionRepository).save(argThat(submission -> submission.getTask().getId().equals(taskId) &&
           "CPP23".equals(submission.getLanguage()) &&
           "#include <iostream>".equals(submission.getSourceCode()) &&
           submission.getStatus() == SubmissionStatus.QUEUED));
+
+      // 2. САМОЕ ГЛАВНОЕ: проверяем, что метод пуша в Редис был вызван ровно 1 раз с
+      // нашим UUID!
+      verify(redisQueueService, times(1)).pushToQueue(generatedId);
     }
 
     @Test
     @DisplayName("Should throw RuntimeException when task does not exist (404 context)")
+
     void createSubmission_TaskNotFound_ShouldThrow() {
       // Arrange
       Long taskId = 999L;
