@@ -4,6 +4,9 @@ import Link from "next/link";
 // Workspace включает Monaco Editor и submission lifecycle.
 import { CodeLessonWorkspace } from "@/components/CodeLessonWorkspace";
 
+// AuthStatus показывает Вход или @username/Выйти.
+import { AuthStatus } from "@/components/AuthStatus";
+
 // SafeMarkdown рендерит lesson/task markdown без raw HTML.
 import { SafeMarkdown } from "@/components/SafeMarkdown";
 
@@ -95,6 +98,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <Link className="transition hover:text-acid" href="/">
               Витрина
             </Link>
+            <AuthStatus />
             <Link className="transition hover:text-acid" href="/admin/content">
               Admin
             </Link>

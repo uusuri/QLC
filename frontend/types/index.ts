@@ -13,8 +13,57 @@ export type PaymentMethodId = "stars" | "crypto";
 // Состояние mock-кнопки оплаты.
 export type PaymentState = "idle" | "loading" | "ready";
 
-// Состояние mock-кнопки авторизации.
-export type LoginState = "idle" | "loading" | "ready";
+// Роль пользователя из auth response. Backend может вернуть STUDENT или ROLE_USER.
+export type AuthUserRole = "STUDENT" | "ROLE_USER" | "ROLE_ADMIN" | "ROLE_TUTOR" | string;
+
+// Краткая информация о текущем пользователе.
+export interface AuthUserDto {
+  // ID пользователя из backend.
+  id: number;
+  // Username для отображения в навигации.
+  username: string;
+  // Email пользователя.
+  email: string;
+  // Роль пользователя.
+  role: AuthUserRole;
+}
+
+// Payload регистрации.
+export interface RegisterUserPayload {
+  // Username: 3-32 символа, латиница/цифры/_.
+  username: string;
+  // Email пользователя.
+  email: string;
+  // Пароль не сохраняется на фронте.
+  password: string;
+}
+
+// Payload входа.
+export interface LoginUserPayload {
+  // Username пользователя.
+  username: string;
+  // Пароль нужен только для запроса login и не сохраняется.
+  password: string;
+}
+
+// Ответ auth endpoint.
+export interface AuthResponseDto {
+  // JWT/access token.
+  accessToken: string;
+  // Тип токена, обычно Bearer.
+  tokenType: "Bearer" | string;
+  // Краткая информация о пользователе.
+  user: AuthUserDto;
+}
+
+// Коды auth-ошибок, которые UI показывает человекочитаемо.
+export type AuthErrorCode =
+  | "validation"
+  | "backend"
+  | "unauthorized"
+  | "duplicate_username"
+  | "duplicate_email"
+  | "missing_token";
 
 // Денежное значение для курса.
 export interface MoneyDto {

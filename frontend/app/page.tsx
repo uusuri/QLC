@@ -7,6 +7,9 @@ import { getCourseCatalog } from "@/services/api";
 // ButtonLink нужен для единого CTA из shared UI-kit.
 import { ButtonLink } from "@/components/ui";
 
+// AuthStatus показывает Вход или @username/Выйти после hydration.
+import { AuthStatus } from "@/components/AuthStatus";
+
 // Тип карточки нужен для локальной переменной courses в try/catch.
 import type { CourseDto } from "@/types";
 
@@ -44,10 +47,8 @@ export default async function HomePage() {
             <a className="transition hover:text-acid" href="#courses">
               Курсы
             </a>
-            {/* Переход на экран входа. */}
-            <Link className="transition hover:text-acid" href="/login">
-              Вход
-            </Link>
+            {/* AuthStatus после входа показывает username и logout. */}
+            <AuthStatus />
             {/* Переход в личный кабинет. */}
             <Link className="text-acid" href="/profile">
               Профиль
@@ -84,7 +85,7 @@ export default async function HomePage() {
                 className="inline-flex min-h-12 items-center border border-acid bg-acid px-5 text-xs font-black uppercase text-ink transition hover:bg-transparent hover:text-acid"
                 href="/login"
               >
-                Войти через Telegram
+                Войти в аккаунт
               </Link>
               {/* Вторичная кнопка прокручивает к курсам. */}
               <a

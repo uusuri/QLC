@@ -8,13 +8,26 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // API-запросы идут только через service layer.
-import { createSubmission, getSubmission } from "@/services/api";
+import {
+  createSubmission,
+  getAuthChangeEventName,
+  getCurrentUser,
+  getSubmission
+} from "@/services/api";
 
 // UI-kit компоненты фиксируют общий визуальный язык Sprint 2.
-import { Alert, Button, Panel, PanelBody, PanelHeader, StatusBadge } from "@/components/ui";
+import {
+  Alert,
+  Button,
+  ButtonLink,
+  Panel,
+  PanelBody,
+  PanelHeader,
+  StatusBadge
+} from "@/components/ui";
 
 // Типы backend DTO и submission response.
-import type { AdminTaskDto, SubmissionResponseDto } from "@/types";
+import type { AdminTaskDto, AuthUserDto, SubmissionResponseDto } from "@/types";
 
 // Monaco загружается client-only, чтобы production build не падал на SSR.
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
@@ -314,6 +327,8 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
   const draftKey = `qlc:draft:task:${task.id}`;
   const lastSubmissionKey = `qlc:last-submission:task:${task.id}`;
   const initialCode = useMemo(() => getInitialCode(task), [task]);
+  const [authUser, setAuthUser] = useState<AuthUserDto | null>(null);
+  const [currentPath, setCurrentPath] = useState("/");
   const [source, setSource] = useState("");
   const [draftLoaded, setDraftLoaded] = useState(false);
   const [lastSubmissionId, setLastSubmissionId] = useState<string | null>(null);
@@ -327,8 +342,9 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
   const phaseCopy = getPhaseCopy(submission.phase);
   const isBusy = ["submitting", "queued", "running"].includes(submission.phase);
   const sourceTooLarge = sourceSize > MAX_SOURCE_SIZE;
-  const canSubmit = trimmedSource.length > 0 && !sourceTooLarge && !isBusy;
+  const canSubmit = Boolean(authUser) && trimmedSource.length > 0 && !sourceTooLarge && !isBusy;
   const safeLog = submission.response?.safeMessage ?? submission.errorMessage ?? "";
+  const loginHref = `/login?redirectTo=${encodeURIComponent(currentPath)}`;
 
   // При смене task один раз загружаем draft или backend templateCode.
   useEffect(() => {
@@ -342,6 +358,24 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
     setSubmission({ phase: "idle", submissionId: savedSubmissionId ?? undefined });
     setDraftLoaded(true);
   }, [draftKey, initialCode, lastSubmissionKey, lessonId]);
+
+  // Восстанавливает auth state и реагирует на login/logout в других компонентах.
+  useEffect(() => {
+    const refreshAuth = () => {
+      setCurrentPath(`${window.location.pathname}${window.location.search}`);
+      void getCurrentUser().then(setAuthUser);
+    };
+
+    refreshAuth();
+
+    window.addEventListener("storage", refreshAuth);
+    window.addEventListener(getAuthChangeEventName(), refreshAuth);
+
+    return () => {
+      window.removeEventListener("storage", refreshAuth);
+      window.removeEventListener(getAuthChangeEventName(), refreshAuth);
+    };
+  }, []);
 
   // После первой загрузки сохраняем draft при каждом изменении исходника.
   useEffect(() => {
@@ -428,6 +462,10 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
 
   // Отправляет текущее решение.
   const handleSubmit = async () => {
+    if (!authUser) {
+      return;
+    }
+
     if (!canSubmit) {
       return;
     }
@@ -496,6 +534,11 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
             <StatusBadge tone={phaseCopy.tone}>{phaseCopy.badge}</StatusBadge>
             {completed && <StatusBadge tone="success">lesson completed</StatusBadge>}
             <StatusBadge tone="neutral">C++23</StatusBadge>
+            {authUser ? (
+              <StatusBadge tone="success">@{authUser.username}</StatusBadge>
+            ) : (
+              <StatusBadge tone="warning">login required</StatusBadge>
+            )}
           </div>
           <h2 className="text-3xl font-black uppercase leading-tight">Решение задачи</h2>
           <p className="mt-3 max-w-3xl text-sm leading-snug text-white/56">
@@ -533,15 +576,26 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
             <span>
               Source size: {sourceSize} / {MAX_SOURCE_SIZE} bytes
             </span>
+            {!authUser && (
+              <span className="text-yellow-100">Чтобы отправить решение, войди в аккаунт.</span>
+            )}
             {sourceTooLarge && <span className="text-red-200">Source is too large</span>}
             {!trimmedSource && <span className="text-yellow-100">Source cannot be empty</span>}
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <Button disabled={!canSubmit} loading={submission.phase === "submitting"} onClick={handleSubmit}>
-              Run / Submit
-            </Button>
-            <Button disabled={!lastSubmissionId || isBusy} onClick={handleResume} variant="secondary">
+            {authUser ? (
+              <Button
+                disabled={!canSubmit}
+                loading={submission.phase === "submitting"}
+                onClick={handleSubmit}
+              >
+                Run / Submit
+              </Button>
+            ) : (
+              <ButtonLink href={loginHref}>Войти</ButtonLink>
+            )}
+            <Button disabled={!authUser || !lastSubmissionId || isBusy} onClick={handleResume} variant="secondary">
               Poll last
             </Button>
             <Button disabled={isBusy} onClick={handleResetDraft} variant="secondary">
@@ -549,6 +603,13 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
             </Button>
           </div>
         </div>
+
+        {!authUser && (
+          <Alert title="auth required" tone="warning">
+            Чтобы отправить решение, войди в аккаунт. Submission request body останется без
+            `userId`; frontend добавит только `Authorization: Bearer token`.
+          </Alert>
+        )}
 
         <Alert title={phaseCopy.title} tone={phaseCopy.tone}>
           <p>{phaseCopy.description}</p>

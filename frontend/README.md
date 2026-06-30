@@ -60,6 +60,18 @@ Checkout больше не использует статичный катало�
 
 Если backend позже перенесет submission API на `/api/v1`, нужно поменять пути только в `services/api.ts`.
 
+Auth flow:
+- `/login` — username/password form;
+- `/register` — username/email/password/repeatPassword form;
+- token хранится в `localStorage` под ключом `qlc:auth-token`;
+- user summary хранится под ключом `qlc:auth-user`;
+- nav после hydration показывает `@username` и `Выйти`;
+- submission UI не отправляет решение без auth state;
+- `createSubmission()` добавляет `Authorization: Bearer {token}` через `apiRequest({ auth: true })`;
+- request body submission содержит только `language` и `sourceCode`, без `userId`.
+
+В текущем backend-коде пока нет `AuthController` для `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`. Поэтому `registerUser()`, `loginUser()` и `getCurrentUser()` сейчас работают как чистый frontend mock с TODO-комментариями. Как только backend добавит эти endpoints, нужно заменить mock-часть внутри `services/api.ts`; компоненты менять не нужно.
+
 Monaco Editor подключен через `@monaco-editor/react` client-only. Draft решения хранится в `localStorage` по ключу task ID, последний submission ID тоже хранится локально для повторного polling после refresh.
 
 Текущие моки:
@@ -67,6 +79,7 @@ Monaco Editor подключен через `@monaco-editor/react` client-only. 
 - `getStudentProfile()` — анонимный профиль студента, прогресс и купленные/активные курсы.
 - `getPaymentMethods()` — Telegram Stars как основной метод и crypto как будущий шлюз; платежного backend endpoint пока нет.
 - `getLoginNotes()` — тезисы для минималистичного экрана входа.
+- `registerUser()` / `loginUser()` / `getCurrentUser()` — временный frontend auth mock до появления backend AuthController.
 
 Все места будущей интеграции помечены комментарием:
 
@@ -74,7 +87,7 @@ Monaco Editor подключен через `@monaco-editor/react` client-only. 
 // TODO: Интегрировать с бэком, когда появится эндпоинт...
 ```
 
-Как только backend добавит реальные эндпоинты для профиля, оплаты и доступа к купленным курсам, нужно заменить соответствующие моки внутри `services/api.ts`, не размазывая запросы по компонентам.
+Как только backend добавит реальные эндпоинты для auth, профиля, оплаты и доступа к купленным курсам, нужно заменить соответствующие моки внутри `services/api.ts`, не размазывая запросы по компонентам.
 
 ## Тестовая среда и CI
 
@@ -120,7 +133,7 @@ npm run start
 
 ## Переменные окружения
 
-Для `/` и `/admin/content` фронтенд ходит в backend API. По умолчанию используется:
+Для `/`, `/admin/content`, `/courses/[slug]`, `/lessons/[id]`, `/checkout` и submission polling фронтенд ходит в backend API. По умолчанию используется:
 
 ```bash
 http://127.0.0.1:8080

@@ -4,6 +4,9 @@ import Link from "next/link";
 // Импортируем клиентский компонент выбора способа оплаты.
 import { PaymentMethodSelector } from "@/components/PaymentMethodSelector";
 
+// AuthStatus показывает Вход или @username/Выйти.
+import { AuthStatus } from "@/components/AuthStatus";
+
 // Checkout получает реальные курсы, тексты доступа и методы оплаты из сервисного слоя.
 import { COURSE_ACCESS_COPY, getCourseCatalog, getPaymentMethods } from "@/services/api";
 
@@ -100,10 +103,8 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
           </Link>
           {/* Правая часть навигации. */}
           <nav className="flex items-center gap-5 text-white/50">
-            {/* Ссылка на страницу входа. */}
-            <Link className="transition hover:text-acid" href="/login">
-              Вход
-            </Link>
+            {/* AuthStatus после login показывает username и logout. */}
+            <AuthStatus />
             {/* Ссылка на профиль. */}
             <Link className="transition hover:text-acid" href="/profile">
               Профиль
@@ -275,9 +276,7 @@ function CheckoutStatePage({
             Course Archive
           </Link>
           <nav className="flex items-center gap-5 text-white/50">
-            <Link className="transition hover:text-acid" href="/login">
-              Вход
-            </Link>
+            <AuthStatus />
             <Link className="transition hover:text-acid" href="/profile">
               Профиль
             </Link>

@@ -4,6 +4,9 @@ import Link from "next/link";
 // SafeMarkdown безопасно рендерит backend description без raw HTML.
 import { SafeMarkdown } from "@/components/SafeMarkdown";
 
+// AuthStatus показывает Вход или @username/Выйти.
+import { AuthStatus } from "@/components/AuthStatus";
+
 // Shared UI-kit из S2-FE-01.
 import { Alert, ButtonLink, Panel, PanelBody, PanelHeader, StatusBadge } from "@/components/ui";
 
@@ -77,9 +80,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
             Course Archive
           </Link>
           <nav className="flex items-center gap-5 text-white/50">
-            <Link className="transition hover:text-acid" href="/profile">
-              Профиль
-            </Link>
+            <AuthStatus />
             <Link className="transition hover:text-acid" href="/admin/content">
               Admin
             </Link>

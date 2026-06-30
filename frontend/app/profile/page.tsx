@@ -1,6 +1,9 @@
 // Link нужен для перехода на login-страницу из профиля.
 import Link from "next/link";
 
+// AuthStatus показывает Вход или @username/Выйти.
+import { AuthStatus } from "@/components/AuthStatus";
+
 // Профиль берется из сервисного слоя, чтобы позже заменить мок на backend API в одном месте.
 import { getStudentProfile } from "@/services/api";
 
@@ -64,13 +67,10 @@ export default async function ProfilePage() {
             <strong className="text-lg text-acid">{stats.rank}</strong>
           </div>
 
-          {/* Ссылка на страницу входа. */}
-          <Link
-            className="border border-line px-4 py-3 font-mono text-xs font-bold uppercase text-white/48 transition hover:border-acid hover:text-acid"
-            href="/login"
-          >
-            Login
-          </Link>
+          {/* AuthStatus после login показывает username и logout. */}
+          <div className="border border-line px-4 py-3 font-mono text-xs font-bold uppercase text-white/48">
+            <AuthStatus />
+          </div>
         </header>
 
         {/* Верхний блок статистики и карты обучения. */}

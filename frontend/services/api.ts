@@ -8,13 +8,18 @@ import type {
   AdminModuleDto,
   AdminTaskCreatePayload,
   AdminTaskDto,
+  AuthErrorCode,
+  AuthResponseDto,
+  AuthUserDto,
   CourseLearningViewDto,
   CourseAccessCopyDto,
   CourseAccessStatus,
   CourseDto,
   LessonLearningViewDto,
+  LoginUserPayload,
   LoginNoteDto,
   PaymentMethodDto,
+  RegisterUserPayload,
   SubmissionCreatePayload,
   SubmissionCreatedResponseDto,
   SubmissionResponseDto,
@@ -26,6 +31,29 @@ const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:
   /\/$/,
   ""
 );
+
+// Ключи localStorage для Sprint 2 auth state.
+const AUTH_TOKEN_STORAGE_KEY = "qlc:auth-token";
+const AUTH_USER_STORAGE_KEY = "qlc:auth-user";
+const AUTH_CHANGE_EVENT = "qlc-auth-change";
+
+// Расширяем RequestInit флагом auth, чтобы не размазывать Authorization header по компонентам.
+type ApiRequestOptions = RequestInit & {
+  // auth=true добавляет Authorization: Bearer {token}, если токен есть.
+  auth?: boolean;
+};
+
+// Ошибка auth-service с кодом для UI.
+export class AuthClientError extends Error {
+  // code позволяет форме показать понятное состояние.
+  code: AuthErrorCode;
+
+  constructor(code: AuthErrorCode, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "AuthClientError";
+  }
+}
 
 // Дефолтная картинка нужна, потому что backend CourseDTO пока не содержит imageUrl.
 const DEFAULT_COURSE_IMAGE_URL =
@@ -74,17 +102,29 @@ async function readErrorMessage(response: Response): Promise<string> {
 // Единая обертка над fetch для admin/API-запросов.
 async function apiRequest<TResponse>(
   path: string,
-  options: RequestInit = {}
+  options: ApiRequestOptions = {}
 ): Promise<TResponse> {
+  // auth — наш внутренний флаг, в fetch его передавать нельзя.
+  const { auth = false, ...requestOptions } = options;
+
   // Headers умеет принимать любые допустимые варианты RequestInit.headers.
-  const headers = new Headers(options.headers);
+  const headers = new Headers(requestOptions.headers);
 
   // JSON — общий формат текущих backend DTO.
   headers.set("Content-Type", "application/json");
 
+  // Protected frontend calls могут добавить Bearer token из localStorage.
+  if (auth) {
+    const token = getAuthToken();
+
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+  }
+
   // Собираем абсолютный URL, чтобы frontend на 3000 ходил в Spring Boot на 8080.
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
+    ...requestOptions,
     cache: "no-store",
     headers
   });
@@ -212,6 +252,84 @@ function parseCourseIdFromSlug(slug: string): number | null {
   return Number.isSafeInteger(id) && id > 0 ? id : null;
 }
 
+// Проверяет, доступен ли browser localStorage.
+function canUseLocalStorage() {
+  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+}
+
+// Уведомляет клиентские компоненты, что auth state изменился.
+function emitAuthChange() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
+  }
+}
+
+// Безопасно читает user из localStorage.
+function readStoredUser(): AuthUserDto | null {
+  if (!canUseLocalStorage()) {
+    return null;
+  }
+
+  try {
+    const raw = window.localStorage.getItem(AUTH_USER_STORAGE_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : null;
+
+    if (
+      typeof parsed === "object" &&
+      parsed !== null &&
+      "id" in parsed &&
+      "username" in parsed &&
+      "email" in parsed &&
+      "role" in parsed &&
+      typeof parsed.id === "number" &&
+      typeof parsed.username === "string" &&
+      typeof parsed.email === "string" &&
+      typeof parsed.role === "string"
+    ) {
+      return parsed as AuthUserDto;
+    }
+  } catch {
+    clearAuthToken();
+  }
+
+  return null;
+}
+
+// Создает mock JWT-like строку без хранения пароля.
+function createMockAccessToken(username: string) {
+  const suffix =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+  return `mock-auth-token.${encodeURIComponent(username)}.${suffix}`;
+}
+
+// Создает mock auth response, пока backend AuthController отсутствует.
+function createMockAuthResponse(username: string, email: string): AuthResponseDto {
+  return {
+    accessToken: createMockAccessToken(username),
+    tokenType: "Bearer",
+    user: {
+      email,
+      id: Date.now(),
+      role: "STUDENT",
+      username
+    }
+  };
+}
+
+// Сохраняет auth session в localStorage.
+function setAuthSession(response: AuthResponseDto) {
+  setAuthToken(response.accessToken);
+
+  if (canUseLocalStorage()) {
+    window.localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(response.user));
+  }
+
+  emitAuthChange();
+}
+
 // Маппит backend CourseDTO в frontend CourseDto, который ожидает главная витрина.
 function mapAdminCourseToCatalogCourse(course: AdminCourseDto): CourseDto {
   const price = formatRubPrice(course.price);
@@ -335,22 +453,106 @@ const paymentMethodsMock: PaymentMethodDto[] = [
 
 // Тезисы для login-экрана не требуют backend, но лежат рядом с остальными UI-данными.
 const loginNotesMock: LoginNoteDto[] = [
-  // Первый тезис: вход без классических форм.
+  // Первый тезис: обычный username/password login для MVP.
   {
-    id: "no-password",
-    title: "без email и пароля"
+    id: "username-password",
+    title: "username и пароль"
   },
-  // Второй тезис: профиль без персональных данных.
+  // Второй тезис: token живет локально на фронте.
   {
-    id: "anonymous-profile",
-    title: "анонимный учебный профиль"
+    id: "local-token",
+    title: "токен хранится локально"
   },
-  // Третий тезис: место под Telegram API.
+  // Третий тезис: submission отправляется с Authorization header.
   {
-    id: "telegram-ready",
-    title: "готово под Telegram Widget / WebApps API"
+    id: "authorized-submission",
+    title: "submission только после входа"
   }
 ];
+
+// Возвращает имя события, на которое могут подписаться client-компоненты.
+export function getAuthChangeEventName() {
+  return AUTH_CHANGE_EVENT;
+}
+
+// Возвращает текущий access token из localStorage.
+export function getAuthToken(): string | null {
+  if (!canUseLocalStorage()) {
+    return null;
+  }
+
+  return window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+}
+
+// Сохраняет access token в localStorage.
+export function setAuthToken(token: string) {
+  if (canUseLocalStorage()) {
+    window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
+  }
+}
+
+// Удаляет access token и user summary.
+export function clearAuthToken() {
+  if (canUseLocalStorage()) {
+    window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+    window.localStorage.removeItem(AUTH_USER_STORAGE_KEY);
+  }
+
+  emitAuthChange();
+}
+
+// Регистрирует пользователя. Пока backend AuthController отсутствует, работает как чистый mock.
+export async function registerUser(payload: RegisterUserPayload): Promise<AuthResponseDto> {
+  // TODO: Интегрировать с бэком, когда появится эндпоинт POST /api/auth/register.
+  const username = payload.username.trim();
+  const email = payload.email.trim().toLowerCase();
+  const loweredUsername = username.toLowerCase();
+
+  if (loweredUsername.includes("taken") || loweredUsername.includes("exists")) {
+    throw new AuthClientError("duplicate_username", "Пользователь с таким username уже существует.");
+  }
+
+  if (email.includes("taken") || email.includes("exists")) {
+    throw new AuthClientError("duplicate_email", "Email уже используется.");
+  }
+
+  const response = createMockAuthResponse(username, email);
+  setAuthSession(response);
+  return response;
+}
+
+// Выполняет login. Пока backend AuthController отсутствует, работает как чистый mock.
+export async function loginUser(payload: LoginUserPayload): Promise<AuthResponseDto> {
+  // TODO: Интегрировать с бэком, когда появится эндпоинт POST /api/auth/login.
+  const username = payload.username.trim();
+
+  if (username.toLowerCase() === "wrong" || payload.password === "wrong-password") {
+    throw new AuthClientError("unauthorized", "Неверный username или пароль.");
+  }
+
+  const existingUser = readStoredUser();
+  const response = createMockAuthResponse(
+    username,
+    existingUser?.username === username ? existingUser.email : `${username}@example.local`
+  );
+  setAuthSession(response);
+  return response;
+}
+
+// Возвращает текущего пользователя по сохраненному auth state.
+export async function getCurrentUser(): Promise<AuthUserDto | null> {
+  // TODO: Интегрировать с бэком, когда появится эндпоинт GET /api/auth/me.
+  if (!getAuthToken()) {
+    return null;
+  }
+
+  return readStoredUser();
+}
+
+// Выполняет logout на фронте.
+export function logoutUser() {
+  clearAuthToken();
+}
 
 // Возвращает каталог курсов для главной и checkout-страницы.
 export async function getCourseCatalog(): Promise<CourseDto[]> {
@@ -531,7 +733,12 @@ export async function createSubmission(
   payload: SubmissionCreatePayload,
   signal?: AbortSignal
 ): Promise<SubmissionCreatedResponseDto> {
+  if (!getAuthToken()) {
+    throw new AuthClientError("missing_token", "Чтобы отправить решение, войди в аккаунт.");
+  }
+
   return apiRequest<SubmissionCreatedResponseDto>(`/api/tasks/${taskId}/submissions`, {
+    auth: true,
     method: "POST",
     body: JSON.stringify(payload),
     signal
@@ -544,6 +751,7 @@ export async function getSubmission(
   signal?: AbortSignal
 ): Promise<SubmissionResponseDto> {
   return apiRequest<SubmissionResponseDto>(`/api/submissions/${id}`, {
+    auth: true,
     signal
   });
 }
