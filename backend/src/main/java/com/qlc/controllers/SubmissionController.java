@@ -24,9 +24,10 @@ public class SubmissionController {
   @PostMapping("/tasks/{taskId}/submissions")
   public ResponseEntity<SubmissionCreatedResponse> createSubmission(
       @PathVariable Long taskId,
-      @Valid @RequestBody SubmissionRequest request) {
+      @Valid @RequestBody SubmissionRequest request,
+      @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey) {
 
-    SubmissionCreatedResponse response = submissionService.createSubmission(taskId, request);
+    SubmissionCreatedResponse response = submissionService.createSubmission(taskId, request, idempotencyKey);
 
     // Возвращаем статус 202 Accepted вместо привычного 201 Created
     return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);

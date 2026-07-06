@@ -1,24 +1,36 @@
 package com.qlc.services;
 
+import com.qlc.models.entities.Submission;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.Map;
 
 @Service
 public class RedisQueueService {
 
   private final StringRedisTemplate redisTemplate;
-  private final String queueName;
+  private final String streamName;
 
   public RedisQueueService(StringRedisTemplate redisTemplate,
-      @Value("${app.submissions.queue-name:queue:submissions}") String queueName) {
+      @Value("${app.submissions.stream-name:qlc:submissions}") String streamName) {
     this.redisTemplate = redisTemplate;
-    this.queueName = queueName;
+    this.streamName = streamName;
   }
 
-  public void pushToQueue(UUID submissionId) {
-    redisTemplate.opsForList().leftPush(queueName, submissionId.toString());
+  public void pushToStream(Submission submission) {
+    String uuidStr = submission.getId().toString();
+
+    // ТЗ: Message содержит только submissionId и schema version (мы передаем строку
+    // "1")
+    Map<String, String> body = Map.of(
+        "submissionId", uuidStr,
+        "schemaVersion", "1");
+
+    // Важно: .add() отправляет сообщение именно в Stream очередь
+    redisTemplate.opsForStream().add(streamName, body);
+
+    System.out.println("[Redis Stream] ID отправлен в очередь qlc:submissions: " + uuidStr);
   }
 }

@@ -21,12 +21,16 @@ public class CourseController {
   // ==== COURSES ====
   @GetMapping("/courses")
   public ResponseEntity<List<CourseDTO>> getAllCourses() {
-    return ResponseEntity.ok(courseService.getAllCourses());
+    return ResponseEntity.ok()
+        .header("Cache-Control", "max-age=60")
+        .body(courseService.getAllCourses());
   }
 
   @GetMapping("/courses/{id}")
   public ResponseEntity<CourseDTO> getCourseById(@PathVariable Long id) {
-    return ResponseEntity.ok(courseService.getCourseById(id));
+    return ResponseEntity.ok()
+        .header("Cache-Control", "max-age=60")
+        .body(courseService.getCourseById(id));
   }
 
   @PostMapping("/courses")
@@ -48,12 +52,16 @@ public class CourseController {
   // ==== MODULES ====
   @GetMapping("/courses/{courseId}/modules")
   public ResponseEntity<List<ModuleDTO>> getModulesByCourseId(@PathVariable Long courseId) {
-    return ResponseEntity.ok(courseService.getModulesByCourseId(courseId));
+    return ResponseEntity.ok()
+        .header("Cache-Control", "max-age=60")
+        .body(courseService.getModulesByCourseId(courseId));
   }
 
   @GetMapping("/modules/{id}")
   public ResponseEntity<ModuleDTO> getModuleById(@PathVariable Long id) {
-    return ResponseEntity.ok(courseService.getModuleById(id));
+    return ResponseEntity.ok()
+        .header("Cache-Control", "max-age=60")
+        .body(courseService.getModuleById(id));
   }
 
   @PostMapping("/courses/{courseId}/modules")
@@ -75,12 +83,16 @@ public class CourseController {
   // ==== LESSONS ====
   @GetMapping("/modules/{moduleId}/lessons")
   public ResponseEntity<List<LessonDTO>> getLessonsByModuleId(@PathVariable Long moduleId) {
-    return ResponseEntity.ok(courseService.getLessonsByModuleId(moduleId));
+    return ResponseEntity.ok()
+        .header("Cache-Control", "max-age=60")
+        .body(courseService.getLessonsByModuleId(moduleId));
   }
 
   @GetMapping("/lessons/{id}")
   public ResponseEntity<LessonDTO> getLessonById(@PathVariable Long id) {
-    return ResponseEntity.ok(courseService.getLessonById(id));
+    return ResponseEntity.ok()
+        .header("Cache-Control", "max-age=60")
+        .body(courseService.getLessonById(id));
   }
 
   @PostMapping("/modules/{moduleId}/lessons")

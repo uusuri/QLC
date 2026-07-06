@@ -11,7 +11,10 @@ import com.qlc.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -22,9 +25,11 @@ public class SubmissionService {
   private final SubmissionRepository submissionRepository;
   private final TaskRepository taskRepository;
 
-  // Вытаскиваем максимальный размер кода из application.yaml (дефолт 65535 байт)
   @Value("${app.submissions.max-size:65535}")
   private int maxSourceSize;
+
+  @Value("${app.submissions.max-log-length:10000}")
+  private int maxLogLength;
 
   public SubmissionService(SubmissionRepository submissionRepository, TaskRepository taskRepository,
       RedisQueueService redisQueueService) {
@@ -33,31 +38,58 @@ public class SubmissionService {
     this.redisQueueService = redisQueueService;
   }
 
-  public SubmissionCreatedResponse createSubmission(Long taskId, SubmissionRequest request) {
-    // 1. Проверяем, существует ли таска (иначе 404)
-    Task task = taskRepository.findById(taskId)
-        .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+  public SubmissionCreatedResponse createSubmission(Long taskId, SubmissionRequest request, String idempotencyKey) {
+    // 1. ПЕРВОЕ ДЕЛО: Проверяем ключ идемпотентности. Если запрос дублируется,
+    // завершаем метод мгновенно, экономя CPU и коннекты к БД.
+    if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+      Optional<Submission> existing = submissionRepository.findByIdempotencyKey(idempotencyKey);
+      if (existing.isPresent()) {
+        Submission s = existing.get();
+        return new SubmissionCreatedResponse(s.getId(), s.getStatus().name());
+      }
+    }
 
-    // 2. Проверяем ограничение на размер исходного кода (иначе 400 Bad Request)
-    if (request.sourceCode().getBytes().length > maxSourceSize) {
+    // 2. Базовая валидация входящего payload
+    if (request.sourceCode() == null || request.sourceCode().getBytes().length > maxSourceSize) {
       throw new IllegalArgumentException("Source code size exceeds the allowed limit of " + maxSourceSize + " bytes");
     }
 
-    // 3. Создаем сабмишен со статусом QUEUED
+    if (request.language() == null || !"CPP23".equalsIgnoreCase(request.language())) {
+      throw new IllegalArgumentException("Unsupported language: " + request.language());
+    }
+
+    // 3. Проверяем, существует ли целевая таска
+    Task task = taskRepository.findById(taskId)
+        .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+
+    // 4. Инициализируем новую сущность в очереди
     Submission submission = new Submission();
     submission.setTask(task);
     submission.setLanguage(request.language());
     submission.setSourceCode(request.sourceCode());
     submission.setStatus(SubmissionStatus.QUEUED);
-    // TODO:
-    // Привязать юзера!!!
+    submission.setIdempotencyKey(idempotencyKey);
+    // TODO: Привязать юзера из SecurityContext!!!
 
     Submission saved = submissionRepository.save(submission);
 
-    // 4. Закидываем в очередь в Redis
-    redisQueueService.pushToQueue(saved.getId());
+    // 5. Transactional Outbox Pattern — отправляем в Redis Stream только ПОСЛЕ
+    // успешного коммита
+    if (TransactionSynchronizationManager.isSynchronizationActive()) {
+      TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+        @Override
+        public void afterCommit() {
+          try {
+            redisQueueService.pushToStream(saved);
+          } catch (Exception e) {
+            System.err.println("[Redis] Failed to publish submission after commit: " + e.getMessage());
+          }
+        }
+      });
+    } else {
+      redisQueueService.pushToStream(saved);
+    }
 
-    // 5. Возвращаем UUID и статус
     return new SubmissionCreatedResponse(saved.getId(), saved.getStatus().name());
   }
 
@@ -65,6 +97,13 @@ public class SubmissionService {
   public SubmissionResponse getSubmissionById(UUID id) {
     Submission s = submissionRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Submission not found with id: " + id));
+
+    // Обрезка потенциально огромных логов компилятора под лимиты конфигурации
+    // сервера
+    String safe = s.getSafeMessage();
+    if (safe != null && safe.length() > maxLogLength) {
+      safe = safe.substring(0, maxLogLength) + "\n[truncated]";
+    }
 
     return new SubmissionResponse(
         s.getId(),
@@ -74,7 +113,7 @@ public class SubmissionService {
         s.getVerdict() != null ? s.getVerdict().name() : null,
         s.getExecutionTime(),
         s.getMemoryUsed(),
-        s.getSafeMessage(),
+        safe,
         s.getCreatedAt());
   }
 }

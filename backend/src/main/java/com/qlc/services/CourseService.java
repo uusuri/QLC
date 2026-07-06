@@ -37,13 +37,13 @@ public class CourseService {
 
   // --- Course CRUD ---
   public List<CourseDTO> getAllCourses() {
-    return courseRepository.findAll().stream()
+    return courseRepository.findAllByPublishedTrue().stream()
         .map(this::mapToCourseDTO)
         .toList();
   }
 
   public CourseDTO getCourseById(Long courseId) {
-    Course c = courseRepository.findById(courseId)
+    Course c = courseRepository.findByIdAndPublishedTrue(courseId)
         .orElseThrow(() -> new RuntimeException("Course not found"));
     return mapToCourseDTO(c);
   }
@@ -79,7 +79,7 @@ public class CourseService {
 
   // --- Module CRUD ---
   public List<ModuleDTO> getModulesByCourseId(Long courseId) {
-    return moduleRepository.findByCourseId(courseId).stream()
+    return moduleRepository.findByCourseIdOrderByPositionAsc(courseId).stream()
         .map(this::mapToModuleDTO)
         .toList();
   }
@@ -112,12 +112,13 @@ public class CourseService {
   }
 
   private ModuleDTO mapToModuleDTO(com.qlc.models.entities.Module m) {
-    return new ModuleDTO(m.getId(), m.getCourse().getId(), m.getName(), m.getDescription());
+    return new ModuleDTO(m.getId(), m.getCourse().getId(), m.getName(), m.getDescription(), m.getPosition());
   }
 
   // --- Lesson CRUD ---
   public List<LessonDTO> getLessonsByModuleId(Long moduleId) {
-    return lessonRepository.findByModuleId(moduleId).stream()
+    return lessonRepository.findByModuleIdOrderByPositionAsc(moduleId).stream()
+        .filter(l -> l.isPublished())
         .map(this::mapToLessonDTO)
         .toList();
   }
@@ -150,7 +151,10 @@ public class CourseService {
   }
 
   private LessonDTO mapToLessonDTO(Lesson l) {
-    return new LessonDTO(l.getId(), l.getModule().getId(), l.getName(), l.getDescription());
+    // Hide content for unpublished lessons (coming soon)
+    String content = l.isPublished() ? l.getContentMd() : null;
+    return new LessonDTO(l.getId(), l.getModule().getId(), l.getName(), l.getDescription(), l.getPosition(), content,
+        l.isPublished());
   }
 
   // --- Task CRUD ---

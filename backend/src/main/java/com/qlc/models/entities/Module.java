@@ -23,10 +23,14 @@ public class Module {
   @Column(nullable = false)
   private String description;
 
+  @Column(nullable = false)
+  private int position = 0;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "course_id", nullable = false)
   private Course course;
 
   @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OrderBy("position ASC")
   private List<Lesson> lessons;
 }

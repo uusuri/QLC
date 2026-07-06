@@ -2,7 +2,9 @@ package com.qlc.models.enums;
 
 public enum SubmissionStatus {
   QUEUED,
+  COMPILING,
   RUNNING,
-  COMPLETED,
-  FAILED
+  FINISHED,
+  INFRA_ERROR,
+  CANCELLED
 }

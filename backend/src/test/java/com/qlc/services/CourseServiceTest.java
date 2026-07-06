@@ -66,6 +66,7 @@ class CourseServiceTest {
     sampleLesson.setName("Polymorphism");
     sampleLesson.setDescription("Intro to poly");
     sampleLesson.setModule(sampleModule);
+    sampleLesson.setPublished(true);
   }
 
   // COURSE CRUD TESTS
@@ -75,7 +76,7 @@ class CourseServiceTest {
 
     @Test
     void getAllCourses_ShouldReturnList() {
-      when(courseRepository.findAll()).thenReturn(List.of(sampleCourse));
+      when(courseRepository.findAllByPublishedTrue()).thenReturn(List.of(sampleCourse));
       List<CourseDTO> result = courseService.getAllCourses();
       assertEquals(1, result.size());
       assertEquals("Java Core", result.get(0).name());
@@ -83,14 +84,14 @@ class CourseServiceTest {
 
     @Test
     void getCourseById_Success() {
-      when(courseRepository.findById(1L)).thenReturn(Optional.of(sampleCourse));
+      when(courseRepository.findByIdAndPublishedTrue(1L)).thenReturn(Optional.of(sampleCourse));
       CourseDTO result = courseService.getCourseById(1L);
       assertEquals("Java Core", result.name());
     }
 
     @Test
     void getCourseById_NotFound_ShouldThrow() {
-      when(courseRepository.findById(1L)).thenReturn(Optional.empty());
+      when(courseRepository.findByIdAndPublishedTrue(1L)).thenReturn(Optional.empty());
       assertThrows(RuntimeException.class, () -> courseService.getCourseById(1L));
     }
 
@@ -137,10 +138,34 @@ class CourseServiceTest {
 
     @Test
     void getModulesByCourseId_ShouldReturnList() {
-      when(moduleRepository.findByCourseId(1L)).thenReturn(List.of(sampleModule));
+      when(moduleRepository.findByCourseIdOrderByPositionAsc(1L)).thenReturn(List.of(sampleModule));
       List<ModuleDTO> result = courseService.getModulesByCourseId(1L);
       assertEquals(1, result.size());
       assertEquals("OOP", result.get(0).name());
+    }
+
+    @Test
+    @DisplayName("REQUIREMENT: Modules list must be stably sorted by position parameter")
+    void getModulesByCourseId_ShouldMaintainStablePositionOrder() {
+      // Arrange
+      Module secondModule = new Module();
+      secondModule.setId(20L);
+      secondModule.setName("Advanced OOP");
+      secondModule.setPosition(1);
+      secondModule.setCourse(sampleCourse); // Полная связь
+
+      sampleModule.setPosition(0);
+
+      when(moduleRepository.findByCourseIdOrderByPositionAsc(1L))
+          .thenReturn(List.of(sampleModule, secondModule));
+
+      // Act
+      List<ModuleDTO> result = courseService.getModulesByCourseId(1L);
+
+      // Assert
+      assertEquals(2, result.size());
+      assertEquals("OOP", result.get(0).name());
+      assertEquals("Advanced OOP", result.get(1).name());
     }
 
     @Test
@@ -158,7 +183,7 @@ class CourseServiceTest {
 
     @Test
     void createModule_Success() {
-      ModuleDTO dto = new ModuleDTO(null, null, "Exceptions", "Error handling");
+      ModuleDTO dto = new ModuleDTO(null, null, "Exceptions", "Error handling", null);
       when(courseRepository.findById(1L)).thenReturn(Optional.of(sampleCourse));
       when(moduleRepository.save(any(Module.class))).thenAnswer(i -> i.getArgument(0));
 
@@ -168,7 +193,7 @@ class CourseServiceTest {
 
     @Test
     void updateModule_Success() {
-      ModuleDTO dto = new ModuleDTO(null, null, "New OOP", "New Desc");
+      ModuleDTO dto = new ModuleDTO(null, null, "New OOP", "New Desc", null);
       when(moduleRepository.findById(10L)).thenReturn(Optional.of(sampleModule));
       when(moduleRepository.save(any(Module.class))).thenAnswer(i -> i.getArgument(0));
 
@@ -191,7 +216,7 @@ class CourseServiceTest {
 
     @Test
     void getLessonsByModuleId_ShouldReturnList() {
-      when(lessonRepository.findByModuleId(10L)).thenReturn(List.of(sampleLesson));
+      when(lessonRepository.findByModuleIdOrderByPositionAsc(10L)).thenReturn(List.of(sampleLesson));
       List<LessonDTO> result = courseService.getLessonsByModuleId(10L);
       assertEquals(1, result.size());
       assertEquals("Polymorphism", result.get(0).name());
@@ -205,8 +230,31 @@ class CourseServiceTest {
     }
 
     @Test
+    @DisplayName("SECURITY REQUIREMENT: Unreleased or coming_soon lessons must hide content_md payload")
+    void getLessonById_ComingSoon_ShouldHideContentMarkdown() {
+      // Arrange
+      // Модифицируем готовый sampleLesson, у которого граф связей уже настроен в
+      // setUp()
+      sampleLesson.setId(101L);
+      sampleLesson.setName("Spring Security Advanced");
+      sampleLesson.setContentMd("# Super Secret Content That Users Shouldn't See Yet");
+      sampleLesson.setPublished(false); // Прячем
+
+      when(lessonRepository.findById(101L)).thenReturn(Optional.of(sampleLesson));
+
+      // Act
+      LessonDTO result = courseService.getLessonById(101L);
+
+      // Assert
+      assertNotNull(result);
+      assertEquals("Spring Security Advanced", result.name());
+      assertNull(result.contentMd(),
+          "Контент неопубликованного урока ОБЯЗАН быть null в DTO, чтобы фронт его не слил!");
+    }
+
+    @Test
     void createLesson_Success() {
-      LessonDTO dto = new LessonDTO(null, null, "Inheritance", "Desc");
+      LessonDTO dto = new LessonDTO(null, null, "Inheritance", "Desc", null, null, null);
       when(moduleRepository.findById(10L)).thenReturn(Optional.of(sampleModule));
       when(lessonRepository.save(any(Lesson.class))).thenAnswer(i -> i.getArgument(0));
 
@@ -216,7 +264,7 @@ class CourseServiceTest {
 
     @Test
     void updateLesson_Success() {
-      LessonDTO dto = new LessonDTO(null, null, "Super Poly", "Desc");
+      LessonDTO dto = new LessonDTO(null, null, "Super Poly", "Desc", null, null, null);
       when(lessonRepository.findById(100L)).thenReturn(Optional.of(sampleLesson));
       when(lessonRepository.save(any(Lesson.class))).thenAnswer(i -> i.getArgument(0));
 

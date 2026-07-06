@@ -19,6 +19,12 @@ public class Submission {
   @Id
   private UUID id;
 
+  @Version
+  private Long version;
+
+  @Column(name = "idempotency_key", length = 100, unique = true)
+  private String idempotencyKey;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "task_id", nullable = false)
   private Task task;

@@ -37,10 +37,14 @@ public class Course {
   @Column(name = "hidden_content_link", length = 512)
   private String hiddenContentLink;
 
+  @Column(nullable = false)
+  private boolean published = true;
+
   @ManyToMany
   @JoinTable(name = "user_courses", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
   private Set<User> students;
 
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OrderBy("position ASC")
   private List<Module> modules;
 }

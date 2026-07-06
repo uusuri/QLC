@@ -23,6 +23,15 @@ public class Lesson {
   @Column(nullable = false)
   private String description;
 
+  @Column(nullable = false)
+  private int position = 0;
+
+  @Column(nullable = false)
+  private boolean published = false;
+
+  @Column(name = "content_md", columnDefinition = "TEXT")
+  private String contentMd;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "module_id", nullable = false)
   private Module module;

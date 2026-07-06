@@ -48,7 +48,7 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(request -> {
           CorsConfiguration config = new CorsConfiguration();
-          config.setAllowedOrigins(List.of("http://localhost:3001"));
+          config.setAllowedOrigins(List.of("http://localhost:3000", "http://127.0.0.1:3000"));
           config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
           config.setAllowedHeaders(List.of("*"));
           config.setAllowCredentials(true);
@@ -63,6 +63,8 @@ public class SecurityConfig {
         .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests((authorize) -> authorize
             .requestMatchers("/auth/**").permitAll()
+            .requestMatchers("/api/tasks/**", "/task/**").hasAnyRole("USER", "ADMIN")
+            .requestMatchers("/api/submissions/**", "/submission/**").hasAnyRole("USER", "ADMIN")
             .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
             .requestMatchers("/admin/**").hasAnyRole("ADMIN")
             .requestMatchers("/secured/user").fullyAuthenticated()

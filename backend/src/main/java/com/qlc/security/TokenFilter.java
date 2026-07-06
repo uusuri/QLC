@@ -29,20 +29,39 @@ public class TokenFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     String username = null;
     String jwt = null;
-    UserDetails userDetails;
-    UsernamePasswordAuthenticationToken token;
 
     try {
       String authHeader = request.getHeader("Authorization");
       if (authHeader != null && authHeader.startsWith("Bearer ")) {
         jwt = authHeader.substring(7);
-        username = jwtCore.extractUsername(jwt);
+
+        if (jwt.startsWith("mock-auth-token")) {
+          String[] parts = jwt.split("\\.");
+          username = (parts.length > 1) ? parts[1] : "uusuri";
+        } else {
+          username = jwtCore.extractUsername(jwt);
+        }
       }
 
       if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-        userDetails = userDetailsService.loadUserByUsername(username);
-        if (jwtCore.isTokenValid(jwt, userDetails)) {
-          token = new UsernamePasswordAuthenticationToken(
+        UserDetails userDetails;
+
+        if (jwt != null && jwt.startsWith("mock-auth-token")) {
+          // Создаем фейкового юзера без обращения к PostgreSQL
+          userDetails = org.springframework.security.core.userdetails.User.builder()
+              .username(username)
+              .password("") // пароль для контекста не важен
+              .authorities("ROLE_USER") // или какая роль тебе сейчас нужна
+              .build();
+        } else {
+          // Для реальных токенов идем честно в базу
+          userDetails = userDetailsService.loadUserByUsername(username);
+        }
+
+        boolean isValid = jwt.startsWith("mock-auth-token") || jwtCore.isTokenValid(jwt, userDetails);
+
+        if (isValid) {
+          UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
               userDetails, null, userDetails.getAuthorities());
           SecurityContextHolder.getContext().setAuthentication(token);
         }
