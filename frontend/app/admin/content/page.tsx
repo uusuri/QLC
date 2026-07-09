@@ -99,30 +99,30 @@ const adminSteps: Array<{
   subtitle: string;
   blockedBy?: AdminStep;
 }> = [
-  {
-    id: "course",
-    label: "Course",
-    subtitle: "GET/POST /api/courses"
-  },
-  {
-    id: "module",
-    label: "Module",
-    subtitle: "GET/POST /api/courses/{courseId}/modules",
-    blockedBy: "course"
-  },
-  {
-    id: "lesson",
-    label: "Lesson",
-    subtitle: "GET/POST /api/modules/{moduleId}/lessons",
-    blockedBy: "module"
-  },
-  {
-    id: "task",
-    label: "Task",
-    subtitle: "GET/POST /api/lessons/{lessonId}/tasks",
-    blockedBy: "lesson"
-  }
-];
+    {
+      id: "course",
+      label: "Course",
+      subtitle: "GET/POST /api/courses"
+    },
+    {
+      id: "module",
+      label: "Module",
+      subtitle: "GET/POST /api/courses/{courseId}/modules",
+      blockedBy: "course"
+    },
+    {
+      id: "lesson",
+      label: "Lesson",
+      subtitle: "GET/POST /api/modules/{moduleId}/lessons",
+      blockedBy: "module"
+    },
+    {
+      id: "task",
+      label: "Task",
+      subtitle: "GET/POST /api/lessons/{lessonId}/tasks",
+      blockedBy: "lesson"
+    }
+  ];
 
 // Превращает неизвестную ошибку в строку для UI.
 function getErrorMessage(error: unknown): string {
@@ -496,7 +496,6 @@ export default function AdminContentPage() {
       setSelectedLessonId(created.id);
       setLessonForm(initialSimpleForm);
       setLessonSearch("");
-      setActiveStep("task");
       setLessonState({
         loading: false,
         error: "",
@@ -1020,11 +1019,10 @@ function TabButton({
 }) {
   return (
     <button
-      className={`grid gap-2 border-b p-4 text-left transition sm:border-b-0 sm:border-r ${
-        active
-          ? "border-acid bg-acid text-ink"
-          : "border-line bg-ink text-white hover:bg-white/8"
-      }`}
+      className={`grid gap-2 border-b p-4 text-left transition sm:border-b-0 sm:border-r ${active
+        ? "border-acid bg-acid text-ink"
+        : "border-line bg-ink text-white hover:bg-white/8"
+        }`}
       onClick={onClick}
       type="button"
     >
@@ -1222,9 +1220,8 @@ function EntityList({
 
         return (
           <button
-            className={`grid gap-2 p-3 text-left transition ${
-              isSelected ? "bg-acid text-ink" : "bg-panel text-white hover:bg-white/8"
-            }`}
+            className={`grid gap-2 p-3 text-left transition ${isSelected ? "bg-acid text-ink" : "bg-panel text-white hover:bg-white/8"
+              }`}
             key={item.id}
             onClick={() => onSelect(item.id)}
             title={item.title}

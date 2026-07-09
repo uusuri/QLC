@@ -15,6 +15,7 @@ import com.qlc.repositories.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -118,7 +119,6 @@ public class CourseService {
   // --- Lesson CRUD ---
   public List<LessonDTO> getLessonsByModuleId(Long moduleId) {
     return lessonRepository.findByModuleIdOrderByPositionAsc(moduleId).stream()
-        .filter(l -> l.isPublished())
         .map(this::mapToLessonDTO)
         .toList();
   }
@@ -204,31 +204,62 @@ public class CourseService {
   }
 
   private void updateTaskFields(Task task, TaskDTO dto) {
-    task.setTaskText(dto.taskText());
+    task.setStatementMd(dto.statementMd() != null ? dto.statementMd().trim() : "");
+
     if (task instanceof CodeTask ct) {
+      ct.setStarterCode(dto.starterCode());
       ct.setTemplateCode(dto.templateCode());
       ct.setTestCases(dto.testCases());
+      ct.setTimeLimitMs(dto.timeLimitMs() != null ? dto.timeLimitMs() : 2000);
+      ct.setMemoryLimitKb(dto.memoryLimitKb() != null ? dto.memoryLimitKb() : 65536);
+      ct.setOutputLimitKb(dto.outputLimitKb() != null ? dto.outputLimitKb() : 4096);
+      ct.setTestSetVersion(dto.testSetVersion() != null ? dto.testSetVersion() : 1);
     } else if (task instanceof TestTask tt) {
-      tt.setOptions(dto.options());
-      tt.setCorrectOptionIndex(dto.correctOptionIndex());
+      // Безопасно обновляем коллекции элементов
+      if (tt.getOptions() != null) {
+        tt.getOptions().clear();
+        if (dto.options() != null)
+          tt.getOptions().addAll(dto.options());
+      } else {
+        tt.setOptions(dto.options() != null ? new ArrayList<>(dto.options()) : new ArrayList<>());
+      }
+
+      if (tt.getCorrectOptionIndexes() != null) {
+        tt.getCorrectOptionIndexes().clear();
+        if (dto.correctOptionIndexes() != null)
+          tt.getCorrectOptionIndexes().addAll(dto.correctOptionIndexes());
+      } else {
+        tt.setCorrectOptionIndexes(
+            dto.correctOptionIndexes() != null ? new ArrayList<>(dto.correctOptionIndexes()) : new ArrayList<>());
+      }
     } else if (task instanceof NumericTask nt) {
       nt.setCorrectNumericAnswer(dto.correctNumericAnswer());
     }
   }
 
   private TaskDTO mapToTaskDTO(Task t) {
+    String starterCode = null;
     String templateCode = null;
     String testCases = null;
+    Integer timeLimitMs = null;
+    Integer memoryLimitKb = null;
+    Integer outputLimitKb = null;
+    Integer testSetVersion = null;
     List<String> options = null;
-    Integer correctOptionIndex = null;
+    List<Integer> correctOptionIndexes = null;
     BigDecimal correctNumericAnswer = null;
 
     if (t instanceof CodeTask ct) {
+      starterCode = ct.getStarterCode();
       templateCode = ct.getTemplateCode();
       testCases = ct.getTestCases();
+      timeLimitMs = ct.getTimeLimitMs();
+      memoryLimitKb = ct.getMemoryLimitKb();
+      outputLimitKb = ct.getOutputLimitKb();
+      testSetVersion = ct.getTestSetVersion();
     } else if (t instanceof TestTask tt) {
       options = tt.getOptions();
-      correctOptionIndex = tt.getCorrectOptionIndex();
+      correctOptionIndexes = tt.getCorrectOptionIndexes();
     } else if (t instanceof NumericTask nt) {
       correctNumericAnswer = nt.getCorrectNumericAnswer();
     }
@@ -237,11 +268,16 @@ public class CourseService {
         t.getId(),
         t.getLesson().getId(),
         t.getTaskType(),
-        t.getTaskText(),
+        t.getStatementMd(),
+        starterCode,
+        timeLimitMs,
+        memoryLimitKb,
+        outputLimitKb,
+        testSetVersion,
         templateCode,
         testCases,
         options,
-        correctOptionIndex,
+        correctOptionIndexes,
         correctNumericAnswer);
   }
 }

@@ -14,7 +14,7 @@ CREATE TABLE courses (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     description TEXT NOT NULL,
-    price NUMERIC(10, 2) NOT NULL,          -- BigDecimal в Java
+    price NUMERIC(10, 2) NOT NULL,
     price_in_stars NUMERIC(10, 2) NOT NULL,
     hidden_content_link VARCHAR(512)
 );
@@ -42,7 +42,6 @@ CREATE TABLE tasks (
     id BIGSERIAL PRIMARY KEY,
     lesson_id BIGINT NOT NULL,       -- Перевели связь с course_id на lesson_id
     task_type VARCHAR(50) NOT NULL, -- Дискриминатор: TEST, CODE, NUMERIC
-    task_text TEXT NOT NULL,
     
     -- Поля для TestTask
     correct_option_index INT,

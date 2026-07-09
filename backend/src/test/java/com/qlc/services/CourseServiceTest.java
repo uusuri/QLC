@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -290,7 +291,7 @@ class CourseServiceTest {
       CodeTask codeTask = new CodeTask();
       codeTask.setId(200L);
       codeTask.setLesson(sampleLesson);
-      codeTask.setTaskText("Write code");
+      codeTask.setStatementMd("Write code");
       codeTask.setTemplateCode("int main()");
 
       when(taskRepository.findByLessonId(100L)).thenReturn(List.of(codeTask));
@@ -306,7 +307,7 @@ class CourseServiceTest {
       NumericTask numericTask = new NumericTask();
       numericTask.setId(300L);
       numericTask.setLesson(sampleLesson);
-      numericTask.setTaskText("What is 2+2?");
+      numericTask.setStatementMd("What is 2+2?");
       numericTask.setCorrectNumericAnswer(new BigDecimal("4"));
 
       when(taskRepository.findById(300L)).thenReturn(Optional.of(numericTask));
@@ -321,17 +322,17 @@ class CourseServiceTest {
       CodeTask existingTask = new CodeTask();
       existingTask.setId(200L);
       existingTask.setLesson(sampleLesson);
-      existingTask.setTaskText("Old Text");
+      existingTask.setStatementMd("Old Text");
 
-      TaskDTO updateDto = new TaskDTO(
-          null, null, "CODE", "New Text",
-          "new template", "new test cases", null, null, null);
+      TaskDTO updateDto = new TaskDTO(null, null, "CODE", "New Text",
+          null, null, null, null, null, "new template", "new test cases",
+          null, null, null);
 
       when(taskRepository.findById(200L)).thenReturn(Optional.of(existingTask));
       when(taskRepository.save(any(Task.class))).thenAnswer(i -> i.getArgument(0));
 
       TaskDTO result = courseService.updateTask(200L, updateDto);
-      assertEquals("New Text", result.taskText());
+      assertEquals("New Text", result.statementMd());
       assertEquals("new template", result.templateCode());
       assertEquals("new test cases", result.testCases());
     }
@@ -341,17 +342,32 @@ class CourseServiceTest {
       TestTask existingTask = new TestTask();
       existingTask.setId(201L);
       existingTask.setLesson(sampleLesson);
+      // Инициализируем пустые списки в сущности, чтобы маппер не поймал
+      // NullPointerException при первом обращении
+      existingTask.setOptions(new ArrayList<>());
+      existingTask.setCorrectOptionIndexes(new ArrayList<>());
 
+      // Сборка DTO: передаем список правильных индексов List.of(1) на место нужного
+      // аргумента
       TaskDTO updateDto = new TaskDTO(
-          null, null, "TEST", "Choose option",
-          null, null, List.of("A", "B"), 1, null);
+          null, null, "TEST", "Test Statement",
+          null, null, null, null, null, null, null,
+          List.of("Option A", "Option B"),
+          List.of(1),
+          null);
 
       when(taskRepository.findById(201L)).thenReturn(Optional.of(existingTask));
       when(taskRepository.save(any(Task.class))).thenAnswer(i -> i.getArgument(0));
 
       TaskDTO result = courseService.updateTask(201L, updateDto);
-      assertEquals(1, result.correctOptionIndex());
+
+      // Проверяем размер списка правильных ответов и само значение внутри него
+      assertEquals(1, result.correctOptionIndexes().size());
+      assertEquals(1, result.correctOptionIndexes().get(0));
+
+      // Проверяем варианты ответов
       assertEquals(2, result.options().size());
+      assertEquals("Option A", result.options().get(0));
     }
 
     @Test

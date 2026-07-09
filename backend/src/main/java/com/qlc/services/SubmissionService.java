@@ -39,7 +39,7 @@ public class SubmissionService {
   }
 
   public SubmissionCreatedResponse createSubmission(Long taskId, SubmissionRequest request, String idempotencyKey) {
-    // 1. ПЕРВОЕ ДЕЛО: Проверяем ключ идемпотентности. Если запрос дублируется,
+    // 1. Проверяем ключ идемпотентности. Если запрос дублируется,
     // завершаем метод мгновенно, экономя CPU и коннекты к БД.
     if (idempotencyKey != null && !idempotencyKey.isBlank()) {
       Optional<Submission> existing = submissionRepository.findByIdempotencyKey(idempotencyKey);

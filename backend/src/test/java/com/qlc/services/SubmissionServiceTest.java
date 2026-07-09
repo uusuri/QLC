@@ -55,7 +55,7 @@ class SubmissionServiceTest {
 
     sampleTask = new CodeTask();
     sampleTask.setId(42L);
-    sampleTask.setTaskText("Implement bubble sort");
+    sampleTask.setStatementMd("Implement bubble sort");
   }
 
   @Nested
@@ -173,8 +173,6 @@ class SubmissionServiceTest {
       // Arrange
       Long taskId = 42L;
       SubmissionRequest request = new SubmissionRequest("PYTHON3", "print('hello')");
-
-      // ФИКС: Убрали стаб findById, так как метод падает раньше на валидации языка
 
       // Act & Assert
       IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,

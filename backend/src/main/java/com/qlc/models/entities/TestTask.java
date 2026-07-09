@@ -15,6 +15,9 @@ public class TestTask extends Task {
   @Column(name = "option_text")
   private List<String> options;
 
-  @Column(name = "correct_option_index")
-  private Integer correctOptionIndex;
+  @ElementCollection
+  @CollectionTable(name = "task_test_correct_indexes", joinColumns = @JoinColumn(name = "task_id"))
+  @Column(name = "correct_index")
+  private List<Integer> correctOptionIndexes;
+
 }

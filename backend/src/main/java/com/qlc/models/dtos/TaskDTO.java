@@ -7,10 +7,21 @@ public record TaskDTO(
     Long id,
     Long lessonId,
     String taskType,
-    String taskText,
+    String statementMd,
+
+    // поля для CODE задач
+    String starterCode,
+    Integer timeLimitMs,
+    Integer memoryLimitKb,
+    Integer outputLimitKb,
+    Integer testSetVersion,
     String templateCode,
     String testCases,
+
+    // поля для TEST задач
     List<String> options,
-    Integer correctOptionIndex,
+    List<Integer> correctOptionIndexes,
+
+    // --- Специфичные поля для NUMERIC задач ---
     BigDecimal correctNumericAnswer) {
 }

@@ -51,7 +51,7 @@ public class TokenFilter extends OncePerRequestFilter {
           userDetails = org.springframework.security.core.userdetails.User.builder()
               .username(username)
               .password("") // пароль для контекста не важен
-              .authorities("ROLE_USER") // или какая роль тебе сейчас нужна
+              .authorities("ROLE_USER")
               .build();
         } else {
           // Для реальных токенов идем честно в базу
@@ -70,7 +70,6 @@ public class TokenFilter extends OncePerRequestFilter {
     } catch (Exception e) {
       System.out.println("Cannot set user authentication: " + e.getMessage());
     }
-
     filterChain.doFilter(request, response);
   }
 }

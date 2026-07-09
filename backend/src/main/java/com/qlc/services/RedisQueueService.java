@@ -22,13 +22,12 @@ public class RedisQueueService {
   public void pushToStream(Submission submission) {
     String uuidStr = submission.getId().toString();
 
-    // ТЗ: Message содержит только submissionId и schema version (мы передаем строку
-    // "1")
+    // Message содержит только submissionId и schema version (передаем строку "1")
     Map<String, String> body = Map.of(
         "submissionId", uuidStr,
         "schemaVersion", "1");
 
-    // Важно: .add() отправляет сообщение именно в Stream очередь
+    // Важно: .add() отправляет сообщение в Stream очередь
     redisTemplate.opsForStream().add(streamName, body);
 
     System.out.println("[Redis Stream] ID отправлен в очередь qlc:submissions: " + uuidStr);
