@@ -27,7 +27,7 @@ import {
 } from "@/components/ui";
 
 // Типы backend DTO и submission response.
-import type { AdminTaskDto, AuthUserDto, SubmissionResponseDto } from "@/types";
+import type { AuthUserDto, LearnerTaskDto, SubmissionResponseDto } from "@/types";
 
 // Monaco загружается client-only, чтобы production build не падал на SSR.
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
@@ -53,6 +53,7 @@ type SubmissionPhase =
   | "idle"
   | "submitting"
   | "queued"
+  | "compiling"
   | "running"
   | "ac"
   | "wa"
@@ -63,6 +64,7 @@ type SubmissionPhase =
   | "ole"
   | "network"
   | "infra"
+  | "cancelled"
   | "unknown";
 
 // Локальное состояние submission UI.
@@ -82,7 +84,7 @@ type CodeLessonWorkspaceProps = {
   // lessonId нужен для локальной отметки completed.
   lessonId: number;
   // task — основная CODE-задача урока.
-  task: AdminTaskDto;
+  task: LearnerTaskDto;
 };
 
 // Проверяет AbortError без any.
@@ -104,9 +106,10 @@ function getSourceSize(source: string) {
   return source.length;
 }
 
-// Возвращает default C++23 шаблон, если backend templateCode пустой.
-function getInitialCode(task: AdminTaskDto) {
+// Возвращает starterCode из актуального TaskDTO, затем legacy templateCode или default C++23.
+function getInitialCode(task: LearnerTaskDto) {
   return (
+    task.starterCode ||
     task.templateCode ||
     `#include <bits/stdc++.h>
 using namespace std;
@@ -121,60 +124,105 @@ int main() {
   );
 }
 
-// Сопоставляет backend response с UI-фазой.
-function getPhaseFromResponse(response: SubmissionResponseDto): SubmissionPhase {
-  if (response.status === "QUEUED") {
-    return "queued";
-  }
-
-  if (response.status === "RUNNING") {
-    return "running";
-  }
-
-  if (response.status === "FAILED") {
-    return "infra";
-  }
-
-  if (response.status !== "COMPLETED") {
-    return "unknown";
-  }
-
-  if (response.verdict === "ACCEPTED") {
+// Сопоставляет актуальный короткий verdict и legacy alias с UI-фазой.
+function getVerdictPhase(verdict: SubmissionResponseDto["verdict"]): SubmissionPhase {
+  if (verdict === "AC" || verdict === "ACCEPTED") {
     return "ac";
   }
 
-  if (response.verdict === "WRONG_ANSWER") {
+  if (verdict === "WA" || verdict === "WRONG_ANSWER") {
     return "wa";
   }
 
-  if (response.verdict === "COMPILATION_ERROR") {
+  if (verdict === "CE" || verdict === "COMPILATION_ERROR") {
     return "ce";
   }
 
-  if (response.verdict === "TIME_LIMIT_EXCEEDED") {
+  if (verdict === "TLE" || verdict === "TIME_LIMIT_EXCEEDED") {
     return "tle";
   }
 
-  if (response.verdict === "MEMORY_LIMIT_EXCEEDED") {
+  if (verdict === "MLE" || verdict === "MEMORY_LIMIT_EXCEEDED") {
     return "mle";
   }
 
-  if (response.verdict === "RUNTIME_ERROR") {
+  if (verdict === "RE" || verdict === "RUNTIME_ERROR") {
     return "re";
   }
 
-  if (response.verdict === "OUTPUT_LIMIT_EXCEEDED") {
+  if (verdict === "OLE" || verdict === "OUTPUT_LIMIT_EXCEEDED") {
     return "ole";
   }
 
   return "unknown";
 }
 
+// Сопоставляет новый worker lifecycle и временные legacy statuses с UI-фазой.
+function getPhaseFromResponse(response: SubmissionResponseDto): SubmissionPhase {
+  if (response.status === "QUEUED") {
+    return "queued";
+  }
+
+  if (response.status === "COMPILING") {
+    return "compiling";
+  }
+
+  if (response.status === "RUNNING") {
+    return "running";
+  }
+
+  if (response.status === "INFRA_ERROR" || response.status === "FAILED") {
+    return "infra";
+  }
+
+  if (response.status === "CANCELLED") {
+    return "cancelled";
+  }
+
+  if (response.status === "FINISHED" || response.status === "COMPLETED") {
+    return getVerdictPhase(response.verdict);
+  }
+
+  return "unknown";
+}
+
+// Created response не содержит verdict; non-terminal worker status можно показать сразу.
+function getCreatedPhase(status: SubmissionResponseDto["status"]): SubmissionPhase {
+  if (status === "COMPILING") {
+    return "compiling";
+  }
+
+  if (status === "RUNNING") {
+    return "running";
+  }
+
+  if (status === "INFRA_ERROR" || status === "FAILED") {
+    return "infra";
+  }
+
+  if (status === "CANCELLED") {
+    return "cancelled";
+  }
+
+  // QUEUED — штатный create response. FINISHED/unknown сразу уточняются первым poll.
+  return "queued";
+}
+
 // Определяет, нужно ли продолжать polling.
 function isTerminalPhase(phase: SubmissionPhase) {
-  return ["ac", "wa", "ce", "tle", "mle", "re", "ole", "network", "infra", "unknown"].includes(
-    phase
-  );
+  return [
+    "ac",
+    "wa",
+    "ce",
+    "tle",
+    "mle",
+    "re",
+    "ole",
+    "network",
+    "infra",
+    "cancelled",
+    "unknown"
+  ].includes(phase);
 }
 
 // Возвращает тексты и тон статуса.
@@ -197,10 +245,19 @@ function getPhaseCopy(phase: SubmissionPhase) {
     };
   }
 
+  if (phase === "compiling") {
+    return {
+      badge: "compiling",
+      description: "Worker компилирует исходный код.",
+      title: "Compiling",
+      tone: "info" as const
+    };
+  }
+
   if (phase === "running") {
     return {
-      badge: "compiling / running",
-      description: "Backend проверяет решение: компиляция и тесты.",
+      badge: "running",
+      description: "Worker запускает скомпилированное решение на тестах.",
       title: "Running tests",
       tone: "info" as const
     };
@@ -281,9 +338,18 @@ function getPhaseCopy(phase: SubmissionPhase) {
   if (phase === "infra") {
     return {
       badge: "infra",
-      description: "Backend вернул FAILED без student verdict.",
+      description: "Backend вернул INFRA_ERROR без student verdict.",
       title: "Infrastructure error",
       tone: "danger" as const
+    };
+  }
+
+  if (phase === "cancelled") {
+    return {
+      badge: "cancelled",
+      description: "Проверка была отменена backend или worker.",
+      title: "Submission cancelled",
+      tone: "warning" as const
     };
   }
 
@@ -340,13 +406,13 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
   const sourceSize = getSourceSize(source);
   const trimmedSource = source.trim();
   const phaseCopy = getPhaseCopy(submission.phase);
-  const isBusy = ["submitting", "queued", "running"].includes(submission.phase);
+  const isBusy = ["submitting", "queued", "compiling", "running"].includes(submission.phase);
   const sourceTooLarge = sourceSize > MAX_SOURCE_SIZE;
   const canSubmit = Boolean(authUser) && trimmedSource.length > 0 && !sourceTooLarge && !isBusy;
   const safeLog = submission.response?.safeMessage ?? submission.errorMessage ?? "";
   const loginHref = `/login?redirectTo=${encodeURIComponent(currentPath)}`;
 
-  // При смене task один раз загружаем draft или backend templateCode.
+  // При смене task один раз загружаем draft или backend starterCode/templateCode.
   useEffect(() => {
     const savedDraft = window.localStorage.getItem(draftKey);
     const savedSubmissionId = window.localStorage.getItem(lastSubmissionKey);
@@ -488,7 +554,7 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
       window.localStorage.setItem(lastSubmissionKey, created.id);
       setLastSubmissionId(created.id);
       setSubmission({
-        phase: created.status === "QUEUED" ? "queued" : "unknown",
+        phase: getCreatedPhase(created.status),
         submissionId: created.id
       });
       pollSubmission(created.id, controller);
@@ -520,7 +586,7 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
     pollSubmission(lastSubmissionId, controller);
   };
 
-  // Сбрасывает editor к backend templateCode.
+  // Сбрасывает editor к backend starterCode/templateCode.
   const handleResetDraft = () => {
     setSource(initialCode);
     window.localStorage.setItem(draftKey, initialCode);

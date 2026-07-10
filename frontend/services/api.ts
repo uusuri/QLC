@@ -16,6 +16,7 @@ import type {
   CourseAccessStatus,
   CourseDto,
   LessonLearningViewDto,
+  LearnerTaskDto,
   LoginUserPayload,
   LoginNoteDto,
   PaymentMethodDto,
@@ -349,6 +350,23 @@ function mapAdminCourseToCatalogCourse(course: AdminCourseDto): CourseDto {
   };
 }
 
+// Удаляет приватные judge-поля до сериализации server component в браузер.
+function mapAdminTaskToLearnerTask(task: AdminTaskDto): LearnerTaskDto {
+  return {
+    id: task.id,
+    lessonId: task.lessonId,
+    taskType: task.taskType,
+    statementMd: task.statementMd,
+    starterCode: task.starterCode,
+    timeLimitMs: task.timeLimitMs,
+    memoryLimitKb: task.memoryLimitKb,
+    outputLimitKb: task.outputLimitKb,
+    testSetVersion: task.testSetVersion,
+    templateCode: task.templateCode,
+    options: task.options
+  };
+}
+
 // TODO: Интегрировать с бэком, когда появится эндпоинт профиля студента.
 // Профиль анонимный: без имени, фамилии, аватарки и других персональных данных.
 const studentProfileMock: StudentProfileDto = {
@@ -592,10 +610,11 @@ export async function getCourseLearningView(slug: string): Promise<CourseLearnin
   const modulesWithLessons = await Promise.all(
     modules.map(async (module) => ({
       module,
-      lessons: await getAdminLessons(module.id)
+      lessons: (await getAdminLessons(module.id)).filter((lesson) => lesson.published)
     }))
   );
-  const firstLesson = modulesWithLessons.flatMap((item) => item.lessons)[0] ?? null;
+  const firstLesson =
+    modulesWithLessons.flatMap((item) => item.lessons).find((lesson) => lesson.published) ?? null;
 
   return {
     course,
@@ -614,7 +633,9 @@ export async function getLessonLearningView(id: number): Promise<LessonLearningV
   const course = await getAdminCourseById(module.courseId);
   const courses = await getAdminCourses();
   const courseIndex = courses.findIndex((item) => item.id === course.id);
-  const tasks = await getAdminTasks(lesson.id);
+  const tasks = lesson.published
+    ? (await getAdminTasks(lesson.id)).map(mapAdminTaskToLearnerTask)
+    : [];
 
   return {
     course,

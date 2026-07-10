@@ -84,6 +84,16 @@ export default async function LessonPage({ params }: LessonPageProps) {
     );
   }
 
+  if (!view.lesson.published) {
+    return (
+      <LessonStatePage
+        eyebrow="lesson / unpublished"
+        text="Урок еще не опубликован. Backend скрывает contentMd до публикации."
+        title="Скоро."
+      />
+    );
+  }
+
   const primaryTask = view.primaryTask;
   const courseSlug = `course-${view.course.id}`;
 
@@ -142,17 +152,19 @@ export default async function LessonPage({ params }: LessonPageProps) {
               <h2 className="mt-3 text-3xl font-black uppercase leading-tight">Материал урока</h2>
             </PanelHeader>
             <PanelBody>
-              <SafeMarkdown markdown={view.lesson.description || "Материал урока скоро появится."} />
+              <SafeMarkdown
+                markdown={
+                  view.lesson.contentMd ||
+                  view.lesson.description ||
+                  "Материал урока скоро появится."
+                }
+              />
             </PanelBody>
           </Panel>
 
           {!primaryTask ? (
             <Alert title="Задач пока нет" tone="warning">
-              Создай CODE Task для этого урока в `/admin/content`, затем обнови страницу.
-            </Alert>
-          ) : primaryTask.taskType !== "CODE" ? (
-            <Alert title="Задача скоро" tone="warning">
-              Sprint 2 lesson UI поддерживает CODE-задачи. Для TEST/NUMERIC нужен отдельный UI позже.
+              Создай Task для этого урока в `/admin/content`, затем обнови страницу.
             </Alert>
           ) : (
             <>
@@ -163,28 +175,61 @@ export default async function LessonPage({ params }: LessonPageProps) {
                       task statement
                     </p>
                     <h2 className="mt-3 text-3xl font-black uppercase leading-tight">
-                      CODE Task
+                      {primaryTask.taskType} Task
                     </h2>
                   </div>
                   <StatusBadge tone="info">task id {primaryTask.id}</StatusBadge>
                 </PanelHeader>
                 <PanelBody className="grid gap-6">
-                  <SafeMarkdown markdown={primaryTask.taskText || "Условие задачи пока пустое."} />
+                  <SafeMarkdown
+                    markdown={primaryTask.statementMd || "Условие задачи пока пустое."}
+                  />
 
-                  {primaryTask.testCases && (
-                    <div>
-                      <p className="mb-3 font-mono text-xs font-black uppercase text-white/46">
-                        test cases / examples
-                      </p>
-                      <pre className="overflow-x-auto border border-line bg-ink p-4 text-sm leading-relaxed text-white/72">
-                        <code>{primaryTask.testCases}</code>
-                      </pre>
+                  {primaryTask.taskType === "CODE" && (
+                    <div className="flex flex-wrap gap-2">
+                      {primaryTask.timeLimitMs !== null && (
+                        <StatusBadge tone="neutral">
+                          time {primaryTask.timeLimitMs} ms
+                        </StatusBadge>
+                      )}
+                      {primaryTask.memoryLimitKb !== null && (
+                        <StatusBadge tone="neutral">
+                          memory {primaryTask.memoryLimitKb} KB
+                        </StatusBadge>
+                      )}
+                      {primaryTask.outputLimitKb !== null && (
+                        <StatusBadge tone="neutral">
+                          output {primaryTask.outputLimitKb} KB
+                        </StatusBadge>
+                      )}
+                    </div>
+                  )}
+
+                  {primaryTask.taskType === "TEST" && (
+                    <div className="grid gap-px border border-line bg-line">
+                      {(primaryTask.options ?? []).map((option, index) => (
+                        <div
+                          className="grid grid-cols-[auto_1fr] gap-3 bg-ink p-4 text-sm text-white/74"
+                          key={`${option}-${index}`}
+                        >
+                          <span className="font-mono font-black text-acid">[{index}]</span>
+                          <span>{option}</span>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </PanelBody>
               </Panel>
 
-              <CodeLessonWorkspace lessonId={view.lesson.id} task={primaryTask} />
+              {primaryTask.taskType === "CODE" ? (
+                <CodeLessonWorkspace lessonId={view.lesson.id} task={primaryTask} />
+              ) : (
+                <Alert title="answer submission pending" tone="info">
+                  {primaryTask.taskType === "TEST"
+                    ? "Варианты показаны без correctOptionIndexes. Endpoint отправки TEST-ответа пока не подключен."
+                    : "Правильный numeric-ответ не отображается. Endpoint отправки NUMERIC-ответа пока не подключен."}
+                </Alert>
+              )}
             </>
           )}
         </section>

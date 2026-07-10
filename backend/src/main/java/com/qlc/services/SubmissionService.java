@@ -3,6 +3,7 @@ package com.qlc.services;
 import com.qlc.models.requests.SubmissionRequest;
 import com.qlc.models.responses.SubmissionCreatedResponse;
 import com.qlc.models.responses.SubmissionResponse;
+import com.qlc.models.entities.CodeTask;
 import com.qlc.models.entities.Submission;
 import com.qlc.models.entities.Task;
 import com.qlc.models.enums.SubmissionStatus;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,7 +52,11 @@ public class SubmissionService {
     }
 
     // 2. Базовая валидация входящего payload
-    if (request.sourceCode() == null || request.sourceCode().getBytes().length > maxSourceSize) {
+    if (request.sourceCode() == null || request.sourceCode().isBlank()) {
+      throw new IllegalArgumentException("Source code must not be blank");
+    }
+
+    if (request.sourceCode().getBytes(StandardCharsets.UTF_8).length > maxSourceSize) {
       throw new IllegalArgumentException("Source code size exceeds the allowed limit of " + maxSourceSize + " bytes");
     }
 
@@ -61,6 +67,10 @@ public class SubmissionService {
     // 3. Проверяем, существует ли целевая таска
     Task task = taskRepository.findById(taskId)
         .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+
+    if (!(task instanceof CodeTask)) {
+      throw new IllegalArgumentException("Source-code submissions are only supported for CODE tasks");
+    }
 
     // 4. Инициализируем новую сущность в очереди
     Submission submission = new Submission();
@@ -73,8 +83,9 @@ public class SubmissionService {
 
     Submission saved = submissionRepository.save(submission);
 
-    // 5. Transactional Outbox Pattern — отправляем в Redis Stream только ПОСЛЕ
-    // успешного коммита
+    // 5. Best-effort publish после commit. Это НЕ transactional outbox: если Redis
+    // недоступен после фиксации БД, запись останется QUEUED без сообщения до
+    // появления отдельного recovery scan/outbox механизма.
     if (TransactionSynchronizationManager.isSynchronizationActive()) {
       TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
         @Override

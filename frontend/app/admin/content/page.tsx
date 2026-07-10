@@ -24,6 +24,7 @@ import type {
   AdminCourseDto,
   AdminLessonDto,
   AdminModuleDto,
+  AdminTaskCreatePayload,
   AdminTaskDto,
   AdminTaskType
 } from "@/types";
@@ -55,12 +56,20 @@ type SimpleNestedFormState = {
   description: string;
 };
 
-// Форма создания CODE-задачи.
+// Форма создания задачи. Специфичные поля показываются только для выбранного taskType.
 type TaskFormState = {
   taskType: AdminTaskType;
-  taskText: string;
+  statementMd: string;
+  starterCode: string;
   templateCode: string;
   testCases: string;
+  timeLimitMs: string;
+  memoryLimitKb: string;
+  outputLimitKb: string;
+  testSetVersion: string;
+  optionsText: string;
+  correctOptionIndexes: number[];
+  correctNumericAnswer: string;
 };
 
 // Пустое состояние запроса.
@@ -84,12 +93,20 @@ const initialSimpleForm: SimpleNestedFormState = {
   description: ""
 };
 
-// Начальные значения формы CODE-задачи.
+// Начальные значения формы задачи. CODE-лимиты совпадают с backend defaults.
 const initialTaskForm: TaskFormState = {
   taskType: "CODE",
-  taskText: "",
+  statementMd: "",
+  starterCode: "",
   templateCode: "",
-  testCases: ""
+  testCases: "",
+  timeLimitMs: "2000",
+  memoryLimitKb: "65536",
+  outputLimitKb: "4096",
+  testSetVersion: "1",
+  optionsText: "",
+  correctOptionIndexes: [],
+  correctNumericAnswer: ""
 };
 
 // Описание вкладок. blockedBy используется только для визуальной подсказки.
@@ -150,6 +167,31 @@ function parseOptionalNumber(value: string): number | null {
 function optionalText(value: string): string | null {
   const trimmed = value.trim();
   return trimmed ? trimmed : null;
+}
+
+// Парсит положительное целое CODE-поле; пустое значение оставляет backend default.
+function parseOptionalPositiveInteger(value: string, label: string): number | null {
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  const parsed = Number(trimmed);
+
+  if (!Number.isSafeInteger(parsed) || parsed <= 0) {
+    throw new Error(`${label} must be a positive integer.`);
+  }
+
+  return parsed;
+}
+
+// Превращает TEST textarea в массив непустых вариантов, по одному на строку.
+function parseTestOptions(value: string): string[] {
+  return value
+    .split(/\r?\n/)
+    .map((option) => option.trim())
+    .filter(Boolean);
 }
 
 // Поиск по названию/тексту без учета регистра.
@@ -234,7 +276,7 @@ export default function AdminContentPage() {
   );
 
   const filteredTasks = useMemo(
-    () => tasks.filter((task) => matchesSearch(task.taskText, taskSearch)),
+    () => tasks.filter((task) => matchesSearch(task.statementMd, taskSearch)),
     [tasks, taskSearch]
   );
 
@@ -506,7 +548,7 @@ export default function AdminContentPage() {
     }
   }
 
-  // Создание CODE-задачи требует выбранный урок и показывает главный taskId.
+  // Создание задачи требует выбранный урок и формирует payload строго по выбранному taskType.
   async function handleCreateTask(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -515,23 +557,83 @@ export default function AdminContentPage() {
         throw new Error("Select Lesson before creating Task.");
       }
 
-      if (!taskForm.taskText.trim()) {
-        throw new Error("Task text is required.");
+      if (!taskForm.statementMd.trim()) {
+        throw new Error("Task statementMd is required.");
       }
 
       setTaskState({ loading: true, error: "", success: "" });
       setCreatedTaskId(null);
       setCopyStatus("");
 
-      const created = await createAdminTask(selectedLessonId, {
+      const payload: AdminTaskCreatePayload = {
         taskType: taskForm.taskType,
-        taskText: taskForm.taskText.trim(),
-        templateCode: optionalText(taskForm.templateCode),
-        testCases: optionalText(taskForm.testCases),
+        statementMd: taskForm.statementMd.trim(),
+        starterCode: null,
+        timeLimitMs: null,
+        memoryLimitKb: null,
+        outputLimitKb: null,
+        testSetVersion: null,
+        templateCode: null,
+        testCases: null,
         options: null,
-        correctOptionIndex: null,
+        correctOptionIndexes: null,
         correctNumericAnswer: null
-      });
+      };
+
+      if (taskForm.taskType === "CODE") {
+        payload.starterCode = optionalText(taskForm.starterCode);
+        payload.templateCode = optionalText(taskForm.templateCode);
+        payload.testCases = optionalText(taskForm.testCases);
+        payload.timeLimitMs = parseOptionalPositiveInteger(taskForm.timeLimitMs, "timeLimitMs");
+        payload.memoryLimitKb = parseOptionalPositiveInteger(
+          taskForm.memoryLimitKb,
+          "memoryLimitKb"
+        );
+        payload.outputLimitKb = parseOptionalPositiveInteger(
+          taskForm.outputLimitKb,
+          "outputLimitKb"
+        );
+        payload.testSetVersion = parseOptionalPositiveInteger(
+          taskForm.testSetVersion,
+          "testSetVersion"
+        );
+      }
+
+      if (taskForm.taskType === "TEST") {
+        const options = parseTestOptions(taskForm.optionsText);
+
+        if (options.length < 2) {
+          throw new Error("TEST task requires at least two non-empty options.");
+        }
+
+        if (taskForm.correctOptionIndexes.length === 0) {
+          throw new Error("Select at least one correct TEST option.");
+        }
+
+        if (
+          taskForm.correctOptionIndexes.some(
+            (index) => !Number.isSafeInteger(index) || index < 0 || index >= options.length
+          )
+        ) {
+          throw new Error(`Every correct option index must be between 0 and ${options.length - 1}.`);
+        }
+
+        payload.options = options;
+        payload.correctOptionIndexes = [...taskForm.correctOptionIndexes].sort((a, b) => a - b);
+      }
+
+      if (taskForm.taskType === "NUMERIC") {
+        const rawAnswer = taskForm.correctNumericAnswer.trim();
+        const correctNumericAnswer = Number(rawAnswer);
+
+        if (!rawAnswer || !Number.isFinite(correctNumericAnswer)) {
+          throw new Error("correctNumericAnswer must be a valid number.");
+        }
+
+        payload.correctNumericAnswer = correctNumericAnswer;
+      }
+
+      const created = await createAdminTask(selectedLessonId, payload);
 
       const nextTasks = await getAdminTasks(selectedLessonId);
 
@@ -849,7 +951,7 @@ export default function AdminContentPage() {
           )}
 
           {activeStep === "task" && (
-            <WorkspacePanel state={taskState} subtitle="Task step" title="Create CODE Task">
+            <WorkspacePanel state={taskState} subtitle="Task step" title="Create Task">
               {!selectedLesson ? (
                 <BlockedMessage text="Сначала выбери урок" />
               ) : (
@@ -899,7 +1001,7 @@ export default function AdminContentPage() {
                       items={filteredTasks.map((task) => ({
                         id: task.id,
                         meta: `taskId: ${task.id} / type: ${task.taskType}`,
-                        title: task.taskText
+                        title: task.statementMd
                       }))}
                       loading={taskState.loading && tasks.length === 0}
                       selectedId={selectedTaskId}
@@ -908,43 +1010,178 @@ export default function AdminContentPage() {
                   </div>
 
                   <form className="grid content-start gap-3 border border-line bg-panel/60 p-4" onSubmit={handleCreateTask}>
-                    <FormTitle title="Create CODE Task" idLabel={selectedTaskId} />
+                    <FormTitle title={`Create ${taskForm.taskType} Task`} idLabel={selectedTaskId} />
+                    <TaskTypeSelector
+                      value={taskForm.taskType}
+                      onChange={(taskType) =>
+                        setTaskForm((current) => ({ ...current, taskType }))
+                      }
+                    />
                     <div className="border border-acid/50 bg-acid/10 p-3">
                       <p className="font-mono text-[10px] font-bold uppercase text-acid">
-                        taskType: CODE
+                        statementMd / Markdown
                       </p>
                       <p className="mt-2 text-xs font-bold uppercase leading-snug text-white/62">
-                        Sprint 2 supports CODE task creation here. TEST/NUMERIC fields are hidden.
+                        Условие хранится как Markdown. Заголовки, списки и fenced code blocks
+                        отобразятся студенту через безопасный renderer.
                       </p>
                     </div>
                     <TextArea
-                      help="Условие задачи, которое увидит студент."
-                      label="taskText"
-                      rows={6}
-                      value={taskForm.taskText}
+                      help="Обязательное условие задачи в Markdown. Приватные ответы сюда не добавляй."
+                      label="statementMd (Markdown)"
+                      rows={8}
+                      value={taskForm.statementMd}
                       onChange={(value) =>
-                        setTaskForm((current) => ({ ...current, taskText: value }))
+                        setTaskForm((current) => ({ ...current, statementMd: value }))
                       }
                     />
-                    <TextArea
-                      help="Стартовый код для редактора. Можно оставить пустым."
-                      label="templateCode"
-                      rows={7}
-                      value={taskForm.templateCode}
-                      onChange={(value) =>
-                        setTaskForm((current) => ({ ...current, templateCode: value }))
-                      }
+
+                    {taskForm.taskType === "CODE" && (
+                      <div className="grid gap-3 border-t border-line pt-3">
+                        <TextArea
+                          help="Код, который первым откроется студенту в Monaco Editor."
+                          label="starterCode"
+                          rows={8}
+                          value={taskForm.starterCode}
+                          onChange={(value) =>
+                            setTaskForm((current) => ({ ...current, starterCode: value }))
+                          }
+                        />
+                        <TextArea
+                          help="Legacy-поле backend. Learner UI использует его только если starterCode пуст."
+                          label="templateCode (legacy fallback)"
+                          rows={6}
+                          value={taskForm.templateCode}
+                          onChange={(value) =>
+                            setTaskForm((current) => ({ ...current, templateCode: value }))
+                          }
+                        />
+                        <TextArea
+                          help="Приватные judge-тесты. Learner UI намеренно никогда их не показывает."
+                          label="testCases (private)"
+                          rows={7}
+                          value={taskForm.testCases}
+                          onChange={(value) =>
+                            setTaskForm((current) => ({ ...current, testCases: value }))
+                          }
+                        />
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <TextInput
+                            inputMode="numeric"
+                            label="timeLimitMs"
+                            value={taskForm.timeLimitMs}
+                            onChange={(value) =>
+                              setTaskForm((current) => ({ ...current, timeLimitMs: value }))
+                            }
+                          />
+                          <TextInput
+                            inputMode="numeric"
+                            label="memoryLimitKb"
+                            value={taskForm.memoryLimitKb}
+                            onChange={(value) =>
+                              setTaskForm((current) => ({ ...current, memoryLimitKb: value }))
+                            }
+                          />
+                          <TextInput
+                            inputMode="numeric"
+                            label="outputLimitKb"
+                            value={taskForm.outputLimitKb}
+                            onChange={(value) =>
+                              setTaskForm((current) => ({ ...current, outputLimitKb: value }))
+                            }
+                          />
+                          <TextInput
+                            inputMode="numeric"
+                            label="testSetVersion"
+                            value={taskForm.testSetVersion}
+                            onChange={(value) =>
+                              setTaskForm((current) => ({ ...current, testSetVersion: value }))
+                            }
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {taskForm.taskType === "NUMERIC" && (
+                      <div className="grid gap-3 border-t border-line pt-3">
+                        <TextInput
+                          inputMode="decimal"
+                          label="correctNumericAnswer"
+                          value={taskForm.correctNumericAnswer}
+                          onChange={(value) =>
+                            setTaskForm((current) => ({ ...current, correctNumericAnswer: value }))
+                          }
+                        />
+                        <p className="text-xs font-bold uppercase leading-snug text-white/46">
+                          Ответ сохраняется в backend, но learner UI его не получает из интерфейса и
+                          не отображает.
+                        </p>
+                      </div>
+                    )}
+
+                    {taskForm.taskType === "TEST" && (
+                      <div className="grid gap-3 border-t border-line pt-3">
+                        <TextArea
+                          help="Один вариант на строку. Затем отметь один или несколько правильных вариантов ниже."
+                          label="options"
+                          rows={7}
+                          value={taskForm.optionsText}
+                          onChange={(value) =>
+                            setTaskForm((current) => {
+                              const optionsCount = parseTestOptions(value).length;
+
+                              return {
+                                ...current,
+                                optionsText: value,
+                                correctOptionIndexes: current.correctOptionIndexes.filter(
+                                  (index) => index < optionsCount
+                                )
+                              };
+                            })
+                          }
+                        />
+                        {parseTestOptions(taskForm.optionsText).length > 0 && (
+                          <div className="grid gap-2 border border-line bg-ink p-3">
+                            <p className="font-mono text-[10px] font-bold uppercase text-white/48">
+                              Correct option indexes
+                            </p>
+                            {parseTestOptions(taskForm.optionsText).map((option, index) => (
+                              <label
+                                className={`grid cursor-pointer grid-cols-[auto_auto_1fr] items-start gap-3 border p-3 text-xs transition ${
+                                  taskForm.correctOptionIndexes.includes(index)
+                                    ? "border-acid bg-acid/10 text-white"
+                                    : "border-line text-white/70 hover:border-white/30"
+                                }`}
+                                key={`${option}-${index}`}
+                              >
+                                <input
+                                  checked={taskForm.correctOptionIndexes.includes(index)}
+                                  className="mt-0.5 accent-[#9ef651]"
+                                  onChange={(event) =>
+                                    setTaskForm((current) => ({
+                                      ...current,
+                                      correctOptionIndexes: event.target.checked
+                                        ? [...current.correctOptionIndexes, index]
+                                        : current.correctOptionIndexes.filter(
+                                            (selectedIndex) => selectedIndex !== index
+                                          )
+                                    }))
+                                  }
+                                  type="checkbox"
+                                />
+                                <span className="font-mono font-black text-acid">[{index}]</span>
+                                <span>{option}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <SubmitButton
+                      disabled={taskState.loading}
+                      label={`Create ${taskForm.taskType} Task`}
                     />
-                    <TextArea
-                      help="Тесты или примеры проверки в формате, который сейчас принимает backend."
-                      label="testCases"
-                      rows={7}
-                      value={taskForm.testCases}
-                      onChange={(value) =>
-                        setTaskForm((current) => ({ ...current, testCases: value }))
-                      }
-                    />
-                    <SubmitButton disabled={taskState.loading} label="Create CODE Task" />
                   </form>
                 </div>
               )}
@@ -981,7 +1218,7 @@ function SelectedPath({
       <PathCell label="Lesson" title={lesson?.name ?? "Not selected"} id={lesson?.id ?? null} />
       <PathCell
         label="Task"
-        title={createdTaskId !== null ? "Created task" : task?.taskText ?? "Not selected"}
+        title={createdTaskId !== null ? "Created task" : task?.statementMd ?? "Not selected"}
         id={createdTaskId ?? task?.id ?? null}
       />
     </section>
@@ -1260,6 +1497,42 @@ function SearchInput({
         value={value}
       />
     </label>
+  );
+}
+
+// Выбор discriminator TaskDTO. Специфичные поля формы зависят от этого значения.
+function TaskTypeSelector({
+  onChange,
+  value
+}: {
+  onChange: (value: AdminTaskType) => void;
+  value: AdminTaskType;
+}) {
+  const taskTypes: AdminTaskType[] = ["CODE", "NUMERIC", "TEST"];
+
+  return (
+    <fieldset className="grid gap-2">
+      <legend className="font-mono text-[10px] font-bold uppercase text-white/58">
+        taskType
+      </legend>
+      <div className="grid gap-px border border-line bg-line sm:grid-cols-3">
+        {taskTypes.map((taskType) => (
+          <button
+            aria-pressed={value === taskType}
+            className={`min-h-12 px-3 text-xs font-black uppercase transition ${
+              value === taskType
+                ? "bg-acid text-ink"
+                : "bg-ink text-white/68 hover:text-acid"
+            }`}
+            key={taskType}
+            onClick={() => onChange(taskType)}
+            type="button"
+          >
+            {taskType}
+          </button>
+        ))}
+      </div>
+    </fieldset>
   );
 }
 

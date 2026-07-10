@@ -36,9 +36,11 @@ frontend/
 Learning path Sprint 2:
 - первый курс из backend-каталога считается доступным и ведет на `/courses/course-{id}`;
 - остальные курсы на витрине маркируются `Скоро` и не ведут в фиктивную оплату;
-- `/courses/[slug]` показывает модули и уроки выбранного курса;
-- `/lessons/[id]` показывает материал урока, CODE-задачу, Monaco Editor и submission lifecycle;
-- markdown-описания рендерятся ограниченным безопасным renderer без `dangerouslySetInnerHTML`.
+- `/courses/[slug]` показывает только опубликованные уроки выбранного курса;
+- `/lessons/[id]` берет материал из `LessonDTO.contentMd` и условие из `TaskDTO.statementMd`;
+- CODE-задача показывает Monaco Editor и submission lifecycle, TEST — публичные варианты, NUMERIC — условие без приватного ответа;
+- Markdown рендерится ограниченным безопасным renderer без `dangerouslySetInnerHTML`;
+- перед передачей learner data в client/RSC frontend физически удаляет `testCases`, `correctOptionIndexes` и `correctNumericAnswer`.
 
 Для внутренней панели `/admin/content` подключены текущие backend endpoints из `CourseController`:
 
@@ -50,6 +52,13 @@ Learning path Sprint 2:
 - `POST /api/modules/{moduleId}/lessons`
 - `GET /api/lessons/{lessonId}/tasks`
 - `POST /api/lessons/{lessonId}/tasks`
+
+Task form поддерживает все discriminator-типы актуального `TaskDTO`:
+
+- `CODE` — `starterCode`, legacy `templateCode`, приватные `testCases`, time/memory/output limits и `testSetVersion`;
+- `NUMERIC` — `correctNumericAnswer`;
+- `TEST` — список `options` и один или несколько `correctOptionIndexes` через checkbox;
+- общее поле `statementMd` явно редактируется как Markdown, а поля других типов отправляются как `null`.
 
 Checkout больше не использует статичный каталог как основной источник. Курс выбирается по query-параметру `course`, например `/checkout?course=course-1`, где slug строится из backend `id`. Если курс не найден, checkout показывает not-found state и не fallback-ится на первый курс.
 

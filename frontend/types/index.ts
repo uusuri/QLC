@@ -234,6 +234,12 @@ export interface AdminLessonDto {
   name: string;
   // Описание урока.
   description: string;
+  // Позиция урока внутри модуля.
+  position: number;
+  // Основной материал урока в Markdown. Для неопубликованного урока backend возвращает null.
+  contentMd: string | null;
+  // Флаг публикации урока.
+  published: boolean;
 }
 
 // Payload для POST /api/modules/{moduleId}/lessons.
@@ -252,37 +258,63 @@ export interface AdminTaskDto {
   lessonId: number;
   // Тип задачи: CODE, TEST или NUMERIC.
   taskType: AdminTaskType;
-  // Условие задачи.
-  taskText: string;
-  // Шаблон кода для CODE-задачи.
+  // Условие задачи в Markdown.
+  statementMd: string;
+  // Стартовый код, который CODE-задача показывает студенту.
+  starterCode: string | null;
+  // Ограничение времени CODE-задачи в миллисекундах.
+  timeLimitMs: number | null;
+  // Ограничение памяти CODE-задачи в килобайтах.
+  memoryLimitKb: number | null;
+  // Ограничение вывода CODE-задачи в килобайтах.
+  outputLimitKb: number | null;
+  // Версия набора приватных тестов CODE-задачи.
+  testSetVersion: number | null;
+  // Legacy-шаблон кода CODE-задачи; starterCode имеет приоритет в learner UI.
   templateCode: string | null;
-  // Тест-кейсы для CODE-задачи.
+  // Приватные тест-кейсы CODE-задачи. Learner UI не должен их отображать.
   testCases: string | null;
   // Варианты ответа для TEST-задачи.
   options: string[] | null;
-  // Индекс правильного варианта для TEST-задачи.
-  correctOptionIndex: number | null;
+  // Индексы правильных вариантов TEST-задачи. Learner UI не должен их отображать.
+  correctOptionIndexes: number[] | null;
   // Правильный числовой ответ для NUMERIC-задачи.
   correctNumericAnswer: number | null;
 }
 
 // Payload для POST /api/lessons/{lessonId}/tasks.
 export interface AdminTaskCreatePayload {
-  // Тип задачи, в Sprint 2 UI создает CODE.
+  // Тип создаваемой задачи.
   taskType: AdminTaskType;
-  // Условие задачи.
-  taskText: string;
-  // Шаблон кода для CODE-задачи.
+  // Условие задачи в Markdown.
+  statementMd: string;
+  // Стартовый код для CODE-задачи.
+  starterCode: string | null;
+  // Ограничение времени CODE-задачи в миллисекундах.
+  timeLimitMs: number | null;
+  // Ограничение памяти CODE-задачи в килобайтах.
+  memoryLimitKb: number | null;
+  // Ограничение вывода CODE-задачи в килобайтах.
+  outputLimitKb: number | null;
+  // Версия набора приватных тестов CODE-задачи.
+  testSetVersion: number | null;
+  // Legacy-шаблон кода для CODE-задачи.
   templateCode: string | null;
-  // Тест-кейсы для CODE-задачи.
+  // Приватные тест-кейсы для CODE-задачи.
   testCases: string | null;
   // Варианты ответа для TEST-задачи.
   options: string[] | null;
-  // Индекс правильного варианта для TEST-задачи.
-  correctOptionIndex: number | null;
+  // Индексы правильных вариантов для TEST-задачи.
+  correctOptionIndexes: number[] | null;
   // Правильный числовой ответ для NUMERIC-задачи.
   correctNumericAnswer: number | null;
 }
+
+// Learner DTO намеренно исключает приватные judge-тесты и правильные ответы.
+export type LearnerTaskDto = Omit<
+  AdminTaskDto,
+  "testCases" | "correctOptionIndexes" | "correctNumericAnswer"
+>;
 
 // Модуль курса вместе с уроками, которые нужны странице курса.
 export interface CourseModuleWithLessonsDto {
@@ -321,25 +353,42 @@ export interface LessonLearningViewDto {
   // Сам урок.
   lesson: AdminLessonDto;
   // Задачи урока.
-  tasks: AdminTaskDto[];
+  tasks: LearnerTaskDto[];
   // Основная задача урока для Sprint 2.
-  primaryTask: AdminTaskDto | null;
+  primaryTask: LearnerTaskDto | null;
 }
 
 // Язык submission, который поддерживает Sprint 2 UI.
 export type SubmissionLanguage = "CPP23";
 
-// Backend-статус submission из enum SubmissionStatus плюс безопасная неизвестная строка.
-export type BackendSubmissionStatus = "QUEUED" | "RUNNING" | "COMPLETED" | "FAILED" | (string & {});
+// Актуальный worker status плюс legacy aliases на время совместимого rollout.
+export type BackendSubmissionStatus =
+  | "QUEUED"
+  | "COMPILING"
+  | "RUNNING"
+  | "FINISHED"
+  | "INFRA_ERROR"
+  | "CANCELLED"
+  | "COMPLETED"
+  | "FAILED"
+  | (string & {});
 
-// Verdict из backend enum Verdict плюс безопасная неизвестная строка.
+// Актуальные короткие verdicts плюс legacy длинные aliases.
 export type BackendVerdict =
+  | "AC"
+  | "WA"
+  | "CE"
+  | "TLE"
+  | "MLE"
+  | "RE"
+  | "OLE"
   | "ACCEPTED"
   | "WRONG_ANSWER"
   | "TIME_LIMIT_EXCEEDED"
   | "MEMORY_LIMIT_EXCEEDED"
   | "COMPILATION_ERROR"
   | "RUNTIME_ERROR"
+  | "OUTPUT_LIMIT_EXCEEDED"
   | (string & {});
 
 // Payload для POST /api/tasks/{taskId}/submissions.
