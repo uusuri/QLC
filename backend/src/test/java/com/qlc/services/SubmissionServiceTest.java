@@ -6,6 +6,7 @@ import com.qlc.models.responses.SubmissionResponse;
 import com.qlc.models.entities.Submission;
 import com.qlc.models.entities.Task;
 import com.qlc.models.entities.CodeTask;
+import com.qlc.models.entities.NumericTask;
 import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.models.enums.Verdict;
 import com.qlc.repositories.SubmissionRepository;
@@ -149,6 +150,23 @@ class SubmissionServiceTest {
     }
 
     @Test
+    @DisplayName("VALIDATION ERROR: Should reject source-code submissions for non-CODE tasks")
+    void createSubmission_NumericTask_ThrowsException() {
+      NumericTask numericTask = new NumericTask();
+      numericTask.setId(77L);
+      numericTask.setStatementMd("Enter a number");
+      SubmissionRequest request = new SubmissionRequest("CPP23", "int main() {}");
+      when(taskRepository.findById(77L)).thenReturn(Optional.of(numericTask));
+
+      IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+          () -> submissionService.createSubmission(77L, request, null));
+
+      assertEquals("Source-code submissions are only supported for CODE tasks", ex.getMessage());
+      verify(submissionRepository, never()).save(any());
+      verify(redisQueueService, never()).pushToStream(any());
+    }
+
+    @Test
     @DisplayName("VALIDATION ERROR: Should throw IllegalArgumentException when source code is too massive (400 context)")
     void createSubmission_PayloadTooLarge_ThrowsException() {
       // Arrange
@@ -165,6 +183,20 @@ class SubmissionServiceTest {
 
       assertTrue(ex.getMessage().contains("Source code size exceeds the allowed limit"));
       verify(submissionRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("VALIDATION ERROR: Should reject blank source before creating a permanently queued submission")
+    void createSubmission_BlankSource_ThrowsException() {
+      SubmissionRequest request = new SubmissionRequest("CPP23", "   \n\t");
+
+      IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+          () -> submissionService.createSubmission(42L, request, null));
+
+      assertEquals("Source code must not be blank", ex.getMessage());
+      verify(taskRepository, never()).findById(any());
+      verify(submissionRepository, never()).save(any());
+      verify(redisQueueService, never()).pushToStream(any());
     }
 
     @Test
