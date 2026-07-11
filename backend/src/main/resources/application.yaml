@@ -12,13 +12,6 @@ spring:
     default-property-inclusion: non_null
 
 app:
-  submissions:
-    max-size: 65535
-    max-log-length: 10000
-    stream-name: "qlc:submissions"
-    worker:
-      enabled: true
-      consumer-group: "submission-workers"
-      consumer-name: "${WORKER_ID:qlc-worker-1}"
-      poll-delay-ms: 500
-      batch-size: 10
+  submission:
+    max-source-size: 65535
+    queue-name: "queue:submissions"
