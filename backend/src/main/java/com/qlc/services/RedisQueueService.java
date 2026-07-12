@@ -26,8 +26,6 @@ public class RedisQueueService {
   public void pushToStream(Submission submission) {
     String uuidStr = submission.getId().toString();
 
-    // Stream contract v1: submissionId is UUID, taskId is Long and sourceCode is
-    // the exact submitted text. Source code must never be written to logs.
     Map<String, String> body = Map.of(
         "submissionId", uuidStr,
         "taskId", submission.getTask().getId().toString(),

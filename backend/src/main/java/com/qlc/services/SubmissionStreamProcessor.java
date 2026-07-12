@@ -16,10 +16,8 @@ import java.util.UUID;
 @Service
 public class SubmissionStreamProcessor {
 
-  static final String TEMPORARY_SUCCESS_MESSAGE =
-      "Temporary worker stub: sandbox execution is not implemented; submission marked AC for integration testing.";
-  static final String CONTRACT_MISMATCH_MESSAGE =
-      "Redis Stream payload does not match the persisted submission metadata.";
+  static final String TEMPORARY_SUCCESS_MESSAGE = "Temporary worker stub: sandbox execution is not implemented; submission marked AC for integration testing.";
+  static final String CONTRACT_MISMATCH_MESSAGE = "Redis Stream payload does not match the persisted submission metadata.";
 
   private final SubmissionRepository submissionRepository;
 
@@ -71,9 +69,6 @@ public class SubmissionStreamProcessor {
           sourceSizeBytes);
     }
 
-    // The temporary worker deliberately performs no compilation or sandbox run.
-    // Intermediate states are assigned inside the same transaction, so other
-    // readers observe either the previous state or the final terminal result.
     submission.setStatus(SubmissionStatus.COMPILING);
     submission.setStatus(SubmissionStatus.RUNNING);
     submission.setVerdict(Verdict.AC);

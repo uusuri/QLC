@@ -1,34 +1,28 @@
 package com.qlc.services;
 
+import com.qlc.models.dtos.SubmissionStreamDTO;
 import com.qlc.models.messages.SubmissionStreamMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.stream.Consumer;
-import org.springframework.data.redis.connection.stream.MapRecord;
-import org.springframework.data.redis.connection.stream.ReadOffset;
-import org.springframework.data.redis.connection.stream.RecordId;
-import org.springframework.data.redis.connection.stream.StreamOffset;
-import org.springframework.data.redis.connection.stream.StreamReadOptions;
+import org.springframework.data.domain.Range;
+import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Component
-@ConditionalOnProperty(
-    name = "app.submissions.worker.enabled",
-    havingValue = "true",
-    matchIfMissing = true)
+@ConditionalOnProperty(name = "app.submissions.worker.enabled", havingValue = "true", matchIfMissing = true)
 public class RedisSubmissionWorker {
 
   private static final Logger log = LoggerFactory.getLogger(RedisSubmissionWorker.class);
   private static final String SUPPORTED_SCHEMA_VERSION = "1";
+  private static final int MAX_RETRY_COUNT = 3;
 
   private final StringRedisTemplate redisTemplate;
   private final SubmissionStreamProcessor processor;
@@ -44,22 +38,25 @@ public class RedisSubmissionWorker {
       SubmissionStreamProcessor processor,
       @Value("${app.submissions.stream-name:qlc:submissions}") String streamName,
       @Value("${app.submissions.worker.consumer-group:submission-workers}") String consumerGroup,
-      @Value("${app.submissions.worker.consumer-name:qlc-worker-1}") String consumerName,
       @Value("${app.submissions.worker.batch-size:10}") long batchSize) {
     this.redisTemplate = redisTemplate;
     this.processor = processor;
     this.streamName = streamName;
     this.consumerGroup = consumerGroup;
-    this.consumerName = consumerName;
+
+    // Уникальное имя инстанса для безопасного масштабирования в Docker
+    this.consumerName = "qlc-worker-" + UUID.randomUUID().toString().substring(0, 8);
     this.batchSize = batchSize;
+
+    log.info("Initialized RedisSubmissionWorker with unique consumer name: {}", this.consumerName);
   }
 
   @Scheduled(fixedDelayString = "${app.submissions.worker.poll-delay-ms:500}")
   public void poll() {
     try {
       ensureConsumerGroup();
-      consume(ReadOffset.from("0-0"));
-      consume(ReadOffset.lastConsumed());
+      consumePendingRecords(); // 1. Чистим зависшие хвосты
+      consumeNewRecords(); // 2. Читаем новые поступления
     } catch (DataAccessException exception) {
       consumerGroupReady = false;
       log.warn("Redis submission poll failed: {}", exception.getMessage());
@@ -68,33 +65,74 @@ public class RedisSubmissionWorker {
     }
   }
 
-  private void consume(ReadOffset offset) {
-    List<MapRecord<String, Object, Object>> records = redisTemplate.opsForStream().read(
+  @SuppressWarnings("unchecked")
+  private void consumePendingRecords() {
+    // Типизированное чтение PEL-списка (0-0)
+    List<ObjectRecord<String, SubmissionStreamDTO>> records = redisTemplate.opsForStream().read(
+        SubmissionStreamDTO.class,
         Consumer.from(consumerGroup, consumerName),
         StreamReadOptions.empty().count(batchSize),
-        StreamOffset.create(streamName, offset));
+        StreamOffset.create(streamName, ReadOffset.from("0-0")));
+
+    if (records == null || records.isEmpty()) {
+      return;
+    }
+
+    for (ObjectRecord<String, SubmissionStreamDTO> record : records) {
+      String messageIdStr = record.getId().getValue();
+
+      // Запрашиваем информацию о доставке конкретного ID через Range
+      PendingMessages pendingDetails = redisTemplate.opsForStream().pending(
+          streamName,
+          consumerGroup,
+          Range.just(messageIdStr),
+          1L);
+
+      long deliveryCount = 0;
+      if (pendingDetails != null && !pendingDetails.isEmpty()) {
+        deliveryCount = pendingDetails.get(0).getTotalDeliveryCount();
+      }
+
+      // Защита от Poison Pill (бесконечного цикла падений)
+      if (deliveryCount > MAX_RETRY_COUNT) {
+        log.error("Poison pill detected! Message {} exceeded max retries ({}). Acknowledging to drop.",
+            record.getId(), deliveryCount);
+        acknowledge(record.getId());
+        continue;
+      }
+
+      processRecord(record);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private void consumeNewRecords() {
+    // Типизированное чтение новых сообщений
+    List<ObjectRecord<String, SubmissionStreamDTO>> records = redisTemplate.opsForStream().read(
+        SubmissionStreamDTO.class,
+        Consumer.from(consumerGroup, consumerName),
+        StreamReadOptions.empty().count(batchSize),
+        StreamOffset.create(streamName, ReadOffset.lastConsumed()));
 
     if (records == null) {
       return;
     }
 
-    for (MapRecord<String, Object, Object> record : records) {
+    for (ObjectRecord<String, SubmissionStreamDTO> record : records) {
       processRecord(record);
     }
   }
 
-  void processRecord(MapRecord<String, Object, Object> record) {
-    Map<Object, Object> body = record.getValue();
-    String schemaVersion = asString(body.get("schemaVersion"));
-    String rawSubmissionId = asString(body.get("submissionId"));
-    String rawTaskId = asString(body.get("taskId"));
-    String sourceCode = asString(body.get("sourceCode"));
+  void processRecord(ObjectRecord<String, SubmissionStreamDTO> record) {
+    SubmissionStreamDTO body = record.getValue();
+
+    String schemaVersion = body.schemaVersion();
+    String rawSubmissionId = body.submissionId();
+    String rawTaskId = body.taskId();
+    String sourceCode = body.sourceCode();
 
     if (!SUPPORTED_SCHEMA_VERSION.equals(schemaVersion)) {
-      log.warn(
-          "Acknowledging submission message {} with unsupported schema version {}",
-          record.getId(),
-          schemaVersion);
+      log.warn("Acknowledging message {} with unsupported schema version {}", record.getId(), schemaVersion);
       acknowledge(record.getId());
       return;
     }
@@ -108,57 +146,35 @@ public class RedisSubmissionWorker {
         throw new IllegalArgumentException("Invalid taskId or sourceCode");
       }
     } catch (RuntimeException exception) {
-      log.warn(
-          "Acknowledging malformed submission message {}: invalid UUID, Long taskId, or sourceCode",
-          record.getId());
+      log.warn("Acknowledging malformed message {}: invalid UUID, taskId, or sourceCode", record.getId());
       acknowledge(record.getId());
       return;
     }
 
     try {
-      SubmissionStreamMessage message = new SubmissionStreamMessage(
-          schemaVersion,
-          submissionId,
-          taskId,
-          sourceCode);
+      SubmissionStreamMessage message = new SubmissionStreamMessage(schemaVersion, submissionId, taskId, sourceCode);
       SubmissionStreamProcessor.ProcessingResult result = processor.process(message);
       acknowledge(record.getId());
-      log.info(
-          "Processed submissionId={} taskId={} sourceBytes={} outcome={}",
-          result.submissionId(),
-          result.taskId(),
-          result.sourceSizeBytes(),
+      log.info("Processed submissionId={} taskId={} outcome={}", result.submissionId(), result.taskId(),
           result.outcome());
     } catch (RuntimeException exception) {
-      // No ACK: the record remains pending and is retried by this configured
-      // consumer name on the next poll. Full cross-consumer reclaim is future work.
-      log.error("Submission processing failed for submissionId={}; message left pending", submissionId, exception);
+      // Оставляем в pending, при следующем тике deliveryCount увеличится
+      log.error("Submission processing failed for submissionId={}; message left pending for retry", submissionId,
+          exception);
     }
   }
 
   private void acknowledge(RecordId recordId) {
-    Long acknowledged = redisTemplate.opsForStream().acknowledge(streamName, consumerGroup, recordId);
-    if (acknowledged == null || acknowledged == 0) {
-      log.debug("Redis message {} was already acknowledged or not pending", recordId);
-    }
-  }
-
-  private String asString(Object value) {
-    return value == null ? null : value.toString();
+    redisTemplate.opsForStream().acknowledge(streamName, consumerGroup, recordId);
   }
 
   private void ensureConsumerGroup() {
     if (consumerGroupReady) {
       return;
     }
-
     try {
-      redisTemplate.opsForStream().createGroup(
-          streamName,
-          ReadOffset.from("0-0"),
-          consumerGroup);
+      redisTemplate.opsForStream().createGroup(streamName, ReadOffset.from("0-0"), consumerGroup);
       consumerGroupReady = true;
-      log.info("Created Redis Stream consumer group {} for {}", consumerGroup, streamName);
     } catch (DataAccessException exception) {
       if (containsBusyGroup(exception)) {
         consumerGroupReady = true;
@@ -179,5 +195,4 @@ public class RedisSubmissionWorker {
     }
     return false;
   }
-
 }

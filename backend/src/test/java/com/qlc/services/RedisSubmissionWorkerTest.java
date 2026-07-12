@@ -1,18 +1,17 @@
 package com.qlc.services;
 
+import com.qlc.models.dtos.SubmissionStreamDTO;
 import com.qlc.models.messages.SubmissionStreamMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.connection.stream.MapRecord;
+import org.springframework.data.redis.connection.stream.ObjectRecord;
 import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.data.redis.core.StreamOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.mockito.Mockito.never;
@@ -40,26 +39,26 @@ class RedisSubmissionWorkerTest {
 
   @BeforeEach
   void setUp() {
-    worker = new RedisSubmissionWorker(redisTemplate, processor, STREAM, GROUP, "worker-test", 10);
+    worker = new RedisSubmissionWorker(redisTemplate, processor, STREAM, GROUP, 10L);
   }
 
   @Test
   void validRecordIsProcessedAndAcknowledged() {
     UUID submissionId = UUID.randomUUID();
-    MapRecord<String, Object, Object> record = record(Map.of(
-        "submissionId", submissionId.toString(),
-        "taskId", "42",
-        "sourceCode", "int main() {}",
-        "schemaVersion", "1"));
-    SubmissionStreamMessage message = new SubmissionStreamMessage(
-        "1", submissionId, 42L, "int main() {}");
+
+    // Создаем типизированный ObjectRecord с нашим новым DTO рекордом
+    ObjectRecord<String, SubmissionStreamDTO> record = createMockRecord(
+        new SubmissionStreamDTO("1", submissionId.toString(), "42", "int main() {}"));
+
+    SubmissionStreamMessage message = new SubmissionStreamMessage("1", submissionId, 42L, "int main() {}");
+
     when(processor.process(message)).thenReturn(new SubmissionStreamProcessor.ProcessingResult(
         SubmissionStreamProcessor.ProcessingOutcome.COMPLETED,
         submissionId,
         42L,
         21));
+
     when(redisTemplate.opsForStream()).thenReturn(streamOperations);
-    when(record.getId()).thenReturn(RECORD_ID);
     when(streamOperations.acknowledge(STREAM, GROUP, RECORD_ID)).thenReturn(1L);
 
     worker.processRecord(record);
@@ -70,13 +69,10 @@ class RedisSubmissionWorkerTest {
 
   @Test
   void malformedUuidIsAcknowledgedAsPoisonMessage() {
-    MapRecord<String, Object, Object> record = record(Map.of(
-        "submissionId", "not-a-uuid",
-        "taskId", "42",
-        "sourceCode", "int main() {}",
-        "schemaVersion", "1"));
+    ObjectRecord<String, SubmissionStreamDTO> record = createMockRecord(
+        new SubmissionStreamDTO("1", "not-a-uuid", "42", "int main() {}"));
+
     when(redisTemplate.opsForStream()).thenReturn(streamOperations);
-    when(record.getId()).thenReturn(RECORD_ID);
     when(streamOperations.acknowledge(STREAM, GROUP, RECORD_ID)).thenReturn(1L);
 
     worker.processRecord(record);
@@ -87,13 +83,10 @@ class RedisSubmissionWorkerTest {
 
   @Test
   void unsupportedSchemaIsAcknowledgedWithoutProcessing() {
-    MapRecord<String, Object, Object> record = record(Map.of(
-        "submissionId", UUID.randomUUID().toString(),
-        "taskId", "42",
-        "sourceCode", "int main() {}",
-        "schemaVersion", "2"));
+    ObjectRecord<String, SubmissionStreamDTO> record = createMockRecord(
+        new SubmissionStreamDTO("2", UUID.randomUUID().toString(), "42", "int main() {}"));
+
     when(redisTemplate.opsForStream()).thenReturn(streamOperations);
-    when(record.getId()).thenReturn(RECORD_ID);
     when(streamOperations.acknowledge(STREAM, GROUP, RECORD_ID)).thenReturn(1L);
 
     worker.processRecord(record);
@@ -105,29 +98,24 @@ class RedisSubmissionWorkerTest {
   @Test
   void processingFailureLeavesMessagePending() {
     UUID submissionId = UUID.randomUUID();
-    MapRecord<String, Object, Object> record = record(Map.of(
-        "submissionId", submissionId.toString(),
-        "taskId", "42",
-        "sourceCode", "int main() {}",
-        "schemaVersion", "1"));
-    when(processor.process(eq(new SubmissionStreamMessage(
-        "1", submissionId, 42L, "int main() {}"))))
+    ObjectRecord<String, SubmissionStreamDTO> record = createMockRecord(
+        new SubmissionStreamDTO("1", submissionId.toString(), "42", "int main() {}"));
+
+    when(processor.process(eq(new SubmissionStreamMessage("1", submissionId, 42L, "int main() {}"))))
         .thenThrow(new IllegalStateException("database unavailable"));
 
     worker.processRecord(record);
 
+    // Убеждаемся, что acknowledge НЕ вызывается при падении бизнес-логики
     verify(streamOperations, never()).acknowledge(STREAM, GROUP, RECORD_ID);
   }
 
   @Test
   void invalidLongTaskIdIsAcknowledgedWithoutProcessing() {
-    MapRecord<String, Object, Object> record = record(Map.of(
-        "submissionId", UUID.randomUUID().toString(),
-        "taskId", "not-a-long",
-        "sourceCode", "int main() {}",
-        "schemaVersion", "1"));
+    ObjectRecord<String, SubmissionStreamDTO> record = createMockRecord(
+        new SubmissionStreamDTO("1", UUID.randomUUID().toString(), "not-a-long", "int main() {}"));
+
     when(redisTemplate.opsForStream()).thenReturn(streamOperations);
-    when(record.getId()).thenReturn(RECORD_ID);
     when(streamOperations.acknowledge(STREAM, GROUP, RECORD_ID)).thenReturn(1L);
 
     worker.processRecord(record);
@@ -136,11 +124,14 @@ class RedisSubmissionWorkerTest {
     verify(streamOperations).acknowledge(STREAM, GROUP, RECORD_ID);
   }
 
+  /**
+   * Вспомогательный метод для генерации типизированного мока ObjectRecord
+   */
   @SuppressWarnings("unchecked")
-  private MapRecord<String, Object, Object> record(Map<String, String> values) {
-    MapRecord<String, Object, Object> record = org.mockito.Mockito.mock(MapRecord.class);
-    Map<Object, Object> body = new HashMap<>(values);
-    when(record.getValue()).thenReturn(body);
+  private ObjectRecord<String, SubmissionStreamDTO> createMockRecord(SubmissionStreamDTO value) {
+    ObjectRecord<String, SubmissionStreamDTO> record = org.mockito.Mockito.mock(ObjectRecord.class);
+    org.mockito.Mockito.lenient().when(record.getId()).thenReturn(RECORD_ID);
+    org.mockito.Mockito.when(record.getValue()).thenReturn(value);
     return record;
   }
 }
