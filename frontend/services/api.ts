@@ -610,9 +610,13 @@ export async function getCourseLearningView(slug: string): Promise<CourseLearnin
   const modulesWithLessons = await Promise.all(
     modules.map(async (module) => ({
       module,
-      lessons: (await getAdminLessons(module.id)).filter((lesson) => lesson.published)
+      // Backend возвращает и опубликованные уроки, и черновики.
+      // Страница курса должна показывать всю структуру, поэтому здесь нельзя
+      // отбрасывать published: false: новые уроки создаются именно с таким статусом.
+      lessons: await getAdminLessons(module.id)
     }))
   );
+  // Главная CTA открывает только опубликованный урок, содержимое которого backend не скрывает.
   const firstLesson =
     modulesWithLessons.flatMap((item) => item.lessons).find((lesson) => lesson.published) ?? null;
 

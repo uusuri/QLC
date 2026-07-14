@@ -6,19 +6,33 @@ project(sandbox
     LANGUAGES CXX
 )
 
+function(enable_sandbox_warnings target_name)
+    target_compile_options(${target_name}
+        PRIVATE
+            -Wall
+            -Wextra
+            -Wpedantic
+            -Wconversion
+            -Wshadow
+    )
+endfunction()
+
 option(
     SANDBOX_BUILD_RESOURCE_TESTS
     "Build resource-limit test fixtures"
     OFF
 )
 
-add_executable(sandbox
-    src/main.cpp
+add_library(sandbox_core STATIC
     src/sandbox.cpp
 )
 
-target_compile_features(sandbox
-    PRIVATE
+add_executable(sandbox
+    src/main.cpp
+)
+
+target_compile_features(sandbox_core
+    PUBLIC
         cxx_std_23
 )
 
@@ -27,24 +41,25 @@ set_target_properties(sandbox
         CXX_EXTENSIONS OFF
 )
 
-target_include_directories(sandbox
-    PRIVATE
+set_target_properties(sandbox_core
+    PROPERTIES
+        CXX_EXTENSIONS OFF
+)
+
+target_include_directories(sandbox_core
+    PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_compile_options(sandbox
+enable_sandbox_warnings(sandbox_core)
+enable_sandbox_warnings(sandbox)
+
+target_link_libraries(sandbox
     PRIVATE
-        -Wall
-        -Wextra
-        -Wpedantic
-        -Wconversion
-        -Wshadow
+        sandbox_core
 )
 
 if(SANDBOX_BUILD_RESOURCE_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()
-
-# TODO: позже добавим отдельную библиотеку sandbox_core,
-# чтобы main.cpp был тонким CLI-слоем, а логика жила в src/.
-# enable_testing() после того, как защиту реализую

@@ -156,7 +156,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
                       <div className="grid gap-px border border-line bg-line">
                         {item.lessons.map((lesson, lessonIndex) => (
                           <Link
-                            className="grid gap-3 bg-ink p-4 transition hover:bg-white/8 sm:grid-cols-[auto_1fr_auto] sm:items-center"
+                            className="grid gap-3 bg-ink p-4 transition hover:bg-white/8 sm:grid-cols-[auto_1fr_auto_auto] sm:items-center"
                             href={`/lessons/${lesson.id}`}
                             key={lesson.id}
                           >
@@ -169,6 +169,9 @@ export default async function CoursePage({ params }: CoursePageProps) {
                                 {lesson.description || "Описание урока пока пустое."}
                               </p>
                             </div>
+                            <StatusBadge tone={lesson.published ? "success" : "warning"}>
+                              {lesson.published ? "published" : "draft"}
+                            </StatusBadge>
                             <span className="font-mono text-xs font-black uppercase text-white/38">
                               ID {lesson.id}
                             </span>
