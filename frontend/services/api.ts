@@ -689,6 +689,17 @@ export async function createAdminCourse(
   });
 }
 
+// Обновляет выбранный курс через текущий PUT CourseController.
+export async function updateAdminCourse(
+  id: number,
+  payload: AdminCourseCreatePayload
+): Promise<AdminCourseDto> {
+  return apiRequest<AdminCourseDto>(`/api/courses/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+}
+
 // Загружает модули только для выбранного курса.
 export async function getAdminModules(courseId: number): Promise<AdminModuleDto[]> {
   return apiRequest<AdminModuleDto[]>(`/api/courses/${courseId}/modules`);
@@ -706,6 +717,17 @@ export async function createAdminModule(
 ): Promise<AdminModuleDto> {
   return apiRequest<AdminModuleDto>(`/api/courses/${courseId}/modules`, {
     method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+// Обновляет выбранный модуль через текущий PUT CourseController.
+export async function updateAdminModule(
+  id: number,
+  payload: AdminModuleCreatePayload
+): Promise<AdminModuleDto> {
+  return apiRequest<AdminModuleDto>(`/api/modules/${id}`, {
+    method: "PUT",
     body: JSON.stringify(payload)
   });
 }
@@ -731,6 +753,17 @@ export async function createAdminLesson(
   });
 }
 
+// Обновляет выбранный урок через текущий PUT CourseController.
+export async function updateAdminLesson(
+  id: number,
+  payload: AdminLessonCreatePayload
+): Promise<AdminLessonDto> {
+  return apiRequest<AdminLessonDto>(`/api/lessons/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+}
+
 // Загружает задачи только для выбранного урока.
 export async function getAdminTasks(lessonId: number): Promise<AdminTaskDto[]> {
   return apiRequest<AdminTaskDto[]>(`/api/lessons/${lessonId}/tasks`);
@@ -748,6 +781,17 @@ export async function createAdminTask(
 ): Promise<AdminTaskDto> {
   return apiRequest<AdminTaskDto>(`/api/lessons/${lessonId}/tasks`, {
     method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+// Обновляет все DTO-поля выбранной задачи через текущий PUT CourseController.
+export async function updateAdminTask(
+  id: number,
+  payload: AdminTaskCreatePayload
+): Promise<AdminTaskDto> {
+  return apiRequest<AdminTaskDto>(`/api/tasks/${id}`, {
+    method: "PUT",
     body: JSON.stringify(payload)
   });
 }

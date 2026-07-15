@@ -4,8 +4,8 @@
 // FormEvent и ReactNode нужны только на уровне типов.
 import type { FormEvent, ReactNode } from "react";
 
-// useEffect загружает зависимые списки, useMemo вычисляет выбранные сущности, useState хранит UI.
-import { useEffect, useMemo, useState } from "react";
+// useEffect загружает данные, useMemo вычисляет выбор, useRef держит restore-снимок.
+import { useEffect, useMemo, useRef, useState } from "react";
 
 // Все backend-запросы идут только через сервисный слой.
 import {
@@ -16,13 +16,20 @@ import {
   getAdminCourses,
   getAdminLessons,
   getAdminModules,
-  getAdminTasks
+  getAdminTasks,
+  updateAdminCourse,
+  updateAdminLesson,
+  updateAdminModule,
+  updateAdminTask
 } from "@/services/api";
 
 // DTO строго повторяют Java record из backend.
 import type {
+  AdminCourseCreatePayload,
   AdminCourseDto,
+  AdminLessonCreatePayload,
   AdminLessonDto,
+  AdminModuleCreatePayload,
   AdminModuleDto,
   AdminTaskCreatePayload,
   AdminTaskDto,
@@ -50,10 +57,20 @@ type CourseFormState = {
   priceInStars: string;
 };
 
-// Форма создания модуля/урока.
-type SimpleNestedFormState = {
+// Форма модуля повторяет редактируемые поля backend ModuleDTO.
+type ModuleFormState = {
   name: string;
   description: string;
+  position: string;
+};
+
+// Форма урока повторяет редактируемые поля backend LessonDTO.
+type LessonFormState = {
+  name: string;
+  description: string;
+  position: string;
+  contentMd: string;
+  published: boolean;
 };
 
 // Форма создания задачи. Специфичные поля показываются только для выбранного taskType.
@@ -72,6 +89,22 @@ type TaskFormState = {
   correctNumericAnswer: string;
 };
 
+// Снимок рабочего места, который позволяет продолжить с того же шага после возврата.
+type AdminWorkspaceSnapshot = {
+  version: 1;
+  activeStep: AdminStep;
+  selectedCourseId: number | null;
+  selectedModuleId: number | null;
+  selectedLessonId: number | null;
+  selectedTaskId: number | null;
+  createdTaskId: number | null;
+  taskForm: TaskFormState;
+  savedAt: string;
+};
+
+// Версионированный ключ не конфликтует с auth и learner draft в localStorage.
+const ADMIN_WORKSPACE_STORAGE_KEY = "qlc:admin-content-workspace:v1";
+
 // Пустое состояние запроса.
 const idlePanelState: PanelState = {
   loading: false,
@@ -87,10 +120,20 @@ const initialCourseForm: CourseFormState = {
   priceInStars: ""
 };
 
-// Начальные значения формы модуля/урока.
-const initialSimpleForm: SimpleNestedFormState = {
+// Начальные значения формы модуля.
+const initialModuleForm: ModuleFormState = {
   name: "",
-  description: ""
+  description: "",
+  position: "0"
+};
+
+// Начальные значения формы урока.
+const initialLessonForm: LessonFormState = {
+  name: "",
+  description: "",
+  position: "0",
+  contentMd: "",
+  published: false
 };
 
 // Начальные значения формы задачи. CODE-лимиты совпадают с backend defaults.
@@ -186,6 +229,17 @@ function parseOptionalPositiveInteger(value: string, label: string): number | nu
   return parsed;
 }
 
+// DTO position принимает целое число от нуля: ноль означает первую/default позицию.
+function parseNonNegativeInteger(value: string, label: string): number {
+  const parsed = Number(value.trim());
+
+  if (!Number.isSafeInteger(parsed) || parsed < 0) {
+    throw new Error(`${label} must be a non-negative integer.`);
+  }
+
+  return parsed;
+}
+
 // Превращает TEST textarea в массив непустых вариантов, по одному на строку.
 function parseTestOptions(value: string): string[] {
   return value
@@ -197,6 +251,251 @@ function parseTestOptions(value: string): string[] {
 // Поиск по названию/тексту без учета регистра.
 function matchesSearch(value: string, search: string): boolean {
   return value.toLowerCase().includes(search.trim().toLowerCase());
+}
+
+// Type guard защищает восстановление от поврежденного JSON в localStorage.
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+// Возвращает строку из неизвестного JSON или fallback.
+function storedString(value: unknown, fallback: string): string {
+  return typeof value === "string" ? value : fallback;
+}
+
+// ID из storage должен быть положительным безопасным integer или null.
+function storedId(value: unknown): number | null {
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0 ? value : null;
+}
+
+// Восстанавливает Task draft по полям, не доверяя форме сохраненного JSON.
+function restoreTaskForm(value: unknown): TaskFormState {
+  if (!isRecord(value)) {
+    return initialTaskForm;
+  }
+
+  const taskType: AdminTaskType =
+    value.taskType === "TEST" || value.taskType === "NUMERIC" || value.taskType === "CODE"
+      ? value.taskType
+      : initialTaskForm.taskType;
+  const correctOptionIndexes = Array.isArray(value.correctOptionIndexes)
+    ? value.correctOptionIndexes.filter(
+        (index): index is number => Number.isSafeInteger(index) && Number(index) >= 0
+      )
+    : initialTaskForm.correctOptionIndexes;
+
+  return {
+    taskType,
+    statementMd: storedString(value.statementMd, initialTaskForm.statementMd),
+    starterCode: storedString(value.starterCode, initialTaskForm.starterCode),
+    templateCode: storedString(value.templateCode, initialTaskForm.templateCode),
+    testCases: storedString(value.testCases, initialTaskForm.testCases),
+    timeLimitMs: storedString(value.timeLimitMs, initialTaskForm.timeLimitMs),
+    memoryLimitKb: storedString(value.memoryLimitKb, initialTaskForm.memoryLimitKb),
+    outputLimitKb: storedString(value.outputLimitKb, initialTaskForm.outputLimitKb),
+    testSetVersion: storedString(value.testSetVersion, initialTaskForm.testSetVersion),
+    optionsText: storedString(value.optionsText, initialTaskForm.optionsText),
+    correctOptionIndexes,
+    correctNumericAnswer: storedString(
+      value.correctNumericAnswer,
+      initialTaskForm.correctNumericAnswer
+    )
+  };
+}
+
+// Читает последний шаг и Task draft. Любая ошибка дает чистое рабочее место.
+function readAdminWorkspace(): AdminWorkspaceSnapshot | null {
+  try {
+    const raw = window.localStorage.getItem(ADMIN_WORKSPACE_STORAGE_KEY);
+
+    if (!raw) {
+      return null;
+    }
+
+    const parsed: unknown = JSON.parse(raw);
+
+    if (!isRecord(parsed) || parsed.version !== 1) {
+      return null;
+    }
+
+    const activeStep: AdminStep =
+      parsed.activeStep === "module" ||
+      parsed.activeStep === "lesson" ||
+      parsed.activeStep === "task" ||
+      parsed.activeStep === "course"
+        ? parsed.activeStep
+        : "course";
+
+    return {
+      version: 1,
+      activeStep,
+      selectedCourseId: storedId(parsed.selectedCourseId),
+      selectedModuleId: storedId(parsed.selectedModuleId),
+      selectedLessonId: storedId(parsed.selectedLessonId),
+      selectedTaskId: storedId(parsed.selectedTaskId),
+      createdTaskId: storedId(parsed.createdTaskId),
+      taskForm: restoreTaskForm(parsed.taskForm),
+      savedAt: storedString(parsed.savedAt, "")
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Преобразует Course form в payload для POST и PUT.
+function buildCoursePayload(form: CourseFormState): AdminCourseCreatePayload {
+  if (!form.name.trim()) {
+    throw new Error("Course name is required.");
+  }
+
+  return {
+    name: form.name.trim(),
+    description: form.description.trim(),
+    price: parseOptionalNumber(form.price),
+    priceInStars: parseOptionalNumber(form.priceInStars)
+  };
+}
+
+// Преобразует Module form в полный DTO payload.
+function buildModulePayload(form: ModuleFormState): AdminModuleCreatePayload {
+  if (!form.name.trim()) {
+    throw new Error("Module name is required.");
+  }
+
+  return {
+    name: form.name.trim(),
+    description: form.description.trim(),
+    position: parseNonNegativeInteger(form.position, "position")
+  };
+}
+
+// Преобразует Lesson form в полный DTO payload.
+function buildLessonPayload(form: LessonFormState): AdminLessonCreatePayload {
+  if (!form.name.trim()) {
+    throw new Error("Lesson name is required.");
+  }
+
+  return {
+    name: form.name.trim(),
+    description: form.description.trim(),
+    position: parseNonNegativeInteger(form.position, "position"),
+    contentMd: optionalText(form.contentMd),
+    published: form.published
+  };
+}
+
+// Собирает Task payload и валидирует поля конкретного discriminator-типа.
+function buildTaskPayload(form: TaskFormState): AdminTaskCreatePayload {
+  if (!form.statementMd.trim()) {
+    throw new Error("Task statementMd is required.");
+  }
+
+  const payload: AdminTaskCreatePayload = {
+    taskType: form.taskType,
+    statementMd: form.statementMd.trim(),
+    starterCode: null,
+    timeLimitMs: null,
+    memoryLimitKb: null,
+    outputLimitKb: null,
+    testSetVersion: null,
+    templateCode: null,
+    testCases: null,
+    options: null,
+    correctOptionIndexes: null,
+    correctNumericAnswer: null
+  };
+
+  if (form.taskType === "CODE") {
+    payload.starterCode = optionalText(form.starterCode);
+    payload.templateCode = optionalText(form.templateCode);
+    payload.testCases = optionalText(form.testCases);
+    payload.timeLimitMs = parseOptionalPositiveInteger(form.timeLimitMs, "timeLimitMs");
+    payload.memoryLimitKb = parseOptionalPositiveInteger(form.memoryLimitKb, "memoryLimitKb");
+    payload.outputLimitKb = parseOptionalPositiveInteger(form.outputLimitKb, "outputLimitKb");
+    payload.testSetVersion = parseOptionalPositiveInteger(form.testSetVersion, "testSetVersion");
+  }
+
+  if (form.taskType === "TEST") {
+    const options = parseTestOptions(form.optionsText);
+
+    if (options.length < 2) {
+      throw new Error("TEST task requires at least two non-empty options.");
+    }
+
+    if (form.correctOptionIndexes.length === 0) {
+      throw new Error("Select at least one correct TEST option.");
+    }
+
+    if (
+      form.correctOptionIndexes.some(
+        (index) => !Number.isSafeInteger(index) || index < 0 || index >= options.length
+      )
+    ) {
+      throw new Error(`Every correct option index must be between 0 and ${options.length - 1}.`);
+    }
+
+    payload.options = options;
+    payload.correctOptionIndexes = [...form.correctOptionIndexes].sort((a, b) => a - b);
+  }
+
+  if (form.taskType === "NUMERIC") {
+    const rawAnswer = form.correctNumericAnswer.trim();
+    const correctNumericAnswer = Number(rawAnswer);
+
+    if (!rawAnswer || !Number.isFinite(correctNumericAnswer)) {
+      throw new Error("correctNumericAnswer must be a valid number.");
+    }
+
+    payload.correctNumericAnswer = correctNumericAnswer;
+  }
+
+  return payload;
+}
+
+// Заполняет формы данными выбранной сущности для последующего PUT.
+function courseDtoToForm(course: AdminCourseDto): CourseFormState {
+  return {
+    name: course.name,
+    description: course.description,
+    price: course.price === null ? "" : String(course.price),
+    priceInStars: course.priceInStars === null ? "" : String(course.priceInStars)
+  };
+}
+
+function moduleDtoToForm(moduleItem: AdminModuleDto): ModuleFormState {
+  return {
+    name: moduleItem.name,
+    description: moduleItem.description,
+    position: String(moduleItem.position)
+  };
+}
+
+function lessonDtoToForm(lesson: AdminLessonDto): LessonFormState {
+  return {
+    name: lesson.name,
+    description: lesson.description,
+    position: String(lesson.position),
+    contentMd: lesson.contentMd ?? "",
+    published: lesson.published
+  };
+}
+
+function taskDtoToForm(task: AdminTaskDto): TaskFormState {
+  return {
+    taskType: task.taskType,
+    statementMd: task.statementMd,
+    starterCode: task.starterCode ?? "",
+    templateCode: task.templateCode ?? "",
+    testCases: task.testCases ?? "",
+    timeLimitMs: task.timeLimitMs === null ? "" : String(task.timeLimitMs),
+    memoryLimitKb: task.memoryLimitKb === null ? "" : String(task.memoryLimitKb),
+    outputLimitKb: task.outputLimitKb === null ? "" : String(task.outputLimitKb),
+    testSetVersion: task.testSetVersion === null ? "" : String(task.testSetVersion),
+    optionsText: (task.options ?? []).join("\n"),
+    correctOptionIndexes: [...(task.correctOptionIndexes ?? [])],
+    correctNumericAnswer:
+      task.correctNumericAnswer === null ? "" : String(task.correctNumericAnswer)
+  };
 }
 
 // Главная страница внутренней панели контента.
@@ -228,9 +527,14 @@ export default function AdminContentPage() {
 
   // Формы создания сущностей.
   const [courseForm, setCourseForm] = useState<CourseFormState>(initialCourseForm);
-  const [moduleForm, setModuleForm] = useState<SimpleNestedFormState>(initialSimpleForm);
-  const [lessonForm, setLessonForm] = useState<SimpleNestedFormState>(initialSimpleForm);
+  const [moduleForm, setModuleForm] = useState<ModuleFormState>(initialModuleForm);
+  const [lessonForm, setLessonForm] = useState<LessonFormState>(initialLessonForm);
   const [taskForm, setTaskForm] = useState<TaskFormState>(initialTaskForm);
+
+  // Пока restore не завершен, autosave не должен затереть сохраненный путь пустыми ID.
+  const [workspaceStorageReady, setWorkspaceStorageReady] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState("");
+  const pendingRestoreRef = useRef<AdminWorkspaceSnapshot | null>(null);
 
   // Отдельный status на каждый шаг, чтобы ошибки не перетирали друг друга.
   const [courseState, setCourseState] = useState<PanelState>(idlePanelState);
@@ -280,6 +584,28 @@ export default function AdminContentPage() {
     [tasks, taskSearch]
   );
 
+  // На первом client mount читаем последний шаг и Task draft.
+  useEffect(() => {
+    const snapshot = readAdminWorkspace();
+
+    if (!snapshot) {
+      setWorkspaceStorageReady(true);
+      return;
+    }
+
+    pendingRestoreRef.current = snapshot;
+    setActiveStep(snapshot.activeStep);
+    setTaskForm(snapshot.taskForm);
+    setLastSavedAt(snapshot.savedAt);
+    setSelectedCourseId(snapshot.selectedCourseId);
+
+    // Без Course каскадно восстанавливать больше нечего.
+    if (snapshot.selectedCourseId === null) {
+      pendingRestoreRef.current = null;
+      setWorkspaceStorageReady(true);
+    }
+  }, []);
+
   // Первичная загрузка курсов. Пустая база даст пустой список, не падение страницы.
   useEffect(() => {
     let ignore = false;
@@ -293,10 +619,26 @@ export default function AdminContentPage() {
         if (!ignore) {
           setCourses(nextCourses);
           setCourseState(idlePanelState);
+
+          const pending = pendingRestoreRef.current;
+
+          // Если сохраненный Course удалили, сбрасываем невалидный путь до первого шага.
+          if (
+            pending?.selectedCourseId !== null &&
+            pending?.selectedCourseId !== undefined &&
+            !nextCourses.some((course) => course.id === pending.selectedCourseId)
+          ) {
+            pendingRestoreRef.current = null;
+            setSelectedCourseId(null);
+            setActiveStep("course");
+            setWorkspaceStorageReady(true);
+          }
         }
       } catch (error) {
         if (!ignore) {
           setCourseState({ loading: false, error: getErrorMessage(error), success: "" });
+          pendingRestoreRef.current = null;
+          setWorkspaceStorageReady(true);
         }
       }
     }
@@ -340,10 +682,36 @@ export default function AdminContentPage() {
         if (!ignore) {
           setModules(nextModules);
           setModuleState(idlePanelState);
+
+          const pending = pendingRestoreRef.current;
+          const restoredModuleId =
+            pending?.selectedCourseId === courseId &&
+            pending.selectedModuleId !== null &&
+            nextModules.some((moduleItem) => moduleItem.id === pending.selectedModuleId)
+              ? pending.selectedModuleId
+              : null;
+
+          if (restoredModuleId !== null) {
+            setSelectedModuleId(restoredModuleId);
+          } else if (pending?.selectedCourseId === courseId) {
+            // Course существует, но сохраненного Module уже нет: продолжаем с Module step.
+            pendingRestoreRef.current = null;
+            setActiveStep(
+              pending.activeStep === "course" ? pending.activeStep : "module"
+            );
+            setWorkspaceStorageReady(true);
+          }
         }
       } catch (error) {
         if (!ignore) {
           setModuleState({ loading: false, error: getErrorMessage(error), success: "" });
+
+          if (pendingRestoreRef.current?.selectedCourseId === courseId) {
+            const pending = pendingRestoreRef.current;
+            pendingRestoreRef.current = null;
+            setActiveStep(pending.activeStep);
+            setWorkspaceStorageReady(true);
+          }
         }
       }
     }
@@ -384,10 +752,38 @@ export default function AdminContentPage() {
         if (!ignore) {
           setLessons(nextLessons);
           setLessonState(idlePanelState);
+
+          const pending = pendingRestoreRef.current;
+          const restoredLessonId =
+            pending?.selectedModuleId === moduleId &&
+            pending.selectedLessonId !== null &&
+            nextLessons.some((lesson) => lesson.id === pending.selectedLessonId)
+              ? pending.selectedLessonId
+              : null;
+
+          if (restoredLessonId !== null) {
+            setSelectedLessonId(restoredLessonId);
+          } else if (pending?.selectedModuleId === moduleId) {
+            // Module существует, но Lesson удален или не был выбран.
+            pendingRestoreRef.current = null;
+            setActiveStep(
+              pending.activeStep === "course" || pending.activeStep === "module"
+                ? pending.activeStep
+                : "lesson"
+            );
+            setWorkspaceStorageReady(true);
+          }
         }
       } catch (error) {
         if (!ignore) {
           setLessonState({ loading: false, error: getErrorMessage(error), success: "" });
+
+          if (pendingRestoreRef.current?.selectedModuleId === moduleId) {
+            const pending = pendingRestoreRef.current;
+            pendingRestoreRef.current = null;
+            setActiveStep(pending.activeStep);
+            setWorkspaceStorageReady(true);
+          }
         }
       }
     }
@@ -425,10 +821,37 @@ export default function AdminContentPage() {
         if (!ignore) {
           setTasks(nextTasks);
           setTaskState(idlePanelState);
+
+          const pending = pendingRestoreRef.current;
+
+          if (pending?.selectedLessonId === lessonId) {
+            const restoredTaskId =
+              pending.selectedTaskId !== null &&
+              nextTasks.some((task) => task.id === pending.selectedTaskId)
+                ? pending.selectedTaskId
+                : null;
+            const restoredCreatedTaskId =
+              pending.createdTaskId !== null &&
+              nextTasks.some((task) => task.id === pending.createdTaskId)
+                ? pending.createdTaskId
+                : null;
+
+            setSelectedTaskId(restoredTaskId);
+            setCreatedTaskId(restoredCreatedTaskId);
+            pendingRestoreRef.current = null;
+            setWorkspaceStorageReady(true);
+          }
         }
       } catch (error) {
         if (!ignore) {
           setTaskState({ loading: false, error: getErrorMessage(error), success: "" });
+
+          if (pendingRestoreRef.current?.selectedLessonId === lessonId) {
+            const pending = pendingRestoreRef.current;
+            pendingRestoreRef.current = null;
+            setActiveStep(pending.activeStep);
+            setWorkspaceStorageReady(true);
+          }
         }
       }
     }
@@ -440,23 +863,49 @@ export default function AdminContentPage() {
     };
   }, [selectedLessonId]);
 
+  // Сохраняет последний шаг, выбранный путь и каждое изменение Task draft.
+  useEffect(() => {
+    if (!workspaceStorageReady) {
+      return;
+    }
+
+    const savedAt = new Date().toISOString();
+    const snapshot: AdminWorkspaceSnapshot = {
+      version: 1,
+      activeStep,
+      selectedCourseId,
+      selectedModuleId,
+      selectedLessonId,
+      selectedTaskId,
+      createdTaskId,
+      taskForm,
+      savedAt
+    };
+
+    try {
+      window.localStorage.setItem(ADMIN_WORKSPACE_STORAGE_KEY, JSON.stringify(snapshot));
+      setLastSavedAt(savedAt);
+    } catch {
+      // Админка продолжает работать, даже если storage запрещен политикой браузера.
+    }
+  }, [
+    activeStep,
+    createdTaskId,
+    selectedCourseId,
+    selectedLessonId,
+    selectedModuleId,
+    selectedTaskId,
+    taskForm,
+    workspaceStorageReady
+  ]);
+
   // Создание курса и обновление списка без перезагрузки страницы.
   async function handleCreateCourse(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     try {
-      if (!courseForm.name.trim()) {
-        throw new Error("Course name is required.");
-      }
-
       setCourseState({ loading: true, error: "", success: "" });
-
-      const created = await createAdminCourse({
-        name: courseForm.name.trim(),
-        description: courseForm.description.trim(),
-        price: parseOptionalNumber(courseForm.price),
-        priceInStars: parseOptionalNumber(courseForm.priceInStars)
-      });
+      const created = await createAdminCourse(buildCoursePayload(courseForm));
 
       const nextCourses = await getAdminCourses();
 
@@ -484,22 +933,17 @@ export default function AdminContentPage() {
         throw new Error("Select Course before creating Module.");
       }
 
-      if (!moduleForm.name.trim()) {
-        throw new Error("Module name is required.");
-      }
-
       setModuleState({ loading: true, error: "", success: "" });
-
-      const created = await createAdminModule(selectedCourseId, {
-        name: moduleForm.name.trim(),
-        description: moduleForm.description.trim()
-      });
+      const created = await createAdminModule(
+        selectedCourseId,
+        buildModulePayload(moduleForm)
+      );
 
       const nextModules = await getAdminModules(selectedCourseId);
 
       setModules(nextModules);
       setSelectedModuleId(created.id);
-      setModuleForm(initialSimpleForm);
+      setModuleForm(initialModuleForm);
       setModuleSearch("");
       setActiveStep("lesson");
       setModuleState({
@@ -521,22 +965,17 @@ export default function AdminContentPage() {
         throw new Error("Select Module before creating Lesson.");
       }
 
-      if (!lessonForm.name.trim()) {
-        throw new Error("Lesson name is required.");
-      }
-
       setLessonState({ loading: true, error: "", success: "" });
-
-      const created = await createAdminLesson(selectedModuleId, {
-        name: lessonForm.name.trim(),
-        description: lessonForm.description.trim()
-      });
+      const created = await createAdminLesson(
+        selectedModuleId,
+        buildLessonPayload(lessonForm)
+      );
 
       const nextLessons = await getAdminLessons(selectedModuleId);
 
       setLessons(nextLessons);
       setSelectedLessonId(created.id);
-      setLessonForm(initialSimpleForm);
+      setLessonForm(initialLessonForm);
       setLessonSearch("");
       setLessonState({
         loading: false,
@@ -557,83 +996,10 @@ export default function AdminContentPage() {
         throw new Error("Select Lesson before creating Task.");
       }
 
-      if (!taskForm.statementMd.trim()) {
-        throw new Error("Task statementMd is required.");
-      }
-
       setTaskState({ loading: true, error: "", success: "" });
       setCreatedTaskId(null);
       setCopyStatus("");
-
-      const payload: AdminTaskCreatePayload = {
-        taskType: taskForm.taskType,
-        statementMd: taskForm.statementMd.trim(),
-        starterCode: null,
-        timeLimitMs: null,
-        memoryLimitKb: null,
-        outputLimitKb: null,
-        testSetVersion: null,
-        templateCode: null,
-        testCases: null,
-        options: null,
-        correctOptionIndexes: null,
-        correctNumericAnswer: null
-      };
-
-      if (taskForm.taskType === "CODE") {
-        payload.starterCode = optionalText(taskForm.starterCode);
-        payload.templateCode = optionalText(taskForm.templateCode);
-        payload.testCases = optionalText(taskForm.testCases);
-        payload.timeLimitMs = parseOptionalPositiveInteger(taskForm.timeLimitMs, "timeLimitMs");
-        payload.memoryLimitKb = parseOptionalPositiveInteger(
-          taskForm.memoryLimitKb,
-          "memoryLimitKb"
-        );
-        payload.outputLimitKb = parseOptionalPositiveInteger(
-          taskForm.outputLimitKb,
-          "outputLimitKb"
-        );
-        payload.testSetVersion = parseOptionalPositiveInteger(
-          taskForm.testSetVersion,
-          "testSetVersion"
-        );
-      }
-
-      if (taskForm.taskType === "TEST") {
-        const options = parseTestOptions(taskForm.optionsText);
-
-        if (options.length < 2) {
-          throw new Error("TEST task requires at least two non-empty options.");
-        }
-
-        if (taskForm.correctOptionIndexes.length === 0) {
-          throw new Error("Select at least one correct TEST option.");
-        }
-
-        if (
-          taskForm.correctOptionIndexes.some(
-            (index) => !Number.isSafeInteger(index) || index < 0 || index >= options.length
-          )
-        ) {
-          throw new Error(`Every correct option index must be between 0 and ${options.length - 1}.`);
-        }
-
-        payload.options = options;
-        payload.correctOptionIndexes = [...taskForm.correctOptionIndexes].sort((a, b) => a - b);
-      }
-
-      if (taskForm.taskType === "NUMERIC") {
-        const rawAnswer = taskForm.correctNumericAnswer.trim();
-        const correctNumericAnswer = Number(rawAnswer);
-
-        if (!rawAnswer || !Number.isFinite(correctNumericAnswer)) {
-          throw new Error("correctNumericAnswer must be a valid number.");
-        }
-
-        payload.correctNumericAnswer = correctNumericAnswer;
-      }
-
-      const created = await createAdminTask(selectedLessonId, payload);
+      const created = await createAdminTask(selectedLessonId, buildTaskPayload(taskForm));
 
       const nextTasks = await getAdminTasks(selectedLessonId);
 
@@ -652,6 +1018,93 @@ export default function AdminContentPage() {
     }
   }
 
+  // PUT обновляет выбранный Course, не создавая дубликат записи.
+  async function handleUpdateCourse() {
+    try {
+      if (selectedCourseId === null) {
+        throw new Error("Select Course before updating it.");
+      }
+
+      setCourseState({ loading: true, error: "", success: "" });
+      const updated = await updateAdminCourse(
+        selectedCourseId,
+        buildCoursePayload(courseForm)
+      );
+      const nextCourses = await getAdminCourses();
+
+      setCourses(nextCourses);
+      setCourseForm(courseDtoToForm(updated));
+      setCourseState({ loading: false, error: "", success: `Course updated. ID: ${updated.id}` });
+    } catch (error) {
+      setCourseState({ loading: false, error: getErrorMessage(error), success: "" });
+    }
+  }
+
+  // PUT обновляет выбранный Module всеми полями frontend DTO.
+  async function handleUpdateModule() {
+    try {
+      if (selectedCourseId === null || selectedModuleId === null) {
+        throw new Error("Select Module before updating it.");
+      }
+
+      setModuleState({ loading: true, error: "", success: "" });
+      const updated = await updateAdminModule(
+        selectedModuleId,
+        buildModulePayload(moduleForm)
+      );
+      const nextModules = await getAdminModules(selectedCourseId);
+
+      setModules(nextModules);
+      setModuleForm(moduleDtoToForm(updated));
+      setModuleState({ loading: false, error: "", success: `Module updated. ID: ${updated.id}` });
+    } catch (error) {
+      setModuleState({ loading: false, error: getErrorMessage(error), success: "" });
+    }
+  }
+
+  // PUT обновляет выбранный Lesson всеми полями frontend DTO.
+  async function handleUpdateLesson() {
+    try {
+      if (selectedModuleId === null || selectedLessonId === null) {
+        throw new Error("Select Lesson before updating it.");
+      }
+
+      setLessonState({ loading: true, error: "", success: "" });
+      const updated = await updateAdminLesson(
+        selectedLessonId,
+        buildLessonPayload(lessonForm)
+      );
+      const nextLessons = await getAdminLessons(selectedModuleId);
+
+      setLessons(nextLessons);
+      setLessonForm(lessonDtoToForm(updated));
+      setLessonState({ loading: false, error: "", success: `Lesson updated. ID: ${updated.id}` });
+    } catch (error) {
+      setLessonState({ loading: false, error: getErrorMessage(error), success: "" });
+    }
+  }
+
+  // PUT обновляет Task и оставляет форму заполненной последней серверной версией.
+  async function handleUpdateTask() {
+    try {
+      if (selectedLessonId === null || selectedTaskId === null) {
+        throw new Error("Select Task before updating it.");
+      }
+
+      setTaskState({ loading: true, error: "", success: "" });
+      setCreatedTaskId(null);
+      setCopyStatus("");
+      const updated = await updateAdminTask(selectedTaskId, buildTaskPayload(taskForm));
+      const nextTasks = await getAdminTasks(selectedLessonId);
+
+      setTasks(nextTasks);
+      setTaskForm(taskDtoToForm(updated));
+      setTaskState({ loading: false, error: "", success: `Task updated. ID: ${updated.id}` });
+    } catch (error) {
+      setTaskState({ loading: false, error: getErrorMessage(error), success: "" });
+    }
+  }
+
   // Копирует taskId для ручной проверки submission API.
   async function handleCopyTaskId(taskId: number) {
     try {
@@ -664,6 +1117,8 @@ export default function AdminContentPage() {
 
   // Выбор курса явно сбрасывает нижние уровни, чтобы не создать сущность не туда.
   function handleSelectCourse(courseId: number) {
+    const course = courses.find((item) => item.id === courseId);
+
     setSelectedCourseId(courseId);
     setSelectedModuleId(null);
     setSelectedLessonId(null);
@@ -671,32 +1126,54 @@ export default function AdminContentPage() {
     setCreatedTaskId(null);
     setCopyStatus("");
     setActiveStep("module");
+
+    if (course) {
+      setCourseForm(courseDtoToForm(course));
+    }
   }
 
   // Выбор модуля сбрасывает уроки/задачи.
   function handleSelectModule(moduleId: number) {
+    const moduleItem = modules.find((item) => item.id === moduleId);
+
     setSelectedModuleId(moduleId);
     setSelectedLessonId(null);
     setSelectedTaskId(null);
     setCreatedTaskId(null);
     setCopyStatus("");
     setActiveStep("lesson");
+
+    if (moduleItem) {
+      setModuleForm(moduleDtoToForm(moduleItem));
+    }
   }
 
   // Выбор урока сбрасывает выбранную задачу.
   function handleSelectLesson(lessonId: number) {
+    const lesson = lessons.find((item) => item.id === lessonId);
+
     setSelectedLessonId(lessonId);
     setSelectedTaskId(null);
     setCreatedTaskId(null);
     setCopyStatus("");
     setActiveStep("task");
+
+    if (lesson) {
+      setLessonForm(lessonDtoToForm(lesson));
+    }
   }
 
   // Выбор задачи нужен для selected path и копирования уже существующего taskId.
   function handleSelectTask(taskId: number) {
+    const task = tasks.find((item) => item.id === taskId);
+
     setSelectedTaskId(taskId);
     setCreatedTaskId(null);
     setCopyStatus("");
+
+    if (task) {
+      setTaskForm(taskDtoToForm(task));
+    }
   }
 
   // Проверяет, можно ли реально работать с выбранной вкладкой.
@@ -716,13 +1193,29 @@ export default function AdminContentPage() {
     return true;
   }
 
+  const activeStepIndex = adminSteps.findIndex((step) => step.id === activeStep);
+  const previousStep = activeStepIndex > 0 ? adminSteps[activeStepIndex - 1] : null;
+  const nextStep = activeStepIndex < adminSteps.length - 1 ? adminSteps[activeStepIndex + 1] : null;
+
   return (
     <main className="min-h-screen px-4 py-4 sm:px-6 lg:px-8">
       <section className="mx-auto max-w-7xl border border-line bg-ink/95">
         <header className="border-b border-line p-5 sm:p-7">
-          <p className="font-mono text-xs font-bold uppercase text-acid">
-            internal / sprint 2 content tool
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="font-mono text-xs font-bold uppercase text-acid">
+              internal / sprint 2 content tool
+            </p>
+            <p className="border border-line px-3 py-2 font-mono text-[10px] font-bold uppercase text-white/52">
+              {!workspaceStorageReady
+                ? "restoring workspace"
+                : lastSavedAt
+                  ? `local draft saved ${new Date(lastSavedAt).toLocaleTimeString("ru-RU", {
+                      hour: "2-digit",
+                      minute: "2-digit"
+                    })}`
+                  : "local draft ready"}
+            </p>
+          </div>
           <h1 className="mt-3 text-4xl font-black uppercase leading-none sm:text-6xl">
             Admin Content Builder
           </h1>
@@ -819,7 +1312,13 @@ export default function AdminContentPage() {
                       }
                     />
                   </div>
-                  <SubmitButton disabled={courseState.loading} label="Create Course" />
+                  <FormActions
+                    busy={courseState.loading}
+                    createLabel="Create Course"
+                    onUpdate={handleUpdateCourse}
+                    updateDisabled={selectedCourseId === null}
+                    updateLabel="Update selected Course"
+                  />
                 </form>
               </div>
             </WorkspacePanel>
@@ -850,7 +1349,7 @@ export default function AdminContentPage() {
                       }
                       items={filteredModules.map((moduleItem) => ({
                         id: moduleItem.id,
-                        meta: `moduleId: ${moduleItem.id} / courseId: ${moduleItem.courseId}`,
+                        meta: `moduleId: ${moduleItem.id} / courseId: ${moduleItem.courseId} / position: ${moduleItem.position}`,
                         title: moduleItem.name
                       }))}
                       loading={moduleState.loading && modules.length === 0}
@@ -876,7 +1375,21 @@ export default function AdminContentPage() {
                         setModuleForm((current) => ({ ...current, description: value }))
                       }
                     />
-                    <SubmitButton disabled={moduleState.loading} label="Create Module" />
+                    <TextInput
+                      inputMode="numeric"
+                      label="position"
+                      value={moduleForm.position}
+                      onChange={(value) =>
+                        setModuleForm((current) => ({ ...current, position: value }))
+                      }
+                    />
+                    <FormActions
+                      busy={moduleState.loading}
+                      createLabel="Create Module"
+                      onUpdate={handleUpdateModule}
+                      updateDisabled={selectedModuleId === null}
+                      updateLabel="Update selected Module"
+                    />
                   </form>
                 </div>
               )}
@@ -917,7 +1430,7 @@ export default function AdminContentPage() {
                       }
                       items={filteredLessons.map((lesson) => ({
                         id: lesson.id,
-                        meta: `lessonId: ${lesson.id} / moduleId: ${lesson.moduleId}`,
+                        meta: `lessonId: ${lesson.id} / moduleId: ${lesson.moduleId} / position: ${lesson.position} / ${lesson.published ? "published" : "draft"}`,
                         title: lesson.name
                       }))}
                       loading={lessonState.loading && lessons.length === 0}
@@ -943,7 +1456,37 @@ export default function AdminContentPage() {
                         setLessonForm((current) => ({ ...current, description: value }))
                       }
                     />
-                    <SubmitButton disabled={lessonState.loading} label="Create Lesson" />
+                    <TextInput
+                      inputMode="numeric"
+                      label="position"
+                      value={lessonForm.position}
+                      onChange={(value) =>
+                        setLessonForm((current) => ({ ...current, position: value }))
+                      }
+                    />
+                    <TextArea
+                      help="Материал урока в Markdown. Backend может скрывать его, пока published выключен."
+                      label="contentMd"
+                      rows={8}
+                      value={lessonForm.contentMd}
+                      onChange={(value) =>
+                        setLessonForm((current) => ({ ...current, contentMd: value }))
+                      }
+                    />
+                    <ToggleInput
+                      checked={lessonForm.published}
+                      label="published"
+                      onChange={(published) =>
+                        setLessonForm((current) => ({ ...current, published }))
+                      }
+                    />
+                    <FormActions
+                      busy={lessonState.loading}
+                      createLabel="Create Lesson"
+                      onUpdate={handleUpdateLesson}
+                      updateDisabled={selectedLessonId === null}
+                      updateLabel="Update selected Lesson"
+                    />
                   </form>
                 </div>
               )}
@@ -1178,15 +1721,26 @@ export default function AdminContentPage() {
                       </div>
                     )}
 
-                    <SubmitButton
-                      disabled={taskState.loading}
-                      label={`Create ${taskForm.taskType} Task`}
+                    <FormActions
+                      busy={taskState.loading}
+                      createLabel={`Create ${taskForm.taskType} Task`}
+                      onUpdate={handleUpdateTask}
+                      updateDisabled={selectedTaskId === null}
+                      updateLabel={`Update selected ${taskForm.taskType} Task`}
                     />
                   </form>
                 </div>
               )}
             </WorkspacePanel>
           )}
+
+          <StepNavigation
+            nextDisabled={nextStep !== null && !isStepReady(nextStep.id)}
+            nextLabel={nextStep?.label ?? null}
+            onNext={() => nextStep && setActiveStep(nextStep.id)}
+            onPrevious={() => previousStep && setActiveStep(previousStep.id)}
+            previousLabel={previousStep?.label ?? null}
+          />
         </section>
       </section>
     </main>
@@ -1273,6 +1827,50 @@ function TabButton({
       </span>
       <span className="font-mono text-[10px] font-bold uppercase opacity-60">{subtitle}</span>
     </button>
+  );
+}
+
+// Нижняя навигация позволяет пройти Course -> Module -> Lesson -> Task без возврата к tabbar.
+function StepNavigation({
+  nextDisabled,
+  nextLabel,
+  onNext,
+  onPrevious,
+  previousLabel
+}: {
+  nextDisabled: boolean;
+  nextLabel: string | null;
+  onNext: () => void;
+  onPrevious: () => void;
+  previousLabel: string | null;
+}) {
+  return (
+    <nav className="mt-5 grid gap-px border border-line bg-line sm:grid-cols-2">
+      {previousLabel ? (
+        <button
+          className="min-h-14 bg-panel px-4 text-left text-xs font-black uppercase text-white transition hover:bg-white/8 hover:text-acid"
+          onClick={onPrevious}
+          type="button"
+        >
+          {`<- Назад: ${previousLabel}`}
+        </button>
+      ) : (
+        <span className="hidden bg-panel sm:block" />
+      )}
+
+      {nextLabel ? (
+        <button
+          className="min-h-14 bg-acid px-4 text-right text-xs font-black uppercase text-ink transition hover:bg-white disabled:cursor-not-allowed disabled:bg-panel disabled:text-white/30"
+          disabled={nextDisabled}
+          onClick={onNext}
+          type="button"
+        >
+          {nextDisabled ? `Сначала выбери ${nextLabel}` : `Далее: ${nextLabel} ->`}
+        </button>
+      ) : (
+        <span className="hidden bg-panel sm:block" />
+      )}
+    </nav>
   );
 }
 
@@ -1586,6 +2184,61 @@ function TextArea({
       />
       {help && <span className="text-xs font-bold uppercase leading-snug text-white/46">{help}</span>}
     </label>
+  );
+}
+
+// Бинарное DTO-поле отображается как явный checkbox, а не текстовое значение true/false.
+function ToggleInput({
+  checked,
+  label,
+  onChange
+}: {
+  checked: boolean;
+  label: string;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label className="flex min-h-12 cursor-pointer items-center justify-between gap-4 border border-line bg-ink px-3 transition hover:border-white/30">
+      <span className="font-mono text-[10px] font-bold uppercase text-white/58">{label}</span>
+      <span className="flex items-center gap-3 font-mono text-[10px] font-black uppercase">
+        <span className={checked ? "text-acid" : "text-white/42"}>{checked ? "true" : "false"}</span>
+        <input
+          checked={checked}
+          className="h-5 w-5 accent-[#9ef651]"
+          onChange={(event) => onChange(event.target.checked)}
+          type="checkbox"
+        />
+      </span>
+    </label>
+  );
+}
+
+// Create отправляет POST, Update selected отправляет PUT для выбранного ID.
+function FormActions({
+  busy,
+  createLabel,
+  onUpdate,
+  updateDisabled,
+  updateLabel
+}: {
+  busy: boolean;
+  createLabel: string;
+  onUpdate: () => void;
+  updateDisabled: boolean;
+  updateLabel: string;
+}) {
+  return (
+    <div className="grid gap-2">
+      <SubmitButton disabled={busy} label={createLabel} />
+      <button
+        className="min-h-12 border border-acid bg-transparent px-5 text-xs font-black uppercase text-acid transition hover:bg-acid hover:text-ink disabled:cursor-not-allowed disabled:border-white/20 disabled:text-white/30"
+        disabled={busy || updateDisabled}
+        onClick={onUpdate}
+        type="button"
+      >
+        {busy ? "Loading..." : updateLabel}
+      </button>
+    </div>
   );
 }
 

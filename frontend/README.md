@@ -36,7 +36,7 @@ frontend/
 Learning path Sprint 2:
 - первый курс из backend-каталога считается доступным и ведет на `/courses/course-{id}`;
 - остальные курсы на витрине маркируются `Скоро` и не ведут в фиктивную оплату;
-- `/courses/[slug]` показывает только опубликованные уроки выбранного курса;
+- `/courses/[slug]` показывает опубликованные уроки и черновики, но открывает learner content только для `published: true`;
 - `/lessons/[id]` берет материал из `LessonDTO.contentMd` и условие из `TaskDTO.statementMd`;
 - CODE-задача показывает Monaco Editor и submission lifecycle, TEST — публичные варианты, NUMERIC — условие без приватного ответа;
 - Markdown рендерится ограниченным безопасным renderer без `dangerouslySetInnerHTML`;
@@ -46,12 +46,25 @@ Learning path Sprint 2:
 
 - `GET /api/courses`
 - `POST /api/courses`
+- `PUT /api/courses/{courseId}`
 - `GET /api/courses/{courseId}/modules`
 - `POST /api/courses/{courseId}/modules`
+- `PUT /api/modules/{moduleId}`
 - `GET /api/modules/{moduleId}/lessons`
 - `POST /api/modules/{moduleId}/lessons`
+- `PUT /api/lessons/{lessonId}`
 - `GET /api/lessons/{lessonId}/tasks`
 - `POST /api/lessons/{lessonId}/tasks`
+- `PUT /api/tasks/{taskId}`
+
+Admin workspace хранит в `localStorage` под ключом `qlc:admin-content-workspace:v1`:
+
+- последнюю активную вкладку;
+- выбранные `courseId`, `moduleId`, `lessonId`, `taskId`;
+- последний созданный `taskId`;
+- полный черновик формы Task.
+
+При повторном открытии `/admin/content` путь восстанавливается каскадно через backend. Если сохраненная сущность удалена, UI возвращается на ближайший валидный шаг. Формы соответствуют текущим DTO: Module включает `position`, Lesson включает `position`, `contentMd` и `published`, Task включает все discriminator-поля `CODE`, `TEST` и `NUMERIC`. Выбор существующей сущности заполняет форму; `Create` отправляет POST, а `Update selected` отправляет PUT для выбранного ID.
 
 Task form поддерживает все discriminator-типы актуального `TaskDTO`:
 

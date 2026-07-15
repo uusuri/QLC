@@ -214,6 +214,8 @@ export interface AdminModuleDto {
   name: string;
   // Описание модуля.
   description: string;
+  // Позиция модуля внутри курса.
+  position: number;
 }
 
 // Payload для POST /api/courses/{courseId}/modules.
@@ -222,6 +224,8 @@ export interface AdminModuleCreatePayload {
   name: string;
   // Описание модуля.
   description: string;
+  // Позиция модуля внутри курса.
+  position: number;
 }
 
 // DTO урока из backend LessonDTO.
@@ -248,6 +252,12 @@ export interface AdminLessonCreatePayload {
   name: string;
   // Описание урока.
   description: string;
+  // Позиция урока внутри модуля.
+  position: number;
+  // Основной материал урока в Markdown.
+  contentMd: string | null;
+  // Флаг публикации урока.
+  published: boolean;
 }
 
 // DTO задачи из backend TaskDTO.
