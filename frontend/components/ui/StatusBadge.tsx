@@ -37,7 +37,7 @@ function getToneClassName(tone: StatusTone) {
     return "border-cyan-300/70 bg-cyan-300/12 text-cyan-100";
   }
 
-  return "border-line bg-panel text-white/72";
+  return "border-line bg-panel text-white/74";
 }
 
 // Маленький бейдж для статусов API, задач, доступа и очереди.
@@ -50,9 +50,9 @@ export function StatusBadge({ children, className, tone = "neutral" }: StatusBad
         className
       )}
     >
-      <span aria-hidden="true">[</span>
+      <span aria-hidden="true">⟦</span>
       <span>{children}</span>
-      <span aria-hidden="true">]</span>
+      <span aria-hidden="true">⟧</span>
     </span>
   );
 }

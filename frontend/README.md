@@ -1,6 +1,6 @@
 # QLC Frontend
 
-Фронтенд учебной платформы на Next.js, TypeScript и Tailwind CSS. Визуальная концепция: темная Premium Tech / Fashion Brand эстетика, жесткая сетка, моноширинная типографика и акцент `#9ef651`.
+Фронтенд учебной платформы на Next.js, TypeScript и Tailwind CSS. Визуальная концепция: Marathon-inspired dark UI, жесткая сетка, моноширинная типографика и теплый акцент `#ff6a3d`.
 
 ## Архитектура папки
 

@@ -26,10 +26,13 @@ export function Progress({ label, value }: ProgressProps) {
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={Math.round(percent)}
-        className="h-3 border border-line bg-panel"
+        className="h-3 border border-line bg-panel shadow-inner"
         role="progressbar"
       >
-        <div className="h-full bg-acid" style={{ width: `${percent}%` }} />
+        <div
+          className="h-full bg-gradient-to-r from-acid via-ember to-white/80"
+          style={{ width: `${percent}%` }}
+        />
       </div>
     </div>
   );

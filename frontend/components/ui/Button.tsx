@@ -42,14 +42,14 @@ function cn(...items: Array<string | false | null | undefined>) {
 // Возвращает Tailwind-классы для выбранного варианта.
 function getVariantClassName(variant: ButtonVariant) {
   if (variant === "danger") {
-    return "border-red-400/80 bg-red-400/12 text-red-100 hover:bg-red-400 hover:text-ink";
+    return "border-red-400/70 bg-red-400/10 text-red-100 hover:bg-red-400 hover:text-ink";
   }
 
   if (variant === "secondary") {
-    return "border-line bg-panel text-white/78 hover:border-acid hover:text-acid";
+    return "border-line bg-panel text-white/76 hover:border-acid hover:text-acid";
   }
 
-  return "border-acid bg-acid text-ink hover:bg-transparent hover:text-acid";
+  return "border-acid bg-acid text-ink shadow-[0_0_30px_rgba(255,106,61,0.25)] hover:bg-transparent hover:text-acid";
 }
 
 // Общий набор классов: рубленая геометрия, видимый focus, disabled/loading.
@@ -63,7 +63,7 @@ function getButtonClassName({
   variant: ButtonVariant;
 }) {
   return cn(
-    "inline-flex min-h-12 items-center justify-center gap-2 border px-5 text-xs font-black uppercase transition",
+    "inline-flex min-h-12 items-center justify-center gap-2 border px-5 text-xs font-black uppercase tracking-[0.18em] transition",
     "focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid",
     "disabled:cursor-not-allowed disabled:border-white/16 disabled:bg-white/8 disabled:text-white/34",
     disabled && "pointer-events-none cursor-not-allowed opacity-55",
@@ -92,7 +92,7 @@ export function Button({
       type={type}
       {...props}
     >
-      {loading && <span aria-hidden="true">...</span>}
+      {loading && <span aria-hidden="true">↻</span>}
       <span>{children}</span>
     </button>
   );
@@ -117,7 +117,7 @@ export function ButtonLink({
       href={isDisabled ? "#" : href}
       tabIndex={isDisabled ? -1 : undefined}
     >
-      {loading && <span aria-hidden="true">...</span>}
+      {loading && <span aria-hidden="true">↻</span>}
       <span>{children}</span>
     </Link>
   );

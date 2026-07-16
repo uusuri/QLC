@@ -63,10 +63,10 @@ export function PaymentMethodSelector({ methods, price }: PaymentMethodSelectorP
           return (
             <button
               // Класс меняется по isSelected: активная карточка кислотная, обычная темная.
-              className={`grid gap-3 p-4 text-left transition ${
+              className={`grid gap-3 border border-transparent p-4 text-left transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid ${
                 isSelected
-                  ? "bg-acid text-ink"
-                  : "bg-panel/95 text-white hover:bg-white/8"
+                  ? "border-acid bg-acid text-ink shadow-[0_0_24px_rgba(255,106,61,0.18)]"
+                  : "bg-panel/95 text-white hover:border-white/18 hover:bg-white/8"
               }`}
               // key помогает React стабильно отличать элементы списка.
               key={item.id}
@@ -99,7 +99,7 @@ export function PaymentMethodSelector({ methods, price }: PaymentMethodSelectorP
       {/* Главная кнопка платежа. */}
       <button
         // Disabled-стили заранее показывают, что Crypto пока не работает.
-        className="min-h-14 border border-acid bg-acid px-5 text-xs font-black uppercase text-ink transition hover:bg-transparent hover:text-acid disabled:border-white/18 disabled:bg-white/8 disabled:text-white/32"
+        className="min-h-14 border border-acid bg-acid px-5 text-xs font-black uppercase tracking-[0.18em] text-ink transition hover:bg-transparent hover:text-acid disabled:border-white/18 disabled:bg-white/8 disabled:text-white/32"
         // Блокируем кнопку во время mock-загрузки и для выключенных методов.
         disabled={isLoading || !isEnabled}
         // Запускаем mock-платеж.
@@ -109,11 +109,8 @@ export function PaymentMethodSelector({ methods, price }: PaymentMethodSelectorP
       >
         {/* Текст для будущих неактивных интеграций. */}
         {!isEnabled && "Gateway pending"}
-        {/* Текст во время mock-загрузки. */}
         {isLoading && "Создаем платеж"}
-        {/* Текст после mock-успеха. */}
         {state === "ready" && "Mock-платеж готов"}
-        {/* Обычный текст кнопки для активного метода оплаты. */}
         {isEnabled && state === "idle" && `Оплатить ${price} через ${selected?.title}`}
       </button>
     </div>

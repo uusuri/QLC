@@ -140,7 +140,7 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
   if (block.kind === "code") {
     return (
       <pre
-        className="overflow-x-auto border border-line bg-ink p-4 text-sm leading-relaxed text-white"
+        className="overflow-x-auto border border-line bg-ink p-4 text-sm leading-relaxed text-white shadow-[0_0_40px_rgba(255,106,61,0.06)]"
         key={index}
       >
         {block.language && (

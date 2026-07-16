@@ -56,16 +56,25 @@ export function AuthStatus() {
 
   if (!hydrated || !user) {
     return (
-      <Link className="transition hover:text-acid" href={loginHref}>
+      <Link
+        className="inline-flex items-center border border-line bg-panel/70 px-3 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-white/72 transition hover:border-acid hover:text-acid"
+        href={loginHref}
+      >
         Вход
       </Link>
     );
   }
 
   return (
-    <div className="flex items-center gap-3">
-      <span className="max-w-[160px] truncate text-acid">@{user.username}</span>
-      <button className="transition hover:text-acid" onClick={handleLogout} type="button">
+    <div className="flex items-center gap-2">
+      <span className="inline-flex items-center border border-acid bg-acid px-3 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-ink">
+        @{user.username}
+      </span>
+      <button
+        className="inline-flex items-center border border-line bg-panel/70 px-3 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-white/70 transition hover:border-acid hover:text-acid"
+        onClick={handleLogout}
+        type="button"
+      >
         Выйти
       </button>
     </div>

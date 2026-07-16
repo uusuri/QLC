@@ -191,7 +191,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         <span className="font-mono text-xs font-black uppercase text-white/48">Username</span>
         <input
           autoComplete="username"
-          className="min-h-12 border border-line bg-ink px-4 text-sm font-bold text-white outline-none transition focus:border-acid"
+          className="min-h-12 border border-line bg-panel/70 px-4 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
           maxLength={32}
           name="username"
           onChange={(event) => updateField("username", event.target.value)}
@@ -205,7 +205,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
           <span className="font-mono text-xs font-black uppercase text-white/48">Email</span>
           <input
             autoComplete="email"
-            className="min-h-12 border border-line bg-ink px-4 text-sm font-bold text-white outline-none transition focus:border-acid"
+            className="min-h-12 border border-line bg-panel/70 px-4 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
             name="email"
             onChange={(event) => updateField("email", event.target.value)}
             required
@@ -219,7 +219,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         <span className="font-mono text-xs font-black uppercase text-white/48">Password</span>
         <input
           autoComplete={isRegister ? "new-password" : "current-password"}
-          className="min-h-12 border border-line bg-ink px-4 text-sm font-bold text-white outline-none transition focus:border-acid"
+          className="min-h-12 border border-line bg-panel/70 px-4 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
           minLength={8}
           name="password"
           onChange={(event) => updateField("password", event.target.value)}
@@ -236,7 +236,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
           </span>
           <input
             autoComplete="new-password"
-            className="min-h-12 border border-line bg-ink px-4 text-sm font-bold text-white outline-none transition focus:border-acid"
+            className="min-h-12 border border-line bg-panel/70 px-4 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
             minLength={8}
             name="repeatPassword"
             onChange={(event) => updateField("repeatPassword", event.target.value)}

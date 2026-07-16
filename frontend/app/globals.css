@@ -1,55 +1,39 @@
-/* Подключает базовые reset-стили Tailwind. */
 @tailwind base;
-
-/* Подключает слой компонентов Tailwind. */
 @tailwind components;
-
-/* Подключает utility-классы Tailwind, которые используются в JSX. */
 @tailwind utilities;
 
-/* Глобальные CSS-переменные и базовые настройки темы. */
 :root {
-  /* Говорим браузеру, что сайт рассчитан на темную тему. */
   color-scheme: dark;
-  /* Базовый фон документа. */
-  background: #050505;
-  /* Базовый цвет текста. */
-  color: #f7f7f2;
+  background: #050304;
+  color: #f7f1ea;
 }
 
-/* Универсальная модель размеров: padding и border входят в width/height. */
 * {
   box-sizing: border-box;
 }
 
-/* Настройки корневого html-элемента. */
 html {
-  /* Минимальная ширина, ниже которой верстку не сжимаем. */
   min-width: 320px;
-  /* Запрещаем горизонтальный overflow на уровне документа. */
   overflow-x: clip;
-  /* Плавная прокрутка к якорям вроде #courses. */
   scroll-behavior: smooth;
 }
 
-/* Базовые стили страницы. */
 body {
-  /* Дублируем минимальную ширину на body. */
+  position: relative;
+  isolation: isolate;
   min-width: 320px;
-  /* Body занимает минимум высоту экрана. */
   min-height: 100vh;
-  /* Убираем стандартный отступ браузера. */
   margin: 0;
-  /* Запрещаем горизонтальный overflow на уровне body. */
   overflow-x: clip;
-  /* Фон: вертикальная сетка, горизонтальные линии и темная база. */
   background:
-    linear-gradient(90deg, rgba(158, 246, 81, 0.075) 1px, transparent 1px) 0 0 / 25vw 100%,
-    linear-gradient(0deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 100% 96px,
-    #050505;
-  /* Основной цвет текста. */
-  color: #f7f7f2;
-  /* Моноширинная база для hacker/premium tech эстетики. */
+    radial-gradient(circle at top left, rgba(255, 106, 61, 0.22), transparent 34%),
+    radial-gradient(circle at 85% 18%, rgba(255, 138, 91, 0.16), transparent 22%),
+    radial-gradient(circle at bottom center, rgba(255, 255, 255, 0.05), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.028), transparent 20%),
+    linear-gradient(90deg, rgba(255, 106, 61, 0.07) 1px, transparent 1px) 0 0 / 18vw 100%,
+    linear-gradient(0deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 100% 88px,
+    #050304;
+  color: #f7f1ea;
   font-family:
     "IBM Plex Mono",
     "SFMono-Regular",
@@ -57,40 +41,131 @@ body {
     Monaco,
     Consolas,
     monospace;
-  /* Улучшает рендеринг текста. */
   text-rendering: optimizeLegibility;
 }
 
-/* Базовое оформление ссылок. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, transparent 0 42%, rgba(0, 0, 0, 0.38) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.46));
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.015) 0,
+      rgba(255, 255, 255, 0.015) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+  mix-blend-mode: screen;
+  opacity: 0.35;
+}
+
+@keyframes marathon-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes marathon-pulse {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes marathon-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marathon-scan {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 0 100%;
+  }
+}
+
+.marathon-float {
+  animation: marathon-drift 8s ease-in-out infinite;
+}
+
+.marathon-pulse {
+  animation: marathon-pulse 4.5s ease-in-out infinite;
+}
+
+.marathon-marquee {
+  animation: marathon-marquee 26s linear infinite;
+}
+
+.marathon-scan {
+  background-size: 100% 12px;
+  animation: marathon-scan 14s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marathon-float,
+  .marathon-pulse,
+  .marathon-marquee,
+  .marathon-scan {
+    animation: none !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 a {
-  /* Ссылки наследуют цвет от родителя. */
   color: inherit;
-  /* Убираем стандартное подчеркивание. */
   text-decoration: none;
 }
 
-/* Общая настройка для кликабельных элементов на мобильных. */
 button,
 a {
-  /* Убираем серую подсветку на tap в iOS/Safari. */
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Базовое оформление кнопок. */
 button {
-  /* Запрещаем скругления, чтобы сохранить рубленую геометрию. */
   border-radius: 0;
-  /* Кнопки наследуют шрифт от body. */
   font: inherit;
 }
 
-/* Базовое поведение изображений. */
 img {
-  /* Убираем inline-gap под изображениями. */
   display: block;
 }
 
-/* Убираем верхний margin у текстовых элементов. */
 h1,
 h2,
 h3,
@@ -98,26 +173,19 @@ p {
   margin-top: 0;
 }
 
-/* Фиксируем отсутствие letter-spacing на крупной типографике. */
 h1,
 h2,
 h3,
 strong {
-  letter-spacing: 0;
+  letter-spacing: -0.02em;
 }
 
-/* Видимый focus для клавиатурной навигации. */
 :focus-visible {
-  /* Кислотная рамка фокуса. */
-  outline: 1px solid #9ef651;
-  /* Отступ рамки от элемента. */
+  outline: 1px solid #ff6a3d;
   outline-offset: 3px;
 }
 
-/* Цвет выделения текста мышью. */
 ::selection {
-  /* Текст выделения становится темным. */
-  color: #050505;
-  /* Фон выделения становится кислотным. */
-  background: #9ef651;
+  color: #050304;
+  background: #ff6a3d;
 }

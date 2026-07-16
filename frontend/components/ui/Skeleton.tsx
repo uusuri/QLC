@@ -9,7 +9,7 @@ export function Skeleton({ className = "" }: SkeletonProps) {
   return (
     <div
       aria-hidden="true"
-      className={`animate-pulse border border-line bg-white/8 ${className}`}
+      className={`animate-pulse border border-line bg-gradient-to-r from-white/[0.04] via-white/[0.08] to-white/[0.04] ${className}`}
     />
   );
 }

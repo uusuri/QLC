@@ -7,7 +7,7 @@ import "./globals.css";
 // Metadata используется Next.js для title/description.
 export const metadata: Metadata = {
   // Заголовок вкладки браузера.
-  title: "Course Archive",
+  title: "Course Archive / Marathon Edition",
   // Описание сайта для SEO/preview.
   description: "Premium tech education platform"
 };
@@ -25,7 +25,7 @@ export default function RootLayout({
     // lang="ru" говорит браузеру и screen reader, что основной язык русский.
     <html lang="ru">
       {/* В body рендерится конкретная страница. */}
-      <body>{children}</body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

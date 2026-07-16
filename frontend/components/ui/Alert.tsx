@@ -28,7 +28,7 @@ function getToneClassName(tone: AlertTone) {
   }
 
   if (tone === "warning") {
-    return "border-yellow-300/60 bg-yellow-300/10 text-yellow-100";
+    return "border-amber-300/70 bg-amber-300/10 text-amber-100";
   }
 
   if (tone === "danger") {
@@ -45,9 +45,9 @@ function getToneClassName(tone: AlertTone) {
 // Alert — единый блок для error/empty/success/info состояний.
 export function Alert({ children, className, title, tone = "info" }: AlertProps) {
   return (
-    <div className={cn("border p-4", getToneClassName(tone), className)} role="status">
+    <div className={cn("border p-4 shadow-[0_0_40px_rgba(255,106,61,0.06)]", getToneClassName(tone), className)} role="status">
       <p className="font-mono text-xs font-black uppercase">{title}</p>
-      <div className="mt-3 text-sm leading-snug text-white/72">{children}</div>
+      <div className="mt-3 text-sm leading-snug text-white/76">{children}</div>
     </div>
   );
 }
