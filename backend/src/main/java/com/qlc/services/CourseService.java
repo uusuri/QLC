@@ -96,6 +96,7 @@ public class CourseService {
     com.qlc.models.entities.Module module = new com.qlc.models.entities.Module();
     module.setName(dto.name());
     module.setDescription(dto.description());
+    module.setPosition(dto.position() != null ? dto.position() : 0);
     module.setCourse(course);
     return mapToModuleDTO(moduleRepository.save(module));
   }
@@ -105,6 +106,7 @@ public class CourseService {
         .orElseThrow(() -> new RuntimeException("Module not found"));
     module.setName(dto.name());
     module.setDescription(dto.description());
+    module.setPosition(dto.position() != null ? dto.position() : module.getPosition());
     return mapToModuleDTO(moduleRepository.save(module));
   }
 
@@ -134,6 +136,9 @@ public class CourseService {
     Lesson lesson = new Lesson();
     lesson.setName(dto.name());
     lesson.setDescription(dto.description());
+    lesson.setPosition(dto.position() != null ? dto.position() : 0);
+    lesson.setContentMd(dto.contentMd());
+    lesson.setPublished(dto.published() != null ? dto.published() : true);
     lesson.setModule(module);
     return mapToLessonDTO(lessonRepository.save(lesson));
   }
@@ -143,6 +148,11 @@ public class CourseService {
         .orElseThrow(() -> new RuntimeException("Lesson not found"));
     lesson.setName(dto.name());
     lesson.setDescription(dto.description());
+    lesson.setPosition(dto.position() != null ? dto.position() : lesson.getPosition());
+    lesson.setContentMd(dto.contentMd());
+    if (dto.published() != null) {
+      lesson.setPublished(dto.published());
+    }
     return mapToLessonDTO(lessonRepository.save(lesson));
   }
 
@@ -151,10 +161,8 @@ public class CourseService {
   }
 
   private LessonDTO mapToLessonDTO(Lesson l) {
-    // Hide content for unpublished lessons (coming soon)
-    String content = l.isPublished() ? l.getContentMd() : null;
-    return new LessonDTO(l.getId(), l.getModule().getId(), l.getName(), l.getDescription(), l.getPosition(), content,
-        l.isPublished());
+    return new LessonDTO(l.getId(), l.getModule().getId(), l.getName(), l.getDescription(), l.getPosition(),
+        l.getContentMd(), l.isPublished());
   }
 
   // --- Task CRUD ---

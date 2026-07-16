@@ -23,6 +23,8 @@ import {
   updateAdminTask
 } from "@/services/api";
 
+import { Alert, Button, Panel, PanelBody, PanelHeader, StatusBadge } from "@/components/ui";
+
 // DTO строго повторяют Java record из backend.
 import type {
   AdminCourseCreatePayload,
@@ -1202,26 +1204,24 @@ export default function AdminContentPage() {
       <section className="mx-auto max-w-7xl border border-line bg-ink/95">
         <header className="border-b border-line p-5 sm:p-7">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="font-mono text-xs font-bold uppercase text-acid">
-              internal / sprint 2 content tool
-            </p>
-            <p className="border border-line px-3 py-2 font-mono text-[10px] font-bold uppercase text-white/52">
+            <StatusBadge tone="success">internal tool</StatusBadge>
+            <StatusBadge tone="info">
               {!workspaceStorageReady
                 ? "restoring workspace"
                 : lastSavedAt
-                  ? `local draft saved ${new Date(lastSavedAt).toLocaleTimeString("ru-RU", {
+                  ? `draft ${new Date(lastSavedAt).toLocaleTimeString("ru-RU", {
                       hour: "2-digit",
                       minute: "2-digit"
                     })}`
-                  : "local draft ready"}
-            </p>
+                  : "draft ready"}
+            </StatusBadge>
           </div>
-          <h1 className="mt-3 text-4xl font-black uppercase leading-none sm:text-6xl">
+          <h1 className="mt-4 max-w-4xl text-4xl font-black uppercase leading-none sm:text-6xl">
             Admin Content Builder
           </h1>
           <p className="mt-4 max-w-3xl text-sm leading-snug text-white/64">
-            4-step interface для создания Course - Module - Lesson - Task и получения taskId для
-            POST /api/v1/tasks/{"{taskId}"}/submissions.
+            Пошаговая панель для Course → Module → Lesson → Task. Выбирай родителя, редактируй
+            все поля DTO и сразу проверяй, что update сохраняет именно то, что видно в форме.
           </p>
         </header>
 
@@ -1847,26 +1847,22 @@ function StepNavigation({
   return (
     <nav className="mt-5 grid gap-px border border-line bg-line sm:grid-cols-2">
       {previousLabel ? (
-        <button
-          className="min-h-14 bg-panel px-4 text-left text-xs font-black uppercase text-white transition hover:bg-white/8 hover:text-acid"
-          onClick={onPrevious}
-          type="button"
-        >
+        <Button className="justify-start" onClick={onPrevious} variant="secondary">
           {`<- Назад: ${previousLabel}`}
-        </button>
+        </Button>
       ) : (
         <span className="hidden bg-panel sm:block" />
       )}
 
       {nextLabel ? (
-        <button
-          className="min-h-14 bg-acid px-4 text-right text-xs font-black uppercase text-ink transition hover:bg-white disabled:cursor-not-allowed disabled:bg-panel disabled:text-white/30"
+        <Button
+          className="justify-end"
           disabled={nextDisabled}
           onClick={onNext}
-          type="button"
+          variant={nextDisabled ? "secondary" : "primary"}
         >
           {nextDisabled ? `Сначала выбери ${nextLabel}` : `Далее: ${nextLabel} ->`}
-        </button>
+        </Button>
       ) : (
         <span className="hidden bg-panel sm:block" />
       )}
@@ -1887,24 +1883,23 @@ function WorkspacePanel({
   title: string;
 }) {
   return (
-    <section className="grid gap-5 border border-line bg-ink p-5">
-      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-4">
-        <div>
-          <p className="font-mono text-[10px] font-bold uppercase text-acid">{subtitle}</p>
-          <h2 className="mt-2 text-3xl font-black uppercase leading-none">{title}</h2>
+    <Panel>
+      <PanelHeader>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="font-mono text-[10px] font-bold uppercase text-acid">{subtitle}</p>
+            <h2 className="mt-2 text-3xl font-black uppercase leading-none">{title}</h2>
+          </div>
+          {state.loading && <StatusBadge tone="info">loading</StatusBadge>}
         </div>
-        {state.loading && (
-          <span className="border border-acid px-2 py-1 font-mono text-[10px] font-bold uppercase text-acid">
-            loading
-          </span>
-        )}
-      </div>
+      </PanelHeader>
+      <PanelBody className="grid gap-5">
+        {state.error && <StatusMessage tone="error" text={state.error} />}
+        {state.success && <StatusMessage tone="success" text={state.success} />}
 
-      {state.error && <StatusMessage tone="error" text={state.error} />}
-      {state.success && <StatusMessage tone="success" text={state.success} />}
-
-      {children}
-    </section>
+        {children}
+      </PanelBody>
+    </Panel>
   );
 }
 
@@ -1936,23 +1931,22 @@ function ContextNote({ id, label, title }: { id: number; label: string; title: s
 // Сообщение о заблокированной вложенной форме.
 function BlockedMessage({ text }: { text: string }) {
   return (
-    <div className="border border-line bg-panel/60 p-6">
+    <Alert className="p-5" title="step locked" tone="warning">
       <p className="text-2xl font-black uppercase leading-tight text-white">{text}</p>
       <p className="mt-3 max-w-xl text-sm font-bold uppercase leading-snug text-white/58">
         Выбери родительскую сущность в предыдущей вкладке, и этот шаг станет доступен.
       </p>
-    </div>
+    </Alert>
   );
 }
 
 // Универсальное сообщение success/error.
 function StatusMessage({ text, tone }: { text: string; tone: "error" | "success" }) {
-  const className =
-    tone === "error"
-      ? "border-red-500/50 bg-red-500/10 text-red-200"
-      : "border-acid/60 bg-acid/10 text-acid";
-
-  return <div className={`border p-3 text-xs font-bold uppercase ${className}`}>{text}</div>;
+  return (
+    <Alert className="p-4" title={tone === "error" ? "update failed" : "update saved"} tone={tone === "error" ? "danger" : "success"}>
+      {text}
+    </Alert>
+  );
 }
 
 // Заметный блок с главным результатом карточки.
@@ -1966,20 +1960,30 @@ function TaskCreatedBlock({
   taskId: number;
 }) {
   return (
-    <div className="border border-acid bg-acid p-4 text-ink">
-      <p className="text-sm font-black uppercase">Task created. ID: {taskId}</p>
-      <p className="mt-2 text-xs font-bold uppercase">
-        Use for POST /api/v1/tasks/{taskId}/submissions
-      </p>
-      <button
-        className="mt-4 border border-ink px-3 py-2 text-xs font-black uppercase transition hover:bg-ink hover:text-acid"
-        onClick={onCopy}
-        type="button"
-      >
-        Copy taskId
-      </button>
-      {copyStatus && <p className="mt-2 text-xs font-bold">{copyStatus}</p>}
-    </div>
+    <Panel className="border-acid bg-acid text-ink">
+      <PanelHeader className="border-white/10">
+        <div className="flex items-center justify-between gap-3">
+          <StatusBadge tone="neutral">
+            task ready
+          </StatusBadge>
+          <StatusBadge tone="neutral">
+            id {taskId}
+          </StatusBadge>
+        </div>
+      </PanelHeader>
+      <PanelBody className="grid gap-3">
+        <p className="text-sm font-black uppercase">Task created. ID: {taskId}</p>
+        <p className="text-xs font-bold uppercase">
+          Use for POST /api/v1/tasks/{taskId}/submissions
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button onClick={onCopy} variant="secondary">
+            Copy taskId
+          </Button>
+          {copyStatus && <p className="text-xs font-bold">{copyStatus}</p>}
+        </div>
+      </PanelBody>
+    </Panel>
   );
 }
 
@@ -1994,20 +1998,26 @@ function SelectedTaskBlock({
   taskId: number;
 }) {
   return (
-    <div className="border border-line bg-panel/70 p-4">
-      <p className="text-sm font-black uppercase text-white">Selected task. ID: {taskId}</p>
-      <p className="mt-2 text-xs font-bold uppercase text-white/58">
-        Use for POST /api/v1/tasks/{taskId}/submissions
-      </p>
-      <button
-        className="mt-4 border border-acid px-3 py-2 text-xs font-black uppercase text-acid transition hover:bg-acid hover:text-ink"
-        onClick={onCopy}
-        type="button"
-      >
-        Copy taskId
-      </button>
-      {copyStatus && <p className="mt-2 text-xs font-bold text-acid">{copyStatus}</p>}
-    </div>
+    <Panel muted>
+      <PanelHeader>
+        <div className="flex items-center justify-between gap-3">
+          <StatusBadge tone="neutral">selected task</StatusBadge>
+          <StatusBadge tone="info">id {taskId}</StatusBadge>
+        </div>
+      </PanelHeader>
+      <PanelBody className="grid gap-3">
+        <p className="text-sm font-black uppercase text-white">Selected task. ID: {taskId}</p>
+        <p className="text-xs font-bold uppercase text-white/58">
+          Use for POST /api/v1/tasks/{taskId}/submissions
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button onClick={onCopy} variant="secondary">
+            Copy taskId
+          </Button>
+          {copyStatus && <p className="text-xs font-bold text-acid">{copyStatus}</p>}
+        </div>
+      </PanelBody>
+    </Panel>
   );
 }
 
@@ -2034,7 +2044,7 @@ function EntityList({
 }) {
   if (loading) {
     return (
-      <div className="border border-line bg-panel/50 p-4 font-mono text-xs font-bold uppercase text-white/58">
+      <div className="border border-line bg-panel/60 p-4 font-mono text-xs font-bold uppercase text-white/58">
         Loading list...
       </div>
     );
@@ -2042,7 +2052,7 @@ function EntityList({
 
   if (items.length === 0) {
     return (
-      <div className="border border-line bg-panel/50 p-4 font-mono text-xs font-bold uppercase text-white/58">
+      <div className="border border-line bg-panel/60 p-4 font-mono text-xs font-bold uppercase text-white/58">
         {emptyText}
       </div>
     );
@@ -2055,8 +2065,11 @@ function EntityList({
 
         return (
           <button
-            className={`grid gap-2 p-3 text-left transition ${isSelected ? "bg-acid text-ink" : "bg-panel text-white hover:bg-white/8"
-              }`}
+            className={`grid gap-2 border border-transparent p-3 text-left transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid ${
+              isSelected
+                ? "border-acid bg-acid text-ink"
+                : "bg-panel text-white hover:border-white/20 hover:bg-white/8"
+            }`}
             key={item.id}
             onClick={() => onSelect(item.id)}
             title={item.title}
@@ -2089,7 +2102,7 @@ function SearchInput({
     <label className="grid gap-2">
       <span className="font-mono text-[10px] font-bold uppercase text-white/58">{label}</span>
       <input
-        className="min-h-12 border border-line bg-panel/60 px-3 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid"
+        className="min-h-12 border border-line bg-panel/70 px-3 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
         onChange={(event) => onChange(event.target.value)}
         placeholder="Type to filter..."
         value={value}
@@ -2117,10 +2130,10 @@ function TaskTypeSelector({
         {taskTypes.map((taskType) => (
           <button
             aria-pressed={value === taskType}
-            className={`min-h-12 px-3 text-xs font-black uppercase transition ${
+            className={`min-h-12 px-3 text-xs font-black uppercase transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid ${
               value === taskType
                 ? "bg-acid text-ink"
-                : "bg-ink text-white/68 hover:text-acid"
+                : "bg-ink text-white/68 hover:bg-white/8 hover:text-acid"
             }`}
             key={taskType}
             onClick={() => onChange(taskType)}
@@ -2150,7 +2163,7 @@ function TextInput({
     <label className="grid gap-2">
       <span className="font-mono text-[10px] font-bold uppercase text-white/58">{label}</span>
       <input
-        className="min-h-12 border border-line bg-ink px-3 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid"
+        className="min-h-12 border border-line bg-panel/70 px-3 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
         inputMode={inputMode}
         onChange={(event) => onChange(event.target.value)}
         value={value}
@@ -2177,7 +2190,7 @@ function TextArea({
     <label className="grid gap-2">
       <span className="font-mono text-[10px] font-bold uppercase text-white/58">{label}</span>
       <textarea
-        className="resize-y border border-line bg-ink px-3 py-3 font-mono text-sm text-white outline-none transition placeholder:text-white/22 focus:border-acid"
+        className="resize-y border border-line bg-panel/70 px-3 py-3 font-mono text-sm text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
         onChange={(event) => onChange(event.target.value)}
         rows={rows}
         value={value}
@@ -2198,7 +2211,7 @@ function ToggleInput({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex min-h-12 cursor-pointer items-center justify-between gap-4 border border-line bg-ink px-3 transition hover:border-white/30">
+    <label className="flex min-h-12 cursor-pointer items-center justify-between gap-4 border border-line bg-panel/70 px-3 transition hover:border-white/30">
       <span className="font-mono text-[10px] font-bold uppercase text-white/58">{label}</span>
       <span className="flex items-center gap-3 font-mono text-[10px] font-black uppercase">
         <span className={checked ? "text-acid" : "text-white/42"}>{checked ? "true" : "false"}</span>
@@ -2228,29 +2241,18 @@ function FormActions({
   updateLabel: string;
 }) {
   return (
-    <div className="grid gap-2">
-      <SubmitButton disabled={busy} label={createLabel} />
-      <button
-        className="min-h-12 border border-acid bg-transparent px-5 text-xs font-black uppercase text-acid transition hover:bg-acid hover:text-ink disabled:cursor-not-allowed disabled:border-white/20 disabled:text-white/30"
+    <div className="grid gap-2 sm:grid-cols-2">
+      <Button loading={busy} type="submit">
+        {createLabel}
+      </Button>
+      <Button
         disabled={busy || updateDisabled}
+        loading={busy}
         onClick={onUpdate}
-        type="button"
+        variant="secondary"
       >
-        {busy ? "Loading..." : updateLabel}
-      </button>
+        {updateLabel}
+      </Button>
     </div>
-  );
-}
-
-// Общая submit-кнопка.
-function SubmitButton({ disabled, label }: { disabled: boolean; label: string }) {
-  return (
-    <button
-      className="min-h-12 border border-acid bg-acid px-5 text-xs font-black uppercase text-ink transition hover:bg-transparent hover:text-acid disabled:cursor-wait disabled:border-white/20 disabled:bg-white/8 disabled:text-white/34"
-      disabled={disabled}
-      type="submit"
-    >
-      {disabled ? "Loading..." : label}
-    </button>
   );
 }

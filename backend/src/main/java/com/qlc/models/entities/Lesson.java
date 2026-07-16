@@ -27,7 +27,7 @@ public class Lesson {
   private int position = 0;
 
   @Column(nullable = false)
-  private boolean published = false;
+  private boolean published = true;
 
   @Column(name = "content_md", columnDefinition = "TEXT")
   private String contentMd;
