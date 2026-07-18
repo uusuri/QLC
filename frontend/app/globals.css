@@ -6,6 +6,12 @@
   color-scheme: dark;
   background: #050304;
   color: #f7f1ea;
+  --acid: #ff6a3d;
+  --ink: #050304;
+  --panel: #101013;
+  --line: rgba(255, 255, 255, 0.14);
+  --ember: #ff8a5b;
+  --phosphor: #7dff6a;
 }
 
 * {
@@ -117,6 +123,43 @@ body::after {
   }
 }
 
+@keyframes marathon-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  41% {
+    opacity: 1;
+  }
+
+  42% {
+    opacity: 0.4;
+  }
+
+  43% {
+    opacity: 1;
+  }
+
+  45% {
+    opacity: 0.6;
+  }
+
+  46% {
+    opacity: 1;
+  }
+}
+
+@keyframes marathon-border-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
 .marathon-float {
   animation: marathon-drift 8s ease-in-out infinite;
 }
@@ -134,11 +177,22 @@ body::after {
   animation: marathon-scan 14s linear infinite;
 }
 
+.marathon-flicker {
+  animation: marathon-flicker 3.2s ease-in-out infinite;
+}
+
+.marathon-border-flow {
+  background-size: 200% 100%;
+  animation: marathon-border-flow 2.6s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marathon-float,
   .marathon-pulse,
   .marathon-marquee,
-  .marathon-scan {
+  .marathon-scan,
+  .marathon-flicker,
+  .marathon-border-flow {
     animation: none !important;
   }
 
@@ -188,4 +242,68 @@ strong {
 ::selection {
   color: #050304;
   background: #ff6a3d;
+}
+
+/* Marathon terminal / HUD utility components */
+@layer components {
+  .hud-label {
+    @apply font-mono text-[10px] font-black uppercase tracking-[0.22em] text-white/40;
+  }
+
+  .hud-value {
+    @apply text-3xl font-black uppercase leading-none text-white;
+  }
+
+  .hud-box {
+    @apply relative border border-line bg-panel/95 p-5 shadow-hud;
+  }
+
+  .hud-box::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, var(--acid) 0 12px, transparent 12px) top left no-repeat,
+      linear-gradient(180deg, var(--acid) 0 12px, transparent 12px) top left no-repeat,
+      linear-gradient(-90deg, var(--acid) 0 12px, transparent 12px) top right no-repeat,
+      linear-gradient(180deg, var(--acid) 0 12px, transparent 12px) top right no-repeat,
+      linear-gradient(90deg, var(--acid) 0 12px, transparent 12px) bottom left no-repeat,
+      linear-gradient(0deg, var(--acid) 0 12px, transparent 12px) bottom left no-repeat,
+      linear-gradient(-90deg, var(--acid) 0 12px, transparent 12px) bottom right no-repeat,
+      linear-gradient(0deg, var(--acid) 0 12px, transparent 12px) bottom right no-repeat;
+    background-size: 12px 1px, 1px 12px;
+    opacity: 0.5;
+  }
+
+  .corner-frame {
+    position: relative;
+  }
+
+  .corner-frame::before,
+  .corner-frame::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-color: var(--acid);
+    border-style: solid;
+    pointer-events: none;
+  }
+
+  .corner-frame::before {
+    top: -1px;
+    left: -1px;
+    border-width: 2px 0 0 2px;
+  }
+
+  .corner-frame::after {
+    bottom: -1px;
+    right: -1px;
+    border-width: 0 2px 2px 0;
+  }
+
+  .terminal-rule {
+    @apply border-t border-line bg-gradient-to-r from-transparent via-white/[0.08] to-transparent;
+  }
 }

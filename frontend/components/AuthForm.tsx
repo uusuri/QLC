@@ -1,26 +1,15 @@
-// Форма работает в браузере: localStorage token, router redirect и controlled inputs.
 "use client";
 
-// Link нужен для перехода между login/register.
 import Link from "next/link";
-
-// useRouter делает redirect после успешного входа/регистрации.
 import { useRouter } from "next/navigation";
-
-// React-хуки и тип события формы.
 import { useState } from "react";
 import type { FormEvent } from "react";
 
-// Auth API идет через service layer.
 import { AuthClientError, loginUser, registerUser } from "@/services/api";
-
-// Shared UI-kit.
 import { Alert, Button } from "@/components/ui";
 
-// Режим формы.
 type AuthFormMode = "login" | "register";
 
-// Состояния формы из карточки.
 type AuthFormStatus =
   | "idle"
   | "loading"
@@ -30,27 +19,18 @@ type AuthFormStatus =
   | "unauthorized"
   | "duplicate";
 
-// Props формы.
 type AuthFormProps = {
-  // mode определяет набор полей и endpoint.
   mode: AuthFormMode;
-  // redirectTo — куда отправить пользователя после success.
   redirectTo?: string;
 };
 
-// Поля формы.
 type AuthFields = {
-  // email нужен только register.
   email: string;
-  // password не сохраняется на фронте.
   password: string;
-  // repeatPassword нужен только register.
   repeatPassword: string;
-  // username общий для login/register.
   username: string;
 };
 
-// Начальные значения полей.
 const initialFields: AuthFields = {
   email: "",
   password: "",
@@ -58,19 +38,14 @@ const initialFields: AuthFields = {
   username: ""
 };
 
-// Username: 3-32 символа, латиница, цифры и underscore.
 const USERNAME_PATTERN = /^[A-Za-z0-9_]{3,32}$/;
-
-// Простая email-проверка для UX, не заменяет backend validation.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Возвращает ссылку на соседний auth route с сохранением redirectTo.
 function getSwitchHref(mode: AuthFormMode, redirectTo?: string) {
   const target = mode === "login" ? "/register" : "/login";
   return redirectTo ? `${target}?redirectTo=${encodeURIComponent(redirectTo)}` : target;
 }
 
-// Превращает неизвестную ошибку в понятный статус и текст.
 function getErrorState(error: unknown): { message: string; status: AuthFormStatus } {
   if (error instanceof AuthClientError) {
     if (error.code === "unauthorized" || error.code === "missing_token") {
@@ -93,7 +68,6 @@ function getErrorState(error: unknown): { message: string; status: AuthFormStatu
   return { message: "Не удалось выполнить auth-запрос.", status: "backend" };
 }
 
-// Валидирует поля до обращения к service layer.
 function validateFields(mode: AuthFormMode, fields: AuthFields): string | null {
   if (!USERNAME_PATTERN.test(fields.username.trim())) {
     return "Username: 3-32 символа, латиница, цифры или _.";
@@ -114,12 +88,13 @@ function validateFields(mode: AuthFormMode, fields: AuthFields): string | null {
   return null;
 }
 
-// Общая форма для /login и /register.
 export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const router = useRouter();
   const [fields, setFields] = useState<AuthFields>(initialFields);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<AuthFormStatus>("idle");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRepeat, setShowRepeat] = useState(false);
   const isRegister = mode === "register";
   const isLoading = status === "loading";
   const submitLabel = isRegister ? "Создать аккаунт" : "Войти";
@@ -174,9 +149,9 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   };
 
   return (
-    <form className="grid gap-4" onSubmit={handleSubmit}>
+    <form className="grid gap-5" onSubmit={handleSubmit}>
       <div>
-        <p className="font-mono text-xs font-bold uppercase text-acid">{title}</p>
+        <p className="font-mono text-xs font-black uppercase text-acid">{title}</p>
         <h2 className="mt-4 text-3xl font-black uppercase leading-[1.04] sm:text-5xl">
           {isRegister ? "Создай аккаунт." : "Войди в аккаунт."}
         </h2>
@@ -187,64 +162,54 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         </p>
       </div>
 
-      <label className="grid gap-2">
-        <span className="font-mono text-xs font-black uppercase text-white/48">Username</span>
-        <input
-          autoComplete="username"
-          className="min-h-12 border border-line bg-panel/70 px-4 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
-          maxLength={32}
-          name="username"
-          onChange={(event) => updateField("username", event.target.value)}
-          required
-          value={fields.username}
-        />
-      </label>
+      <InputField
+        autoComplete="username"
+        label="Username"
+        maxLength={32}
+        name="username"
+        onChange={(value) => updateField("username", value)}
+        placeholder="runner_01"
+        value={fields.username}
+      />
 
       {isRegister && (
-        <label className="grid gap-2">
-          <span className="font-mono text-xs font-black uppercase text-white/48">Email</span>
-          <input
-            autoComplete="email"
-            className="min-h-12 border border-line bg-panel/70 px-4 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
-            name="email"
-            onChange={(event) => updateField("email", event.target.value)}
-            required
-            type="email"
-            value={fields.email}
-          />
-        </label>
+        <InputField
+          autoComplete="email"
+          label="Email"
+          name="email"
+          onChange={(value) => updateField("email", value)}
+          placeholder="you@example.com"
+          type="email"
+          value={fields.email}
+        />
       )}
 
-      <label className="grid gap-2">
-        <span className="font-mono text-xs font-black uppercase text-white/48">Password</span>
-        <input
-          autoComplete={isRegister ? "new-password" : "current-password"}
-          className="min-h-12 border border-line bg-panel/70 px-4 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
-          minLength={8}
-          name="password"
-          onChange={(event) => updateField("password", event.target.value)}
-          required
-          type="password"
-          value={fields.password}
-        />
-      </label>
+      <InputField
+        autoComplete={isRegister ? "new-password" : "current-password"}
+        label="Password"
+        minLength={8}
+        name="password"
+        onChange={(value) => updateField("password", value)}
+        onToggleVisibility={() => setShowPassword((current) => !current)}
+        placeholder="минимум 8 символов"
+        reveal={showPassword}
+        type="password"
+        value={fields.password}
+      />
 
       {isRegister && (
-        <label className="grid gap-2">
-          <span className="font-mono text-xs font-black uppercase text-white/48">
-            Repeat password
-          </span>
-          <input
-            autoComplete="new-password"
-            className="min-h-12 border border-line bg-panel/70 px-4 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
-            minLength={8}
-            name="repeatPassword"
-            onChange={(event) => updateField("repeatPassword", event.target.value)}
-            required
-            type="password"
-            value={fields.repeatPassword}
-          />
-        </label>
+        <InputField
+          autoComplete="new-password"
+          label="Repeat password"
+          minLength={8}
+          name="repeatPassword"
+          onChange={(value) => updateField("repeatPassword", value)}
+          onToggleVisibility={() => setShowRepeat((current) => !current)}
+          placeholder="повтори пароль"
+          reveal={showRepeat}
+          type="password"
+          value={fields.repeatPassword}
+        />
       )}
 
       {message && (
@@ -277,5 +242,64 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         {switchText}
       </Link>
     </form>
+  );
+}
+
+function InputField({
+  autoComplete,
+  label,
+  maxLength,
+  minLength,
+  name,
+  onChange,
+  onToggleVisibility,
+  placeholder,
+  reveal,
+  type = "text",
+  value
+}: {
+  autoComplete?: string;
+  label: string;
+  maxLength?: number;
+  minLength?: number;
+  name: string;
+  onChange: (value: string) => void;
+  onToggleVisibility?: () => void;
+  placeholder?: string;
+  reveal?: boolean;
+  type?: string;
+  value: string;
+}) {
+  const inputType = type === "password" && reveal ? "text" : type;
+
+  return (
+    <label className="grid gap-2">
+      <span className="font-mono text-xs font-black uppercase text-white/48">{label}</span>
+      <span className="relative">
+        <input
+          autoComplete={autoComplete}
+          className="min-h-12 w-full border border-line bg-panel/70 px-4 pr-12 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
+          maxLength={maxLength}
+          minLength={minLength}
+          name={name}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          required
+          type={inputType}
+          value={value}
+        />
+        {type === "password" && onToggleVisibility && (
+          <button
+            aria-label={reveal ? "Скрыть пароль" : "Показать пароль"}
+            className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] font-black uppercase text-white/36 transition hover:text-acid"
+            onClick={onToggleVisibility}
+            tabIndex={-1}
+            type="button"
+          >
+            {reveal ? "скрыть" : "показать"}
+          </button>
+        )}
+      </span>
+    </label>
   );
 }

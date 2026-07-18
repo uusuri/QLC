@@ -4,8 +4,14 @@
 // FormEvent и ReactNode нужны только на уровне типов.
 import type { FormEvent, ReactNode } from "react";
 
+// Link нужен для возврата на витрину.
+import Link from "next/link";
+
 // useEffect загружает данные, useMemo вычисляет выбор, useRef держит restore-снимок.
 import { useEffect, useMemo, useRef, useState } from "react";
+
+import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 
 // Все backend-запросы идут только через сервисный слой.
 import {
@@ -1200,40 +1206,55 @@ export default function AdminContentPage() {
   const nextStep = activeStepIndex < adminSteps.length - 1 ? adminSteps[activeStepIndex + 1] : null;
 
   return (
-    <main className="min-h-screen px-4 py-4 sm:px-6 lg:px-8">
-      <section className="mx-auto max-w-7xl border border-line bg-ink/95">
-        <header className="border-b border-line p-5 sm:p-7">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <StatusBadge tone="success">internal tool</StatusBadge>
-            <StatusBadge tone="info">
-              {!workspaceStorageReady
-                ? "restoring workspace"
-                : lastSavedAt
-                  ? `draft ${new Date(lastSavedAt).toLocaleTimeString("ru-RU", {
-                      hour: "2-digit",
-                      minute: "2-digit"
-                    })}`
-                  : "draft ready"}
-            </StatusBadge>
-          </div>
-          <h1 className="mt-4 max-w-4xl text-4xl font-black uppercase leading-none sm:text-6xl">
-            Admin Content Builder
-          </h1>
-          <p className="mt-4 max-w-3xl text-sm leading-snug text-white/64">
-            Пошаговая панель для Course → Module → Lesson → Task. Выбирай родителя, редактируй
-            все поля DTO и сразу проверяй, что update сохраняет именно то, что видно в форме.
-          </p>
-        </header>
+    <main className="flex min-h-screen flex-col px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
+        <SiteHeader compact />
 
-        <SelectedPath
-          course={selectedCourse}
-          moduleItem={selectedModule}
-          lesson={selectedLesson}
-          task={selectedTask}
-          createdTaskId={createdTaskId}
-        />
+        <section className="mt-4 flex-1 border border-line bg-ink/95">
+          <header className="relative overflow-hidden border-b border-line p-5 sm:p-7">
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <StatusBadge tone="success">internal tool</StatusBadge>
+                <StatusBadge tone="info">
+                  {!workspaceStorageReady
+                    ? "restoring workspace"
+                    : lastSavedAt
+                      ? `draft ${new Date(lastSavedAt).toLocaleTimeString("ru-RU", {
+                          hour: "2-digit",
+                          minute: "2-digit"
+                        })}`
+                      : "draft ready"}
+                </StatusBadge>
+              </div>
+              <Link
+                className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-white/48 transition hover:text-acid"
+                href="/"
+              >
+                ← На витрину
+              </Link>
+            </div>
+            <h1 className="relative z-10 mt-4 max-w-4xl text-4xl font-black uppercase leading-none sm:text-6xl">
+              Admin Content Builder
+            </h1>
+            <p className="relative z-10 mt-4 max-w-3xl text-sm leading-snug text-white/64">
+              Пошаговая панель для Course → Module → Lesson → Task. Выбирай родителя, редактируй
+              все поля DTO и сразу проверяй, что update сохраняет именно то, что видно в форме.
+            </p>
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-acid/10 blur-3xl"
+            />
+          </header>
 
-        <nav className="grid border-b border-line bg-panel/40 sm:grid-cols-4">
+          <SelectedPath
+            course={selectedCourse}
+            moduleItem={selectedModule}
+            lesson={selectedLesson}
+            task={selectedTask}
+            createdTaskId={createdTaskId}
+          />
+
+          <nav className="grid border-b border-line bg-panel/40 sm:grid-cols-4">
           {adminSteps.map((step) => (
             <TabButton
               active={activeStep === step.id}
@@ -1743,7 +1764,12 @@ export default function AdminContentPage() {
           />
         </section>
       </section>
-    </main>
+    </div>
+
+    <div className="mx-auto w-full max-w-7xl">
+      <SiteFooter />
+    </div>
+  </main>
   );
 }
 

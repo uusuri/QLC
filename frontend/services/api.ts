@@ -265,61 +265,6 @@ function emitAuthChange() {
   }
 }
 
-// Безопасно читает user из localStorage.
-function readStoredUser(): AuthUserDto | null {
-  if (!canUseLocalStorage()) {
-    return null;
-  }
-
-  try {
-    const raw = window.localStorage.getItem(AUTH_USER_STORAGE_KEY);
-    const parsed: unknown = raw ? JSON.parse(raw) : null;
-
-    if (
-      typeof parsed === "object" &&
-      parsed !== null &&
-      "id" in parsed &&
-      "username" in parsed &&
-      "email" in parsed &&
-      "role" in parsed &&
-      typeof parsed.id === "number" &&
-      typeof parsed.username === "string" &&
-      typeof parsed.email === "string" &&
-      typeof parsed.role === "string"
-    ) {
-      return parsed as AuthUserDto;
-    }
-  } catch {
-    clearAuthToken();
-  }
-
-  return null;
-}
-
-// Создает mock JWT-like строку без хранения пароля.
-function createMockAccessToken(username: string) {
-  const suffix =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-
-  return `mock-auth-token.${encodeURIComponent(username)}.${suffix}`;
-}
-
-// Создает mock auth response, пока backend AuthController отсутствует.
-function createMockAuthResponse(username: string, email: string): AuthResponseDto {
-  return {
-    accessToken: createMockAccessToken(username),
-    tokenType: "Bearer",
-    user: {
-      email,
-      id: Date.now(),
-      role: "STUDENT",
-      username
-    }
-  };
-}
-
 // Сохраняет auth session в localStorage.
 function setAuthSession(response: AuthResponseDto) {
   setAuthToken(response.accessToken);
@@ -519,52 +464,47 @@ export function clearAuthToken() {
   emitAuthChange();
 }
 
-// Регистрирует пользователя. Пока backend AuthController отсутствует, работает как чистый mock.
+// Регистрирует пользователя через backend AuthController и сохраняет реальный JWT.
 export async function registerUser(payload: RegisterUserPayload): Promise<AuthResponseDto> {
-  // TODO: Интегрировать с бэком, когда появится эндпоинт POST /api/auth/register.
-  const username = payload.username.trim();
-  const email = payload.email.trim().toLowerCase();
-  const loweredUsername = username.toLowerCase();
+  const response = await apiRequest<AuthResponseDto>("/api/auth/register", {
+    method: "POST",
+    body: JSON.stringify({
+      email: payload.email.trim().toLowerCase(),
+      password: payload.password,
+      username: payload.username.trim()
+    })
+  });
 
-  if (loweredUsername.includes("taken") || loweredUsername.includes("exists")) {
-    throw new AuthClientError("duplicate_username", "Пользователь с таким username уже существует.");
-  }
-
-  if (email.includes("taken") || email.includes("exists")) {
-    throw new AuthClientError("duplicate_email", "Email уже используется.");
-  }
-
-  const response = createMockAuthResponse(username, email);
   setAuthSession(response);
   return response;
 }
 
-// Выполняет login. Пока backend AuthController отсутствует, работает как чистый mock.
+// Выполняет login через backend AuthController и сохраняет реальный JWT.
 export async function loginUser(payload: LoginUserPayload): Promise<AuthResponseDto> {
-  // TODO: Интегрировать с бэком, когда появится эндпоинт POST /api/auth/login.
-  const username = payload.username.trim();
+  const response = await apiRequest<AuthResponseDto>("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({
+      password: payload.password,
+      username: payload.username.trim()
+    })
+  });
 
-  if (username.toLowerCase() === "wrong" || payload.password === "wrong-password") {
-    throw new AuthClientError("unauthorized", "Неверный username или пароль.");
-  }
-
-  const existingUser = readStoredUser();
-  const response = createMockAuthResponse(
-    username,
-    existingUser?.username === username ? existingUser.email : `${username}@example.local`
-  );
   setAuthSession(response);
   return response;
 }
 
-// Возвращает текущего пользователя по сохраненному auth state.
+// Возвращает текущего пользователя через GET /api/auth/me с реальным JWT.
 export async function getCurrentUser(): Promise<AuthUserDto | null> {
-  // TODO: Интегрировать с бэком, когда появится эндпоинт GET /api/auth/me.
   if (!getAuthToken()) {
     return null;
   }
 
-  return readStoredUser();
+  try {
+    return await apiRequest<AuthUserDto>("/api/auth/me", { auth: true });
+  } catch {
+    clearAuthToken();
+    return null;
+  }
 }
 
 // Выполняет logout на фронте.

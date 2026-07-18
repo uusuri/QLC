@@ -49,7 +49,7 @@ function getVariantClassName(variant: ButtonVariant) {
     return "border-line bg-panel text-white/76 hover:border-acid hover:text-acid";
   }
 
-  return "border-acid bg-acid text-ink shadow-[0_0_30px_rgba(255,106,61,0.25)] hover:bg-transparent hover:text-acid";
+  return "relative border-acid bg-acid text-ink shadow-[0_0_30px_rgba(255,106,61,0.25)] hover:bg-transparent hover:text-acid";
 }
 
 // Общий набор классов: рубленая геометрия, видимый focus, disabled/loading.
@@ -63,7 +63,7 @@ function getButtonClassName({
   variant: ButtonVariant;
 }) {
   return cn(
-    "inline-flex min-h-12 items-center justify-center gap-2 border px-5 text-xs font-black uppercase tracking-[0.18em] transition",
+    "group inline-flex min-h-12 items-center justify-center gap-2 border px-5 text-xs font-black uppercase tracking-[0.18em] transition",
     "focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid",
     "disabled:cursor-not-allowed disabled:border-white/16 disabled:bg-white/8 disabled:text-white/34",
     disabled && "pointer-events-none cursor-not-allowed opacity-55",
@@ -92,8 +92,22 @@ export function Button({
       type={type}
       {...props}
     >
-      {loading && <span aria-hidden="true">↻</span>}
+      {loading && (
+        <span aria-hidden="true" className="animate-spin">
+          ↻
+        </span>
+      )}
       <span>{children}</span>
+      {variant === "primary" && !isDisabled && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 opacity-0 transition-opacity group-hover:opacity-100"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent)"
+          }}
+        />
+      )}
     </button>
   );
 }
@@ -117,7 +131,11 @@ export function ButtonLink({
       href={isDisabled ? "#" : href}
       tabIndex={isDisabled ? -1 : undefined}
     >
-      {loading && <span aria-hidden="true">↻</span>}
+      {loading && (
+        <span aria-hidden="true" className="animate-spin">
+          ↻
+        </span>
+      )}
       <span>{children}</span>
     </Link>
   );

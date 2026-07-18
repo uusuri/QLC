@@ -26,12 +26,17 @@ export function Progress({ label, value }: ProgressProps) {
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={Math.round(percent)}
-        className="h-3 border border-line bg-panel shadow-inner"
+        className="relative h-3 overflow-hidden border border-line bg-panel shadow-inner"
         role="progressbar"
       >
         <div
-          className="h-full bg-gradient-to-r from-acid via-ember to-white/80"
+          className="absolute left-0 top-0 h-full bg-gradient-to-r from-acid via-ember to-white/90 shadow-[0_0_16px_rgba(255,106,61,0.35)]"
           style={{ width: `${percent}%` }}
+        />
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 -translate-x-full animate-[marathon-scan_3s_linear_infinite] bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.12)_50%,transparent_100%)]"
+          style={{ backgroundSize: "30% 100%" }}
         />
       </div>
     </div>

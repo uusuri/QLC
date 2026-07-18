@@ -22,7 +22,7 @@ function cn(...items: Array<string | false | null | undefined>) {
 // Возвращает цветовую схему статуса.
 function getToneClassName(tone: StatusTone) {
   if (tone === "success") {
-    return "border-acid bg-acid text-ink";
+    return "border-acid bg-acid text-ink shadow-[0_0_16px_rgba(255,106,61,0.28)]";
   }
 
   if (tone === "warning") {
@@ -40,19 +40,39 @@ function getToneClassName(tone: StatusTone) {
   return "border-line bg-panel text-white/74";
 }
 
+// Возвращает маленький маркер состояния.
+function getToneDot(tone: StatusTone) {
+  if (tone === "success") {
+    return <span className="h-1.5 w-1.5 rounded-full bg-ink" />;
+  }
+
+  if (tone === "warning") {
+    return <span className="h-1.5 w-1.5 rounded-full bg-yellow-300" />;
+  }
+
+  if (tone === "danger") {
+    return <span className="h-1.5 w-1.5 rounded-full bg-red-400" />;
+  }
+
+  if (tone === "info") {
+    return <span className="h-1.5 w-1.5 rounded-full bg-cyan-300" />;
+  }
+
+  return <span className="h-1.5 w-1.5 rounded-full bg-white/40" />;
+}
+
 // Маленький бейдж для статусов API, задач, доступа и очереди.
 export function StatusBadge({ children, className, tone = "neutral" }: StatusBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex w-fit items-center gap-2 border px-2 py-1 font-mono text-[10px] font-black uppercase",
+        "inline-flex w-fit items-center gap-2 border px-2.5 py-1 font-mono text-[10px] font-black uppercase",
         getToneClassName(tone),
         className
       )}
     >
-      <span aria-hidden="true">⟦</span>
+      {getToneDot(tone)}
       <span>{children}</span>
-      <span aria-hidden="true">⟧</span>
     </span>
   );
 }

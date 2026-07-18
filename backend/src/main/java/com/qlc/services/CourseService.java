@@ -75,7 +75,12 @@ public class CourseService {
   }
 
   private CourseDTO mapToCourseDTO(Course c) {
-    return new CourseDTO(c.getId(), c.getName(), c.getDescription(), c.getPrice(), c.getPriceInStars());
+    return new CourseDTO(
+        c.getId(),
+        c.getName(),
+        c.getDescription(),
+        c.getPrice(),
+        c.getPriceInStars());
   }
 
   // --- Module CRUD ---
@@ -115,7 +120,12 @@ public class CourseService {
   }
 
   private ModuleDTO mapToModuleDTO(com.qlc.models.entities.Module m) {
-    return new ModuleDTO(m.getId(), m.getCourse().getId(), m.getName(), m.getDescription(), m.getPosition());
+    return new ModuleDTO(
+        m.getId(),
+        m.getCourse().getId(),
+        m.getName(),
+        m.getDescription(),
+        m.getPosition());
   }
 
   // --- Lesson CRUD ---
@@ -161,8 +171,14 @@ public class CourseService {
   }
 
   private LessonDTO mapToLessonDTO(Lesson l) {
-    return new LessonDTO(l.getId(), l.getModule().getId(), l.getName(), l.getDescription(), l.getPosition(),
-        l.getContentMd(), l.isPublished());
+    return new LessonDTO(
+        l.getId(),
+        l.getModule().getId(),
+        l.getName(),
+        l.getDescription(),
+        l.getPosition(),
+        l.isPublished() ? l.getContentMd() : null,
+        l.isPublished());
   }
 
   // --- Task CRUD ---
