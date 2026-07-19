@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { HomeBottomAuthCTA, HomeHeroLoginButton } from "@/components/HomeAuthActions";
 import { Alert, ButtonLink, Panel, PanelBody, PanelHeader, Progress, StatusBadge } from "@/components/ui";
 import { getCourseCatalog } from "@/services/api";
 import type { CourseDto } from "@/types";
@@ -61,9 +62,7 @@ export default async function HomePage() {
                   </p>
                   <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
                     <ButtonLink href="#courses">Смотреть курсы</ButtonLink>
-                    <ButtonLink href="/login" variant="secondary">
-                      Войти в аккаунт
-                    </ButtonLink>
+                    <HomeHeroLoginButton />
                   </div>
                 </div>
 
@@ -141,27 +140,7 @@ export default async function HomePage() {
             </section>
 
             {/* Bottom CTA */}
-            <Panel muted>
-              <PanelBody className="flex flex-col items-center justify-between gap-6 text-center sm:flex-row sm:text-left">
-                <div>
-                  <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-acid">
-                    next step
-                  </p>
-                  <h2 className="mt-2 text-2xl font-black uppercase sm:text-3xl">
-                    Готов начать обучение?
-                  </h2>
-                  <p className="mt-2 text-sm text-white/58">
-                    Авторизуйся, чтобы сохранять прогресс и отправлять решения на проверку.
-                  </p>
-                </div>
-                <div className="flex flex-wrap justify-center gap-3">
-                  <ButtonLink href="/register">Создать аккаунт</ButtonLink>
-                  <ButtonLink href="/login" variant="secondary">
-                    Войти
-                  </ButtonLink>
-                </div>
-              </PanelBody>
-            </Panel>
+            <HomeBottomAuthCTA />
           </section>
         </div>
       </div>

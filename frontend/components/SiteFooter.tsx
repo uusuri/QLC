@@ -1,6 +1,12 @@
+"use client";
+
 import Link from "next/link";
 
+import { useAuth } from "@/components/AuthProvider";
+
 export function SiteFooter() {
+  const { user } = useAuth();
+
   return (
     <footer className="border-t border-line bg-ink/90">
       <div className="mx-auto max-w-[92vw] px-4 py-8 sm:px-6 lg:px-8">
@@ -25,9 +31,11 @@ export function SiteFooter() {
             <Link className="transition hover:text-acid" href="/profile">
               Профиль
             </Link>
-            <Link className="transition hover:text-acid" href="/login">
-              Вход
-            </Link>
+            {!user && (
+              <Link className="transition hover:text-acid" href="/login">
+                Вход
+              </Link>
+            )}
             <Link className="transition hover:text-acid" href="/admin/content">
               Admin
             </Link>

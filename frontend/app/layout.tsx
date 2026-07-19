@@ -1,6 +1,9 @@
 // Metadata — тип Next.js для описания meta-информации страницы.
 import type { Metadata } from "next";
 
+// AuthProvider дает всем client-компонентам доступ к текущему пользователю.
+import { AuthProvider } from "@/components/AuthProvider";
+
 // Подключаем глобальные стили один раз на все приложение.
 import "./globals.css";
 
@@ -25,7 +28,9 @@ export default function RootLayout({
     // lang="ru" говорит браузеру и screen reader, что основной язык русский.
     <html lang="ru">
       {/* В body рендерится конкретная страница. */}
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

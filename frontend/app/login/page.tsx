@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AuthForm } from "@/components/AuthForm";
+import { RedirectIfAuthenticated } from "@/components/RedirectIfAuthenticated";
 import { SiteFooter } from "@/components/SiteFooter";
 import { getLoginNotes } from "@/services/api";
 
@@ -16,6 +17,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   return (
     <main className="flex min-h-screen flex-col">
+      <RedirectIfAuthenticated redirectTo={params?.redirectTo} />
       <div className="flex flex-1 items-stretch px-4 py-4 sm:px-6 lg:px-8">
         <section className="mx-auto grid min-h-[calc(100vh-32px)] w-full max-w-7xl border border-line bg-ink/90 lg:grid-cols-[1fr_520px]">
           <div className="relative grid content-between gap-12 overflow-hidden border-b border-line p-5 sm:p-7 lg:border-b-0 lg:border-r">

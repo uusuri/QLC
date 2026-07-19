@@ -464,6 +464,26 @@ export function clearAuthToken() {
   emitAuthChange();
 }
 
+// Возвращает сохраненное в localStorage краткое summary пользователя.
+// Используется для синхронной инициализации UI перед фоновой проверкой токена.
+export function getStoredUser(): AuthUserDto | null {
+  if (!canUseLocalStorage() || !getAuthToken()) {
+    return null;
+  }
+
+  const raw = window.localStorage.getItem(AUTH_USER_STORAGE_KEY);
+
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw) as AuthUserDto;
+  } catch {
+    return null;
+  }
+}
+
 // Регистрирует пользователя через backend AuthController и сохраняет реальный JWT.
 export async function registerUser(payload: RegisterUserPayload): Promise<AuthResponseDto> {
   const response = await apiRequest<AuthResponseDto>("/api/auth/register", {
