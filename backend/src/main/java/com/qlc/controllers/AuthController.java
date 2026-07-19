@@ -39,9 +39,9 @@ public class AuthController {
   private final JWTCore jwtCore;
 
   public AuthController(UserRepository userRepository,
-                        PasswordEncoder passwordEncoder,
-                        AuthenticationManager authenticationManager,
-                        JWTCore jwtCore) {
+      PasswordEncoder passwordEncoder,
+      AuthenticationManager authenticationManager,
+      JWTCore jwtCore) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
@@ -72,8 +72,7 @@ public class AuthController {
 
     AuthResponse response = new AuthResponse(
         generateTokenForUser(saved),
-        new AuthResponse.UserInfo(saved.getId(), saved.getUsername(), saved.getEmail(), saved.getRole().name())
-    );
+        new AuthResponse.UserInfo(saved.getId(), saved.getUsername(), saved.getEmail(), saved.getRole().name()));
 
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
@@ -97,8 +96,7 @@ public class AuthController {
 
     AuthResponse response = new AuthResponse(
         jwt,
-        new AuthResponse.UserInfo(user.getId(), user.getUsername(), user.getEmail(), user.getRole().name())
-    );
+        new AuthResponse.UserInfo(user.getId(), user.getUsername(), user.getEmail(), user.getRole().name()));
 
     return ResponseEntity.ok(response);
   }
@@ -113,14 +111,13 @@ public class AuthController {
         principal.getId(),
         principal.getUsername(),
         principal.getEmail(),
-        principal.getRole()
-    ));
+        principal.getRole()));
   }
 
   private String generateTokenForUser(User user) {
     UserDetailsImpl details = UserDetailsImpl.build(user);
-    UsernamePasswordAuthenticationToken auth =
-        new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());
+    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, null,
+        details.getAuthorities());
     return jwtCore.generateToken(auth);
   }
 

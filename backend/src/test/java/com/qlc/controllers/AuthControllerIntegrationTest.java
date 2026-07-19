@@ -25,6 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -49,7 +51,10 @@ class AuthControllerIntegrationTest {
   @BeforeEach
   void setup() {
     SecurityContextHolder.clearContext();
-    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    mockMvc = MockMvcBuilders
+        .webAppContextSetup(webApplicationContext)
+        .apply(springSecurity())
+        .build();
     userRepository.deleteAll();
   }
 
@@ -63,8 +68,8 @@ class AuthControllerIntegrationTest {
     AuthRegisterRequest request = new AuthRegisterRequest("runner01", "runner@example.com", "password123");
 
     MvcResult result = mockMvc.perform(post("/api/auth/register")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isCreated())
         .andReturn();
 
@@ -95,8 +100,8 @@ class AuthControllerIntegrationTest {
     AuthLoginRequest request = new AuthLoginRequest("runner02", "password123");
 
     MvcResult result = mockMvc.perform(post("/api/auth/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk())
         .andReturn();
 
@@ -113,7 +118,8 @@ class AuthControllerIntegrationTest {
     String token = registerAndGetToken("runner03", "runner3@example.com", "password123");
 
     MvcResult result = mockMvc.perform(get("/api/auth/me")
-            .header("Authorization", "Bearer " + token))
+        .header("Authorization", "Bearer " + token))
+        .andDo(print())
         .andExpect(status().isOk())
         .andReturn();
 
@@ -133,8 +139,8 @@ class AuthControllerIntegrationTest {
     AuthRegisterRequest request = new AuthRegisterRequest("runner04", "other@example.com", "password123");
 
     mockMvc.perform(post("/api/auth/register")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isBadRequest());
   }
 
@@ -145,8 +151,8 @@ class AuthControllerIntegrationTest {
     AuthRegisterRequest request = new AuthRegisterRequest("runner05a", "runner5@example.com", "password123");
 
     mockMvc.perform(post("/api/auth/register")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isBadRequest());
   }
 
@@ -157,8 +163,8 @@ class AuthControllerIntegrationTest {
     AuthLoginRequest request = new AuthLoginRequest("runner06", "wrong-password");
 
     mockMvc.perform(post("/api/auth/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isUnauthorized());
   }
 
@@ -183,8 +189,8 @@ class AuthControllerIntegrationTest {
     AuthRegisterRequest request = new AuthRegisterRequest(username, email, password);
 
     MvcResult result = mockMvc.perform(post("/api/auth/register")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isCreated())
         .andReturn();
 

@@ -27,29 +27,35 @@ public class TokenFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-    String username = null;
-    String jwt = null;
 
-    try {
-      String authHeader = request.getHeader("Authorization");
-      if (authHeader != null && authHeader.startsWith("Bearer ")) {
-        jwt = authHeader.substring(7);
-        username = jwtCore.extractUsername(jwt);
-      }
+    String authHeader = request.getHeader("Authorization");
+    System.out.println("DEBUG: Header: " + authHeader);
 
-      if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+      String jwt = authHeader.substring(7);
+      try {
+        String username = jwtCore.extractUsername(jwt);
+        System.out.println("DEBUG: Username from JWT: " + username);
+
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        System.out.println("DEBUG: User loaded from DB: " + userDetails.getUsername());
 
         if (jwtCore.isTokenValid(jwt, userDetails)) {
-          UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+          UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
               userDetails, null, userDetails.getAuthorities());
-          SecurityContextHolder.getContext().setAuthentication(token);
+          SecurityContextHolder.getContext().setAuthentication(auth);
+          System.out.println("DEBUG: Authentication SUCCESSFUL");
+        } else {
+          System.out.println("DEBUG: Token INVALID");
         }
+      } catch (Exception e) {
+        System.out.println("DEBUG: Exception in Filter: " + e.getMessage());
+        e.printStackTrace(); // ВАЖНО: это покажет полный стек ошибки
       }
-
-    } catch (Exception e) {
-      System.out.println("Cannot set user authentication: " + e.getMessage());
+    } else {
+      System.out.println("DEBUG: Authorization header missing or invalid");
     }
+
     filterChain.doFilter(request, response);
   }
 }
