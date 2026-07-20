@@ -1,3 +1,5 @@
+"use client";
+
 // ReactNode позволяет бейджу принимать текст с числами/inline JSX.
 import type { ReactNode } from "react";
 

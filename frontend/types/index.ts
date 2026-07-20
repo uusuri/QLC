@@ -11,7 +11,7 @@ export type StudentCourseStatus = "active" | "completed" | "locked";
 export type PaymentMethodId = "stars" | "crypto";
 
 // Состояние mock-кнопки оплаты.
-export type PaymentState = "idle" | "loading" | "ready";
+export type PaymentState = "idle" | "loading" | "ready" | "error";
 
 // Роль пользователя из auth response. Backend может вернуть STUDENT или ROLE_USER.
 export type AuthUserRole = "STUDENT" | "ROLE_USER" | "ROLE_ADMIN" | "ROLE_TUTOR" | string;
@@ -154,6 +154,19 @@ export interface StudentProfileDto {
 }
 
 // Способ оплаты на checkout-странице.
+export interface CartResponseDto {
+  courseIds: number[];
+}
+
+export interface CourseAccessResponseDto {
+  access: boolean;
+}
+
+export interface LessonLearnResponseDto {
+  lesson: AdminLessonDto;
+  tasks: AdminTaskDto[];
+}
+
 export interface PaymentMethodDto {
   // ID метода нужен для логики выбора.
   id: PaymentMethodId;

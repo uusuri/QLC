@@ -4,9 +4,11 @@
 
 // Импортируем React-хук для хранения выбранного метода оплаты и состояния кнопки.
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 // Общие типы не дают компоненту принять метод оплаты неизвестной формы.
 import type { PaymentMethodDto, PaymentMethodId, PaymentState } from "@/types";
+import { addCourseToCart, purchaseCart } from "@/services/api";
 
 // Props компонента выбора оплаты.
 type PaymentMethodSelectorProps = {
@@ -14,10 +16,12 @@ type PaymentMethodSelectorProps = {
   price: string;
   // Список методов оплаты приходит с серверной checkout-страницы.
   methods: PaymentMethodDto[];
+  // Backend ID курса, который нужно оплатить.
+  courseId: number;
 };
 
 // Компонент принимает цену курса и методы оплаты с родительской checkout-страницы.
-export function PaymentMethodSelector({ methods, price }: PaymentMethodSelectorProps) {
+export function PaymentMethodSelector({ methods, price, courseId }: PaymentMethodSelectorProps) {
   // method хранит текущий выбранный способ оплаты.
   const [method, setMethod] = useState<PaymentMethodId>(methods[0]?.id ?? "stars");
 
@@ -34,18 +38,27 @@ export function PaymentMethodSelector({ methods, price }: PaymentMethodSelectorP
   // Метод считается доступным только если пришел в списке и включен в данных.
   const isEnabled = selected?.enabled ?? false;
 
+  const router = useRouter();
+  const [error, setError] = useState<string>("");
+
   // Обработчик основной кнопки оплаты.
-  const handlePayment = () => {
+  const handlePayment = async () => {
     // Сразу переводим кнопку в состояние загрузки.
     setState("loading");
+    setError("");
 
-    // TODO: Интегрировать с бэком, когда появится эндпоинт создания платежа.
-    // TODO: заменить mock на backend payment API и Telegram Stars invoice.
-    // Сейчас это просто имитация задержки платежного API.
-    window.setTimeout(() => {
-      // Через 1.2 секунды показываем, что mock-платеж готов.
+    try {
+      // Убеждаемся, что выбранный курс есть в корзине, а затем выполняем mock-оплату.
+      await addCourseToCart(courseId);
+      await purchaseCart();
       setState("ready");
-    }, 1200);
+      window.setTimeout(() => {
+        router.push("/profile");
+      }, 900);
+    } catch (err) {
+      setState("error");
+      setError(err instanceof Error ? err.message : "Оплата не удалась");
+    }
   };
 
   // Возвращаем UI выбора способа оплаты и кнопку действия.
@@ -110,9 +123,11 @@ export function PaymentMethodSelector({ methods, price }: PaymentMethodSelectorP
         {/* Текст для будущих неактивных интеграций. */}
         {!isEnabled && "Gateway pending"}
         {isLoading && "Создаем платеж"}
-        {state === "ready" && "Mock-платеж готов"}
+        {state === "ready" && "Доступ открыт"}
+        {state === "error" && "Повторить оплату"}
         {isEnabled && state === "idle" && `Оплатить ${price} через ${selected?.title}`}
       </button>
+      {error ? <p className="text-xs font-bold text-red-300">{error}</p> : null}
     </div>
   );
 }

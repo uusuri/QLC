@@ -1,3 +1,5 @@
+"use client";
+
 // ReactNode позволяет передать в Alert текст, ссылки или маленькую разметку.
 import type { ReactNode } from "react";
 

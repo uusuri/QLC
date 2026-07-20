@@ -1,3 +1,5 @@
+"use client";
+
 // ReactNode описывает любой JSX внутри панели.
 import type { ReactNode } from "react";
 

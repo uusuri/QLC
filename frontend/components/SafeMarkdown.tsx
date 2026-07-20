@@ -1,3 +1,5 @@
+"use client";
+
 // ReactNode нужен для типизации массива JSX-блоков.
 import type { ReactNode } from "react";
 

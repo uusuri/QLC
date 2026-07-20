@@ -11,10 +11,13 @@ import type {
   AuthErrorCode,
   AuthResponseDto,
   AuthUserDto,
+  CartResponseDto,
+  CourseAccessResponseDto,
   CourseLearningViewDto,
   CourseAccessCopyDto,
   CourseAccessStatus,
   CourseDto,
+  LessonLearnResponseDto,
   LessonLearningViewDto,
   LearnerTaskDto,
   LoginUserPayload,
@@ -242,7 +245,7 @@ function formatRubPrice(value: number | string | null | undefined) {
 }
 
 // Достает backend ID из fallback slug вида course-{id}.
-function parseCourseIdFromSlug(slug: string): number | null {
+export function parseCourseIdFromSlug(slug: string): number | null {
   const match = /^course-(\d+)$/.exec(slug);
 
   if (!match) {
@@ -590,16 +593,27 @@ export async function getCourseLearningView(slug: string): Promise<CourseLearnin
   };
 }
 
+// Возвращает урок с задачами только для купившего курс пользователя.
+export async function getLessonForUser(id: number): Promise<LessonLearnResponseDto> {
+  return apiRequest<LessonLearnResponseDto>(`/api/lessons/${id}/learn`, { auth: true });
+}
+
+// Проверяет, купил ли текущий пользователь выбранный курс.
+export async function getCourseAccess(courseId: number): Promise<boolean> {
+  const response = await apiRequest<CourseAccessResponseDto>(`/api/courses/${courseId}/access`, {
+    auth: true
+  });
+  return response.access;
+}
+
 // Собирает страницу урока: урок, родительский модуль/курс и задачи урока.
 export async function getLessonLearningView(id: number): Promise<LessonLearningViewDto | null> {
-  const lesson = await getAdminLessonById(id);
+  const { lesson, tasks } = await getLessonForUser(id);
   const module = await getAdminModuleById(lesson.moduleId);
   const course = await getAdminCourseById(module.courseId);
   const courses = await getAdminCourses();
   const courseIndex = courses.findIndex((item) => item.id === course.id);
-  const tasks = lesson.published
-    ? (await getAdminTasks(lesson.id)).map(mapAdminTaskToLearnerTask)
-    : [];
+  const mappedTasks = tasks.map(mapAdminTaskToLearnerTask);
 
   return {
     course,
@@ -607,8 +621,8 @@ export async function getLessonLearningView(id: number): Promise<LessonLearningV
     isCourseAvailable: courseIndex === 0,
     lesson,
     module,
-    primaryTask: tasks[0] ?? null,
-    tasks
+    primaryTask: mappedTasks[0] ?? null,
+    tasks: mappedTasks
   };
 }
 
@@ -697,9 +711,9 @@ export async function getAdminLessons(moduleId: number): Promise<AdminLessonDto[
   return apiRequest<AdminLessonDto[]>(`/api/modules/${moduleId}/lessons`);
 }
 
-// Загружает один урок по backend ID.
+// Загружает один урок для админки (полные данные независимо от доступа).
 export async function getAdminLessonById(id: number): Promise<AdminLessonDto> {
-  return apiRequest<AdminLessonDto>(`/api/lessons/${id}`);
+  return apiRequest<AdminLessonDto>(`/api/admin/lessons/${id}`, { auth: true });
 }
 
 // Создает урок внутри выбранного модуля.
@@ -783,4 +797,31 @@ export async function getSubmission(
     auth: true,
     signal
   });
+}
+
+// Добавляет курс в корзину текущего пользователя.
+export async function addCourseToCart(courseId: number): Promise<CartResponseDto> {
+  return apiRequest<CartResponseDto>("/api/cart/items", {
+    auth: true,
+    method: "POST",
+    body: JSON.stringify({ courseId })
+  });
+}
+
+// Возвращает содержимое корзины текущего пользователя.
+export async function getCart(): Promise<CartResponseDto> {
+  return apiRequest<CartResponseDto>("/api/cart", { auth: true });
+}
+
+// Выполняет mock-оплату содержимого корзины и открывает доступ к курсам.
+export async function purchaseCart(): Promise<AdminCourseDto[]> {
+  return apiRequest<AdminCourseDto[]>("/api/purchase/checkout", {
+    auth: true,
+    method: "POST"
+  });
+}
+
+// Возвращает список курсов, купленных текущим пользователем.
+export async function getMyCourses(): Promise<AdminCourseDto[]> {
+  return apiRequest<AdminCourseDto[]>("/api/users/me/courses", { auth: true });
 }

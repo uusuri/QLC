@@ -1,38 +1,82 @@
-import Link from "next/link";
+"use client";
 
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { AddToCartButton } from "@/components/AddToCartButton";
 import { SafeMarkdown } from "@/components/SafeMarkdown";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Alert, ButtonLink, Panel, PanelBody, PanelHeader, StatusBadge } from "@/components/ui";
-import { getCourseLearningView } from "@/services/api";
+import {
+  getCourseAccess,
+  getCourseLearningView,
+  getAuthToken,
+  parseCourseIdFromSlug
+} from "@/services/api";
 import type { CourseLearningViewDto } from "@/types";
 
-type CoursePageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
-};
+export default function CoursePage() {
+  const params = useParams<{ slug: string }>();
+  const slug = params.slug ?? "";
 
-export const dynamic = "force-dynamic";
+  const [view, setView] = useState<CourseLearningViewDto | null>(null);
+  const [hasAccess, setHasAccess] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
-export default async function CoursePage({ params }: CoursePageProps) {
-  const { slug } = await params;
-  let view: CourseLearningViewDto | null = null;
-  let loadError = "";
+  useEffect(() => {
+    let ignore = false;
 
-  try {
-    view = await getCourseLearningView(slug);
-  } catch {
-    loadError = "Не удалось загрузить курс. Проверь backend.";
+    async function load() {
+      try {
+        const data = await getCourseLearningView(slug);
+        if (!ignore) {
+          setView(data);
+          if (data && data.catalogCourse.access === "open") {
+            setHasAccess(true);
+          } else if (data) {
+            const courseId = parseCourseIdFromSlug(slug);
+            if (courseId !== null && getAuthToken()) {
+              try {
+                const access = await getCourseAccess(courseId);
+                setHasAccess(access);
+              } catch {
+                setHasAccess(false);
+              }
+            } else {
+              setHasAccess(false);
+            }
+          }
+        }
+      } catch (err) {
+        if (!ignore) {
+          setLoadError(err instanceof Error ? err.message : "Не удалось загрузить курс.");
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void load();
+
+    return () => {
+      ignore = true;
+    };
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <CourseStatePage eyebrow="course / loading" title="Загрузка..." text="Получаем данные курса." />
+    );
   }
 
   if (loadError) {
     return (
-      <CourseStatePage
-        eyebrow="course / backend error"
-        text={loadError}
-        title="Курс недоступен."
-      />
+      <CourseStatePage eyebrow="course / backend error" text={loadError} title="Курс недоступен." />
     );
   }
 
@@ -46,13 +90,25 @@ export default async function CoursePage({ params }: CoursePageProps) {
     );
   }
 
-  if (!view.isAvailable) {
+  const isPaid = view.catalogCourse.access === "locked";
+  const courseId = parseCourseIdFromSlug(slug);
+
+  if (isPaid && !hasAccess) {
     return (
       <CourseStatePage
-        eyebrow="course / coming soon"
-        text="Этот курс уже есть в базе, но пользовательский путь Sprint 2 открыт только для первого курса."
-        title="Скоро."
-      />
+        eyebrow="course / locked"
+        title="Курс закрыт."
+        text="Чтобы открыть материалы и уроки, купи курс."
+      >
+        <div className="mt-4 flex flex-wrap gap-3">
+          {courseId !== null && (
+            <AddToCartButton courseId={courseId} courseSlug={slug} />
+          )}
+          <ButtonLink href="/" variant="secondary">
+            Витрина
+          </ButtonLink>
+        </div>
+      </CourseStatePage>
     );
   }
 
@@ -118,8 +174,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
                   <h2 className="mt-3 text-4xl font-black uppercase leading-none">Модули и уроки</h2>
                 </div>
                 <p className="max-w-xl text-sm leading-snug text-white/54">
-                  Структура приходит из backend: Course → Module → Lesson. Если уроков нет,
-                  создай их в /admin/content.
+                  Структура приходит из backend: Course → Module → Lesson.
                 </p>
               </div>
 
@@ -196,10 +251,16 @@ export default async function CoursePage({ params }: CoursePageProps) {
 }
 
 function CourseStatePage({
+  actionHref = "/",
+  actionText = "На главную",
+  children,
   eyebrow,
   text,
   title
 }: {
+  actionHref?: string;
+  actionText?: string;
+  children?: React.ReactNode;
   eyebrow: string;
   text: string;
   title: string;
@@ -219,11 +280,12 @@ function CourseStatePage({
               {text}
             </p>
             <div className="flex flex-wrap gap-3">
-              <ButtonLink href="/">На главную</ButtonLink>
+              <ButtonLink href={actionHref}>{actionText}</ButtonLink>
               <ButtonLink href="/admin/content" variant="secondary">
                 Admin content
               </ButtonLink>
             </div>
+            {children}
           </section>
         </section>
       </div>

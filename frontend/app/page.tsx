@@ -1,10 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 
+import { CourseList } from "@/components/CourseList";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { HomeBottomAuthCTA, HomeHeroLoginButton } from "@/components/HomeAuthActions";
-import { Alert, ButtonLink, Panel, PanelBody, PanelHeader, Progress, StatusBadge } from "@/components/ui";
+import { Alert, ButtonLink, Panel, PanelBody, PanelHeader, StatusBadge } from "@/components/ui";
 import { getCourseCatalog } from "@/services/api";
 import type { CourseDto } from "@/types";
 
@@ -20,7 +20,6 @@ export default async function HomePage() {
     loadError = "Не удалось загрузить каталог курсов. Проверь, что backend доступен на 127.0.0.1:8080.";
   }
 
-  const featuredCourse = courses[0] ?? null;
   const totalLessons = courses.reduce((sum, course) => sum + course.lessonsCount, 0);
   const isEmpty = courses.length === 0;
 
@@ -49,7 +48,7 @@ export default async function HomePage() {
                       {courses.length} tracks
                     </StatusBadge>
                   </div>
-                  <h1 className="max-w-5xl text-5xl font-black uppercase leading-[0.96] sm:text-7xl lg:text-8xl">
+                  <h1 className="max-w-5xl text-2xl font-black uppercase leading-[0.96] sm:text-8xl lg:text-8xl">
                     Техническое
                     <br />
                     образование?
@@ -57,7 +56,7 @@ export default async function HomePage() {
                     <span className="text-acid justify-center">QLC.</span>
                   </h1>
                   <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/62 lg:mx-0">
-                    Практические курсы по программированию, дизайну и запуску продуктов.
+                    Практические курсы по математике, программированию, и запуску продуктов.
                     Каждый урок — это задача. Каждая задача — это шанс прокачать навык.
                   </p>
                   <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
@@ -84,7 +83,7 @@ export default async function HomePage() {
                   <Feature
                     number="02"
                     title="Четкая структура"
-                    text="Course → Module → Lesson → Task. Никакой воды: только конкретные навыки."
+                    text="Вы сами выбираете в каком порядке решать задачи. Выполните модуль и переходите к следующему."
                   />
                   <Feature
                     number="03"
@@ -127,15 +126,7 @@ export default async function HomePage() {
                   </PanelBody>
                 </Panel>
               ) : (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {courses.map((course, index) => (
-                    <CourseCard
-                      course={course}
-                      index={index}
-                      key={course.slug}
-                    />
-                  ))}
-                </div>
+                <CourseList courses={courses} />
               )}
             </section>
 
@@ -170,57 +161,5 @@ function Feature({ number, title, text }: { number: string; title: string; text:
       <h3 className="mt-4 text-lg font-black uppercase">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-white/58">{text}</p>
     </div>
-  );
-}
-
-function CourseCard({ course, index }: { course: CourseDto; index: number }) {
-  const isAvailable = index === 0;
-
-  return (
-    <article className="group flex flex-col overflow-hidden border border-line bg-ink/92 transition hover:border-acid/50 hover:bg-white/[0.03]">
-      <div className="relative aspect-[16/10] overflow-hidden border-b border-line">
-        <Image
-          alt={course.title}
-          className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          src={course.imageUrl}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
-        <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-          <StatusBadge tone={isAvailable ? "success" : "neutral"}>
-            {isAvailable ? "open" : "soon"}
-          </StatusBadge>
-          {course.badge && course.badge !== "course" && (
-            <StatusBadge tone="info">{course.badge}</StatusBadge>
-          )}
-        </div>
-      </div>
-
-      <div className="flex flex-1 flex-col p-5">
-        <div className="mb-4 flex items-start justify-between gap-3">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.22em] text-white/44">
-            {String(index + 1).padStart(2, "0")}
-          </p>
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.22em] text-white/44">
-            {course.price.formatted}
-          </p>
-        </div>
-
-        <h3 className="text-2xl font-black uppercase leading-tight">{course.title}</h3>
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-white/60">{course.description}</p>
-
-        <div className="mt-5 grid gap-4">
-          <Progress label={`${course.title} readiness`} value={Math.min(100, course.lessonsCount * 3)} />
-          <ButtonLink
-            disabled={!isAvailable}
-            href={`/courses/${course.slug}`}
-            variant={isAvailable ? "primary" : "secondary"}
-          >
-            {isAvailable ? "Открыть курс" : "Скоро"}
-          </ButtonLink>
-        </div>
-      </div>
-    </article>
   );
 }

@@ -39,6 +39,8 @@ class CourseServiceTest {
   private LessonRepository lessonRepository;
   @Mock
   private TaskRepository taskRepository;
+  @Mock
+  private PurchaseService purchaseService;
 
   @InjectMocks
   private CourseService courseService;

@@ -4,7 +4,7 @@ import { PaymentMethodSelector } from "@/components/PaymentMethodSelector";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Alert, ButtonLink } from "@/components/ui";
-import { COURSE_ACCESS_COPY, getCourseCatalog, getPaymentMethods } from "@/services/api";
+import { COURSE_ACCESS_COPY, getCourseCatalog, getPaymentMethods, parseCourseIdFromSlug } from "@/services/api";
 import type { CourseAccessStatus, CourseDto } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -158,6 +158,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
 
                     {needsPayment ? (
                       <PaymentMethodSelector
+                        courseId={parseCourseIdFromSlug(selectedCourse.slug) ?? 0}
                         methods={paymentMethods}
                         price={selectedCourse.price.formatted}
                       />

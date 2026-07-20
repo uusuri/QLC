@@ -1,6 +1,7 @@
 package com.qlc.models.entities;
 
 import java.util.Set;
+import java.util.HashSet;
 import java.util.List;
 import java.math.BigDecimal;
 import jakarta.persistence.*;
@@ -42,7 +43,7 @@ public class Course {
 
   @ManyToMany
   @JoinTable(name = "user_courses", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-  private Set<User> students;
+  private Set<User> students = new HashSet<>();
 
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
   @OrderBy("position ASC")

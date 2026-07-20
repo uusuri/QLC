@@ -3,6 +3,7 @@ package com.qlc.models.entities;
 import com.qlc.models.enums.Role;
 
 import java.util.Set;
+import java.util.HashSet;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
@@ -40,10 +41,10 @@ public class User {
 
   @ManyToMany
   @JoinTable(name = "user_registration_courses", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
-  private Set<Course> selectedOnRegistration;
+  private Set<Course> selectedOnRegistration = new HashSet<>();
 
   @ManyToMany(mappedBy = "students")
-  private Set<Course> boughtCourses;
+  private Set<Course> boughtCourses = new HashSet<>();
 
   @Column(name = "registration_date", nullable = false)
   private LocalDateTime registrationDate;

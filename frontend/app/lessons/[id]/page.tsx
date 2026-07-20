@@ -1,49 +1,78 @@
-import Link from "next/link";
+"use client";
 
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { AddToCartButton } from "@/components/AddToCartButton";
 import { CodeLessonWorkspace } from "@/components/CodeLessonWorkspace";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SafeMarkdown } from "@/components/SafeMarkdown";
 import { Alert, ButtonLink, Panel, PanelBody, PanelHeader, StatusBadge } from "@/components/ui";
-import { getLessonLearningView } from "@/services/api";
+import { getLessonLearningView, parseCourseIdFromSlug } from "@/services/api";
+import { getAuthToken } from "@/services/api";
 import type { LessonLearningViewDto } from "@/types";
 
-type LessonPageProps = {
-  params: Promise<{
-    id: string;
-  }>;
-};
+export default function LessonPage() {
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
+  const lessonId = Number(params.id);
 
-export const dynamic = "force-dynamic";
+  const [view, setView] = useState<LessonLearningViewDto | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
-export default async function LessonPage({ params }: LessonPageProps) {
-  const { id } = await params;
-  const lessonId = Number(id);
-  let view: LessonLearningViewDto | null = null;
-  let loadError = "";
+  useEffect(() => {
+    if (!Number.isSafeInteger(lessonId) || lessonId <= 0) {
+      setLoadError("ID урока должен быть положительным числом.");
+      setLoading(false);
+      return;
+    }
 
-  if (!Number.isSafeInteger(lessonId) || lessonId <= 0) {
+    if (!getAuthToken()) {
+      router.push(`/login?redirectTo=${encodeURIComponent(`/lessons/${lessonId}`)}`);
+      return;
+    }
+
+    let ignore = false;
+
+    async function load() {
+      try {
+        const data = await getLessonLearningView(lessonId);
+        if (!ignore) {
+          setView(data);
+        }
+      } catch (err) {
+        if (!ignore) {
+          setLoadError(err instanceof Error ? err.message : "Не удалось загрузить урок.");
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void load();
+
+    return () => {
+      ignore = true;
+    };
+  }, [lessonId, router]);
+
+  if (loading) {
     return (
-      <LessonStatePage
-        eyebrow="lesson / invalid id"
-        text="ID урока должен быть положительным числом."
-        title="Урок не найден."
-      />
+      <LessonStatePage eyebrow="lesson / loading" title="Загрузка..." text="Получаем данные урока." />
     );
-  }
-
-  try {
-    view = await getLessonLearningView(lessonId);
-  } catch {
-    loadError = "Не удалось загрузить урок. Проверь backend.";
   }
 
   if (loadError) {
     return (
       <LessonStatePage
-        eyebrow="lesson / backend error"
-        text={loadError}
+        eyebrow="lesson / error"
         title="Урок недоступен."
+        text={loadError}
       />
     );
   }
@@ -52,29 +81,35 @@ export default async function LessonPage({ params }: LessonPageProps) {
     return (
       <LessonStatePage
         eyebrow="lesson / not found"
-        text="Урок не найден. Вернись на страницу курса."
         title="Урок не найден."
+        text="Урок не найден. Вернись на страницу курса."
       />
     );
   }
 
-  if (!view.isCourseAvailable) {
-    return (
-      <LessonStatePage
-        eyebrow="lesson / coming soon"
-        text="Этот урок относится к курсу, который пока помечен как Скоро в Sprint 2."
-        title="Скоро."
-      />
-    );
-  }
+  const isPaid = (view.course.price ?? 0) > 0 || (view.course.priceInStars ?? 0) > 0;
+  const hasAccess = Boolean(view.lesson.contentMd);
+  const isLocked = isPaid && !hasAccess;
 
-  if (!view.lesson.published) {
+  if (isLocked) {
     return (
       <LessonStatePage
-        eyebrow="lesson / unpublished"
-        text="Урок еще не опубликован. Backend скрывает contentMd до публикации."
-        title="Скоро."
-      />
+        eyebrow="lesson / locked"
+        title="Доступ к уроку закрыт."
+        text="Чтобы открыть материал и задачи, купи курс."
+      >
+        <div className="mt-4 flex flex-wrap gap-3">
+          {(() => {
+            const courseId = parseCourseIdFromSlug(`course-${view.course.id}`);
+            return courseId !== null ? (
+              <AddToCartButton courseId={courseId} courseSlug={`course-${view.course.id}`} />
+            ) : null;
+          })()}
+          <ButtonLink href="/" variant="secondary">
+            Витрина
+          </ButtonLink>
+        </div>
+      </LessonStatePage>
     );
   }
 
@@ -238,11 +273,13 @@ export default async function LessonPage({ params }: LessonPageProps) {
 function LessonStatePage({
   eyebrow,
   text,
-  title
+  title,
+  children
 }: {
   eyebrow: string;
   text: string;
   title: string;
+  children?: React.ReactNode;
 }) {
   return (
     <main className="flex min-h-screen flex-col">
@@ -264,6 +301,7 @@ function LessonStatePage({
                 Admin content
               </ButtonLink>
             </div>
+            {children}
           </section>
         </section>
       </div>

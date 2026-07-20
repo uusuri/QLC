@@ -6,6 +6,7 @@ import com.qlc.models.dtos.CourseDTO;
 import com.qlc.models.dtos.LessonDTO;
 import com.qlc.models.dtos.ModuleDTO;
 import com.qlc.models.dtos.TaskDTO;
+import com.qlc.models.responses.LessonLearnResponse;
 
 import com.qlc.repositories.CourseRepository;
 import com.qlc.repositories.LessonRepository;
@@ -27,13 +28,16 @@ public class CourseService {
   private final ModuleRepository moduleRepository;
   private final LessonRepository lessonRepository;
   private final TaskRepository taskRepository;
+  private final PurchaseService purchaseService;
 
   public CourseService(CourseRepository courseRepository, ModuleRepository moduleRepository,
-      LessonRepository lessonRepository, TaskRepository taskRepository) {
+      LessonRepository lessonRepository, TaskRepository taskRepository,
+      PurchaseService purchaseService) {
     this.courseRepository = courseRepository;
     this.moduleRepository = moduleRepository;
     this.lessonRepository = lessonRepository;
     this.taskRepository = taskRepository;
+    this.purchaseService = purchaseService;
   }
 
   // --- Course CRUD ---
@@ -131,13 +135,74 @@ public class CourseService {
   // --- Lesson CRUD ---
   public List<LessonDTO> getLessonsByModuleId(Long moduleId) {
     return lessonRepository.findByModuleIdOrderByPositionAsc(moduleId).stream()
-        .map(this::mapToLessonDTO)
+        .map(l -> new LessonDTO(
+            l.getId(),
+            l.getModule().getId(),
+            l.getName(),
+            l.getDescription(),
+            l.getPosition(),
+            null,
+            l.isPublished()))
         .toList();
   }
 
   public LessonDTO getLessonById(Long lessonId) {
     return mapToLessonDTO(lessonRepository.findById(lessonId)
         .orElseThrow(() -> new RuntimeException("Lesson not found")));
+  }
+
+  public LessonDTO getLessonForUser(Long lessonId, Long userId) {
+    Lesson lesson = lessonRepository.findById(lessonId)
+        .orElseThrow(() -> new RuntimeException("Lesson not found"));
+
+    Course course = lesson.getModule().getCourse();
+    boolean hasAccess = isCourseFree(course) || purchaseService.hasAccess(userId, course.getId());
+    boolean visible = lesson.isPublished() && hasAccess;
+
+    return new LessonDTO(
+        lesson.getId(),
+        lesson.getModule().getId(),
+        lesson.getName(),
+        lesson.getDescription(),
+        lesson.getPosition(),
+        visible ? lesson.getContentMd() : null,
+        lesson.isPublished());
+  }
+
+  public boolean hasUserAccessToCourse(Long courseId, Long userId) {
+    Course course = courseRepository.findById(courseId)
+        .orElseThrow(() -> new RuntimeException("Course not found"));
+    if (isCourseFree(course)) {
+      return true;
+    }
+    return purchaseService.hasAccess(userId, courseId);
+  }
+
+  public LessonLearnResponse getLessonWithTasksForUser(Long lessonId, Long userId) {
+    Lesson lesson = lessonRepository.findById(lessonId)
+        .orElseThrow(() -> new RuntimeException("Lesson not found"));
+
+    Course course = lesson.getModule().getCourse();
+    boolean freeCourse = isCourseFree(course);
+    boolean hasAccess = freeCourse || purchaseService.hasAccess(userId, course.getId());
+    boolean visible = lesson.isPublished() && hasAccess;
+
+    LessonDTO lessonDto = new LessonDTO(
+        lesson.getId(),
+        lesson.getModule().getId(),
+        lesson.getName(),
+        lesson.getDescription(),
+        lesson.getPosition(),
+        visible ? lesson.getContentMd() : null,
+        lesson.isPublished());
+
+    List<TaskDTO> tasks = visible
+        ? taskRepository.findByLessonId(lesson.getId()).stream()
+            .map(this::mapToTaskDTO)
+            .toList()
+        : List.of();
+
+    return new LessonLearnResponse(lessonDto, tasks);
   }
 
   public LessonDTO createLesson(Long moduleId, LessonDTO dto) {
@@ -303,5 +368,13 @@ public class CourseService {
         options,
         correctOptionIndexes,
         correctNumericAnswer);
+  }
+
+  private boolean isCourseFree(Course course) {
+    BigDecimal price = course.getPrice();
+    BigDecimal stars = course.getPriceInStars();
+    boolean priceFree = price == null || price.compareTo(BigDecimal.ZERO) == 0;
+    boolean starsFree = stars == null || stars.compareTo(BigDecimal.ZERO) == 0;
+    return priceFree && starsFree;
   }
 }

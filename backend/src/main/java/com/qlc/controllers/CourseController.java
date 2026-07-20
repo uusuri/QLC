@@ -1,11 +1,16 @@
 package com.qlc.controllers;
 
 import com.qlc.models.dtos.*;
+import com.qlc.models.responses.LessonLearnResponse;
+import com.qlc.security.UserDetailsImpl;
 import com.qlc.services.CourseService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -31,6 +36,14 @@ public class CourseController {
     return ResponseEntity.ok()
         .header("Cache-Control", "max-age=60")
         .body(courseService.getCourseById(id));
+  }
+
+  @GetMapping("/courses/{courseId}/access")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<Map<String, Boolean>> checkCourseAccess(@PathVariable Long courseId,
+      @AuthenticationPrincipal UserDetailsImpl principal) {
+    boolean hasAccess = courseService.hasUserAccessToCourse(courseId, principal.getId());
+    return ResponseEntity.ok(Map.of("access", hasAccess));
   }
 
   @PostMapping("/courses")
@@ -93,6 +106,19 @@ public class CourseController {
     return ResponseEntity.ok()
         .header("Cache-Control", "max-age=60")
         .body(courseService.getLessonById(id));
+  }
+
+  @GetMapping("/lessons/{id}/learn")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<LessonLearnResponse> getLessonForUser(@PathVariable Long id,
+      @AuthenticationPrincipal UserDetailsImpl principal) {
+    return ResponseEntity.ok(courseService.getLessonWithTasksForUser(id, principal.getId()));
+  }
+
+  @GetMapping("/admin/lessons/{id}")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<LessonDTO> getLessonForAdmin(@PathVariable Long id) {
+    return ResponseEntity.ok(courseService.getLessonById(id));
   }
 
   @PostMapping("/modules/{moduleId}/lessons")

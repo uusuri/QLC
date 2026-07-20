@@ -1,3 +1,5 @@
+"use client";
+
 // ReactNode описывает label вкладки, если потом понадобится не только строка.
 import type { ReactNode } from "react";
 

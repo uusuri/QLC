@@ -1,3 +1,5 @@
+"use client";
+
 // Link нужен для кнопок-ссылок, которые ведут между страницами Next.js без reload.
 import Link from "next/link";
 
