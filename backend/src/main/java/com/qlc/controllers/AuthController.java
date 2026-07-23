@@ -64,7 +64,7 @@ public class AuthController {
     user.setUsername(request.username());
     user.setEmail(request.email());
     user.setPassword(passwordEncoder.encode(request.password()));
-    user.setRole(Role.ROLE_ADMIN);
+    user.setRole(Role.ROLE_USER);
     user.setTgId(generateUniqueTgId());
     user.setRegistrationDate(LocalDateTime.now());
 
