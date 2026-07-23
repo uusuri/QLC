@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 // Auth helpers идут через service layer.
+import { isAdmin } from "@/components/AdminGuard";
 import { useAuth } from "@/components/AuthProvider";
 import { logoutUser } from "@/services/api";
 
@@ -35,13 +36,27 @@ export function AuthStatus() {
   };
 
   if (user) {
+    const admin = isAdmin(user);
+
     return (
       <div className="flex items-center gap-2">
-        <span className="inline-flex items-center border border-acid bg-acid px-3 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-ink">
+        <span
+          className={`inline-flex items-center gap-1.5 border px-3 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] transition ${
+            admin
+              ? "border-acid bg-acid text-ink"
+              : "border-line bg-panel/70 text-white/76"
+          }`}
+        >
+          {admin && (
+            <span
+              aria-hidden="true"
+              className="inline-block h-1.5 w-1.5 rounded-full bg-ink"
+            />
+          )}
           @{user.username}
         </span>
         <button
-          className="inline-flex items-center border border-line bg-panel/70 px-3 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-white/70 transition hover:border-acid hover:text-acid"
+          className="inline-flex items-center border border-line bg-panel/70 px-3 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-white/70 transition hover:border-acid hover:bg-white/[0.05] hover:text-acid"
           onClick={handleLogout}
           type="button"
         >
@@ -53,7 +68,7 @@ export function AuthStatus() {
 
   return (
     <Link
-      className="inline-flex items-center border border-line bg-panel/70 px-3 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-white/72 transition hover:border-acid hover:text-acid"
+      className="inline-flex items-center border border-line bg-panel/70 px-3 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-white/72 transition hover:border-acid hover:bg-white/[0.05] hover:text-acid"
       href={loginHref}
     >
       Вход

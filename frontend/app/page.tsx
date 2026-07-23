@@ -17,7 +17,7 @@ export default async function HomePage() {
   try {
     courses = await getCourseCatalog();
   } catch {
-    loadError = "Не удалось загрузить каталог курсов. Проверь, что backend доступен на 127.0.0.1:8080.";
+    loadError = "Каталог временно недоступен. Попробуйте обновить страницу.";
   }
 
   const totalLessons = courses.reduce((sum, course) => sum + course.lessonsCount, 0);
@@ -30,7 +30,7 @@ export default async function HomePage() {
           <SiteHeader />
 
           {loadError ? (
-            <Alert className="mb-4" title="backend unavailable" tone="danger">
+            <Alert className="mb-4" title="Ошибка загрузки" tone="danger">
               {loadError}
             </Alert>
           ) : null}
@@ -40,14 +40,6 @@ export default async function HomePage() {
             <Panel className="relative overflow-hidden">
               <PanelHeader className="grid gap-8 text-center lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:text-left">
                 <div className="lg:col-span-2">
-                  <div className="mb-5 flex flex-wrap justify-center gap-2 lg:justify-start">
-                    <StatusBadge tone={isEmpty ? "warning" : "success"}>
-                      {isEmpty ? "catalog empty" : "catalog live"}
-                    </StatusBadge>
-                    <StatusBadge tone="info">
-                      {courses.length} tracks
-                    </StatusBadge>
-                  </div>
                   <h1 className="max-w-5xl text-2xl font-black uppercase leading-[0.96] sm:text-8xl lg:text-8xl">
                     Техническое
                     <br />
@@ -56,7 +48,7 @@ export default async function HomePage() {
                     <span className="text-acid justify-center">QLC.</span>
                   </h1>
                   <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/62 lg:mx-0">
-                    Практические курсы по математике, программированию, и запуску продуктов.
+                    Практические курсы по математике, программированию и запуску продуктов.
                     Каждый урок — это задача. Каждая задача — это шанс прокачать навык.
                   </p>
                   <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
@@ -82,8 +74,8 @@ export default async function HomePage() {
                   />
                   <Feature
                     number="02"
-                    title="Четкая структура"
-                    text="Вы сами выбираете в каком порядке решать задачи. Выполните модуль и переходите к следующему."
+                    title="Чёткая структура"
+                    text="Вы сами выбираете, в каком порядке решать задачи. Выполните модуль и переходите к следующему."
                   />
                   <Feature
                     number="03"
@@ -99,30 +91,27 @@ export default async function HomePage() {
               <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
                 <div>
                   <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-acid">
-                    catalog / tracks
+                    Каталог
                   </p>
                   <h2 className="mt-2 text-3xl font-black uppercase sm:text-5xl">Доступные курсы</h2>
                 </div>
                 {!isEmpty && (
                   <span className="font-mono text-xs font-black uppercase text-white/40">
-                    {courses.length} track{courses.length === 1 ? "" : "s"} / {totalLessons} lessons
+                    {courses.length} курс{courses.length === 1 ? "" : courses.length < 5 ? "а" : "ов"} · {totalLessons} уроков
                   </span>
                 )}
               </div>
 
               {loadError ? (
-                <Alert title="catalog error" tone="danger">
-                  Каталог недоступен. Убедись, что backend поднят, или перейди в админку, чтобы создать первый курс.
+                <Alert title="Каталог недоступен" tone="danger">
+                  {loadError}
                 </Alert>
               ) : isEmpty ? (
                 <Panel muted>
                   <PanelBody className="grid gap-5 text-center">
-                    <Alert title="catalog empty" tone="warning">
-                      В базе пока нет курсов. Создай первый курс в панели администратора.
+                    <Alert title="Курсов пока нет" tone="warning">
+                      В базе ещё нет курсов. Загляните позже.
                     </Alert>
-                    <div>
-                      <ButtonLink href="/admin/content">Открыть админку</ButtonLink>
-                    </div>
                   </PanelBody>
                 </Panel>
               ) : (

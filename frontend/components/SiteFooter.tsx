@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { isAdmin } from "@/components/AdminGuard";
 import { useAuth } from "@/components/AuthProvider";
 
 export function SiteFooter() {
@@ -15,7 +16,7 @@ export function SiteFooter() {
             <div className="flex items-center gap-3">
               <span className="inline-flex h-2 w-2 rounded-full bg-acid shadow-[0_0_12px_rgba(255,106,61,0.5)]" />
               <span className="font-mono text-xs font-black uppercase tracking-[0.24em] text-white/80">
-                Course Archive / Marathon Edition
+                QLC
               </span>
             </div>
             <p className="mt-3 max-w-md text-xs leading-relaxed text-white/40">
@@ -36,9 +37,11 @@ export function SiteFooter() {
                 Вход
               </Link>
             )}
-            <Link className="transition hover:text-acid" href="/admin/content">
-              Admin
-            </Link>
+            {isAdmin(user) && (
+              <Link className="transition hover:text-acid" href="/admin/content">
+                Admin
+              </Link>
+            )}
           </div>
         </div>
 

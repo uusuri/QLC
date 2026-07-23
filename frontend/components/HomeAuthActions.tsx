@@ -30,13 +30,13 @@ export function HomeBottomAuthCTA() {
       <PanelBody className="flex flex-col items-center justify-between gap-6 text-center sm:flex-row sm:text-left">
         <div>
           <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-acid">
-            next step
+            Следующий шаг
           </p>
           <h2 className="mt-2 text-2xl font-black uppercase sm:text-3xl">
-            Готов начать обучение?
+            Готовы начать обучение?
           </h2>
           <p className="mt-2 text-sm text-white/58">
-            Авторизуйся, чтобы сохранять прогресс и отправлять решения на проверку.
+            Авторизуйтесь, чтобы сохранять прогресс и отправлять решения на проверку.
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-3">

@@ -22,7 +22,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
             <header className="flex items-center justify-between gap-4 font-mono text-xs font-bold uppercase">
               <Link className="flex items-center gap-3 transition hover:text-acid" href="/">
                 <span className="inline-flex h-2 w-2 rounded-full bg-acid shadow-[0_0_12px_rgba(255,106,61,0.5)]" />
-                Course Archive
+                QLC
               </Link>
               <Link className="text-white/48 transition hover:text-acid" href="/login">
                 Вход
@@ -30,17 +30,14 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
             </header>
 
             <div className="relative z-10">
-              <p className="mb-5 font-mono text-xs font-bold uppercase text-acid">
-                register screen / create identity
-              </p>
+              <p className="mb-5 font-mono text-xs font-bold uppercase text-acid">Регистрация</p>
               <h1 className="max-w-4xl text-5xl font-black uppercase leading-[1.02] sm:text-7xl lg:text-8xl">
-                Создай
+                Создайте
                 <br />
                 аккаунт.
               </h1>
               <p className="mt-6 max-w-lg text-base leading-relaxed text-white/58">
-                После регистрации токен сохранится локально. Submission на проверку и персональная
-                статистика станут доступны сразу.
+                После регистрации можно покупать курсы, сохранять прогресс и отправлять решения на проверку.
               </p>
             </div>
 
@@ -48,19 +45,19 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
               <div className="relative bg-panel p-4">
                 <span className="font-mono text-xs font-black text-acid">01</span>
                 <p className="mt-8 text-sm font-black uppercase leading-tight text-white/74">
-                  username 3-32 символа
+                  Логин 3–32 символа
                 </p>
               </div>
               <div className="relative bg-panel p-4">
                 <span className="font-mono text-xs font-black text-acid">02</span>
                 <p className="mt-8 text-sm font-black uppercase leading-tight text-white/74">
-                  email для аккаунта
+                  Email для входа
                 </p>
               </div>
               <div className="relative bg-panel p-4">
                 <span className="font-mono text-xs font-black text-acid">03</span>
                 <p className="mt-8 text-sm font-black uppercase leading-tight text-white/74">
-                  пароль не хранится в UI
+                  Пароль не хранится в браузере
                 </p>
               </div>
             </div>

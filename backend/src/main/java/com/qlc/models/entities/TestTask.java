@@ -19,5 +19,4 @@ public class TestTask extends Task {
   @CollectionTable(name = "task_test_correct_indexes", joinColumns = @JoinColumn(name = "task_id"))
   @Column(name = "correct_index")
   private List<Integer> correctOptionIndexes;
-
 }

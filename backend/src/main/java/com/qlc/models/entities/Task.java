@@ -28,9 +28,8 @@ public abstract class Task {
   @Column(name = "statement_md", nullable = false)
   private String statementMd;
 
-  @Transient // Указывает Hibernate, что поля нет в таблице как отдельной колонки
+  @Transient
   public String getTaskType() {
-    // Извлекает значение @DiscriminatorValue, прописано над наследником
     DiscriminatorValue val = this.getClass().getAnnotation(DiscriminatorValue.class);
     return val != null ? val.value() : null;
   }

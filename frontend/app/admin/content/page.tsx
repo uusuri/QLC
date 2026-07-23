@@ -10,6 +10,7 @@ import Link from "next/link";
 // useEffect загружает данные, useMemo вычисляет выбор, useRef держит restore-снимок.
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { AdminGuard } from "@/components/AdminGuard";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 
@@ -1206,7 +1207,8 @@ export default function AdminContentPage() {
   const nextStep = activeStepIndex < adminSteps.length - 1 ? adminSteps[activeStepIndex + 1] : null;
 
   return (
-    <main className="flex min-h-screen flex-col px-4 py-4 sm:px-6 lg:px-8">
+    <AdminGuard>
+      <main className="flex min-h-screen flex-col px-4 py-4 sm:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
         <SiteHeader compact />
 
@@ -1237,8 +1239,8 @@ export default function AdminContentPage() {
               Admin Content Builder
             </h1>
             <p className="relative z-10 mt-4 max-w-3xl text-sm leading-snug text-white/64">
-              Пошаговая панель для Course → Module → Lesson → Task. Выбирай родителя, редактируй
-              все поля DTO и сразу проверяй, что update сохраняет именно то, что видно в форме.
+              Пошаговая панель для Course → Module → Lesson → Task. Выбирайте родителя, редактируйте
+              все поля DTO и сразу проверяйте, что update сохраняет именно то, что видно в форме.
             </p>
             <span
               aria-hidden="true"
@@ -1348,7 +1350,7 @@ export default function AdminContentPage() {
           {activeStep === "module" && (
             <WorkspacePanel state={moduleState} subtitle="Module step" title="Select or create Module">
               {!selectedCourse ? (
-                <BlockedMessage text="Сначала выбери курс" />
+                <BlockedMessage text="Сначала выберите курс" />
               ) : (
                 <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px]">
                   <div className="grid content-start gap-4">
@@ -1420,7 +1422,7 @@ export default function AdminContentPage() {
           {activeStep === "lesson" && (
             <WorkspacePanel state={lessonState} subtitle="Lesson step" title="Select or create Lesson">
               {!selectedModule ? (
-                <BlockedMessage text="Сначала выбери модуль" />
+                <BlockedMessage text="Сначала выберите модуль" />
               ) : (
                 <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px]">
                   <div className="grid content-start gap-4">
@@ -1517,7 +1519,7 @@ export default function AdminContentPage() {
           {activeStep === "task" && (
             <WorkspacePanel state={taskState} subtitle="Task step" title="Create Task">
               {!selectedLesson ? (
-                <BlockedMessage text="Сначала выбери урок" />
+                <BlockedMessage text="Сначала выберите урок" />
               ) : (
                 <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_460px]">
                   <div className="grid content-start gap-4">
@@ -1591,7 +1593,7 @@ export default function AdminContentPage() {
                       </p>
                     </div>
                     <TextArea
-                      help="Обязательное условие задачи в Markdown. Приватные ответы сюда не добавляй."
+                      help="Обязательное условие задачи в Markdown. Приватные ответы сюда не добавляйте."
                       label="statementMd (Markdown)"
                       rows={8}
                       value={taskForm.statementMd}
@@ -1686,7 +1688,7 @@ export default function AdminContentPage() {
                     {taskForm.taskType === "TEST" && (
                       <div className="grid gap-3 border-t border-line pt-3">
                         <TextArea
-                          help="Один вариант на строку. Затем отметь один или несколько правильных вариантов ниже."
+                          help="Один вариант на строку. Затем отметьте один или несколько правильных вариантов ниже."
                           label="options"
                           rows={7}
                           value={taskForm.optionsText}
@@ -1770,6 +1772,7 @@ export default function AdminContentPage() {
       <SiteFooter />
     </div>
   </main>
+    </AdminGuard>
   );
 }
 
@@ -1880,16 +1883,16 @@ function StepNavigation({
         <span className="hidden bg-panel sm:block" />
       )}
 
-      {nextLabel ? (
-        <Button
-          className="justify-end"
-          disabled={nextDisabled}
-          onClick={onNext}
-          variant={nextDisabled ? "secondary" : "primary"}
-        >
-          {nextDisabled ? `Сначала выбери ${nextLabel}` : `Далее: ${nextLabel} ->`}
-        </Button>
-      ) : (
+          {nextLabel ? (
+            <Button
+              className="justify-end"
+              disabled={nextDisabled}
+              onClick={onNext}
+              variant={nextDisabled ? "secondary" : "primary"}
+            >
+              {nextDisabled ? `Сначала выберите ${nextLabel}` : `Далее: ${nextLabel} ->`}
+            </Button>
+          ) : (
         <span className="hidden bg-panel sm:block" />
       )}
     </nav>
@@ -1960,7 +1963,7 @@ function BlockedMessage({ text }: { text: string }) {
     <Alert className="p-5" title="step locked" tone="warning">
       <p className="text-2xl font-black uppercase leading-tight text-white">{text}</p>
       <p className="mt-3 max-w-xl text-sm font-bold uppercase leading-snug text-white/58">
-        Выбери родительскую сущность в предыдущей вкладке, и этот шаг станет доступен.
+        Выберите родительскую сущность в предыдущей вкладке, и этот шаг станет доступен.
       </p>
     </Alert>
   );

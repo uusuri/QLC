@@ -24,7 +24,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             <header className="flex items-center justify-between gap-4 font-mono text-xs font-bold uppercase">
               <Link className="flex items-center gap-3 transition hover:text-acid" href="/">
                 <span className="inline-flex h-2 w-2 rounded-full bg-acid shadow-[0_0_12px_rgba(255,106,61,0.5)]" />
-                Course Archive
+                QLC
               </Link>
               <Link className="text-white/48 transition hover:text-acid" href="/register">
                 Регистрация
@@ -32,17 +32,14 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </header>
 
             <div className="relative z-10">
-              <p className="mb-5 font-mono text-xs font-bold uppercase text-acid">
-                login screen / username access
-              </p>
+              <p className="mb-5 font-mono text-xs font-bold uppercase text-acid">Вход</p>
               <h1 className="max-w-4xl text-5xl font-black uppercase leading-[1.02] sm:text-7xl lg:text-8xl">
                 Доступ
                 <br />
                 к обучению.
               </h1>
               <p className="mt-6 max-w-lg text-base leading-relaxed text-white/58">
-                Войди, чтобы сохранять черновики решений, отправлять задачи на проверку
-                и отслеживать прогресс в личном кабинете.
+                Войдите, чтобы открывать курсы, отправлять решения и отслеживать прогресс в профиле.
               </p>
             </div>
 

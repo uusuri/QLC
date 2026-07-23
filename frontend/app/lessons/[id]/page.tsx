@@ -10,8 +10,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SafeMarkdown } from "@/components/SafeMarkdown";
 import { Alert, ButtonLink, Panel, PanelBody, PanelHeader, StatusBadge } from "@/components/ui";
-import { getLessonLearningView, parseCourseIdFromSlug } from "@/services/api";
-import { getAuthToken } from "@/services/api";
+import { getLessonLearningView, parseCourseIdFromSlug, getAuthToken } from "@/services/api";
 import type { LessonLearningViewDto } from "@/types";
 
 export default function LessonPage() {
@@ -62,27 +61,19 @@ export default function LessonPage() {
   }, [lessonId, router]);
 
   if (loading) {
-    return (
-      <LessonStatePage eyebrow="lesson / loading" title="Загрузка..." text="Получаем данные урока." />
-    );
+    return <LessonStatePage eyebrow="Загрузка" title="Загрузка..." text="Получаем данные урока." />;
   }
 
   if (loadError) {
-    return (
-      <LessonStatePage
-        eyebrow="lesson / error"
-        title="Урок недоступен."
-        text={loadError}
-      />
-    );
+    return <LessonStatePage eyebrow="Ошибка" title="Урок недоступен" text={loadError} />;
   }
 
   if (!view) {
     return (
       <LessonStatePage
-        eyebrow="lesson / not found"
-        title="Урок не найден."
-        text="Урок не найден. Вернись на страницу курса."
+        eyebrow="Не найден"
+        title="Урок не найден"
+        text="Урок не найден. Вернитесь на страницу курса."
       />
     );
   }
@@ -94,9 +85,9 @@ export default function LessonPage() {
   if (isLocked) {
     return (
       <LessonStatePage
-        eyebrow="lesson / locked"
-        title="Доступ к уроку закрыт."
-        text="Чтобы открыть материал и задачи, купи курс."
+        eyebrow="Закрыто"
+        title="Доступ к уроку закрыт"
+        text="Чтобы открыть материал и задачи, купите курс."
       >
         <div className="mt-4 flex flex-wrap gap-3">
           {(() => {
@@ -106,7 +97,7 @@ export default function LessonPage() {
             ) : null;
           })()}
           <ButtonLink href="/" variant="secondary">
-            Витрина
+            К витрине
           </ButtonLink>
         </div>
       </LessonStatePage>
@@ -128,44 +119,28 @@ export default function LessonPage() {
                 <Link className="transition hover:text-acid" href={`/courses/${courseSlug}`}>
                   ← Назад к курсу
                 </Link>
-                <span className="text-white/20">/</span>
-                <span className="text-white/70">Урок {view.lesson.id}</span>
               </div>
               <nav className="flex items-center gap-5 text-white/50">
                 <Link className="transition hover:text-acid" href="/">
                   Витрина
-                </Link>
-                <Link className="transition hover:text-acid" href="/admin/content">
-                  Admin
                 </Link>
               </nav>
             </header>
 
             <section className="grid gap-8 border-b border-line p-5 sm:p-7 lg:grid-cols-[1.05fr_0.95fr] lg:p-8">
               <div>
-                <div className="mb-4 flex flex-wrap gap-2">
-                  <StatusBadge tone="success">lesson id {view.lesson.id}</StatusBadge>
-                  <StatusBadge tone="neutral">module id {view.module.id}</StatusBadge>
-                  <StatusBadge tone="info">{view.tasks.length} tasks</StatusBadge>
-                </div>
                 <h1 className="max-w-5xl text-5xl font-black uppercase leading-[1.02] sm:text-7xl">
                   {view.lesson.name}
                 </h1>
               </div>
 
               <Panel muted>
-                <PanelHeader>
-                  <p className="font-mono text-xs font-black uppercase text-acid">context</p>
-                </PanelHeader>
                 <PanelBody className="grid gap-4 text-sm leading-snug text-white/62">
                   <p>
-                    <span className="text-white/36">Course:</span> {view.course.name}
+                    <span className="text-white/36">Курс:</span> {view.course.name}
                   </p>
                   <p>
-                    <span className="text-white/36">Module:</span> {view.module.name}
-                  </p>
-                  <p>
-                    <span className="text-white/36">Lesson:</span> {view.lesson.name}
+                    <span className="text-white/36">Модуль:</span> {view.module.name}
                   </p>
                 </PanelBody>
               </Panel>
@@ -174,59 +149,46 @@ export default function LessonPage() {
             <section className="grid gap-5 p-5 sm:p-7 lg:p-8">
               <Panel muted>
                 <PanelHeader>
-                  <p className="font-mono text-xs font-black uppercase text-acid">lesson material</p>
-                  <h2 className="mt-3 text-3xl font-black uppercase leading-tight">Материал урока</h2>
+                  <h2 className="text-3xl font-black uppercase leading-tight">Материал урока</h2>
                 </PanelHeader>
                 <PanelBody>
                   <SafeMarkdown
                     markdown={
                       view.lesson.contentMd ||
                       view.lesson.description ||
-                      "Материал урока скоро появится."
+                      "Материал урока пока пуст."
                     }
                   />
                 </PanelBody>
               </Panel>
 
               {!primaryTask ? (
-                <Alert title="Задач пока нет" tone="warning">
-                  Создай Task для этого урока в /admin/content, затем обнови страницу.
+                <Alert title="Задачи скоро появятся" tone="warning">
+                  К этому уроку пока не добавлены задачи.
                 </Alert>
               ) : (
                 <>
                   <Panel muted>
                     <PanelHeader className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
                       <div>
-                        <p className="font-mono text-xs font-black uppercase text-acid">
-                          task statement
-                        </p>
-                        <h2 className="mt-3 text-3xl font-black uppercase leading-tight">
-                          {primaryTask.taskType} Task
-                        </h2>
+                        <h2 className="text-3xl font-black uppercase leading-tight">Задача</h2>
                       </div>
-                      <StatusBadge tone="info">task id {primaryTask.id}</StatusBadge>
                     </PanelHeader>
                     <PanelBody className="grid gap-6">
                       <SafeMarkdown
-                        markdown={primaryTask.statementMd || "Условие задачи пока пустое."}
+                        markdown={primaryTask.statementMd || "Условие задачи пока пусто."}
                       />
 
                       {primaryTask.taskType === "CODE" && (
                         <div className="flex flex-wrap gap-2">
                           {primaryTask.timeLimitMs !== null && (
-                            <StatusBadge tone="neutral">
-                              time {primaryTask.timeLimitMs} ms
-                            </StatusBadge>
+                            <StatusBadge tone="neutral">{primaryTask.timeLimitMs} мс</StatusBadge>
                           )}
                           {primaryTask.memoryLimitKb !== null && (
-                            <StatusBadge tone="neutral">
-                              memory {primaryTask.memoryLimitKb} KB
-                            </StatusBadge>
+                            <StatusBadge tone="neutral">{primaryTask.memoryLimitKb} КБ памяти</StatusBadge>
                           )}
                           {primaryTask.outputLimitKb !== null && (
-                            <StatusBadge tone="neutral">
-                              output {primaryTask.outputLimitKb} KB
-                            </StatusBadge>
+                            <StatusBadge tone="neutral">{primaryTask.outputLimitKb} КБ вывода</StatusBadge>
                           )}
                         </div>
                       )}
@@ -250,10 +212,8 @@ export default function LessonPage() {
                   {primaryTask.taskType === "CODE" ? (
                     <CodeLessonWorkspace lessonId={view.lesson.id} task={primaryTask} />
                   ) : (
-                    <Alert title="answer submission pending" tone="info">
-                      {primaryTask.taskType === "TEST"
-                        ? "Варианты показаны без correctOptionIndexes. Endpoint отправки TEST-ответа пока не подключен."
-                        : "Правильный numeric-ответ не отображается. Endpoint отправки NUMERIC-ответа пока не подключен."}
+                    <Alert title="Отправка ответа" tone="info">
+                      Отправка ответа для этой задачи скоро появится.
                     </Alert>
                   )}
                 </>
@@ -297,9 +257,6 @@ function LessonStatePage({
             </p>
             <div className="flex flex-wrap gap-3">
               <ButtonLink href="/">На главную</ButtonLink>
-              <ButtonLink href="/admin/content" variant="secondary">
-                Admin content
-              </ButtonLink>
             </div>
             {children}
           </section>

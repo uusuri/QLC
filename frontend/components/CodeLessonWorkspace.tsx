@@ -275,7 +275,7 @@ function getPhaseCopy(phase: SubmissionPhase) {
   if (phase === "wa") {
     return {
       badge: "WA",
-      description: "Wrong Answer. Исправь код и отправь снова.",
+      description: "Wrong Answer. Исправьте код и отправьте снова.",
       title: "Wrong answer",
       tone: "warning" as const
     };
@@ -364,7 +364,7 @@ function getPhaseCopy(phase: SubmissionPhase) {
 
   return {
     badge: "idle",
-    description: "Напиши решение и отправь на проверку.",
+    description: "Напишите решение и отправьте на проверку.",
     title: "Ready",
     tone: "neutral" as const
   };
@@ -643,7 +643,7 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
               Source size: {sourceSize} / {MAX_SOURCE_SIZE} bytes
             </span>
             {!authUser && (
-              <span className="text-yellow-100">Чтобы отправить решение, войди в аккаунт.</span>
+              <span className="text-yellow-100">Чтобы отправить решение, войдите в аккаунт.</span>
             )}
             {sourceTooLarge && <span className="text-red-200">Source is too large</span>}
             {!trimmedSource && <span className="text-yellow-100">Source cannot be empty</span>}
@@ -672,7 +672,7 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
 
         {!authUser && (
           <Alert title="auth required" tone="warning">
-            Чтобы отправить решение, войди в аккаунт. Submission request body останется без
+            Чтобы отправить решение, войдите в аккаунт. Submission request body останется без
             `userId`; frontend добавит только `Authorization: Bearer token`.
           </Alert>
         )}

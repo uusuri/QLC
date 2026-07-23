@@ -69,23 +69,19 @@ export default function CoursePage() {
   }, [slug]);
 
   if (loading) {
-    return (
-      <CourseStatePage eyebrow="course / loading" title="Загрузка..." text="Получаем данные курса." />
-    );
+    return <CourseStatePage eyebrow="Загрузка" title="Загрузка..." text="Получаем данные курса." />;
   }
 
   if (loadError) {
-    return (
-      <CourseStatePage eyebrow="course / backend error" text={loadError} title="Курс недоступен." />
-    );
+    return <CourseStatePage eyebrow="Ошибка" text={loadError} title="Курс недоступен" />;
   }
 
   if (!view) {
     return (
       <CourseStatePage
-        eyebrow="course / not found"
-        text="Курс не найден. Вернись на главную и выбери курс из каталога."
-        title="Курс не найден."
+        eyebrow="Не найден"
+        text="Курс не найден. Вернитесь на главную и выберите курс из каталога."
+        title="Курс не найден"
       />
     );
   }
@@ -96,23 +92,19 @@ export default function CoursePage() {
   if (isPaid && !hasAccess) {
     return (
       <CourseStatePage
-        eyebrow="course / locked"
-        title="Курс закрыт."
-        text="Чтобы открыть материалы и уроки, купи курс."
+        eyebrow="Закрыто"
+        title="Курс закрыт"
+        text="Чтобы открыть материалы и уроки, купите курс."
       >
         <div className="mt-4 flex flex-wrap gap-3">
-          {courseId !== null && (
-            <AddToCartButton courseId={courseId} courseSlug={slug} />
-          )}
+          {courseId !== null && <AddToCartButton courseId={courseId} courseSlug={slug} />}
           <ButtonLink href="/" variant="secondary">
-            Витрина
+            К витрине
           </ButtonLink>
         </div>
       </CourseStatePage>
     );
   }
-
-  const lessonsCount = view.modules.reduce((sum, item) => sum + item.lessons.length, 0);
 
   return (
     <main className="flex min-h-screen flex-col">
@@ -134,26 +126,18 @@ export default function CoursePage() {
                 <Link className="transition hover:text-acid" href="/profile">
                   Профиль
                 </Link>
-                <Link className="transition hover:text-acid" href="/admin/content">
-                  Admin
-                </Link>
               </nav>
             </header>
 
             <section className="grid gap-8 border-b border-line p-5 sm:p-7 lg:grid-cols-[1.1fr_0.9fr] lg:p-8">
               <div>
-                <div className="mb-4 flex flex-wrap gap-2">
-                  <StatusBadge tone="success">available</StatusBadge>
-                  <StatusBadge tone="neutral">course id {view.course.id}</StatusBadge>
-                  <StatusBadge tone="info">{lessonsCount} lessons</StatusBadge>
-                </div>
                 <h1 className="max-w-5xl text-5xl font-black uppercase leading-[1.02] sm:text-7xl">
                   {view.course.name}
                 </h1>
               </div>
 
               <div className="grid content-end gap-5">
-                <SafeMarkdown markdown={view.course.description || "Описание курса скоро появится."} />
+                <SafeMarkdown markdown={view.course.description || "Описание пока не добавлено."} />
                 <div className="flex flex-wrap gap-3">
                   <ButtonLink disabled={!view.firstLesson} href={`/lessons/${view.firstLesson?.id ?? ""}`}>
                     Открыть первый урок
@@ -169,73 +153,69 @@ export default function CoursePage() {
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>
                   <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-acid">
-                    course structure
+                    Программа
                   </p>
                   <h2 className="mt-3 text-4xl font-black uppercase leading-none">Модули и уроки</h2>
                 </div>
-                <p className="max-w-xl text-sm leading-snug text-white/54">
-                  Структура приходит из backend: Course → Module → Lesson.
-                </p>
               </div>
 
               {view.modules.length === 0 ? (
-                <Alert title="Структура пустая" tone="warning">
-                  Модулей пока нет. Создай Module и Lesson в /admin/content, затем обнови страницу.
+                <Alert title="Программа пуста" tone="warning">
+                  В курсе пока нет модулей. Загляните позже.
                 </Alert>
               ) : (
                 <div className="grid gap-4">
-                  {view.modules.map((item, moduleIndex) => (
-                    <Panel key={item.module.id} muted>
-                      <PanelHeader className="grid gap-3 sm:grid-cols-[auto_1fr_auto] sm:items-center">
-                        <StatusBadge tone="neutral">module {moduleIndex + 1}</StatusBadge>
-                        <div>
-                          <h3 className="text-2xl font-black uppercase leading-tight">
-                            {item.module.name}
-                          </h3>
-                          <p className="mt-2 text-sm leading-snug text-white/54">
-                            {item.module.description || "Описание модуля пока пустое."}
-                          </p>
-                        </div>
-                        <span className="font-mono text-xs font-black uppercase text-white/42">
-                          ID {item.module.id}
-                        </span>
-                      </PanelHeader>
+                  {view.modules.map((item, moduleIndex) => {
+                    const publishedLessons = item.lessons.filter((lesson) => lesson.published);
 
-                      <PanelBody>
-                        {item.lessons.length === 0 ? (
-                          <Alert title="Уроков нет" tone="warning">
-                            В этом модуле пока нет уроков.
-                          </Alert>
-                        ) : (
-                          <div className="grid gap-px border border-line bg-line">
-                            {item.lessons.map((lesson, lessonIndex) => (
-                              <Link
-                                className="grid gap-3 bg-ink p-4 transition hover:bg-white/8 sm:grid-cols-[auto_1fr_auto_auto] sm:items-center"
-                                href={`/lessons/${lesson.id}`}
-                                key={lesson.id}
-                              >
-                                <StatusBadge tone="info">lesson {lessonIndex + 1}</StatusBadge>
-                                <div>
-                                  <strong className="text-lg font-black uppercase leading-tight">
-                                    {lesson.name}
-                                  </strong>
-                                  <p className="mt-2 line-clamp-2 text-sm text-white/50">
-                                    {lesson.description || "Описание урока пока пустое."}
-                                  </p>
-                                </div>
-                                <StatusBadge tone={lesson.published ? "success" : "warning"}>
-                                  {lesson.published ? "published" : "draft"}
-                                </StatusBadge>
-                                <span className="font-mono text-xs font-black uppercase text-white/38">
-                                  ID {lesson.id}
-                                </span>
-                              </Link>
-                            ))}
+                    return (
+                      <Panel key={item.module.id} muted>
+                        <PanelHeader>
+                          <div>
+                            <p className="font-mono text-xs font-black uppercase text-white/48">
+                              Модуль {moduleIndex + 1}
+                            </p>
+                            <h3 className="mt-1 text-2xl font-black uppercase leading-tight">
+                              {item.module.name}
+                            </h3>
+                            <p className="mt-2 text-sm leading-snug text-white/54">
+                              {item.module.description || "Нет описания."}
+                            </p>
                           </div>
-                        )}
-                      </PanelBody>
-                    </Panel>
-                  ))}
+                        </PanelHeader>
+
+                        <PanelBody>
+                          {publishedLessons.length === 0 ? (
+                            <Alert title="Уроки скоро появятся" tone="warning">
+                              В этом модуле пока нет доступных уроков.
+                            </Alert>
+                          ) : (
+                            <div className="grid gap-px border border-line bg-line">
+                              {publishedLessons.map((lesson, lessonIndex) => (
+                                <Link
+                                  className="grid gap-3 bg-ink p-4 transition hover:bg-white/8 sm:grid-cols-[auto_1fr] sm:items-center"
+                                  href={`/lessons/${lesson.id}`}
+                                  key={lesson.id}
+                                >
+                                  <span className="font-mono text-xs font-black uppercase text-white/48">
+                                    Урок {lessonIndex + 1}
+                                  </span>
+                                  <div>
+                                    <strong className="text-lg font-black uppercase leading-tight">
+                                      {lesson.name}
+                                    </strong>
+                                    <p className="mt-2 line-clamp-2 text-sm text-white/50">
+                                      {lesson.description || "Нет описания."}
+                                    </p>
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </PanelBody>
+                      </Panel>
+                    );
+                  })}
                 </div>
               )}
             </section>
@@ -281,9 +261,6 @@ function CourseStatePage({
             </p>
             <div className="flex flex-wrap gap-3">
               <ButtonLink href={actionHref}>{actionText}</ButtonLink>
-              <ButtonLink href="/admin/content" variant="secondary">
-                Admin content
-              </ButtonLink>
             </div>
             {children}
           </section>

@@ -22,6 +22,6 @@ public record TaskDTO(
     List<String> options,
     List<Integer> correctOptionIndexes,
 
-    // --- Специфичные поля для NUMERIC задач ---
+    // поля для NUMERIC задач ---
     BigDecimal correctNumericAnswer) {
 }

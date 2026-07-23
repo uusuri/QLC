@@ -374,65 +374,54 @@ const studentProfileMock: StudentProfileDto = {
   ]
 };
 
-// Тексты состояний доступа вынесены из checkout-страницы, чтобы UI не держал доменную копию.
+// Тексты состояний доступа в checkout.
 export const COURSE_ACCESS_COPY: Record<CourseAccessStatus, CourseAccessCopyDto> = {
-  // Курс уже доступен.
   open: {
-    label: "course open",
+    label: "Открыт",
     title: "Курс открыт",
     description: "Доступ уже активирован. Можно сразу продолжить обучение."
   },
-  // Курс закрыт и требует оплаты.
   locked: {
-    label: "payment required",
+    label: "Требуется оплата",
     title: "Требуется оплата",
-    description: "После успешного платежа backend откроет доступ к материалам курса."
+    description: "После успешной оплаты курс появится в профиле, а материалы станут доступны."
   },
-  // Платеж создан или ожидает обработки.
   pending: {
-    label: "payment pending",
+    label: "Ожидает оплаты",
     title: "Платеж готовится",
-    description: "Состояние под будущую обработку платежа и ожидание подтверждения."
+    description: "Платеж обрабатывается. Как только он подтвердится, доступ откроется автоматически."
   }
 };
 
-// TODO: Интегрировать с бэком, когда появится эндпоинт методов оплаты.
-// Telegram Stars оставлен основным методом, crypto пока отображается как будущий шлюз.
 const paymentMethodsMock: PaymentMethodDto[] = [
-  // Основной способ оплаты для цифрового курса внутри Telegram.
   {
     id: "stars",
     title: "Telegram Stars",
-    description: "Основной способ оплаты цифрового курса внутри Telegram.",
+    description: "Оплата цифрового курса внутри Telegram.",
     tag: "primary",
     enabled: true
   },
-  // Будущий способ оплаты, пока без реального backend-шлюза.
   {
     id: "crypto",
     title: "Криптовалюта",
-    description: "Зарезервировано под будущий платежный шлюз.",
+    description: "Скоро появится.",
     tag: "soon",
     enabled: false
   }
 ];
 
-// Тезисы для login-экрана не требуют backend, но лежат рядом с остальными UI-данными.
 const loginNotesMock: LoginNoteDto[] = [
-  // Первый тезис: обычный username/password login для MVP.
   {
     id: "username-password",
-    title: "username и пароль"
+    title: "Логин и пароль"
   },
-  // Второй тезис: token живет локально на фронте.
   {
     id: "local-token",
-    title: "токен хранится локально"
+    title: "Сессия сохраняется в браузере"
   },
-  // Третий тезис: submission отправляется с Authorization header.
   {
     id: "authorized-submission",
-    title: "submission только после входа"
+    title: "Решения отправляются только после входа"
   }
 ];
 
@@ -658,6 +647,7 @@ export async function createAdminCourse(
   payload: AdminCourseCreatePayload
 ): Promise<AdminCourseDto> {
   return apiRequest<AdminCourseDto>("/api/courses", {
+    auth: true,
     method: "POST",
     body: JSON.stringify(payload)
   });
@@ -669,6 +659,7 @@ export async function updateAdminCourse(
   payload: AdminCourseCreatePayload
 ): Promise<AdminCourseDto> {
   return apiRequest<AdminCourseDto>(`/api/courses/${id}`, {
+    auth: true,
     method: "PUT",
     body: JSON.stringify(payload)
   });
@@ -690,6 +681,7 @@ export async function createAdminModule(
   payload: AdminModuleCreatePayload
 ): Promise<AdminModuleDto> {
   return apiRequest<AdminModuleDto>(`/api/courses/${courseId}/modules`, {
+    auth: true,
     method: "POST",
     body: JSON.stringify(payload)
   });
@@ -701,6 +693,7 @@ export async function updateAdminModule(
   payload: AdminModuleCreatePayload
 ): Promise<AdminModuleDto> {
   return apiRequest<AdminModuleDto>(`/api/modules/${id}`, {
+    auth: true,
     method: "PUT",
     body: JSON.stringify(payload)
   });
@@ -722,6 +715,7 @@ export async function createAdminLesson(
   payload: AdminLessonCreatePayload
 ): Promise<AdminLessonDto> {
   return apiRequest<AdminLessonDto>(`/api/modules/${moduleId}/lessons`, {
+    auth: true,
     method: "POST",
     body: JSON.stringify(payload)
   });
@@ -733,6 +727,7 @@ export async function updateAdminLesson(
   payload: AdminLessonCreatePayload
 ): Promise<AdminLessonDto> {
   return apiRequest<AdminLessonDto>(`/api/lessons/${id}`, {
+    auth: true,
     method: "PUT",
     body: JSON.stringify(payload)
   });
@@ -754,6 +749,7 @@ export async function createAdminTask(
   payload: AdminTaskCreatePayload
 ): Promise<AdminTaskDto> {
   return apiRequest<AdminTaskDto>(`/api/lessons/${lessonId}/tasks`, {
+    auth: true,
     method: "POST",
     body: JSON.stringify(payload)
   });
@@ -765,6 +761,7 @@ export async function updateAdminTask(
   payload: AdminTaskCreatePayload
 ): Promise<AdminTaskDto> {
   return apiRequest<AdminTaskDto>(`/api/tasks/${id}`, {
+    auth: true,
     method: "PUT",
     body: JSON.stringify(payload)
   });
@@ -777,7 +774,7 @@ export async function createSubmission(
   signal?: AbortSignal
 ): Promise<SubmissionCreatedResponseDto> {
   if (!getAuthToken()) {
-    throw new AuthClientError("missing_token", "Чтобы отправить решение, войди в аккаунт.");
+    throw new AuthClientError("missing_token", "Чтобы отправить решение, войдите в аккаунт.");
   }
 
   return apiRequest<SubmissionCreatedResponseDto>(`/api/tasks/${taskId}/submissions`, {

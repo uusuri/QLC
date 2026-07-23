@@ -4,7 +4,7 @@ import Image from "next/image";
 
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { ButtonLink, Progress, StatusBadge } from "@/components/ui";
-import { parseCourseIdFromSlug } from "@/services/api";
+import { COURSE_ACCESS_COPY, parseCourseIdFromSlug } from "@/services/api";
 import type { CourseDto } from "@/types";
 
 type CourseCardProps = {
@@ -32,10 +32,10 @@ export function CourseCard({ course, index, isBought = false }: CourseCardProps)
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
         <div className="absolute left-4 top-4 flex flex-wrap gap-2">
           {isBought ? (
-            <StatusBadge tone="success">owned</StatusBadge>
+            <StatusBadge tone="success">Куплено</StatusBadge>
           ) : (
             <StatusBadge tone={isOpen ? "success" : isLocked ? "warning" : "neutral"}>
-              {isOpen ? "open" : isLocked ? "locked" : "soon"}
+              {COURSE_ACCESS_COPY[course.access].label}
             </StatusBadge>
           )}
           {course.badge && course.badge !== "course" && (
@@ -58,7 +58,7 @@ export function CourseCard({ course, index, isBought = false }: CourseCardProps)
         <p className="mt-3 flex-1 text-sm leading-relaxed text-white/60">{course.description}</p>
 
         <div className="mt-5 grid gap-4">
-          <Progress label={`${course.title} readiness`} value={Math.min(100, course.lessonsCount * 3)} />
+          <Progress label={course.title} value={Math.min(100, course.lessonsCount * 3)} />
           {canOpen ? (
             <ButtonLink href={`/courses/${course.slug}`}>Открыть курс</ButtonLink>
           ) : isLocked && courseId !== null ? (

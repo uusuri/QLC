@@ -23,14 +23,14 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
   try {
     courses = await getCourseCatalog();
   } catch {
-    loadError = "Не удалось загрузить курс для оплаты. Проверь backend.";
+    loadError = "Не удалось загрузить курс для оплаты. Попробуйте обновить страницу.";
   }
 
   if (loadError) {
     return (
       <CheckoutStatePage
-        eyebrow="checkout / backend error"
-        title="Оплата недоступна."
+        eyebrow="Ошибка"
+        title="Оплата недоступна"
         text={loadError}
       />
     );
@@ -39,11 +39,9 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
   if (courses.length === 0) {
     return (
       <CheckoutStatePage
-        eyebrow="checkout / empty catalog"
-        title="Курсов пока нет."
-        text="Курсов пока нет. Создай курс в /admin/content."
-        actionHref="/admin/content"
-        actionText="Перейти в админку"
+        eyebrow="Пустой каталог"
+        title="Курсов пока нет"
+        text="В базе ещё нет курсов. Загляните позже."
       />
     );
   }
@@ -53,9 +51,9 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
   if (!selectedCourse) {
     return (
       <CheckoutStatePage
-        eyebrow="checkout / not found"
-        title="Курс не найден."
-        text="Курс не найден. Вернись на главную и выбери курс."
+        eyebrow="Не найден"
+        title="Курс не найден"
+        text="Курс не найден. Вернитесь на главную и выберите курс."
       />
     );
   }
@@ -71,7 +69,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
           <SiteHeader />
 
           {loadError && (
-            <Alert className="mb-4" title="backend error" tone="danger">
+            <Alert className="mb-4" title="Ошибка загрузки" tone="danger">
               {loadError}
             </Alert>
           )}
@@ -81,7 +79,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
               <div className="flex items-center gap-3">
                 <span className="inline-flex h-2 w-2 rounded-full bg-acid shadow-[0_0_12px_rgba(255,106,61,0.5)]" />
                 <Link className="transition hover:text-acid" href="/">
-                  Course Archive
+                  QLC
                 </Link>
               </div>
               <nav className="flex items-center gap-5 text-white/50">
@@ -97,9 +95,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
             <section className="grid border-b border-line lg:grid-cols-[1fr_440px]">
               <div className="grid gap-12 border-b border-line p-5 sm:p-7 lg:min-h-[620px] lg:border-b-0 lg:border-r">
                 <div>
-                  <p className="mb-5 text-xs font-black uppercase text-acid">
-                    checkout / instant access
-                  </p>
+                  <p className="mb-5 text-xs font-black uppercase text-acid">Оплата курса</p>
                   <h1 className="max-w-5xl text-5xl font-black uppercase leading-[1.02] sm:text-7xl lg:text-8xl">
                     Оплата курса.
                   </h1>
@@ -177,7 +173,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
 
             <section className="p-5 sm:p-7">
               <p className="mb-4 font-mono text-xs font-black uppercase text-white/40">
-                выбери другой курс
+                выберите другой курс
               </p>
               <div className="grid gap-px bg-line sm:grid-cols-3">
                 {courses.map((course) => (

@@ -46,6 +46,7 @@ function getSwitchHref(mode: AuthFormMode, redirectTo?: string) {
   return redirectTo ? `${target}?redirectTo=${encodeURIComponent(redirectTo)}` : target;
 }
 
+// Обработка ошибок auth-формы.
 function getErrorState(error: unknown): { message: string; status: AuthFormStatus } {
   if (error instanceof AuthClientError) {
     if (error.code === "unauthorized" || error.code === "missing_token") {
@@ -102,6 +103,17 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const switchText = isRegister ? "Уже есть аккаунт? Войти" : "Нет аккаунта? Зарегистрироваться";
   const finalRedirect = redirectTo && redirectTo.startsWith("/") ? redirectTo : "/profile";
 
+  const alertTitle =
+    status === "success"
+      ? "Готово"
+      : status === "validation"
+        ? "Проверьте данные"
+        : status === "unauthorized"
+          ? "Неверные данные"
+          : status === "duplicate"
+            ? "Аккаунт уже существует"
+            : "Ошибка";
+
   const updateField = (name: keyof AuthFields, value: string) => {
     setFields((current) => ({
       ...current,
@@ -153,18 +165,18 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
       <div>
         <p className="font-mono text-xs font-black uppercase text-acid">{title}</p>
         <h2 className="mt-4 text-3xl font-black uppercase leading-[1.04] sm:text-5xl">
-          {isRegister ? "Создай аккаунт." : "Войди в аккаунт."}
+          {isRegister ? "Создайте аккаунт." : "Войдите в аккаунт."}
         </h2>
         <p className="mt-5 text-base leading-snug text-white/58">
           {isRegister
-            ? "Username, email и пароль. После регистрации токен сохранится локально."
-            : "Введи username и пароль. Submission без входа не отправляется."}
+            ? "Укажите логин, email и пароль. После регистрации можно покупать курсы и отслеживать прогресс."
+            : "Введите логин и пароль, чтобы продолжить обучение."}
         </p>
       </div>
 
       <InputField
         autoComplete="username"
-        label="Username"
+        label="Логин"
         maxLength={32}
         name="username"
         onChange={(value) => updateField("username", value)}
@@ -186,7 +198,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
 
       <InputField
         autoComplete={isRegister ? "new-password" : "current-password"}
-        label="Password"
+        label="Пароль"
         minLength={8}
         name="password"
         onChange={(value) => updateField("password", value)}
@@ -200,12 +212,12 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
       {isRegister && (
         <InputField
           autoComplete="new-password"
-          label="Repeat password"
+          label="Повтор пароля"
           minLength={8}
           name="repeatPassword"
           onChange={(value) => updateField("repeatPassword", value)}
           onToggleVisibility={() => setShowRepeat((current) => !current)}
-          placeholder="повтори пароль"
+          placeholder="повторите пароль"
           reveal={showRepeat}
           type="password"
           value={fields.repeatPassword}
@@ -213,20 +225,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
       )}
 
       {message && (
-        <Alert
-          title={
-            status === "success"
-              ? "success"
-              : status === "validation"
-                ? "validation error"
-                : status === "unauthorized"
-                  ? "unauthorized"
-                  : status === "duplicate"
-                    ? "duplicate"
-                    : "backend error"
-          }
-          tone={status === "success" ? "success" : "danger"}
-        >
+        <Alert title={alertTitle} tone={status === "success" ? "success" : "danger"}>
           {message}
         </Alert>
       )}
