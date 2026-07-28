@@ -9,48 +9,25 @@ export function SiteFooter() {
   const { user } = useAuth();
 
   return (
-    <footer className="border-t border-line bg-ink/90">
-      <div className="mx-auto max-w-[92vw] px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid gap-6 sm:grid-cols-[1fr_auto]">
-          <div>
-            <div className="flex items-center gap-3">
-              <span className="inline-flex h-2 w-2 rounded-full bg-acid shadow-[0_0_12px_rgba(255,106,61,0.5)]" />
-              <span className="font-mono text-xs font-black uppercase tracking-[0.24em] text-white/80">
-                QLC
-              </span>
-            </div>
-            <p className="mt-3 max-w-md text-xs leading-relaxed text-white/40">
-              Образовательная платформа в визуальном ключе классического sci-fi терминала.
-              Жесткая сетка, моноширинная типографика и акцентный оранжевый фосфор.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-5 text-[10px] font-black uppercase tracking-[0.18em] text-white/48">
-            <Link className="transition hover:text-acid" href="/">
-              Витрина
-            </Link>
-            <Link className="transition hover:text-acid" href="/profile">
-              Профиль
-            </Link>
-            {!user && (
-              <Link className="transition hover:text-acid" href="/login">
-                Вход
-              </Link>
-            )}
-            {isAdmin(user) && (
-              <Link className="transition hover:text-acid" href="/admin/content">
-                Admin
-              </Link>
-            )}
-          </div>
+    <footer className="mt-20 border-t border-white/8 py-10">
+      <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
+        <div>
+          <p className="text-lg font-black tracking-[-0.04em]">QLC</p>
+          <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/40">
+            Учитесь программировать через практику и понятную обратную связь.
+          </p>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-[10px] font-mono uppercase tracking-[0.16em] text-white/32">
-          <span>© {new Date().getFullYear()} Course Archive</span>
-          <span className="inline-flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-acid" />
-            system operational
-          </span>
+        <div>
+          <div className="flex flex-wrap gap-5 text-sm text-white/46">
+            <Link className="transition hover:text-phosphor" href="/">Курсы</Link>
+            <Link className="transition hover:text-phosphor" href="/profile">Моё обучение</Link>
+            {!user && <Link className="transition hover:text-phosphor" href="/login">Вход</Link>}
+            {isAdmin(user) && (
+              <Link className="transition hover:text-phosphor" href="/admin/content">Админ</Link>
+            )}
+          </div>
+          <p className="mt-4 text-xs text-white/24 sm:text-right">© {new Date().getFullYear()} QLC</p>
         </div>
       </div>
     </footer>

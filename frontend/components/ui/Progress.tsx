@@ -4,6 +4,8 @@
 type ProgressProps = {
   // label делает progress понятным для screen reader и визуально.
   label: string;
+  // light используется на светлом фоне.
+  tone?: "dark" | "light";
   // value — процент прогресса от 0 до 100.
   value: number;
 };
@@ -14,12 +16,13 @@ function clampPercent(value: number) {
 }
 
 // Progress — единый прогресс-бар для профиля/курса/локального завершения урока.
-export function Progress({ label, value }: ProgressProps) {
+export function Progress({ label, tone = "dark", value }: ProgressProps) {
   const percent = clampPercent(value);
+  const isLight = tone === "light";
 
   return (
     <div className="grid gap-2">
-      <div className="flex items-center justify-between gap-4 font-mono text-[10px] font-black uppercase text-white/54">
+      <div className="flex items-center justify-between gap-4 font-mono text-[10px] font-bold uppercase text-current opacity-55">
         <span>{label}</span>
         <span>{Math.round(percent)}%</span>
       </div>
@@ -28,17 +31,18 @@ export function Progress({ label, value }: ProgressProps) {
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={Math.round(percent)}
-        className="relative h-3 overflow-hidden border border-line bg-panel shadow-inner"
+        className="relative h-2 overflow-hidden rounded-full"
         role="progressbar"
+        style={{
+          backgroundColor: isLight ? "rgba(11, 13, 15, 0.2)" : "rgba(255, 255, 255, 0.12)"
+        }}
       >
         <div
-          className="absolute left-0 top-0 h-full bg-gradient-to-r from-acid via-ember to-white/90 shadow-[0_0_16px_rgba(255,106,61,0.35)]"
-          style={{ width: `${percent}%` }}
-        />
-        <span
-          aria-hidden="true"
-          className="absolute inset-0 -translate-x-full animate-[marathon-scan_3s_linear_infinite] bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.12)_50%,transparent_100%)]"
-          style={{ backgroundSize: "30% 100%" }}
+          className="absolute left-0 top-0 h-full"
+          style={{
+            backgroundColor: isLight ? "#0b0d0f" : "#b8ff35",
+            width: `${percent}%`
+          }}
         />
       </div>
     </div>

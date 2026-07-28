@@ -39,7 +39,7 @@ export function CourseList({ courses }: CourseListProps) {
   }, []);
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {courses.map((course, index) => {
         const courseId = Number(course.slug.replace(/^course-/, ""));
         const isBought = Number.isSafeInteger(courseId) && courseId > 0 && boughtIds.has(courseId);

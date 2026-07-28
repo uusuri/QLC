@@ -39,7 +39,7 @@ export function AddToCartButton({ courseId, courseSlug }: AddToCartButtonProps) 
   if (state === "added") {
     return (
       <Link
-        className="inline-flex min-h-12 items-center justify-center border border-acid bg-acid px-5 text-xs font-black uppercase tracking-[0.18em] text-ink transition hover:bg-transparent hover:text-acid"
+        className="inline-flex min-h-12 items-center justify-center rounded-full bg-phosphor px-6 text-sm font-semibold text-ink transition hover:bg-white"
         href={`/checkout?course=${courseSlug}`}
       >
         Оплатить

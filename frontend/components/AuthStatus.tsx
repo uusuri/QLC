@@ -1,26 +1,17 @@
-// AuthStatus читает auth-контекст и должен работать в браузере.
 "use client";
 
-// Link нужен для перехода на /login.
 import Link from "next/link";
-
-// useRouter обновляет серверные части после logout.
 import { useRouter } from "next/navigation";
-
-// React-хуки держат текущего пользователя.
 import { useEffect, useMemo, useState } from "react";
 
-// Auth helpers идут через service layer.
 import { isAdmin } from "@/components/AdminGuard";
 import { useAuth } from "@/components/AuthProvider";
 import { logoutUser } from "@/services/api";
 
-// Компактный auth-block для nav/header.
 export function AuthStatus() {
   const router = useRouter();
   const [currentPath, setCurrentPath] = useState("/");
   const { user } = useAuth();
-
   const loginHref = useMemo(
     () => `/login?redirectTo=${encodeURIComponent(currentPath)}`,
     [currentPath]
@@ -39,24 +30,17 @@ export function AuthStatus() {
     const admin = isAdmin(user);
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <span
-          className={`inline-flex items-center gap-1.5 border px-3 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] transition ${
-            admin
-              ? "border-acid bg-acid text-ink"
-              : "border-line bg-panel/70 text-white/76"
+          className={`hidden items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold sm:inline-flex ${
+            admin ? "bg-phosphor text-ink" : "bg-white/[0.06] text-white/72"
           }`}
         >
-          {admin && (
-            <span
-              aria-hidden="true"
-              className="inline-block h-1.5 w-1.5 rounded-full bg-ink"
-            />
-          )}
+          {admin && <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-ink" />}
           @{user.username}
         </span>
         <button
-          className="inline-flex items-center border border-line bg-panel/70 px-3 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-white/70 transition hover:border-acid hover:bg-white/[0.05] hover:text-acid"
+          className="rounded-full px-3 py-2 text-xs font-semibold text-white/54 transition hover:bg-white/[0.06] hover:text-white"
           onClick={handleLogout}
           type="button"
         >
@@ -68,10 +52,10 @@ export function AuthStatus() {
 
   return (
     <Link
-      className="inline-flex items-center border border-line bg-panel/70 px-3 py-2 font-mono text-[10px] font-black uppercase tracking-[0.24em] text-white/72 transition hover:border-acid hover:bg-white/[0.05] hover:text-acid"
+      className="rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-ink transition hover:bg-phosphor"
       href={loginHref}
     >
-      Вход
+      Войти
     </Link>
   );
 }

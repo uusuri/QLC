@@ -24,22 +24,22 @@ function cn(...items: Array<string | false | null | undefined>) {
 // Возвращает цветовую схему статуса.
 function getToneClassName(tone: StatusTone) {
   if (tone === "success") {
-    return "border-acid bg-acid text-ink shadow-[0_0_16px_rgba(255,106,61,0.28)]";
+    return "bg-phosphor text-ink";
   }
 
   if (tone === "warning") {
-    return "border-yellow-300/70 bg-yellow-300/12 text-yellow-100";
+    return "bg-yellow-300/12 text-yellow-100";
   }
 
   if (tone === "danger") {
-    return "border-red-400/70 bg-red-400/12 text-red-100";
+    return "bg-red-400/12 text-red-100";
   }
 
   if (tone === "info") {
-    return "border-cyan-300/70 bg-cyan-300/12 text-cyan-100";
+    return "bg-cyan-300/12 text-cyan-100";
   }
 
-  return "border-line bg-panel text-white/74";
+  return "bg-white/[0.08] text-white/74";
 }
 
 // Возвращает маленький маркер состояния.
@@ -68,7 +68,7 @@ export function StatusBadge({ children, className, tone = "neutral" }: StatusBad
   return (
     <span
       className={cn(
-        "inline-flex w-fit items-center gap-2 border px-2.5 py-1 font-mono text-[10px] font-black uppercase",
+        "inline-flex w-fit items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold",
         getToneClassName(tone),
         className
       )}

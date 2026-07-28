@@ -9,10 +9,8 @@ import "./globals.css";
 
 // Metadata используется Next.js для title/description.
 export const metadata: Metadata = {
-  // Заголовок вкладки браузера.
-  title: "Course Archive / Marathon Edition",
-  // Описание сайта для SEO/preview.
-  description: "Premium tech education platform"
+  title: "QLC — обучение программированию через практику",
+  description: "Короткая теория, задачи и проверка кода в одном окне."
 };
 
 // RootLayout — корневой layout для всех страниц внутри app router.
