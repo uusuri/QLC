@@ -1,4 +1,3 @@
-// Общие типы фронтенда лежат отдельно, чтобы страницы не дублировали контракты данных.
 import type {
   AdminCourseCreatePayload,
   AdminCourseDto,
@@ -14,6 +13,7 @@ import type {
   CartResponseDto,
   CourseAccessResponseDto,
   CourseLearningViewDto,
+  MyCourseProgressDto,
   CourseAccessCopyDto,
   CourseAccessStatus,
   CourseDto,
@@ -27,29 +27,25 @@ import type {
   SubmissionCreatePayload,
   SubmissionCreatedResponseDto,
   SubmissionResponseDto,
-  StudentProfileDto
+  StudentProfileDto,
+  TelegramAuthPayload
 } from "@/types";
 
-// Базовый URL backend API. В dev по умолчанию Spring Boot живет на 127.0.0.1:8080.
 const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8080").replace(
   /\/$/,
   ""
 );
 
-// Ключи localStorage для Sprint 2 auth state.
 const AUTH_TOKEN_STORAGE_KEY = "qlc:auth-token";
 const AUTH_USER_STORAGE_KEY = "qlc:auth-user";
+const LAST_ACCOUNT_STORAGE_KEY = "qlc:last-account";
 const AUTH_CHANGE_EVENT = "qlc-auth-change";
 
-// Расширяем RequestInit флагом auth, чтобы не размазывать Authorization header по компонентам.
 type ApiRequestOptions = RequestInit & {
-  // auth=true добавляет Authorization: Bearer {token}, если токен есть.
   auth?: boolean;
 };
 
-// Ошибка auth-service с кодом для UI.
 export class AuthClientError extends Error {
-  // code позволяет форме показать понятное состояние.
   code: AuthErrorCode;
 
   constructor(code: AuthErrorCode, message: string) {
@@ -63,29 +59,24 @@ export class AuthClientError extends Error {
 const DEFAULT_COURSE_IMAGE_URL =
   "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=900&q=80";
 
-// Объектная проверка для безопасного чтения неизвестного JSON из ошибок backend.
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-// Возвращает строковое поле из JSON-ошибки, если оно реально является строкой.
 function getStringField(source: Record<string, unknown>, key: string): string | undefined {
   const value = source[key];
   return typeof value === "string" ? value : undefined;
 }
 
-// Достает понятный текст ошибки из ответа backend.
 async function readErrorMessage(response: Response): Promise<string> {
   // Backend может вернуть JSON ErrorDTO, стандартную Spring-ошибку или plain text.
   const text = await response.text();
 
-  // Пустой body тоже превращаем в читабельную ошибку.
   if (!text) {
     return `Backend error ${response.status} ${response.statusText}`;
   }
 
   try {
-    // JSON.parse возвращает unknown, поэтому ниже идут строгие проверки формы.
     const parsed: unknown = JSON.parse(text);
 
     if (isRecord(parsed)) {
@@ -97,27 +88,21 @@ async function readErrorMessage(response: Response): Promise<string> {
       );
     }
   } catch {
-    // Если это не JSON, ниже вернем исходный текст.
   }
 
   return text;
 }
 
-// Единая обертка над fetch для admin/API-запросов.
 async function apiRequest<TResponse>(
   path: string,
   options: ApiRequestOptions = {}
 ): Promise<TResponse> {
-  // auth — наш внутренний флаг, в fetch его передавать нельзя.
   const { auth = false, ...requestOptions } = options;
 
-  // Headers умеет принимать любые допустимые варианты RequestInit.headers.
   const headers = new Headers(requestOptions.headers);
 
-  // JSON — общий формат текущих backend DTO.
   headers.set("Content-Type", "application/json");
 
-  // Protected frontend calls могут добавить Bearer token из localStorage.
   if (auth) {
     const token = getAuthToken();
 
@@ -126,19 +111,23 @@ async function apiRequest<TResponse>(
     }
   }
 
-  // Собираем абсолютный URL, чтобы frontend на 3000 ходил в Spring Boot на 8080.
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...requestOptions,
     cache: "no-store",
     headers
   });
 
-  // Ошибки backend превращаем в Error, чтобы UI мог показать error state.
   if (!response.ok) {
+    // Истекший JWT нельзя оставлять в localStorage: иначе защищённые формы
+    // продолжают отправлять его и показывают ошибки до ручного перелогина.
+    if (auth && response.status === 401) {
+      clearAuthToken();
+      throw new AuthClientError("unauthorized", "Сессия истекла. Войдите снова.");
+    }
+
     throw new Error(await readErrorMessage(response));
   }
 
-  // Для текущих GET/POST backend всегда возвращает JSON DTO.
   return (await response.json()) as TResponse;
 }
 
@@ -274,13 +263,41 @@ function setAuthSession(response: AuthResponseDto) {
 
   if (canUseLocalStorage()) {
     window.localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(response.user));
+    window.localStorage.setItem(LAST_ACCOUNT_STORAGE_KEY, response.user.username);
   }
 
   emitAuthChange();
 }
 
 // Маппит backend CourseDTO в frontend CourseDto, который ожидает главная витрина.
-function mapAdminCourseToCatalogCourse(course: AdminCourseDto): CourseDto {
+export function formatRussianCountWord(count: number, forms: [string, string, string]) {
+  const remainder100 = Math.abs(count) % 100;
+  const remainder10 = Math.abs(count) % 10;
+
+  if (remainder100 >= 11 && remainder100 <= 14) {
+    return forms[2];
+  }
+
+  if (remainder10 === 1) {
+    return forms[0];
+  }
+
+  if (remainder10 >= 2 && remainder10 <= 4) {
+    return forms[1];
+  }
+
+  return forms[2];
+}
+
+export function formatLessonsLabel(lessonsCount: number) {
+  return `${lessonsCount} ${formatRussianCountWord(lessonsCount, ["урок", "урока", "уроков"])}`;
+}
+
+export function formatCoursesLabel(coursesCount: number) {
+  return `${coursesCount} ${formatRussianCountWord(coursesCount, ["курс", "курса", "курсов"])}`;
+}
+
+function mapAdminCourseToCatalogCourse(course: AdminCourseDto, lessonsCount = 0): CourseDto {
   const price = formatRubPrice(course.price);
   const oldPrice = formatRubPrice(price.amount > 0 ? price.amount * 2 : null);
 
@@ -290,8 +307,8 @@ function mapAdminCourseToCatalogCourse(course: AdminCourseDto): CourseDto {
     description: course.description || "Описание курса скоро появится.",
     imageUrl: DEFAULT_COURSE_IMAGE_URL,
     badge: "course",
-    lessonsCount: 0,
-    lessonsLabel: "0 уроков",
+    lessonsCount,
+    lessonsLabel: formatLessonsLabel(lessonsCount),
     price,
     oldPrice,
     access: price.amount > 0 ? "locked" : "open"
@@ -456,6 +473,15 @@ export function clearAuthToken() {
   emitAuthChange();
 }
 
+export function getLastAccountUsername(): string | null {
+  if (!canUseLocalStorage()) {
+    return null;
+  }
+
+  const username = window.localStorage.getItem(LAST_ACCOUNT_STORAGE_KEY)?.trim();
+  return username || null;
+}
+
 // Возвращает сохраненное в localStorage краткое summary пользователя.
 // Используется для синхронной инициализации UI перед фоновой проверкой токена.
 export function getStoredUser(): AuthUserDto | null {
@@ -505,6 +531,16 @@ export async function loginUser(payload: LoginUserPayload): Promise<AuthResponse
   return response;
 }
 
+export async function loginWithTelegram(payload: TelegramAuthPayload): Promise<AuthResponseDto> {
+  const response = await apiRequest<AuthResponseDto>("/api/auth/telegram", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+
+  setAuthSession(response);
+  return response;
+}
+
 // Возвращает текущего пользователя через GET /api/auth/me с реальным JWT.
 export async function getCurrentUser(): Promise<AuthUserDto | null> {
   if (!getAuthToken()) {
@@ -513,9 +549,14 @@ export async function getCurrentUser(): Promise<AuthUserDto | null> {
 
   try {
     return await apiRequest<AuthUserDto>("/api/auth/me", { auth: true });
-  } catch {
-    clearAuthToken();
-    return null;
+  } catch (error) {
+    // При 401 apiRequest уже очистил сессию и разослал событие AuthProvider.
+    if (error instanceof AuthClientError) {
+      return null;
+    }
+
+    // Временная ошибка сети не должна разлогинивать пользователя.
+    return getStoredUser();
   }
 }
 
@@ -526,9 +567,17 @@ export function logoutUser() {
 
 // Возвращает каталог курсов для главной и checkout-страницы.
 export async function getCourseCatalog(): Promise<CourseDto[]> {
-  // Основной сценарий: витрина и checkout берут курсы из backend/БД.
   const courses = await getAdminCourses();
-  return courses.map(mapAdminCourseToCatalogCourse);
+
+  return Promise.all(
+    courses.map(async (course) => {
+      const modules = await getAdminModules(course.id);
+      const lessonsByModule = await Promise.all(modules.map((module) => getAdminLessons(module.id)));
+      const lessonsCount = lessonsByModule.flat().filter((lesson) => lesson.published).length;
+
+      return mapAdminCourseToCatalogCourse(course, lessonsCount);
+    })
+  );
 }
 
 // Возвращает статичный каталог только для будущих локальных fallback/debug-сценариев.
@@ -574,7 +623,10 @@ export async function getCourseLearningView(slug: string): Promise<CourseLearnin
 
   return {
     course,
-    catalogCourse: mapAdminCourseToCatalogCourse(course),
+    catalogCourse: mapAdminCourseToCatalogCourse(
+      course,
+      modulesWithLessons.flatMap((item) => item.lessons).filter((lesson) => lesson.published).length
+    ),
     courseIndex,
     isAvailable: courseIndex === 0,
     modules: modulesWithLessons,
@@ -821,4 +873,9 @@ export async function purchaseCart(): Promise<AdminCourseDto[]> {
 // Возвращает список курсов, купленных текущим пользователем.
 export async function getMyCourses(): Promise<AdminCourseDto[]> {
   return apiRequest<AdminCourseDto[]>("/api/users/me/courses", { auth: true });
+}
+
+// Возвращает все купленные курсы, модули, уроки и реальный прогресс текущего ученика.
+export async function getMyLearningCourses(): Promise<MyCourseProgressDto[]> {
+  return apiRequest<MyCourseProgressDto[]>("/api/users/me/learning-courses", { auth: true });
 }

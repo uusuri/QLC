@@ -13,6 +13,7 @@ import {
   getCourseAccess,
   getCourseLearningView,
   getAuthToken,
+  formatRussianCountWord,
   parseCourseIdFromSlug
 } from "@/services/api";
 import type { CourseLearningViewDto } from "@/types";
@@ -117,21 +118,18 @@ export default function CoursePage() {
               <div className="flex items-center gap-3">
                 <span className="inline-flex h-2 w-2 rounded-full bg-acid shadow-[0_0_12px_rgba(255,106,61,0.5)]" />
                 <Link className="transition hover:text-acid" href="/">
-                  Витрина
+                  Курсы
                 </Link>
                 <span className="text-white/20">/</span>
                 <span className="text-white/70">Курс</span>
               </div>
-              <nav className="flex items-center gap-5 text-white/50">
-                <Link className="transition hover:text-acid" href="/profile">
-                  Профиль
-                </Link>
-              </nav>
+              <Link className="text-white/50 transition hover:text-acid" href="/profile">Моё обучение</Link>
             </header>
 
             <section className="grid gap-8 border-b border-line p-5 sm:p-7 lg:grid-cols-[1.1fr_0.9fr] lg:p-8">
               <div>
-                <h1 className="max-w-5xl text-5xl font-black uppercase leading-[1.02] sm:text-7xl">
+                <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-acid">Курс</p>
+                <h1 className="mt-3 max-w-5xl text-4xl font-black uppercase leading-[1.02] sm:text-6xl">
                   {view.course.name}
                 </h1>
               </div>
@@ -140,10 +138,10 @@ export default function CoursePage() {
                 <SafeMarkdown markdown={view.course.description || "Описание пока не добавлено."} />
                 <div className="flex flex-wrap gap-3">
                   <ButtonLink disabled={!view.firstLesson} href={`/lessons/${view.firstLesson?.id ?? ""}`}>
-                    Открыть первый урок
+                    Начать обучение
                   </ButtonLink>
                   <ButtonLink href="/" variant="secondary">
-                    Назад к витрине
+                    Все курсы
                   </ButtonLink>
                 </div>
               </div>
@@ -157,6 +155,9 @@ export default function CoursePage() {
                   </p>
                   <h2 className="mt-3 text-4xl font-black uppercase leading-none">Модули и уроки</h2>
                 </div>
+                <span className="font-mono text-xs font-black uppercase text-white/44">
+                  {view.modules.length} {formatRussianCountWord(view.modules.length, ["модуль", "модуля", "модулей"])}
+                </span>
               </div>
 
               {view.modules.length === 0 ? (
@@ -170,10 +171,13 @@ export default function CoursePage() {
 
                     return (
                       <Panel key={item.module.id} muted>
-                        <PanelHeader>
+                        <PanelHeader className="grid gap-3 sm:grid-cols-[auto_1fr_auto] sm:items-center">
+                          <span className="grid h-10 w-10 place-items-center border border-acid/40 font-mono text-sm font-black text-acid">
+                            {String(moduleIndex + 1).padStart(2, "0")}
+                          </span>
                           <div>
                             <p className="font-mono text-xs font-black uppercase text-white/48">
-                              Модуль {moduleIndex + 1}
+                              Модуль
                             </p>
                             <h3 className="mt-1 text-2xl font-black uppercase leading-tight">
                               {item.module.name}
@@ -182,6 +186,9 @@ export default function CoursePage() {
                               {item.module.description || "Нет описания."}
                             </p>
                           </div>
+                          <span className="font-mono text-xs font-black uppercase text-white/44">
+                            {publishedLessons.length} {formatRussianCountWord(publishedLessons.length, ["урок", "урока", "уроков"])}
+                          </span>
                         </PanelHeader>
 
                         <PanelBody>
@@ -193,12 +200,12 @@ export default function CoursePage() {
                             <div className="grid gap-px border border-line bg-line">
                               {publishedLessons.map((lesson, lessonIndex) => (
                                 <Link
-                                  className="grid gap-3 bg-ink p-4 transition hover:bg-white/8 sm:grid-cols-[auto_1fr] sm:items-center"
+                                  className="grid gap-3 bg-ink p-4 transition hover:bg-white/8 sm:grid-cols-[auto_1fr_auto] sm:items-center"
                                   href={`/lessons/${lesson.id}`}
                                   key={lesson.id}
                                 >
-                                  <span className="font-mono text-xs font-black uppercase text-white/48">
-                                    Урок {lessonIndex + 1}
+                                  <span className="grid h-8 w-8 place-items-center rounded-full border border-white/20 font-mono text-[10px] font-black text-white/54">
+                                    {String(lessonIndex + 1).padStart(2, "0")}
                                   </span>
                                   <div>
                                     <strong className="text-lg font-black uppercase leading-tight">
@@ -208,6 +215,7 @@ export default function CoursePage() {
                                       {lesson.description || "Нет описания."}
                                     </p>
                                   </div>
+                                  <span className="hidden text-sm font-black text-acid sm:block">Открыть →</span>
                                 </Link>
                               ))}
                             </div>

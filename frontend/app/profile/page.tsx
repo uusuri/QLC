@@ -6,14 +6,16 @@ import { useEffect, useState } from "react";
 
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { Alert, ButtonLink, StatusBadge, Panel, PanelBody, PanelHeader } from "@/components/ui";
-import { getCurrentUser, getMyCourses, getAuthToken } from "@/services/api";
-import type { AdminCourseDto, AuthUserDto } from "@/types";
+import { ContinueLearningCard } from "@/components/ContinueLearning";
+import { Alert, ButtonLink, Progress, StatusBadge, Panel, PanelBody, PanelHeader } from "@/components/ui";
+import { formatCoursesLabel, getCurrentUser, getMyLearningCourses, getAuthToken } from "@/services/api";
+import { getNextLearningLesson } from "@/services/learningProgress";
+import type { AuthUserDto, MyCourseProgressDto } from "@/types";
 
 export default function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState<AuthUserDto | null>(null);
-  const [courses, setCourses] = useState<AdminCourseDto[] | null>(null);
+  const [courses, setCourses] = useState<MyCourseProgressDto[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -29,7 +31,7 @@ export default function ProfilePage() {
       try {
         const [currentUser, myCourses] = await Promise.all([
           getCurrentUser(),
-          getMyCourses()
+          getMyLearningCourses()
         ]);
 
         if (!ignore) {
@@ -75,6 +77,7 @@ export default function ProfilePage() {
   }
 
   const courseList = courses ?? [];
+  const nextLesson = getNextLearningLesson(courseList);
 
   return (
     <main className="flex min-h-screen flex-col">
@@ -106,6 +109,7 @@ export default function ProfilePage() {
 
             {/* Courses list */}
             <section className="p-5 sm:p-7">
+              {nextLesson && <div className="mb-7"><ContinueLearningCard nextLesson={nextLesson} /></div>}
               <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-acid">
@@ -114,7 +118,7 @@ export default function ProfilePage() {
                   <h2 className="mt-2 text-3xl font-black uppercase sm:text-5xl">Мои курсы</h2>
                 </div>
                 <span className="font-mono text-xs font-black uppercase text-white/48">
-                  {courseList.length} курс{courseList.length === 1 ? "" : courseList.length < 5 ? "а" : "ов"}
+                  {formatCoursesLabel(courseList.length)}
                 </span>
               </div>
 
@@ -123,11 +127,14 @@ export default function ProfilePage() {
                   У вас пока нет курсов. Перейдите на витрину, чтобы выбрать первый трек.
                 </Alert>
               ) : (
-                <div className="grid gap-4">
+                <div className="grid gap-6">
                   {courseList.map((course) => (
                     <Panel key={course.id} muted>
                       <PanelHeader className="grid gap-4 sm:grid-cols-[1fr_auto]">
                         <div>
+                          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-acid">
+                            Course / {course.solvedTasks} из {course.totalTasks} задач
+                          </p>
                           <h3 className="text-2xl font-black uppercase leading-[1.04] sm:text-3xl">
                             {course.name}
                           </h3>
@@ -137,14 +144,82 @@ export default function ProfilePage() {
                         </div>
                         <StatusBadge tone="success">Доступно</StatusBadge>
                       </PanelHeader>
-                      <PanelBody className="flex flex-wrap items-center justify-between gap-4">
-                        <span className="font-mono text-xs font-black uppercase text-white/48" />
-                        <Link
-                          className="inline-flex min-h-10 items-center justify-center border border-acid bg-acid px-4 text-xs font-black uppercase text-ink transition hover:bg-transparent hover:text-acid"
-                          href={`/courses/course-${course.id}`}
-                        >
-                          Открыть курс
-                        </Link>
+                      <PanelBody className="grid gap-6">
+                        <Progress label="Прогресс курса" value={course.progressPercent} />
+
+                        {course.modules.length === 0 ? (
+                          <Alert title="Программа готовится" tone="warning">
+                            В этом курсе пока нет модулей.
+                          </Alert>
+                        ) : (
+                          <div className="grid gap-4 xl:grid-cols-2">
+                            {course.modules.map((module, moduleIndex) => (
+                              <section className="border border-line bg-ink/70" key={module.id}>
+                                <header className="border-b border-line px-4 py-3">
+                                  <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
+                                    Модуль {moduleIndex + 1}
+                                  </p>
+                                  <h4 className="mt-1 text-lg font-black uppercase leading-tight text-white">
+                                    {module.name}
+                                  </h4>
+                                </header>
+
+                                {module.lessons.length === 0 ? (
+                                  <p className="p-4 text-sm text-white/48">Уроки скоро появятся.</p>
+                                ) : (
+                                  <div className="grid gap-px bg-line">
+                                    {module.lessons.map((lesson, lessonIndex) => {
+                                      const isComplete = lesson.totalTasks > 0 && lesson.progressPercent === 100;
+                                      const isInProgress = lesson.solvedTasks > 0 && !isComplete;
+
+                                      return (
+                                        <Link
+                                          className="group grid gap-3 bg-panel p-4 transition hover:bg-white/[0.06]"
+                                          href={`/lessons/${lesson.id}`}
+                                          key={lesson.id}
+                                        >
+                                          <div className="grid grid-cols-[auto_1fr_auto] items-start gap-3">
+                                            <span
+                                              aria-label={isComplete ? "Урок завершён" : isInProgress ? "Урок в процессе" : "Урок не начат"}
+                                              className={`mt-1 inline-flex h-3 w-3 rounded-full border-2 ${
+                                                isComplete
+                                                  ? "border-acid bg-acid shadow-[0_0_12px_rgba(255,106,61,0.75)]"
+                                                  : isInProgress
+                                                    ? "border-ember bg-ember/30"
+                                                    : "border-white/25 bg-transparent"
+                                              }`}
+                                            />
+                                            <div className="min-w-0">
+                                              <p className="font-mono text-[10px] font-black uppercase text-white/40">
+                                                Урок {lessonIndex + 1}
+                                              </p>
+                                              <h5 className="mt-1 truncate text-base font-black uppercase leading-tight text-white group-hover:text-acid">
+                                                {lesson.name}
+                                              </h5>
+                                            </div>
+                                            <span className="font-mono text-xs font-black text-white/70">
+                                              {lesson.solvedTasks}/{lesson.totalTasks}
+                                            </span>
+                                          </div>
+                                          <Progress label={`Прогресс: ${lesson.name}`} value={lesson.progressPercent} />
+                                        </Link>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              </section>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="flex justify-end">
+                          <Link
+                            className="inline-flex min-h-10 items-center justify-center border border-acid bg-acid px-4 text-xs font-black uppercase text-ink transition hover:bg-transparent hover:text-acid"
+                            href={`/courses/course-${course.id}`}
+                          >
+                            Открыть курс
+                          </Link>
+                        </div>
                       </PanelBody>
                     </Panel>
                   ))}

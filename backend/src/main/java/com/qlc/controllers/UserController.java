@@ -1,9 +1,11 @@
 package com.qlc.controllers;
 
 import com.qlc.models.dtos.CourseDTO;
+import com.qlc.models.dtos.MyCourseProgressDTO;
 import com.qlc.models.entities.User;
 import com.qlc.repositories.UserRepository;
 import com.qlc.security.UserDetailsImpl;
+import com.qlc.services.LearningProgressService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,9 +26,11 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class UserController {
 
   private final UserRepository userRepository;
+  private final LearningProgressService learningProgressService;
 
-  public UserController(UserRepository userRepository) {
+  public UserController(UserRepository userRepository, LearningProgressService learningProgressService) {
     this.userRepository = userRepository;
+    this.learningProgressService = learningProgressService;
   }
 
   @GetMapping("/me/courses")
@@ -40,6 +44,13 @@ public class UserController {
         .toList();
 
     return ResponseEntity.ok(courses);
+  }
+
+  @GetMapping("/me/learning-courses")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<List<MyCourseProgressDTO>> getMyLearningCourses(
+      @AuthenticationPrincipal UserDetailsImpl principal) {
+    return ResponseEntity.ok(learningProgressService.getPurchasedCoursesProgress(principal.getId()));
   }
 
   private CourseDTO mapToCourseDTO(com.qlc.models.entities.Course c) {

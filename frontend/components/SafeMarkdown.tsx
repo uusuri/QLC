@@ -1,42 +1,104 @@
 "use client";
 
-// ReactNode нужен для типизации массива JSX-блоков.
 import type { ReactNode } from "react";
 
-// Тип блока после простого markdown-парсинга.
 type MarkdownBlock =
   | {
-      // code — fenced code block.
       code: string;
       kind: "code";
       language: string;
     }
   | {
-      // heading — строка #/##/###.
       kind: "heading";
       level: 1 | 2 | 3;
       text: string;
     }
   | {
-      // list — набор строк - item.
       items: string[];
       kind: "list";
     }
   | {
-      // paragraph — обычный текст.
       kind: "paragraph";
       text: string;
     };
 
-// Props markdown-компонента.
 type SafeMarkdownProps = {
-  // markdown — исходная строка из backend DTO.
   markdown: string;
 };
 
-// Разбирает markdown в ограниченный набор безопасных блоков.
+// Рендерит базовый inline Markdown, не превращая входные данные в HTML.
+// Поддерживаем **жирный**, *курсив* и `inline code`; четыре звёздочки с
+// обеих сторон также считаем жирным текстом — такой вариант часто вводят
+// в редакторе по привычке.
+function renderInlineMarkdown(text: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  let cursor = 0;
+  let key = 0;
+
+  const appendText = (value: string) => {
+    if (value) {
+      nodes.push(value);
+    }
+  };
+
+  while (cursor < text.length) {
+    const rest = text.slice(cursor);
+    const token = rest.match(/^(`+|\*{1,}|_{1,})/);
+
+    if (!token) {
+      appendText(text[cursor]);
+      cursor += 1;
+      continue;
+    }
+
+    const marker = token[0];
+    const contentStart = cursor + marker.length;
+    const closingIndex = text.indexOf(marker, contentStart);
+
+    if (closingIndex === -1) {
+      appendText(marker);
+      cursor = contentStart;
+      continue;
+    }
+
+    const content = text.slice(contentStart, closingIndex);
+    if (!content) {
+      appendText(marker);
+      cursor = contentStart;
+      continue;
+    }
+
+    cursor = closingIndex + marker.length;
+
+    if (marker.startsWith("`")) {
+      nodes.push(
+        <code className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[0.9em] text-acid" key={key++}>
+          {content}
+        </code>
+      );
+      continue;
+    }
+
+    const children = renderInlineMarkdown(content);
+    if (marker.length >= 2) {
+      nodes.push(
+        <strong className="font-black text-white" key={key++}>
+          {children}
+        </strong>
+      );
+    } else {
+      nodes.push(
+        <em className="italic" key={key++}>
+          {children}
+        </em>
+      );
+    }
+  }
+
+  return nodes;
+}
+
 function parseMarkdown(markdown: string): MarkdownBlock[] {
-  // Нормализуем переносы строк, чтобы mac/windows/linux работали одинаково.
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
   const blocks: MarkdownBlock[] = [];
   let paragraph: string[] = [];
@@ -44,7 +106,6 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
   let code: string[] | null = null;
   let codeLanguage = "";
 
-  // Сбрасывает накопленный paragraph/list перед новым типом блока.
   const flushTextBlocks = () => {
     if (paragraph.length > 0) {
       blocks.push({
@@ -137,7 +198,6 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
   return blocks;
 }
 
-// Рендерит один markdown-блок в JSX без raw HTML.
 function renderBlock(block: MarkdownBlock, index: number): ReactNode {
   if (block.kind === "code") {
     return (
@@ -161,7 +221,7 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
     if (block.level === 1) {
       return (
         <h2 className={`${className} text-3xl`} key={index}>
-          {block.text}
+          {renderInlineMarkdown(block.text)}
         </h2>
       );
     }
@@ -169,14 +229,14 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
     if (block.level === 2) {
       return (
         <h3 className={`${className} text-2xl`} key={index}>
-          {block.text}
+          {renderInlineMarkdown(block.text)}
         </h3>
       );
     }
 
     return (
       <h4 className={`${className} text-xl`} key={index}>
-        {block.text}
+        {renderInlineMarkdown(block.text)}
       </h4>
     );
   }
@@ -187,7 +247,7 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
         {block.items.map((item, itemIndex) => (
           <li className="grid grid-cols-[auto_1fr] gap-3" key={`${item}-${itemIndex}`}>
             <span className="font-black text-acid">/</span>
-            <span>{item}</span>
+            <span>{renderInlineMarkdown(item)}</span>
           </li>
         ))}
       </ul>
@@ -196,12 +256,11 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
 
   return (
     <p className="text-sm leading-relaxed text-white/70 sm:text-base" key={index}>
-      {block.text}
+      {renderInlineMarkdown(block.text)}
     </p>
   );
 }
 
-// SafeMarkdown — ограниченный markdown-render для backend строк.
 export function SafeMarkdown({ markdown }: SafeMarkdownProps) {
   const blocks = parseMarkdown(markdown || "Описание скоро появится.");
 

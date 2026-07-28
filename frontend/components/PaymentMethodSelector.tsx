@@ -2,17 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import type { PaymentMethodDto, PaymentMethodId, PaymentState } from "@/types";
-import { addCourseToCart, purchaseCart } from "@/services/api";
+import { addCourseToCart, getAuthToken, purchaseCart } from "@/services/api";
 
 type PaymentMethodSelectorProps = {
   price: string;
   methods: PaymentMethodDto[];
   courseId: number;
+  courseSlug: string;
+  skipAddingToCart?: boolean;
 };
 
-export function PaymentMethodSelector({ methods, price, courseId }: PaymentMethodSelectorProps) {
+export function PaymentMethodSelector({ methods, price, courseId, courseSlug, skipAddingToCart = false }: PaymentMethodSelectorProps) {
   const [method, setMethod] = useState<PaymentMethodId>(methods[0]?.id ?? "stars");
   const [state, setState] = useState<PaymentState>("idle");
   const [error, setError] = useState<string>("");
@@ -23,11 +26,18 @@ export function PaymentMethodSelector({ methods, price, courseId }: PaymentMetho
   const isEnabled = selected?.enabled ?? false;
 
   const handlePayment = async () => {
+    if (!getAuthToken()) {
+      router.push(`/login?redirectTo=${encodeURIComponent(`/checkout?course=${courseSlug}`)}`);
+      return;
+    }
+
     setState("loading");
     setError("");
 
     try {
-      await addCourseToCart(courseId);
+      if (!skipAddingToCart) {
+        await addCourseToCart(courseId);
+      }
       await purchaseCart();
       setState("ready");
       window.setTimeout(() => {
@@ -41,6 +51,12 @@ export function PaymentMethodSelector({ methods, price, courseId }: PaymentMetho
 
   return (
     <div className="grid gap-4">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-sm font-black uppercase">Способ оплаты</h3>
+        <span className="border border-acid/40 bg-acid/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-acid">
+          Тестовый режим
+        </span>
+      </div>
       <div className="grid gap-px border border-line bg-line">
         {methods.map((item) => {
           const isSelected = item.id === method;
@@ -60,7 +76,12 @@ export function PaymentMethodSelector({ methods, price, courseId }: PaymentMetho
               type="button"
             >
               <span className="flex items-center justify-between gap-4">
-                <strong className="text-sm font-black uppercase">{item.title}</strong>
+                <span className="flex items-center gap-3">
+                  <span className={`grid h-4 w-4 place-items-center rounded-full border ${isSelected ? "border-current" : "border-white/35"}`}>
+                    {isSelected && <span className="h-2 w-2 rounded-full bg-current" />}
+                  </span>
+                  <strong className="text-sm font-black uppercase">{item.title}</strong>
+                </span>
                 <span className="border border-current px-2 py-1 text-[10px] font-black uppercase">
                   {item.tag}
                 </span>
@@ -80,11 +101,16 @@ export function PaymentMethodSelector({ methods, price, courseId }: PaymentMetho
         type="button"
       >
         {!isEnabled && "Скоро"}
-        {isLoading && "Создаём платёж"}
+        {isLoading && "Открываем тестовый доступ"}
         {state === "ready" && "Доступ открыт"}
         {state === "error" && "Попробовать снова"}
-        {isEnabled && state === "idle" && `Оплатить ${price} через ${selected?.title}`}
+        {isEnabled && state === "idle" && `Открыть доступ · ${price}`}
       </button>
+      {!getAuthToken() && (
+        <p className="text-xs leading-relaxed text-white/48">
+          Перед продолжением понадобится <Link className="text-acid underline underline-offset-4" href={`/login?redirectTo=${encodeURIComponent(`/checkout?course=${courseSlug}`)}`}>войти в аккаунт</Link>.
+        </p>
+      )}
       {error ? <p className="text-xs font-bold text-red-300">{error}</p> : null}
     </div>
   );

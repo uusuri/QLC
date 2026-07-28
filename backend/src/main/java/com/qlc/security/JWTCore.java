@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 
 @Component
@@ -20,10 +21,10 @@ public class JWTCore {
   @Value("${jwt.secret:UusuriKeyForJWTTokenGenerationAndValidation1234567890_SuperLongSecretKeyForHS512Algorithm}")
   private String jwtSecret;
 
-  @Value("${jwt.expiration:60000}")
+  // 24 часа по умолчанию: 60 секунд приводили к постоянным 401 в админке.
+  @Value("${jwt.expiration:86400000}")
   private Long jwtExpiration;
 
-  // В jjwt 0.12.x используется SecretKey вместо SecretKeySpec
   private SecretKey getSigningKey() {
     return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
   }
@@ -46,44 +47,33 @@ public class JWTCore {
   }
 
   public String extractUsername(String token) {
-    return Jwts.parser()
-        .verifyWith(getSigningKey())
-        .build()
-        .parseSignedClaims(token)
-        .getPayload()
-        .getSubject();
+    return getClaims(token).getSubject();
   }
 
   public String extractRole(String token) {
-    return Jwts.parser()
-        .verifyWith(getSigningKey())
-        .build()
-        .parseSignedClaims(token)
-        .getPayload()
-        .get("role", String.class);
+    return getClaims(token).get("role", String.class);
   }
 
   public Long extractUserId(String token) {
-    return Jwts.parser()
-        .verifyWith(getSigningKey())
-        .build()
-        .parseSignedClaims(token)
-        .getPayload()
-        .get("userId", Long.class);
+    return getClaims(token).get("userId", Long.class);
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
     try {
-      String username = extractUsername(token);
-      Date expiration = Jwts.parser()
-          .verifyWith(getSigningKey())
-          .build()
-          .parseSignedClaims(token)
-          .getPayload()
-          .getExpiration();
+      Claims claims = getClaims(token);
+      String username = claims.getSubject();
+      Date expiration = claims.getExpiration();
       return username.equals(userDetails.getUsername()) && expiration.after(new Date());
     } catch (Exception e) {
       return false;
     }
+  }
+
+  private Claims getClaims(String token) {
+    return Jwts.parser()
+        .verifyWith(getSigningKey())
+        .build()
+        .parseSignedClaims(token)
+        .getPayload();
   }
 }

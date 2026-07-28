@@ -114,42 +114,31 @@ export default function LessonPage() {
           <SiteHeader compact />
 
           <section className="mt-4 border border-line bg-ink/90">
-            <header className="flex flex-wrap items-center justify-between gap-4 border-b border-line px-5 py-5 text-xs font-black uppercase sm:px-7">
+            <header className="flex flex-wrap items-center justify-between gap-4 border-b border-line px-5 py-4 text-xs font-black uppercase sm:px-7">
               <div className="flex items-center gap-3">
                 <Link className="transition hover:text-acid" href={`/courses/${courseSlug}`}>
-                  ← Назад к курсу
+                  ← Программа курса
                 </Link>
+                <span className="text-white/25">/</span>
+                <span className="text-white/48">{view.module.name}</span>
               </div>
-              <nav className="flex items-center gap-5 text-white/50">
-                <Link className="transition hover:text-acid" href="/">
-                  Витрина
-                </Link>
-              </nav>
+              <Link className="text-white/50 transition hover:text-acid" href="/profile">Моё обучение</Link>
             </header>
 
-            <section className="grid gap-8 border-b border-line p-5 sm:p-7 lg:grid-cols-[1.05fr_0.95fr] lg:p-8">
+            <section className="grid gap-5 border-b border-line p-5 sm:p-7 lg:grid-cols-[1fr_auto] lg:items-end lg:p-8">
               <div>
-                <h1 className="max-w-5xl text-5xl font-black uppercase leading-[1.02] sm:text-7xl">
+                <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-acid">Урок</p>
+                <h1 className="mt-3 max-w-5xl text-4xl font-black uppercase leading-[1.02] sm:text-6xl">
                   {view.lesson.name}
                 </h1>
               </div>
-
-              <Panel muted>
-                <PanelBody className="grid gap-4 text-sm leading-snug text-white/62">
-                  <p>
-                    <span className="text-white/36">Курс:</span> {view.course.name}
-                  </p>
-                  <p>
-                    <span className="text-white/36">Модуль:</span> {view.module.name}
-                  </p>
-                </PanelBody>
-              </Panel>
+              <p className="max-w-sm text-sm leading-relaxed text-white/54">{view.lesson.description || view.course.name}</p>
             </section>
 
             <section className="grid gap-5 p-5 sm:p-7 lg:p-8">
               <Panel muted>
                 <PanelHeader>
-                  <h2 className="text-3xl font-black uppercase leading-tight">Материал урока</h2>
+                  <h2 className="text-xl font-black uppercase leading-tight">Материал урока</h2>
                 </PanelHeader>
                 <PanelBody>
                   <SafeMarkdown
@@ -167,12 +156,11 @@ export default function LessonPage() {
                   К этому уроку пока не добавлены задачи.
                 </Alert>
               ) : (
-                <>
-                  <Panel muted>
-                    <PanelHeader className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center">
-                      <div>
-                        <h2 className="text-3xl font-black uppercase leading-tight">Задача</h2>
-                      </div>
+                <div className={primaryTask.taskType === "CODE" ? "grid gap-5 lg:grid-cols-[minmax(340px,0.8fr)_minmax(500px,1.2fr)] lg:items-start" : "grid gap-5"}>
+                  <Panel className="min-w-0" muted>
+                    <PanelHeader>
+                      <p className="font-mono text-xs font-black uppercase tracking-[0.18em] text-acid">Задача</p>
+                      <h2 className="mt-2 text-2xl font-black uppercase leading-tight">Условие</h2>
                     </PanelHeader>
                     <PanelBody className="grid gap-6">
                       <SafeMarkdown
@@ -216,7 +204,7 @@ export default function LessonPage() {
                       Отправка ответа для этой задачи скоро появится.
                     </Alert>
                   )}
-                </>
+                </div>
               )}
             </section>
           </section>

@@ -11,6 +11,7 @@ import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.models.enums.Verdict;
 import com.qlc.repositories.SubmissionRepository;
 import com.qlc.repositories.TaskRepository;
+import com.qlc.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,6 +41,8 @@ class SubmissionServiceTest {
   private TaskRepository taskRepository;
   @Mock
   private RedisQueueService redisQueueService;
+  @Mock
+  private UserRepository userRepository;
 
   @InjectMocks
   private SubmissionService submissionService;
@@ -130,6 +133,28 @@ class SubmissionServiceTest {
       verify(taskRepository, never()).findById(any());
       verify(submissionRepository, never()).save(any());
       verify(redisQueueService, never()).pushToStream(any());
+    }
+
+    @Test
+    @DisplayName("IDEMPOTENCY HIT: Must scope duplicate keys to the current user")
+    void createSubmission_UserScopedIdempotencyHit_ReturnsOnlyCurrentUsersSubmission() {
+      Long userId = 17L;
+      String duplicateKey = "same-request-token";
+      UUID existingId = UUID.randomUUID();
+      Submission existing = new Submission();
+      existing.setId(existingId);
+      existing.setStatus(SubmissionStatus.QUEUED);
+
+      when(submissionRepository.findByIdempotencyKeyAndUserId(duplicateKey, userId))
+          .thenReturn(Optional.of(existing));
+
+      SubmissionCreatedResponse response = submissionService.createSubmission(
+          42L, new SubmissionRequest("CPP23", "int main() {}"), duplicateKey, userId);
+
+      assertEquals(existingId, response.id());
+      verify(submissionRepository, never()).findByIdempotencyKey(duplicateKey);
+      verify(taskRepository, never()).findById(any());
+      verify(submissionRepository, never()).save(any());
     }
 
     @Test

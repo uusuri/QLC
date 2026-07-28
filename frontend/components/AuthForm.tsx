@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
-import { AuthClientError, loginUser, registerUser } from "@/services/api";
+import { AuthClientError, getLastAccountUsername, loginUser, loginWithTelegram, registerUser } from "@/services/api";
 import { Alert, Button } from "@/components/ui";
+import { TelegramLoginButton } from "@/components/TelegramLoginButton";
+import type { TelegramAuthPayload } from "@/types";
 
 type AuthFormMode = "login" | "register";
 
@@ -96,12 +98,25 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const [status, setStatus] = useState<AuthFormStatus>("idle");
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeat, setShowRepeat] = useState(false);
+  const [lastAccount, setLastAccount] = useState<string | null>(null);
   const isRegister = mode === "register";
   const isLoading = status === "loading";
   const submitLabel = isRegister ? "Создать аккаунт" : "Войти";
   const title = isRegister ? "Регистрация" : "Вход";
   const switchText = isRegister ? "Уже есть аккаунт? Войти" : "Нет аккаунта? Зарегистрироваться";
   const finalRedirect = redirectTo && redirectTo.startsWith("/") ? redirectTo : "/profile";
+
+  useEffect(() => {
+    if (mode !== "login") {
+      return;
+    }
+
+    const username = getLastAccountUsername();
+    setLastAccount(username);
+    if (username) {
+      setFields((current) => ({ ...current, username }));
+    }
+  }, [mode]);
 
   const alertTitle =
     status === "success"
@@ -160,6 +175,16 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
     }
   };
 
+  const handleTelegramAuth = async (payload: TelegramAuthPayload) => {
+    setMessage("");
+    setStatus("loading");
+    await loginWithTelegram(payload);
+    setMessage("Вход через Telegram выполнен.");
+    setStatus("success");
+    router.push(finalRedirect);
+    router.refresh();
+  };
+
   return (
     <form className="grid gap-5" onSubmit={handleSubmit}>
       <div>
@@ -183,6 +208,12 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         placeholder="runner_01"
         value={fields.username}
       />
+
+      {!isRegister && lastAccount && (
+        <p className="-mt-2 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-white/42">
+          Последний аккаунт · <span className="text-acid">@{lastAccount}</span>
+        </p>
+      )}
 
       {isRegister && (
         <InputField
@@ -233,6 +264,16 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
       <Button loading={isLoading} type="submit">
         {submitLabel}
       </Button>
+
+      <div className="grid gap-3">
+        <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.16em] text-white/34 before:h-px before:flex-1 before:bg-line after:h-px after:flex-1 after:bg-line">
+          или
+        </div>
+        <TelegramLoginButton disabled={isLoading} onAuth={handleTelegramAuth} onError={(error) => {
+          setMessage(error);
+          setStatus("backend");
+        }} />
+      </div>
 
       <Link
         className="text-xs font-black uppercase text-white/48 transition hover:text-acid"

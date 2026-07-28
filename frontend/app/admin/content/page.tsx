@@ -1,20 +1,13 @@
-// Страница является внутренней технической панелью, поэтому вся логика формы живет на клиенте.
 "use client";
 
-// FormEvent и ReactNode нужны только на уровне типов.
 import type { FormEvent, ReactNode } from "react";
-
-// Link нужен для возврата на витрину.
 import Link from "next/link";
-
-// useEffect загружает данные, useMemo вычисляет выбор, useRef держит restore-снимок.
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { AdminGuard } from "@/components/AdminGuard";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 
-// Все backend-запросы идут только через сервисный слой.
 import {
   createAdminCourse,
   createAdminLesson,
@@ -32,7 +25,6 @@ import {
 
 import { Alert, Button, Panel, PanelBody, PanelHeader, StatusBadge } from "@/components/ui";
 
-// DTO строго повторяют Java record из backend.
 import type {
   AdminCourseCreatePayload,
   AdminCourseDto,
@@ -45,20 +37,14 @@ import type {
   AdminTaskType
 } from "@/types";
 
-// Четыре шага внутренней панели.
 type AdminStep = "course" | "module" | "lesson" | "task";
 
-// Универсальное состояние для каждого шага страницы.
 type PanelState = {
-  // loading показывает, что идет GET или POST.
   loading: boolean;
-  // error показывает последнюю ошибку backend или локальной валидации.
   error: string;
-  // success показывает успешное создание сущности.
   success: string;
 };
 
-// Форма создания курса.
 type CourseFormState = {
   name: string;
   description: string;
@@ -66,14 +52,12 @@ type CourseFormState = {
   priceInStars: string;
 };
 
-// Форма модуля повторяет редактируемые поля backend ModuleDTO.
 type ModuleFormState = {
   name: string;
   description: string;
   position: string;
 };
 
-// Форма урока повторяет редактируемые поля backend LessonDTO.
 type LessonFormState = {
   name: string;
   description: string;
@@ -82,7 +66,6 @@ type LessonFormState = {
   published: boolean;
 };
 
-// Форма создания задачи. Специфичные поля показываются только для выбранного taskType.
 type TaskFormState = {
   taskType: AdminTaskType;
   statementMd: string;
@@ -98,7 +81,6 @@ type TaskFormState = {
   correctNumericAnswer: string;
 };
 
-// Снимок рабочего места, который позволяет продолжить с того же шага после возврата.
 type AdminWorkspaceSnapshot = {
   version: 1;
   activeStep: AdminStep;
@@ -111,17 +93,14 @@ type AdminWorkspaceSnapshot = {
   savedAt: string;
 };
 
-// Версионированный ключ не конфликтует с auth и learner draft в localStorage.
 const ADMIN_WORKSPACE_STORAGE_KEY = "qlc:admin-content-workspace:v1";
 
-// Пустое состояние запроса.
 const idlePanelState: PanelState = {
   loading: false,
   error: "",
   success: ""
 };
 
-// Начальные значения формы курса.
 const initialCourseForm: CourseFormState = {
   name: "",
   description: "",
@@ -129,14 +108,12 @@ const initialCourseForm: CourseFormState = {
   priceInStars: ""
 };
 
-// Начальные значения формы модуля.
 const initialModuleForm: ModuleFormState = {
   name: "",
   description: "",
   position: "0"
 };
 
-// Начальные значения формы урока.
 const initialLessonForm: LessonFormState = {
   name: "",
   description: "",
@@ -145,7 +122,6 @@ const initialLessonForm: LessonFormState = {
   published: false
 };
 
-// Начальные значения формы задачи. CODE-лимиты совпадают с backend defaults.
 const initialTaskForm: TaskFormState = {
   taskType: "CODE",
   statementMd: "",
@@ -161,7 +137,6 @@ const initialTaskForm: TaskFormState = {
   correctNumericAnswer: ""
 };
 
-// Описание вкладок. blockedBy используется только для визуальной подсказки.
 const adminSteps: Array<{
   id: AdminStep;
   label: string;

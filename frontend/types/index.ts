@@ -56,6 +56,16 @@ export interface AuthResponseDto {
   user: AuthUserDto;
 }
 
+export interface TelegramAuthPayload {
+  id: number;
+  firstName: string;
+  lastName?: string;
+  username?: string;
+  photoUrl?: string;
+  authDate: number;
+  hash: string;
+}
+
 // Коды auth-ошибок, которые UI показывает человекочитаемо.
 export type AuthErrorCode =
   | "validation"
@@ -361,6 +371,37 @@ export interface CourseLearningViewDto {
   modules: CourseModuleWithLessonsDto[];
   // Первый доступный урок для CTA.
   firstLesson: AdminLessonDto | null;
+}
+
+// Прогресс одного урока в личном кабинете. Backend считает только уникальные AC-задачи.
+export interface LessonProgressDto {
+  id: number;
+  name: string;
+  description: string;
+  position: number;
+  solvedTasks: number;
+  totalTasks: number;
+  progressPercent: number;
+}
+
+// Модуль купленного курса с опубликованными уроками.
+export interface ModuleProgressDto {
+  id: number;
+  name: string;
+  description: string;
+  position: number;
+  lessons: LessonProgressDto[];
+}
+
+// Полная карта обучения для одного купленного курса.
+export interface MyCourseProgressDto {
+  id: number;
+  name: string;
+  description: string;
+  solvedTasks: number;
+  totalTasks: number;
+  progressPercent: number;
+  modules: ModuleProgressDto[];
 }
 
 // Полная структура страницы урока.

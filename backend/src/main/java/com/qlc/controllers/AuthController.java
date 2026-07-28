@@ -4,10 +4,12 @@ import com.qlc.models.entities.User;
 import com.qlc.models.enums.Role;
 import com.qlc.models.requests.AuthLoginRequest;
 import com.qlc.models.requests.AuthRegisterRequest;
+import com.qlc.models.requests.TelegramAuthRequest;
 import com.qlc.models.responses.AuthResponse;
 import com.qlc.repositories.UserRepository;
 import com.qlc.security.JWTCore;
 import com.qlc.security.UserDetailsImpl;
+import com.qlc.services.TelegramAuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,15 +39,18 @@ public class AuthController {
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
   private final JWTCore jwtCore;
+  private final TelegramAuthService telegramAuthService;
 
   public AuthController(UserRepository userRepository,
       PasswordEncoder passwordEncoder,
       AuthenticationManager authenticationManager,
-      JWTCore jwtCore) {
+      JWTCore jwtCore,
+      TelegramAuthService telegramAuthService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
     this.jwtCore = jwtCore;
+    this.telegramAuthService = telegramAuthService;
   }
 
   @PostMapping("/register")
@@ -99,6 +104,14 @@ public class AuthController {
         new AuthResponse.UserInfo(user.getId(), user.getUsername(), user.getEmail(), user.getRole().name()));
 
     return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/telegram")
+  public ResponseEntity<AuthResponse> loginWithTelegram(@Valid @RequestBody TelegramAuthRequest request) {
+    User user = telegramAuthService.authenticate(request);
+    return ResponseEntity.ok(new AuthResponse(
+        generateTokenForUser(user),
+        new AuthResponse.UserInfo(user.getId(), user.getUsername(), user.getEmail(), user.getRole().name())));
   }
 
   @GetMapping("/me")

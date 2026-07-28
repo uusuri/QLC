@@ -11,6 +11,13 @@ spring:
   jackson:
     default-property-inclusion: non_null
 
+# Можно переопределить в окружении через JWT_EXPIRATION (значение в миллисекундах).
+jwt:
+  expiration: ${JWT_EXPIRATION:86400000}
+
+telegram:
+  bot-token: ${TELEGRAM_BOT_TOKEN:}
+
 app:
   submissions:
     max-size: 65535

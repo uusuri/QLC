@@ -15,9 +15,9 @@ type SiteHeaderProps = {
 
 // Основные навигационные ссылки для пользователя.
 const userNavLinks = [
-  { href: "/", label: "Витрина" },
-  { href: "/profile", label: "Профиль" },
-  { href: "/checkout", label: "Оплата" }
+  { href: "/", label: "Курсы" },
+  { href: "/profile", label: "Моё обучение" },
+  { href: "/checkout", label: "Корзина" }
 ];
 
 // Ссылка в админ-панель. Видна только ROLE_ADMIN.

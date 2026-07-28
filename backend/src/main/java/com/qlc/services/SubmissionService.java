@@ -6,9 +6,11 @@ import com.qlc.models.responses.SubmissionResponse;
 import com.qlc.models.entities.CodeTask;
 import com.qlc.models.entities.Submission;
 import com.qlc.models.entities.Task;
+import com.qlc.models.entities.User;
 import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.repositories.SubmissionRepository;
 import com.qlc.repositories.TaskRepository;
+import com.qlc.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,6 +29,7 @@ public class SubmissionService {
   private final RedisQueueService redisQueueService;
   private final SubmissionRepository submissionRepository;
   private final TaskRepository taskRepository;
+  private final UserRepository userRepository;
 
   @Value("${app.submissions.max-size:65535}")
   private int maxSourceSize;
@@ -34,17 +38,25 @@ public class SubmissionService {
   private int maxLogLength;
 
   public SubmissionService(SubmissionRepository submissionRepository, TaskRepository taskRepository,
-      RedisQueueService redisQueueService) {
+      RedisQueueService redisQueueService, UserRepository userRepository) {
     this.submissionRepository = submissionRepository;
     this.taskRepository = taskRepository;
     this.redisQueueService = redisQueueService;
+    this.userRepository = userRepository;
   }
 
   public SubmissionCreatedResponse createSubmission(Long taskId, SubmissionRequest request, String idempotencyKey) {
+    return createSubmission(taskId, request, idempotencyKey, null);
+  }
+
+  public SubmissionCreatedResponse createSubmission(Long taskId, SubmissionRequest request,
+      String idempotencyKey, Long userId) {
     // 1. Проверяем ключ идемпотентности. Если запрос дублируется,
     // завершаем метод мгновенно, экономя CPU и коннекты к БД.
     if (idempotencyKey != null && !idempotencyKey.isBlank()) {
-      Optional<Submission> existing = submissionRepository.findByIdempotencyKey(idempotencyKey);
+      Optional<Submission> existing = userId == null
+          ? submissionRepository.findByIdempotencyKey(idempotencyKey)
+          : submissionRepository.findByIdempotencyKeyAndUserId(idempotencyKey, userId);
       if (existing.isPresent()) {
         Submission s = existing.get();
         return new SubmissionCreatedResponse(s.getId(), s.getStatus().name());
@@ -79,7 +91,11 @@ public class SubmissionService {
     submission.setSourceCode(request.sourceCode());
     submission.setStatus(SubmissionStatus.QUEUED);
     submission.setIdempotencyKey(idempotencyKey);
-    // TODO: Привязать юзера из SecurityContext!!!
+    if (userId != null) {
+      User user = userRepository.findById(userId)
+          .orElseThrow(() -> new RuntimeException("User not found"));
+      submission.setUser(user);
+    }
 
     Submission saved = submissionRepository.save(submission);
 
@@ -106,8 +122,17 @@ public class SubmissionService {
 
   @Transactional(readOnly = true)
   public SubmissionResponse getSubmissionById(UUID id) {
+    return getSubmissionById(id, null, true);
+  }
+
+  @Transactional(readOnly = true)
+  public SubmissionResponse getSubmissionById(UUID id, Long userId, boolean isAdmin) {
     Submission s = submissionRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Submission not found with id: " + id));
+
+    if (!isAdmin && (s.getUser() == null || !Objects.equals(s.getUser().getId(), userId))) {
+      throw new org.springframework.security.access.AccessDeniedException("Submission belongs to another user");
+    }
 
     // Обрезка потенциально огромных логов компилятора под лимиты конфигурации
     // сервера
