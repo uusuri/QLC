@@ -26,6 +26,40 @@ type SafeMarkdownProps = {
   markdown: string;
 };
 
+const codeTokens = /\/\*[\s\S]*?\*\/|\/\/[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:abstract|boolean|break|case|catch|class|const|continue|default|do|double|else|enum|extends|final|float|for|if|implements|import|instanceof|int|interface|long|new|package|private|protected|public|return|short|static|switch|this|throw|throws|try|void|while)\b|\b(?:String|System|Scanner|Files|Path|HttpClient|Main|Integer|Double|Boolean)\b|\b(?:true|false|null)\b|\b\d+(?:\.\d+)?\b/g;
+
+function getCodeTokenClass(token: string) {
+  if (token.startsWith("//") || token.startsWith("/*")) return "text-[#6f8174]";
+  if (token.startsWith('"') || token.startsWith("'")) return "text-[#f6c177]";
+  if (/^(true|false|null)$/.test(token)) return "text-[#c6a0f6]";
+  if (/^\d/.test(token)) return "text-[#8bd5ca]";
+  if (/^(String|System|Scanner|Files|Path|HttpClient|Main|Integer|Double|Boolean)$/.test(token)) {
+    return "text-[#8aadf4]";
+  }
+  return "text-phosphor";
+}
+
+function renderCode(code: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  let cursor = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+
+  codeTokens.lastIndex = 0;
+  while ((match = codeTokens.exec(code)) !== null) {
+    if (match.index > cursor) nodes.push(code.slice(cursor, match.index));
+    nodes.push(
+      <span className={getCodeTokenClass(match[0])} key={key++}>
+        {match[0]}
+      </span>
+    );
+    cursor = match.index + match[0].length;
+  }
+
+  if (cursor < code.length) nodes.push(code.slice(cursor));
+  return nodes;
+}
+
 // Рендерит базовый inline Markdown, не превращая входные данные в HTML.
 // Поддерживаем **жирный**, *курсив* и `inline code`; четыре звёздочки с
 // обеих сторон также считаем жирным текстом — такой вариант часто вводят
@@ -210,7 +244,7 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
             {block.language}
           </code>
         )}
-        <code>{block.code}</code>
+        <code className="font-mono text-[#e8ece8]">{renderCode(block.code)}</code>
       </pre>
     );
   }

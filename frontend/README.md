@@ -155,17 +155,21 @@ npm run start
 
 ## Переменные окружения
 
-Для `/`, `/admin/content`, `/courses/[slug]`, `/lessons/[id]`, `/checkout` и submission polling фронтенд ходит в backend API. По умолчанию используется:
+Серверная часть Next.js обращается к backend по внутреннему адресу:
 
 ```bash
 http://127.0.0.1:8080
 ```
 
-Если backend запущен на другом адресе, локальную переменную нужно хранить в `.env.local`. Этот файл игнорируется корневым `.gitignore` и не должен попадать в Git:
+Браузер обращается к API через тот же домен по `/api`. Next.js проксирует эти запросы в backend, поэтому для ngrok достаточно одного туннеля на frontend.
+
+Если backend запущен на другом внутреннем адресе, задайте серверную переменную:
 
 ```bash
-NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8080
+BACKEND_INTERNAL_URL=http://127.0.0.1:8080
 ```
+
+`NEXT_PUBLIC_API_BASE_URL` нужен только если браузер должен обращаться к отдельному публичному backend-домену.
 
 ## Git ignore
 

@@ -10,6 +10,7 @@ import com.qlc.repositories.CourseRepository;
 import com.qlc.repositories.SubmissionRepository;
 import java.util.List;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,9 @@ public class LearningProgressService {
 
   private final CourseRepository courseRepository;
   private final SubmissionRepository submissionRepository;
+
+  @Value("${app.submissions.mock-auto-accept:true}")
+  private boolean mockAutoAccept;
 
   public LearningProgressService(CourseRepository courseRepository,
       SubmissionRepository submissionRepository) {
@@ -57,7 +61,9 @@ public class LearningProgressService {
   private LessonProgressDTO mapLesson(Lesson lesson, Set<Long> acceptedTaskIds) {
     List<Task> tasks = lesson.getTasks();
     int totalTasks = tasks.size();
-    int solvedTasks = (int) tasks.stream().map(Task::getId).filter(acceptedTaskIds::contains).count();
+    int solvedTasks = mockAutoAccept
+        ? totalTasks
+        : (int) tasks.stream().map(Task::getId).filter(acceptedTaskIds::contains).count();
 
     return new LessonProgressDTO(lesson.getId(), lesson.getName(), lesson.getDescription(),
         lesson.getPosition(), solvedTasks, totalTasks, toPercent(solvedTasks, totalTasks));

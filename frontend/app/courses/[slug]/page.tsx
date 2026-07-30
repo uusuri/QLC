@@ -14,15 +14,21 @@ import {
   getAuthToken,
   getCourseAccess,
   getCourseLearningView,
+  getLessonTaskOutlines,
   parseCourseIdFromSlug
 } from "@/services/api";
-import type { CourseLearningViewDto } from "@/types";
+import type { CourseLearningViewDto, LessonTaskOutlineDto } from "@/types";
 
 export default function CoursePage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug ?? "";
   const [view, setView] = useState<CourseLearningViewDto | null>(null);
   const [hasAccess, setHasAccess] = useState(false);
+  const [expandedModuleIds, setExpandedModuleIds] = useState<number[]>([]);
+  const [expandedLessonId, setExpandedLessonId] = useState<number | null>(null);
+  const [taskOutlines, setTaskOutlines] = useState<Record<number, LessonTaskOutlineDto[]>>({});
+  const [taskOutlineError, setTaskOutlineError] = useState<Record<number, string>>({});
+  const [taskOutlineLoadingId, setTaskOutlineLoadingId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
 
@@ -35,6 +41,7 @@ export default function CoursePage() {
         if (ignore) return;
 
         setView(data);
+        setExpandedModuleIds(data?.modules.length ? [data.modules[0].module.id] : []);
         if (data?.catalogCourse.access === "open") {
           setHasAccess(true);
           return;
@@ -85,6 +92,36 @@ export default function CoursePage() {
   const canStudy = !isPaid || hasAccess;
   const courseId = parseCourseIdFromSlug(slug);
 
+  const toggleModule = (moduleId: number) => {
+    setExpandedModuleIds((current) =>
+      current.includes(moduleId)
+        ? current.filter((id) => id !== moduleId)
+        : [...current, moduleId]
+    );
+  };
+
+  const toggleLesson = async (lessonId: number) => {
+    if (expandedLessonId === lessonId) {
+      setExpandedLessonId(null);
+      return;
+    }
+
+    setExpandedLessonId(lessonId);
+    if (taskOutlines[lessonId] || taskOutlineLoadingId === lessonId) return;
+
+    setTaskOutlineLoadingId(lessonId);
+    setTaskOutlineError((current) => ({ ...current, [lessonId]: "" }));
+
+    try {
+      const outlines = await getLessonTaskOutlines(lessonId);
+      setTaskOutlines((current) => ({ ...current, [lessonId]: outlines }));
+    } catch {
+      setTaskOutlineError((current) => ({ ...current, [lessonId]: "Не удалось загрузить задачи." }));
+    } finally {
+      setTaskOutlineLoadingId((current) => (current === lessonId ? null : current));
+    }
+  };
+
   return (
     <main className="flex min-h-screen flex-col">
       <div className="flex-1 px-4 sm:px-6 lg:px-8">
@@ -126,7 +163,7 @@ export default function CoursePage() {
                 <div className="mt-6">
                   {canStudy ? (
                     <ButtonLink
-                      className="w-full bg-ink text-white hover:bg-white hover:text-ink"
+                      className="w-full !text-ink"
                       disabled={!view.firstLesson}
                       href={`/lessons/${view.firstLesson?.id ?? ""}`}
                     >
@@ -163,60 +200,102 @@ export default function CoursePage() {
                 <div className="mt-10 grid gap-5">
                   {view.modules.map((item, moduleIndex) => {
                     const publishedLessons = item.lessons.filter((lesson) => lesson.published);
+                    const isModuleExpanded = expandedModuleIds.includes(item.module.id);
 
                     return (
                       <section className="rounded-[28px] bg-white/[0.045] p-5 sm:p-7" key={item.module.id}>
-                        <header className="grid gap-4 sm:grid-cols-[60px_1fr_auto] sm:items-start">
+                        <button
+                          aria-expanded={isModuleExpanded}
+                          className="grid w-full gap-4 text-left sm:grid-cols-[60px_1fr_auto] sm:items-start"
+                          onClick={() => toggleModule(item.module.id)}
+                          type="button"
+                        >
                           <span className="font-mono text-sm font-bold text-phosphor">
                             {String(moduleIndex + 1).padStart(2, "0")}
                           </span>
-                          <div>
-                            <h3 className="text-2xl font-bold tracking-[-0.03em]">{item.module.name}</h3>
-                            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-white/48">
+                          <span>
+                            <span className="block text-2xl font-bold tracking-[-0.03em]">{item.module.name}</span>
+                            <span className="mt-2 block max-w-3xl text-sm leading-relaxed text-white/48">
                               {item.module.description || "Описание модуля скоро появится."}
-                            </p>
-                          </div>
-                          <span className="text-sm text-white/36">
-                            {publishedLessons.length}{" "}
-                            {formatRussianCountWord(publishedLessons.length, ["урок", "урока", "уроков"])}
+                            </span>
                           </span>
-                        </header>
+                          <span className="flex items-center justify-between gap-4 text-sm text-white/36 sm:justify-end">
+                            <span>
+                              {publishedLessons.length}{" "}
+                              {formatRussianCountWord(publishedLessons.length, ["урок", "урока", "уроков"])}
+                            </span>
+                            <span
+                              aria-hidden="true"
+                              className={`grid h-8 w-8 place-items-center rounded-full border border-white/12 text-lg text-phosphor transition-transform ${
+                                isModuleExpanded ? "rotate-180" : ""
+                              }`}
+                            >
+                              ↓
+                            </span>
+                          </span>
+                        </button>
 
-                        {publishedLessons.length > 0 && (
+                        {isModuleExpanded && publishedLessons.length > 0 && (
                           <div className="mt-6 border-t border-white/8">
                             {publishedLessons.map((lesson, lessonIndex) => {
-                              const content = (
-                                <>
+                              const isLessonExpanded = expandedLessonId === lesson.id;
+                              const outlines = taskOutlines[lesson.id] ?? [];
+                              const isLoadingOutline = taskOutlineLoadingId === lesson.id;
+
+                              return (
+                                <article className="border-b border-white/8 py-3 last:border-0" key={lesson.id}>
+                                  <button
+                                    aria-expanded={isLessonExpanded}
+                                    className="grid w-full gap-3 py-1 text-left transition hover:pl-2 sm:grid-cols-[40px_1fr_auto] sm:items-center"
+                                    onClick={() => void toggleLesson(lesson.id)}
+                                    type="button"
+                                  >
                                   <span className="font-mono text-xs text-white/25">
                                     {String(lessonIndex + 1).padStart(2, "0")}
                                   </span>
-                                  <div>
-                                    <strong className="text-base font-semibold text-white">{lesson.name}</strong>
-                                    {lesson.description && (
-                                      <p className="mt-1 line-clamp-2 text-sm text-white/42">{lesson.description}</p>
-                                    )}
-                                  </div>
-                                  <span className="text-sm font-semibold text-phosphor">
-                                    {canStudy ? "Открыть →" : "В программе"}
+                                  <span className="text-base font-semibold text-white">{lesson.name}</span>
+                                  <span className="flex items-center justify-between gap-3 text-sm font-semibold text-phosphor sm:justify-end">
+                                    <span>{canStudy ? "Урок" : "В программе"}</span>
+                                    <span
+                                      aria-hidden="true"
+                                      className={`text-lg transition-transform ${isLessonExpanded ? "rotate-180" : ""}`}
+                                    >
+                                      ↓
+                                    </span>
                                   </span>
-                                </>
-                              );
+                                  </button>
 
-                              return canStudy ? (
-                                <Link
-                                  className="grid gap-3 border-b border-white/8 py-4 transition last:border-0 hover:pl-2 sm:grid-cols-[40px_1fr_auto] sm:items-center"
-                                  href={`/lessons/${lesson.id}`}
-                                  key={lesson.id}
-                                >
-                                  {content}
-                                </Link>
-                              ) : (
-                                <div
-                                  className="grid gap-3 border-b border-white/8 py-4 last:border-0 sm:grid-cols-[40px_1fr_auto] sm:items-center"
-                                  key={lesson.id}
-                                >
-                                  {content}
-                                </div>
+                                  {isLessonExpanded && (
+                                    <div className="mt-3 grid gap-4 border-l border-phosphor/30 pl-4 sm:ml-10">
+                                      {lesson.description && <p className="text-sm leading-relaxed text-white/52">{lesson.description}</p>}
+                                      {isLoadingOutline && <p className="text-sm text-white/42">Загружаем задачи…</p>}
+                                      {taskOutlineError[lesson.id] && <p className="text-sm text-red-200">{taskOutlineError[lesson.id]}</p>}
+                                      {!isLoadingOutline && !taskOutlineError[lesson.id] && outlines.length > 0 && (
+                                        <div className="grid gap-2">
+                                          {outlines.map((task, taskIndex) => (
+                                            <div className="flex items-center justify-between gap-3 bg-black/20 px-3 py-2.5" key={task.id}>
+                                              <span className="text-sm text-white/68">
+                                                <span className="mr-2 font-mono text-xs text-phosphor">{String(taskIndex + 1).padStart(2, "0")}</span>
+                                                {getTaskOutlineTitle(task.statementMd, taskIndex)}
+                                              </span>
+                                              <span className="font-mono text-[10px] font-bold uppercase text-white/36">{task.taskType}</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                      {!isLoadingOutline && !taskOutlineError[lesson.id] && outlines.length === 0 && (
+                                        <p className="text-sm text-white/42">Задачи к уроку скоро появятся.</p>
+                                      )}
+                                      {canStudy ? (
+                                        <Link className="w-fit text-sm font-semibold text-phosphor transition hover:text-white" href={`/lessons/${lesson.id}`}>
+                                          Открыть урок →
+                                        </Link>
+                                      ) : (
+                                        <p className="text-sm text-white/42">Урок и редактор откроются после покупки курса.</p>
+                                      )}
+                                    </div>
+                                  )}
+                                </article>
                               );
                             })}
                           </div>
@@ -236,6 +315,11 @@ export default function CoursePage() {
       </div>
     </main>
   );
+}
+
+function getTaskOutlineTitle(statementMd: string, index: number) {
+  const heading = statementMd.match(/^#{1,3}\s+(.+)$/m)?.[1];
+  return heading?.replace(/[*`]/g, "") || `Задача ${index + 1}`;
 }
 
 function CourseStatePage({

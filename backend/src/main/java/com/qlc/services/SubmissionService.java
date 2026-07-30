@@ -72,7 +72,7 @@ public class SubmissionService {
       throw new IllegalArgumentException("Source code size exceeds the allowed limit of " + maxSourceSize + " bytes");
     }
 
-    if (request.language() == null || !"CPP23".equalsIgnoreCase(request.language())) {
+    if (request.language() == null || !isSupportedLanguage(request.language())) {
       throw new IllegalArgumentException("Unsupported language: " + request.language());
     }
 
@@ -82,6 +82,14 @@ public class SubmissionService {
 
     if (!(task instanceof CodeTask)) {
       throw new IllegalArgumentException("Source-code submissions are only supported for CODE tasks");
+    }
+
+    CodeTask codeTask = (CodeTask) task;
+    String taskLanguage = codeTask.getLanguage() == null || codeTask.getLanguage().isBlank()
+        ? "CPP23"
+        : codeTask.getLanguage();
+    if (!taskLanguage.equalsIgnoreCase(request.language())) {
+      throw new IllegalArgumentException("This task accepts " + taskLanguage + ", not " + request.language());
     }
 
     // 4. Инициализируем новую сущность в очереди
@@ -151,5 +159,9 @@ public class SubmissionService {
         s.getMemoryUsed(),
         safe,
         s.getCreatedAt());
+  }
+
+  private boolean isSupportedLanguage(String language) {
+    return "CPP23".equalsIgnoreCase(language) || "JAVA21".equalsIgnoreCase(language);
   }
 }

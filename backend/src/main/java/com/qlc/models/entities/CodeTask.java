@@ -11,6 +11,9 @@ import lombok.*;
 @AllArgsConstructor
 public class CodeTask extends Task {
 
+  @Column(name = "language", length = 32)
+  private String language = "CPP23";
+
   @Column(name = "starter_code", columnDefinition = "TEXT")
   private String starterCode;
 

@@ -7,6 +7,7 @@ public record TaskDTO(
     Long id,
     Long lessonId,
     String taskType,
+    String language,
     String statementMd,
 
     // поля для CODE задач

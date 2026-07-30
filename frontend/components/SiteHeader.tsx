@@ -25,7 +25,7 @@ export function SiteHeader({ compact = false }: SiteHeaderProps) {
 
   return (
     <header className="sticky top-0 z-30 -mx-4 bg-ink/86 px-4 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-      <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-5">
+      <div className="relative mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-5">
         <Link className="group flex shrink-0 items-center gap-3" href="/">
           <span className="grid h-9 w-9 rotate-45 place-items-center bg-phosphor transition-transform group-hover:rotate-[135deg]">
             <span className="-rotate-45 text-[10px] font-black text-ink transition-transform group-hover:-rotate-[135deg]">
@@ -38,7 +38,7 @@ export function SiteHeader({ compact = false }: SiteHeaderProps) {
         {!compact && (
           <nav
             aria-label="Навигация"
-            className="hidden items-center gap-1 rounded-full bg-white/[0.045] p-1 md:flex"
+            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full bg-white/[0.045] p-1 md:flex"
           >
             {navLinks.map((link) => {
               const isActive = pathname === link.href;

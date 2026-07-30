@@ -3,6 +3,7 @@
 
 // dynamic нужен, чтобы Monaco не пытался рендериться на сервере.
 import dynamic from "next/dynamic";
+import type { Monaco } from "@monaco-editor/react";
 
 // React-хуки держат draft, lifecycle submission и cleanup polling.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -38,6 +39,34 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ),
   ssr: false
 });
+
+function defineQlcMonacoTheme(monaco: Monaco) {
+  monaco.editor.defineTheme("qlc-night", {
+    base: "vs-dark",
+    inherit: true,
+    colors: {
+      "editor.background": "#0b0d0f",
+      "editor.foreground": "#e8ece8",
+      "editorCursor.foreground": "#b8ff35",
+      "editor.lineHighlightBackground": "#111714",
+      "editorLineNumber.activeForeground": "#b8ff35",
+      "editorLineNumber.foreground": "#4b574d",
+      "editor.selectionBackground": "#314615",
+      "editor.inactiveSelectionBackground": "#222f14",
+      "editorIndentGuide.background1": "#202a22",
+      "editorIndentGuide.activeBackground1": "#4d6c23"
+    },
+    rules: [
+      { token: "comment", foreground: "6f8174" },
+      { token: "keyword", foreground: "b8ff35" },
+      { token: "string", foreground: "f6c177" },
+      { token: "number", foreground: "8bd5ca" },
+      { token: "type.identifier", foreground: "8aadf4" },
+      { token: "identifier", foreground: "e8ece8" },
+      { token: "delimiter", foreground: "bac5bb" }
+    ]
+  });
+}
 
 // Максимальный размер source до отправки, синхронизирован с backend default.
 const MAX_SOURCE_SIZE = 65_535;
@@ -106,12 +135,21 @@ function getSourceSize(source: string) {
   return source.length;
 }
 
-// Возвращает starterCode из актуального TaskDTO, затем legacy templateCode или default C++23.
+// Возвращает starterCode из актуального TaskDTO, затем legacy templateCode или шаблон языка задачи.
 function getInitialCode(task: LearnerTaskDto) {
+  const language = task.language ?? "CPP23";
+
   return (
     task.starterCode ||
     task.templateCode ||
-    `#include <bits/stdc++.h>
+    (language === "JAVA21"
+      ? `public class Main {
+    public static void main(String[] args) {
+        
+    }
+}
+`
+      : `#include <bits/stdc++.h>
 using namespace std;
 
 int main() {
@@ -120,7 +158,7 @@ int main() {
 
     return 0;
 }
-`
+`)
   );
 }
 
@@ -390,8 +428,9 @@ function readCompletedLessons() {
 
 // CodeLessonWorkspace объединяет editor и submission lifecycle.
 export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps) {
-  const draftKey = `qlc:draft:task:${task.id}`;
-  const lastSubmissionKey = `qlc:last-submission:task:${task.id}`;
+  const taskVersion = task.testSetVersion ?? 1;
+  const draftKey = `qlc:draft:task:${task.id}:v${taskVersion}`;
+  const lastSubmissionKey = `qlc:last-submission:task:${task.id}:v${taskVersion}`;
   const initialCode = useMemo(() => getInitialCode(task), [task]);
   const [authUser, setAuthUser] = useState<AuthUserDto | null>(null);
   const [currentPath, setCurrentPath] = useState("/");
@@ -404,6 +443,7 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
   const timeoutRef = useRef<number | null>(null);
 
   const sourceSize = getSourceSize(source);
+  const language = task.language ?? "CPP23";
   const trimmedSource = source.trim();
   const phaseCopy = getPhaseCopy(submission.phase);
   const isBusy = ["submitting", "queued", "compiling", "running"].includes(submission.phase);
@@ -545,7 +585,7 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
       const created = await createSubmission(
         task.id,
         {
-          language: "CPP23",
+          language,
           sourceCode: source
         },
         controller.signal
@@ -593,13 +633,15 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
   };
 
   return (
-    <Panel className="overflow-hidden" muted>
-      <PanelHeader className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+    <Panel className="flex h-full min-h-0 flex-col overflow-hidden" muted>
+      <PanelHeader>
         <div>
           <div className="mb-3 flex flex-wrap gap-2">
-            <StatusBadge tone={phaseCopy.tone}>{phaseCopy.badge}</StatusBadge>
+            {submission.phase !== "idle" && (
+              <StatusBadge tone={phaseCopy.tone}>{phaseCopy.badge}</StatusBadge>
+            )}
             {completed && <StatusBadge tone="success">lesson completed</StatusBadge>}
-            <StatusBadge tone="neutral">C++23</StatusBadge>
+            <StatusBadge tone="neutral">{language === "JAVA21" ? "Java 21" : "C++23"}</StatusBadge>
             {authUser ? (
               <StatusBadge tone="success">@{authUser.username}</StatusBadge>
             ) : (
@@ -608,21 +650,17 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
           </div>
           <h2 className="text-3xl font-black uppercase leading-tight">Решение задачи</h2>
           <p className="mt-3 max-w-3xl text-sm leading-snug text-white/56">
-            Draft сохраняется локально по task ID. Rerender и refresh не затирают код.
+            Черновик сохраняется автоматически.
           </p>
-        </div>
-
-        <div className="grid gap-2 text-xs font-black uppercase text-white/48 lg:text-right">
-          <span>Task ID: {task.id}</span>
-          {submission.submissionId && <span>Submission: {submission.submissionId}</span>}
         </div>
       </PanelHeader>
 
-      <PanelBody className="grid gap-5">
-        <div className="overflow-hidden border border-line">
+      <PanelBody className="flex min-h-0 flex-1 flex-col gap-5">
+        <div className="min-h-[420px] flex-1 overflow-hidden border border-line">
           <MonacoEditor
-            height="460px"
-            language="cpp"
+            beforeMount={defineQlcMonacoTheme}
+            height="100%"
+            language={language === "JAVA21" ? "java" : "cpp"}
             onChange={(value) => setSource(value ?? "")}
             options={{
               fontFamily: "SFMono-Regular, Menlo, Monaco, Consolas, monospace",
@@ -632,7 +670,7 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
               tabSize: 2,
               wordWrap: "on"
             }}
-            theme="vs-dark"
+            theme="qlc-night"
             value={source}
           />
         </div>
@@ -640,7 +678,7 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
         <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-center">
           <div className="grid gap-2 text-xs font-bold uppercase text-white/48">
             <span>
-              Source size: {sourceSize} / {MAX_SOURCE_SIZE} bytes
+              Размер кода: {sourceSize} / {MAX_SOURCE_SIZE} байт
             </span>
             {!authUser && (
               <span className="text-yellow-100">Чтобы отправить решение, войдите в аккаунт.</span>
@@ -656,16 +694,16 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
                 loading={submission.phase === "submitting"}
                 onClick={handleSubmit}
               >
-                Run / Submit
+                Отправить
               </Button>
             ) : (
               <ButtonLink href={loginHref}>Войти</ButtonLink>
             )}
             <Button disabled={!authUser || !lastSubmissionId || isBusy} onClick={handleResume} variant="secondary">
-              Poll last
+              Обновить статус
             </Button>
             <Button disabled={isBusy} onClick={handleResetDraft} variant="secondary">
-              Reset draft
+              Сбросить код
             </Button>
           </div>
         </div>
@@ -677,21 +715,23 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
           </Alert>
         )}
 
-        <Alert title={phaseCopy.title} tone={phaseCopy.tone}>
-          <p>{phaseCopy.description}</p>
-          {submission.response && (
-            <p className="mt-2 font-mono text-xs text-white/50">
-              status={submission.response.status}
-              {submission.response.verdict ? ` verdict=${submission.response.verdict}` : ""}
-              {submission.response.executionTime !== null
-                ? ` time=${submission.response.executionTime}ms`
-                : ""}
-              {submission.response.memoryUsed !== null
-                ? ` memory=${submission.response.memoryUsed}`
-                : ""}
-            </p>
-          )}
-        </Alert>
+        {submission.phase !== "idle" && (
+          <Alert title={phaseCopy.title} tone={phaseCopy.tone}>
+            <p>{phaseCopy.description}</p>
+            {submission.response && (
+              <p className="mt-2 font-mono text-xs text-white/50">
+                status={submission.response.status}
+                {submission.response.verdict ? ` verdict=${submission.response.verdict}` : ""}
+                {submission.response.executionTime !== null
+                  ? ` time=${submission.response.executionTime}ms`
+                  : ""}
+                {submission.response.memoryUsed !== null
+                  ? ` memory=${submission.response.memoryUsed}`
+                  : ""}
+              </p>
+            )}
+          </Alert>
+        )}
 
         {safeLog && (
           <pre className="max-h-64 overflow-auto border border-line bg-ink p-4 text-xs leading-relaxed text-white/72">

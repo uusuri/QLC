@@ -6,6 +6,7 @@ import com.qlc.models.dtos.CourseDTO;
 import com.qlc.models.dtos.LessonDTO;
 import com.qlc.models.dtos.ModuleDTO;
 import com.qlc.models.dtos.TaskDTO;
+import com.qlc.models.dtos.TaskOutlineDTO;
 import com.qlc.models.responses.LessonLearnResponse;
 
 import com.qlc.repositories.CourseRepository;
@@ -253,6 +254,12 @@ public class CourseService {
         .toList();
   }
 
+  public List<TaskOutlineDTO> getTaskOutlinesByLessonId(Long lessonId) {
+    return taskRepository.findByLessonId(lessonId).stream()
+        .map(task -> new TaskOutlineDTO(task.getId(), task.getTaskType(), task.getStatementMd()))
+        .toList();
+  }
+
   public TaskDTO getTaskById(Long taskId) {
     Task t = taskRepository.findById(taskId)
         .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
@@ -296,6 +303,7 @@ public class CourseService {
     task.setStatementMd(dto.statementMd() != null ? dto.statementMd().trim() : "");
 
     if (task instanceof CodeTask ct) {
+      ct.setLanguage(dto.language() == null || dto.language().isBlank() ? "CPP23" : dto.language().trim());
       ct.setStarterCode(dto.starterCode());
       ct.setTemplateCode(dto.templateCode());
       ct.setTestCases(dto.testCases());
@@ -328,6 +336,7 @@ public class CourseService {
 
   private TaskDTO mapToTaskDTO(Task t) {
     String starterCode = null;
+    String language = null;
     String templateCode = null;
     String testCases = null;
     Integer timeLimitMs = null;
@@ -339,6 +348,7 @@ public class CourseService {
     BigDecimal correctNumericAnswer = null;
 
     if (t instanceof CodeTask ct) {
+      language = ct.getLanguage();
       starterCode = ct.getStarterCode();
       templateCode = ct.getTemplateCode();
       testCases = ct.getTestCases();
@@ -357,6 +367,7 @@ public class CourseService {
         t.getId(),
         t.getLesson().getId(),
         t.getTaskType(),
+        language,
         t.getStatementMd(),
         starterCode,
         timeLimitMs,

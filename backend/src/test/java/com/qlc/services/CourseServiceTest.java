@@ -326,7 +326,7 @@ class CourseServiceTest {
       existingTask.setLesson(sampleLesson);
       existingTask.setStatementMd("Old Text");
 
-      TaskDTO updateDto = new TaskDTO(null, null, "CODE", "New Text",
+      TaskDTO updateDto = new TaskDTO(null, null, "CODE", "CPP23", "New Text",
           null, null, null, null, null, "new template", "new test cases",
           null, null, null);
 
@@ -352,7 +352,7 @@ class CourseServiceTest {
       // Сборка DTO: передаем список правильных индексов List.of(1) на место нужного
       // аргумента
       TaskDTO updateDto = new TaskDTO(
-          null, null, "TEST", "Test Statement",
+          null, null, "TEST", null, "Test Statement",
           null, null, null, null, null, null, null,
           List.of("Option A", "Option B"),
           List.of(1),

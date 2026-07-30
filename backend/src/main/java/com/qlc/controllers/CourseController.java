@@ -148,6 +148,11 @@ public class CourseController {
     return ResponseEntity.ok(courseService.getTasksByLessonId(lessonId));
   }
 
+  @GetMapping("/lessons/{lessonId}/task-outline")
+  public ResponseEntity<List<TaskOutlineDTO>> getTaskOutlinesByLessonId(@PathVariable Long lessonId) {
+    return ResponseEntity.ok(courseService.getTaskOutlinesByLessonId(lessonId));
+  }
+
   @GetMapping("/tasks/{id}")
   public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
     return ResponseEntity.ok(courseService.getTaskById(id));

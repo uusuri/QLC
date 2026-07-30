@@ -291,6 +291,8 @@ export interface AdminTaskDto {
   lessonId: number;
   // Тип задачи: CODE, TEST или NUMERIC.
   taskType: AdminTaskType;
+  // Язык для CODE-задачи. Для старых задач null означает C++23.
+  language: SubmissionLanguage | null;
   // Условие задачи в Markdown.
   statementMd: string;
   // Стартовый код, который CODE-задача показывает студенту.
@@ -319,6 +321,7 @@ export interface AdminTaskDto {
 export interface AdminTaskCreatePayload {
   // Тип создаваемой задачи.
   taskType: AdminTaskType;
+  language: SubmissionLanguage | null;
   // Условие задачи в Markdown.
   statementMd: string;
   // Стартовый код для CODE-задачи.
@@ -348,6 +351,12 @@ export type LearnerTaskDto = Omit<
   AdminTaskDto,
   "testCases" | "correctOptionIndexes" | "correctNumericAnswer"
 >;
+
+export interface LessonTaskOutlineDto {
+  id: number;
+  taskType: AdminTaskType;
+  statementMd: string;
+}
 
 // Модуль курса вместе с уроками, которые нужны странице курса.
 export interface CourseModuleWithLessonsDto {
@@ -423,7 +432,7 @@ export interface LessonLearningViewDto {
 }
 
 // Язык submission, который поддерживает Sprint 2 UI.
-export type SubmissionLanguage = "CPP23";
+export type SubmissionLanguage = "CPP23" | "JAVA21";
 
 // Актуальный worker status плюс legacy aliases на время совместимого rollout.
 export type BackendSubmissionStatus =

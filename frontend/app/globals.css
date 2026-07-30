@@ -243,8 +243,57 @@ p {
   }
 }
 
+@keyframes qlc-atom-shockwave {
+  0% {
+    opacity: 0.52;
+    transform: translate(-50%, -50%) scale(0.42);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.1);
+  }
+}
+
+@keyframes qlc-core-flash {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.65);
+  }
+
+  35% {
+    opacity: 0.72;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.65);
+  }
+}
+
+@keyframes qlc-particle-burst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(var(--particle-x), var(--particle-y)) scale(0.1) rotate(180deg);
+  }
+}
+
 .qlc-atom {
   animation: qlc-atom-float 6s ease-in-out infinite;
+}
+
+.qlc-atom:focus-visible {
+  outline: 2px solid var(--phosphor);
+  outline-offset: 10px;
 }
 
 .qlc-atom__halo {
@@ -256,6 +305,44 @@ p {
     conic-gradient(from 20deg, transparent, rgba(184, 255, 53, 0.05), transparent 35%);
   filter: blur(18px);
   animation: qlc-halo-pulse 4s ease-in-out infinite;
+}
+
+.qlc-atom__pulse {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  width: 145px;
+  height: 145px;
+  border: 1px solid rgba(184, 255, 53, 0.72);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.qlc-atom__core-flash {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 255, 224, 0.8), rgba(184, 255, 53, 0.16) 43%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.qlc-atom--energized .qlc-atom__core-flash {
+  animation: qlc-core-flash 900ms ease-out;
+}
+
+.qlc-atom--energized .qlc-atom__pulse--one {
+  animation: qlc-atom-shockwave 1s ease-out;
+}
+
+.qlc-atom--energized .qlc-atom__pulse--two {
+  animation: qlc-atom-shockwave 1s 180ms ease-out;
 }
 
 .qlc-atom__orbit {
@@ -398,6 +485,60 @@ p {
   animation: qlc-marker-blink 3.2s 1.4s ease-in-out infinite;
 }
 
+.qlc-atom__particle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+  width: 7px;
+  height: 7px;
+  background: var(--phosphor);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.qlc-atom__particle--one {
+  --particle-x: 185px;
+  --particle-y: -128px;
+}
+
+.qlc-atom__particle--two {
+  --particle-x: -190px;
+  --particle-y: 86px;
+  background: #f5f5f0;
+}
+
+.qlc-atom__particle--three {
+  --particle-x: 145px;
+  --particle-y: 152px;
+  width: 5px;
+  height: 5px;
+}
+
+.qlc-atom__particle--four {
+  --particle-x: -126px;
+  --particle-y: -164px;
+  width: 5px;
+  height: 5px;
+  background: #8aadf4;
+}
+
+.qlc-atom--energized .qlc-atom__particle {
+  animation: qlc-particle-burst 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.qlc-atom--energized .qlc-atom__particle--two {
+  animation-delay: 70ms;
+}
+
+.qlc-atom--energized .qlc-atom__particle--three {
+  animation-delay: 120ms;
+}
+
+.qlc-atom--energized .qlc-atom__particle--four {
+  animation-delay: 45ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -410,6 +551,9 @@ p {
   .qlc-atom__marker,
   .qlc-atom__core,
   .qlc-atom__core::after,
+  .qlc-atom__core-flash,
+  .qlc-atom__pulse,
+  .qlc-atom__particle,
   .qlc-hero-signal__dot {
     animation: none;
   }

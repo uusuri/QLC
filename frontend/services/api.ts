@@ -20,6 +20,7 @@ import type {
   LessonLearnResponseDto,
   LessonLearningViewDto,
   LearnerTaskDto,
+  LessonTaskOutlineDto,
   LoginUserPayload,
   LoginNoteDto,
   PaymentMethodDto,
@@ -31,10 +32,13 @@ import type {
   TelegramAuthPayload
 } from "@/types";
 
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8080").replace(
-  /\/$/,
-  ""
-);
+const API_BASE_URL = (
+  typeof window === "undefined"
+    ? process.env.BACKEND_INTERNAL_URL ??
+      process.env.NEXT_PUBLIC_API_BASE_URL ??
+      "http://127.0.0.1:8080"
+    : process.env.NEXT_PUBLIC_API_BASE_URL ?? ""
+).replace(/\/$/, "");
 
 const AUTH_TOKEN_STORAGE_KEY = "qlc:auth-token";
 const AUTH_USER_STORAGE_KEY = "qlc:auth-user";
@@ -321,6 +325,7 @@ function mapAdminTaskToLearnerTask(task: AdminTaskDto): LearnerTaskDto {
     id: task.id,
     lessonId: task.lessonId,
     taskType: task.taskType,
+    language: task.language,
     statementMd: task.statementMd,
     starterCode: task.starterCode,
     timeLimitMs: task.timeLimitMs,
@@ -788,6 +793,10 @@ export async function updateAdminLesson(
 // Загружает задачи только для выбранного урока.
 export async function getAdminTasks(lessonId: number): Promise<AdminTaskDto[]> {
   return apiRequest<AdminTaskDto[]>(`/api/lessons/${lessonId}/tasks`);
+}
+
+export async function getLessonTaskOutlines(lessonId: number): Promise<LessonTaskOutlineDto[]> {
+  return apiRequest<LessonTaskOutlineDto[]>(`/api/lessons/${lessonId}/task-outline`);
 }
 
 // Загружает одну задачу по backend ID.

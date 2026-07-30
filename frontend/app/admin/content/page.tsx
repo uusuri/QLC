@@ -34,7 +34,8 @@ import type {
   AdminModuleDto,
   AdminTaskCreatePayload,
   AdminTaskDto,
-  AdminTaskType
+  AdminTaskType,
+  SubmissionLanguage
 } from "@/types";
 
 type AdminStep = "course" | "module" | "lesson" | "task";
@@ -68,6 +69,7 @@ type LessonFormState = {
 
 type TaskFormState = {
   taskType: AdminTaskType;
+  language: SubmissionLanguage;
   statementMd: string;
   starterCode: string;
   templateCode: string;
@@ -124,6 +126,7 @@ const initialLessonForm: LessonFormState = {
 
 const initialTaskForm: TaskFormState = {
   taskType: "CODE",
+  language: "CPP23",
   statementMd: "",
   starterCode: "",
   templateCode: "",
@@ -262,6 +265,7 @@ function restoreTaskForm(value: unknown): TaskFormState {
     value.taskType === "TEST" || value.taskType === "NUMERIC" || value.taskType === "CODE"
       ? value.taskType
       : initialTaskForm.taskType;
+  const language: SubmissionLanguage = value.language === "JAVA21" ? "JAVA21" : "CPP23";
   const correctOptionIndexes = Array.isArray(value.correctOptionIndexes)
     ? value.correctOptionIndexes.filter(
         (index): index is number => Number.isSafeInteger(index) && Number(index) >= 0
@@ -270,6 +274,7 @@ function restoreTaskForm(value: unknown): TaskFormState {
 
   return {
     taskType,
+    language,
     statementMd: storedString(value.statementMd, initialTaskForm.statementMd),
     starterCode: storedString(value.starterCode, initialTaskForm.starterCode),
     templateCode: storedString(value.templateCode, initialTaskForm.templateCode),
@@ -376,6 +381,7 @@ function buildTaskPayload(form: TaskFormState): AdminTaskCreatePayload {
 
   const payload: AdminTaskCreatePayload = {
     taskType: form.taskType,
+    language: form.taskType === "CODE" ? form.language : null,
     statementMd: form.statementMd.trim(),
     starterCode: null,
     timeLimitMs: null,
@@ -467,6 +473,7 @@ function lessonDtoToForm(lesson: AdminLessonDto): LessonFormState {
 function taskDtoToForm(task: AdminTaskDto): TaskFormState {
   return {
     taskType: task.taskType,
+    language: task.language ?? "CPP23",
     statementMd: task.statementMd,
     starterCode: task.starterCode ?? "",
     templateCode: task.templateCode ?? "",
@@ -1579,6 +1586,19 @@ export default function AdminContentPage() {
 
                     {taskForm.taskType === "CODE" && (
                       <div className="grid gap-3 border-t border-line pt-3">
+                        <label className="grid gap-2">
+                          <span className="font-mono text-[10px] font-bold uppercase text-white/58">language</span>
+                          <select
+                            className="min-h-12 border border-line bg-panel/70 px-3 text-sm font-bold text-white outline-none transition focus:border-acid focus:bg-ink"
+                            onChange={(event) =>
+                              setTaskForm((current) => ({ ...current, language: event.target.value as SubmissionLanguage }))
+                            }
+                            value={taskForm.language}
+                          >
+                            <option value="CPP23">C++23</option>
+                            <option value="JAVA21">Java 21</option>
+                          </select>
+                        </label>
                         <TextArea
                           help="Код, который первым откроется студенту в Monaco Editor."
                           label="starterCode"
