@@ -12,15 +12,19 @@ import com.qlc.repositories.SubmissionRepository;
 import com.qlc.repositories.TaskRepository;
 import com.qlc.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -126,6 +130,20 @@ public class SubmissionService {
     }
 
     return new SubmissionCreatedResponse(saved.getId(), saved.getStatus().name());
+  }
+
+  @Scheduled(fixedDelay = 5000)
+  public void recoverStuckSubmissions() {
+    List<Submission> stuckSubmissions = new ArrayList<>(
+        submissionRepository.findTop50ByStatusAndCreatedAtBeforeOrderByCreatedAtAsc(
+            SubmissionStatus.QUEUED, LocalDateTime.now().minusSeconds(10)));
+    for (Submission s : stuckSubmissions) {
+      try {
+        redisQueueService.pushToStream(s);
+      } catch (Exception e) {
+        System.err.println("[Redis] Failed to recover stuck submission: " + e.getMessage());
+      }
+    }
   }
 
   @Transactional(readOnly = true)

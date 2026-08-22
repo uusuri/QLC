@@ -43,8 +43,6 @@ public class TokenFilter extends OncePerRequestFilter {
           SecurityContextHolder.getContext().setAuthentication(auth);
         }
       } catch (Exception e) {
-        // Невалидный или истекший токен — ожидаемый сценарий. Не логируем его
-        // целиком и не печатаем stack trace, чтобы не раскрывать credentials.
         SecurityContextHolder.clearContext();
       }
     }
