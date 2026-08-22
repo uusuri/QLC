@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -134,14 +133,14 @@ public class SubmissionService {
 
   @Scheduled(fixedDelay = 5000)
   public void recoverStuckSubmissions() {
-    List<Submission> stuckSubmissions = new ArrayList<>(
-        submissionRepository.findTop50ByStatusAndCreatedAtBeforeOrderByCreatedAtAsc(
-            SubmissionStatus.QUEUED, LocalDateTime.now().minusSeconds(10)));
+    List<Submission> stuckSubmissions = submissionRepository.findTop50ByStatusAndCreatedAtBeforeOrderByCreatedAtAsc(
+        SubmissionStatus.QUEUED, LocalDateTime.now().minusSeconds(10));
     for (Submission s : stuckSubmissions) {
       try {
         redisQueueService.pushToStream(s);
       } catch (Exception e) {
         System.err.println("[Redis] Failed to recover stuck submission: " + e.getMessage());
+        return;
       }
     }
   }
