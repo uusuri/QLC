@@ -1,6 +1,5 @@
 package com.qlc.services;
 
-import com.qlc.models.dtos.SubmissionStreamDTO;
 import com.qlc.models.messages.SubmissionStreamMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -108,7 +108,7 @@ public class RedisSubmissionWorker {
     List<MapRecord<String, String, String>> records = redisTemplate.<String, String>opsForStream().read(
         Consumer.from(consumerGroup, consumerName),
         StreamReadOptions.empty().count(batchSize),
-        StreamOffset.create(streamName, ReadOffset.from("0-0")));
+        StreamOffset.create(streamName, ReadOffset.lastConsumed()));
 
     if (records == null) {
       return;
@@ -120,12 +120,12 @@ public class RedisSubmissionWorker {
   }
 
   void processRecord(MapRecord<String, String, String> record) {
-    SubmissionStreamDTO body = SubmissionStreamDTO.class.cast(record.getValue());
+    Map<String, String> body = record.getValue();
 
-    String schemaVersion = body.schemaVersion();
-    String rawSubmissionId = body.submissionId();
-    String rawTaskId = body.taskId();
-    String sourceCode = body.sourceCode();
+    String schemaVersion = body.get("schemaVersion");
+    String rawSubmissionId = body.get("submissionId");
+    String rawTaskId = body.get("taskId");
+    String sourceCode = body.get("sourceCode");
 
     if (!SUPPORTED_SCHEMA_VERSION.equals(schemaVersion)) {
       log.warn("Acknowledging message {} with unsupported schema version {}", record.getId(), schemaVersion);
