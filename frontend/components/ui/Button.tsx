@@ -44,14 +44,14 @@ function cn(...items: Array<string | false | null | undefined>) {
 // Возвращает Tailwind-классы для выбранного варианта.
 function getVariantClassName(variant: ButtonVariant) {
   if (variant === "danger") {
-    return "bg-red-400/12 text-red-100 hover:bg-red-400 hover:text-ink";
+    return "border border-red-300/20 bg-red-400/12 text-red-100 hover:border-red-300/50 hover:bg-red-400 hover:text-ink";
   }
 
   if (variant === "secondary") {
-    return "bg-white/[0.07] text-white/82 hover:bg-white/[0.12] hover:text-white";
+    return "border border-white/10 bg-white/[0.055] text-white/86 hover:border-phosphor/35 hover:bg-white/[0.1] hover:text-white";
   }
 
-  return "relative bg-phosphor text-ink shadow-acid hover:bg-white";
+  return "relative border border-phosphor bg-phosphor text-ink shadow-acid hover:border-white hover:bg-white";
 }
 
 // Общий набор классов: рубленая геометрия, видимый focus, disabled/loading.
@@ -65,9 +65,9 @@ function getButtonClassName({
   variant: ButtonVariant;
 }) {
   return cn(
-    "group inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold transition",
+    "group isolate inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-full px-6 text-sm font-semibold transition duration-200 motion-safe:hover:-translate-y-0.5",
     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-phosphor",
-    "disabled:cursor-not-allowed disabled:bg-white/8 disabled:text-white/34",
+    "disabled:cursor-not-allowed disabled:border-white/8 disabled:bg-white/8 disabled:text-white/38 disabled:hover:translate-y-0",
     disabled && "pointer-events-none cursor-not-allowed opacity-55",
     getVariantClassName(variant),
     className

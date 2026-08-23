@@ -8,8 +8,11 @@
   color: #f5f5f0;
   --acid: #b8ff35;
   --ink: #0b0d0f;
-  --panel: #16191c;
-  --line: rgba(255, 255, 255, 0.11);
+  --panel: #15191c;
+  --surface: #111416;
+  --surface-raised: #1c2023;
+  --line: rgba(255, 255, 255, 0.12);
+  --muted: rgba(245, 245, 240, 0.64);
   --ember: #d7ff7d;
   --phosphor: #b8ff35;
 }
@@ -20,7 +23,6 @@
 
 html {
   min-width: 320px;
-  overflow-x: clip;
   scroll-behavior: smooth;
 }
 
@@ -28,13 +30,21 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
-  overflow-x: clip;
   background:
-    radial-gradient(circle at 78% 8%, rgba(184, 255, 53, 0.08), transparent 28rem),
+    radial-gradient(circle at 82% -4%, rgba(184, 255, 53, 0.09), transparent 30rem),
+    radial-gradient(circle at 8% 42%, rgba(255, 255, 255, 0.025), transparent 24rem),
     #0b0d0f;
   color: #f5f5f0;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   text-rendering: optimizeLegibility;
+}
+
+main {
+  isolation: isolate;
+}
+
+#main-content:focus {
+  outline: none;
 }
 
 a {
@@ -66,6 +76,26 @@ p {
 ::selection {
   color: var(--ink);
   background: var(--phosphor);
+}
+
+.qlc-skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 100;
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  background: var(--phosphor);
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 800;
+  transform: translateY(-180%);
+  transition: transform 160ms ease;
+}
+
+.qlc-skip-link:focus {
+  transform: translateY(0);
 }
 
 @keyframes qlc-satellite-forward {
@@ -542,6 +572,15 @@ p {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
   }
 
   .qlc-atom,

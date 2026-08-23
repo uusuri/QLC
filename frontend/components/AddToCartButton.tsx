@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 import { addCourseToCart, getAuthToken } from "@/services/api";
 import { Button } from "@/components/ui";
@@ -18,10 +17,15 @@ export function AddToCartButton({ courseId, courseSlug }: AddToCartButtonProps) 
   const [error, setError] = useState<string>("");
 
   const handleClick = async () => {
+    if (state === "added") {
+      router.push(`/checkout?course=${courseSlug}`);
+      return;
+    }
+
     setError("");
 
     if (!getAuthToken()) {
-      router.push(`/login?redirectTo=${encodeURIComponent("/")}`);
+      router.push(`/login?redirectTo=${encodeURIComponent(`/checkout?course=${courseSlug}`)}`);
       return;
     }
 
@@ -36,28 +40,22 @@ export function AddToCartButton({ courseId, courseSlug }: AddToCartButtonProps) 
     }
   };
 
-  if (state === "added") {
-    return (
-      <Link
-        className="inline-flex min-h-12 items-center justify-center rounded-full bg-phosphor px-6 text-sm font-semibold text-ink transition hover:bg-white"
-        href={`/checkout?course=${courseSlug}`}
-      >
-        Оплатить
-      </Link>
-    );
-  }
-
   return (
     <>
       <Button
+        aria-busy={state === "loading"}
+        className="w-full"
         disabled={state === "loading"}
         loading={state === "loading"}
         onClick={handleClick}
         variant="primary"
       >
-        В корзину
+        {state === "added" ? "Перейти к оплате" : state === "error" ? "Попробовать снова" : "В корзину"}
       </Button>
-      {error ? <p className="mt-2 text-xs font-bold text-red-300">{error}</p> : null}
+      <span aria-live="polite" className="sr-only">
+        {state === "added" ? "Курс добавлен в корзину. Можно перейти к оплате." : ""}
+      </span>
+      {error ? <p className="mt-2 text-xs font-bold text-red-300" role="alert">{error}</p> : null}
     </>
   );
 }

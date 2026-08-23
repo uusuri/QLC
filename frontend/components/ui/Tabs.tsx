@@ -47,7 +47,7 @@ export function Tabs<TValue extends string>({
             className={cn(
               "min-h-12 px-4 text-left text-xs font-black uppercase tracking-[0.18em] transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid",
               isActive
-                ? "bg-acid text-ink shadow-[0_0_24px_rgba(255,106,61,0.22)]"
+                ? "bg-acid text-ink shadow-[0_0_24px_rgba(184,255,53,0.18)]"
                 : "bg-panel text-white/70 hover:bg-white/8 hover:text-acid",
               item.disabled && "cursor-not-allowed bg-ink text-white/28 hover:text-white/28"
             )}

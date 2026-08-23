@@ -82,17 +82,16 @@ export default function ProfilePage() {
   return (
     <main className="flex min-h-screen flex-col">
       <div className="flex-1 px-4 py-4 sm:px-6 lg:px-8">
+        <SiteHeader />
         <div className="mx-auto max-w-7xl">
-          <SiteHeader />
-
-          <section className="mt-4 border border-line bg-ink/90">
+          <section className="mt-6 overflow-hidden rounded-[28px] border border-line bg-white/[0.025]" id="main-content" tabIndex={-1}>
             {/* Hero header */}
             <header className="grid gap-6 border-b border-line p-5 sm:p-7 lg:grid-cols-[1fr_auto]">
               <div>
                 <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-acid">
                   Профиль
                 </p>
-                <h1 className="mt-3 max-w-4xl text-4xl font-black uppercase leading-[1.04] sm:text-6xl lg:text-7xl">
+                <h1 className="mt-3 max-w-4xl break-words text-4xl font-black leading-[1.04] tracking-[-0.04em] [overflow-wrap:anywhere] sm:text-6xl lg:text-7xl">
                   @{user.username}
                 </h1>
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/58">
@@ -115,7 +114,7 @@ export default function ProfilePage() {
                   <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-acid">
                     Купленные курсы
                   </p>
-                  <h2 className="mt-2 text-3xl font-black uppercase sm:text-5xl">Мои курсы</h2>
+                  <h2 className="mt-2 text-3xl font-bold tracking-[-0.035em] sm:text-5xl">Мои курсы</h2>
                 </div>
                 <span className="font-mono text-xs font-black uppercase text-white/48">
                   {formatCoursesLabel(courseList.length)}
@@ -135,7 +134,7 @@ export default function ProfilePage() {
                           <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-acid">
                             Course / {course.solvedTasks} из {course.totalTasks} задач
                           </p>
-                          <h3 className="text-2xl font-black uppercase leading-[1.04] sm:text-3xl">
+                          <h3 className="text-2xl font-bold leading-[1.04] tracking-[-0.03em] sm:text-3xl">
                             {course.name}
                           </h3>
                           <p className="mt-2 max-w-3xl text-sm leading-snug text-white/60">
@@ -154,12 +153,12 @@ export default function ProfilePage() {
                         ) : (
                           <div className="grid gap-4 xl:grid-cols-2">
                             {course.modules.map((module, moduleIndex) => (
-                              <section className="border border-line bg-ink/70" key={module.id}>
+                              <section className="overflow-hidden rounded-2xl border border-line bg-ink/70" key={module.id}>
                                 <header className="border-b border-line px-4 py-3">
                                   <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
                                     Модуль {moduleIndex + 1}
                                   </p>
-                                  <h4 className="mt-1 text-lg font-black uppercase leading-tight text-white">
+                                  <h4 className="mt-1 text-lg font-bold leading-tight text-white">
                                     {module.name}
                                   </h4>
                                 </header>
@@ -183,7 +182,7 @@ export default function ProfilePage() {
                                               aria-label={isComplete ? "Урок завершён" : isInProgress ? "Урок в процессе" : "Урок не начат"}
                                               className={`mt-1 inline-flex h-3 w-3 rounded-full border-2 ${
                                                 isComplete
-                                                  ? "border-acid bg-acid shadow-[0_0_12px_rgba(255,106,61,0.75)]"
+                                                  ? "border-acid bg-acid shadow-[0_0_12px_rgba(184,255,53,0.65)]"
                                                   : isInProgress
                                                     ? "border-ember bg-ember/30"
                                                     : "border-white/25 bg-transparent"
@@ -193,7 +192,7 @@ export default function ProfilePage() {
                                               <p className="font-mono text-[10px] font-black uppercase text-white/40">
                                                 Урок {lessonIndex + 1}
                                               </p>
-                                              <h5 className="mt-1 truncate text-base font-black uppercase leading-tight text-white group-hover:text-acid">
+                                              <h5 className="mt-1 break-words text-base font-bold leading-tight text-white group-hover:text-acid sm:truncate">
                                                 {lesson.name}
                                               </h5>
                                             </div>
@@ -213,12 +212,9 @@ export default function ProfilePage() {
                         )}
 
                         <div className="flex justify-end">
-                          <Link
-                            className="inline-flex min-h-10 items-center justify-center border border-acid bg-acid px-4 text-xs font-black uppercase text-ink transition hover:bg-transparent hover:text-acid"
-                            href={`/courses/course-${course.id}`}
-                          >
+                          <ButtonLink href={`/courses/course-${course.id}`}>
                             Открыть курс
-                          </Link>
+                          </ButtonLink>
                         </div>
                       </PanelBody>
                     </Panel>
@@ -230,7 +226,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto w-full max-w-[1344px] px-4 sm:px-6 lg:px-8">
         <SiteFooter />
       </div>
     </main>
@@ -249,15 +245,14 @@ function ProfileStatePage({
   return (
     <main className="flex min-h-screen flex-col">
       <div className="flex-1 px-4 py-4 sm:px-6 lg:px-8">
+        <SiteHeader />
         <div className="mx-auto max-w-7xl">
-          <SiteHeader />
-
-          <section className="mt-4 grid min-h-[70vh] content-center gap-6 border border-line bg-ink/90 p-5 sm:p-7">
+          <section className="mt-6 grid min-h-[70vh] content-center gap-6 rounded-[28px] border border-line bg-white/[0.025] p-5 sm:p-7" id="main-content" tabIndex={-1}>
             <StatusBadge tone="warning">{eyebrow}</StatusBadge>
-            <h1 className="max-w-4xl text-5xl font-black uppercase leading-[1.02] sm:text-7xl">
+            <h1 className="max-w-4xl text-5xl font-bold leading-[1.02] tracking-[-0.045em] sm:text-7xl">
               {title}
             </h1>
-            <p className="max-w-2xl text-base font-bold uppercase leading-snug text-white/62">
+            <p className="max-w-2xl text-base leading-relaxed text-white/66">
               {text}
             </p>
             <div className="flex flex-wrap gap-3">
@@ -270,7 +265,7 @@ function ProfileStatePage({
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto w-full max-w-[1344px] px-4 sm:px-6 lg:px-8">
         <SiteFooter />
       </div>
     </main>

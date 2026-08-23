@@ -106,7 +106,7 @@ function renderInlineMarkdown(text: string): ReactNode[] {
 
     if (marker.startsWith("`")) {
       nodes.push(
-        <code className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[0.9em] text-acid" key={key++}>
+        <code className="break-all rounded bg-white/10 px-1.5 py-0.5 font-mono text-[0.9em] text-acid" key={key++}>
           {content}
         </code>
       );
@@ -236,7 +236,7 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
   if (block.kind === "code") {
     return (
       <pre
-        className="overflow-x-auto border border-line bg-ink p-4 text-sm leading-relaxed text-white shadow-[0_0_40px_rgba(255,106,61,0.06)]"
+        className="overflow-x-auto rounded-2xl border border-line bg-ink p-4 text-sm leading-relaxed text-white shadow-[0_0_40px_rgba(184,255,53,0.05)]"
         key={index}
       >
         {block.language && (
@@ -250,7 +250,7 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
   }
 
   if (block.kind === "heading") {
-    const className = "font-black uppercase leading-tight text-white";
+    const className = "[overflow-wrap:anywhere] font-bold leading-tight tracking-[-0.025em] text-white";
 
     if (block.level === 1) {
       return (
@@ -277,11 +277,11 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
 
   if (block.kind === "list") {
     return (
-      <ul className="grid gap-2 text-sm leading-relaxed text-white/72" key={index}>
+      <ul className="grid gap-2 text-sm leading-relaxed text-white/76" key={index}>
         {block.items.map((item, itemIndex) => (
           <li className="grid grid-cols-[auto_1fr] gap-3" key={`${item}-${itemIndex}`}>
             <span className="font-black text-acid">/</span>
-            <span>{renderInlineMarkdown(item)}</span>
+            <span className="min-w-0 [overflow-wrap:anywhere]">{renderInlineMarkdown(item)}</span>
           </li>
         ))}
       </ul>
@@ -289,7 +289,7 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
   }
 
   return (
-    <p className="text-sm leading-relaxed text-white/70 sm:text-base" key={index}>
+    <p className="[overflow-wrap:anywhere] text-sm leading-relaxed text-white/70 sm:text-base" key={index}>
       {renderInlineMarkdown(block.text)}
     </p>
   );
@@ -298,5 +298,5 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
 export function SafeMarkdown({ markdown }: SafeMarkdownProps) {
   const blocks = parseMarkdown(markdown || "Описание скоро появится.");
 
-  return <div className="grid gap-5">{blocks.map(renderBlock)}</div>;
+  return <div className="grid w-full max-w-[80ch] gap-5">{blocks.map(renderBlock)}</div>;
 }

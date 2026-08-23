@@ -30,7 +30,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
   if (loading || !isAdmin(user)) {
     return (
-      <div className="grid min-h-screen place-items-center px-4">
+      <div className="grid min-h-screen place-items-center px-4" id="main-content" tabIndex={-1}>
         <div className="border border-line bg-panel/95 p-6 text-center">
           <p className="font-mono text-xs font-black uppercase text-white/48">QLC</p>
           <p className="mt-3 text-sm font-bold uppercase text-white/72">Проверка доступа...</p>

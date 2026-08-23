@@ -123,17 +123,16 @@ export default function LessonPage() {
   return (
     <main className="flex min-h-screen flex-col">
       <div className="flex-1 px-4 py-4 sm:px-6 lg:px-8">
+        <SiteHeader compact />
         <section className="mx-auto max-w-7xl">
-          <SiteHeader compact />
-
-          <section className="mt-4 border border-line bg-ink/90">
+          <section className="mt-6 overflow-clip rounded-[28px] border border-line bg-white/[0.025]" id="main-content" tabIndex={-1}>
             <header className="flex flex-wrap items-center justify-between gap-4 border-b border-line px-5 py-4 text-xs font-black uppercase sm:px-7">
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 flex-wrap items-center gap-3">
                 <Link className="transition hover:text-acid" href={`/courses/${courseSlug}`}>
                   ← Программа курса
                 </Link>
                 <span className="text-white/25">/</span>
-                <span className="text-white/48">{view.module.name}</span>
+                <span className="min-w-0 [overflow-wrap:anywhere] text-white/58">{view.module.name}</span>
               </div>
               <Link className="text-white/50 transition hover:text-acid" href="/profile">Моё обучение</Link>
             </header>
@@ -141,7 +140,7 @@ export default function LessonPage() {
             <section className="grid gap-5 border-b border-line p-5 sm:p-7 lg:grid-cols-[1fr_auto] lg:items-end lg:p-8">
               <div>
                 <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-acid">Урок</p>
-                <h1 className="mt-3 max-w-5xl text-4xl font-black uppercase leading-[1.02] sm:text-6xl">
+                <h1 className="mt-3 max-w-5xl text-4xl font-bold leading-[1.02] tracking-[-0.04em] sm:text-6xl">
                   {view.lesson.name}
                 </h1>
               </div>
@@ -151,7 +150,7 @@ export default function LessonPage() {
             <section className="grid gap-5 p-5 sm:p-7 lg:p-8">
               <Panel muted>
                 <PanelHeader>
-                  <h2 className="text-xl font-black uppercase leading-tight">Материал урока</h2>
+                  <h2 className="text-xl font-bold leading-tight">Материал урока</h2>
                 </PanelHeader>
                 <PanelBody>
                   <SafeMarkdown
@@ -178,7 +177,7 @@ export default function LessonPage() {
                         return (
                           <button
                             aria-pressed={isSelected}
-                            className={`rounded-full border px-4 py-2 text-left text-sm font-black transition ${
+                            className={`max-w-full [overflow-wrap:anywhere] rounded-full border px-4 py-2 text-left text-sm font-black transition ${
                               isSelected
                                 ? "border-acid bg-acid text-ink"
                                 : "border-line bg-ink text-white/70 hover:border-white/50 hover:text-white"
@@ -197,11 +196,11 @@ export default function LessonPage() {
                     </nav>
                   )}
 
-                  <div className={primaryTask.taskType === "CODE" ? "grid gap-5 lg:grid-cols-[minmax(340px,0.8fr)_minmax(500px,1.2fr)] lg:items-stretch" : "grid gap-5"}>
+                  <div className={primaryTask.taskType === "CODE" ? "grid gap-5 xl:grid-cols-[minmax(340px,0.8fr)_minmax(500px,1.2fr)] xl:items-stretch" : "grid gap-5"}>
                     <Panel className="flex min-w-0 flex-col" muted>
                       <PanelHeader>
                         <p className="font-mono text-xs font-black uppercase tracking-[0.18em] text-acid">Задача</p>
-                        <h2 className="mt-2 text-2xl font-black uppercase leading-tight">Условие</h2>
+                        <h2 className="mt-2 text-2xl font-bold leading-tight">Условие</h2>
                       </PanelHeader>
                       <PanelBody className="grid flex-1 content-start gap-6">
                         <SafeMarkdown
@@ -241,7 +240,6 @@ export default function LessonPage() {
                     {primaryTask.taskType === "CODE" ? (
                       <CodeLessonWorkspace
                         key={`${primaryTask.id}:${primaryTask.testSetVersion ?? 1}`}
-                        lessonId={view.lesson.id}
                         task={primaryTask}
                       />
                     ) : (
@@ -257,7 +255,7 @@ export default function LessonPage() {
         </section>
       </div>
 
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto w-full max-w-[1344px] px-4 sm:px-6 lg:px-8">
         <SiteFooter />
       </div>
     </main>
@@ -278,15 +276,14 @@ function LessonStatePage({
   return (
     <main className="flex min-h-screen flex-col">
       <div className="flex-1 px-4 py-4 sm:px-6 lg:px-8">
+        <SiteHeader />
         <section className="mx-auto max-w-7xl">
-          <SiteHeader />
-
-          <section className="mt-4 grid min-h-[70vh] content-center gap-6 border border-line bg-ink/90 p-5 sm:p-7">
+          <section className="mt-6 grid min-h-[70vh] content-center gap-6 rounded-[28px] border border-line bg-white/[0.025] p-5 sm:p-7" id="main-content" tabIndex={-1}>
             <StatusBadge tone="warning">{eyebrow}</StatusBadge>
-            <h1 className="max-w-4xl text-5xl font-black uppercase leading-[1.02] sm:text-7xl">
+            <h1 className="max-w-4xl text-5xl font-bold leading-[1.02] tracking-[-0.045em] sm:text-7xl">
               {title}
             </h1>
-            <p className="max-w-2xl text-base font-bold uppercase leading-snug text-white/62">
+            <p className="max-w-2xl text-base leading-relaxed text-white/66">
               {text}
             </p>
             <div className="flex flex-wrap gap-3">
@@ -297,7 +294,7 @@ function LessonStatePage({
         </section>
       </div>
 
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto w-full max-w-[1344px] px-4 sm:px-6 lg:px-8">
         <SiteFooter />
       </div>
     </main>

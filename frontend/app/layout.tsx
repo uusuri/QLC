@@ -27,6 +27,9 @@ export default function RootLayout({
     <html lang="ru">
       {/* В body рендерится конкретная страница. */}
       <body className="antialiased">
+        <a className="qlc-skip-link" href="#main-content">
+          Перейти к основному содержимому
+        </a>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

@@ -67,9 +67,7 @@ public class RedisSubmissionWorker {
 
   @SuppressWarnings("unchecked")
   private void consumePendingRecords() {
-    // Типизированное чтение PEL-списка (0-0)
-    List<ObjectRecord<String, SubmissionStreamDTO>> records = redisTemplate.opsForStream().read(
-        SubmissionStreamDTO.class,
+    List<MapRecord<String, String, String>> records = redisTemplate.<String, String>opsForStream().read(
         Consumer.from(consumerGroup, consumerName),
         StreamReadOptions.empty().count(batchSize),
         StreamOffset.create(streamName, ReadOffset.from("0-0")));
@@ -78,7 +76,7 @@ public class RedisSubmissionWorker {
       return;
     }
 
-    for (ObjectRecord<String, SubmissionStreamDTO> record : records) {
+    for (MapRecord<String, String, String> record : records) {
       String messageIdStr = record.getId().getValue();
 
       // Запрашиваем информацию о доставке конкретного ID через Range
@@ -107,24 +105,22 @@ public class RedisSubmissionWorker {
 
   @SuppressWarnings("unchecked")
   private void consumeNewRecords() {
-    // Типизированное чтение новых сообщений
-    List<ObjectRecord<String, SubmissionStreamDTO>> records = redisTemplate.opsForStream().read(
-        SubmissionStreamDTO.class,
+    List<MapRecord<String, String, String>> records = redisTemplate.<String, String>opsForStream().read(
         Consumer.from(consumerGroup, consumerName),
         StreamReadOptions.empty().count(batchSize),
-        StreamOffset.create(streamName, ReadOffset.lastConsumed()));
+        StreamOffset.create(streamName, ReadOffset.from("0-0")));
 
     if (records == null) {
       return;
     }
 
-    for (ObjectRecord<String, SubmissionStreamDTO> record : records) {
+    for (MapRecord<String, String, String> record : records) {
       processRecord(record);
     }
   }
 
-  void processRecord(ObjectRecord<String, SubmissionStreamDTO> record) {
-    SubmissionStreamDTO body = record.getValue();
+  void processRecord(MapRecord<String, String, String> record) {
+    SubmissionStreamDTO body = SubmissionStreamDTO.class.cast(record.getValue());
 
     String schemaVersion = body.schemaVersion();
     String rawSubmissionId = body.submissionId();

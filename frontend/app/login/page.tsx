@@ -19,11 +19,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     <main className="flex min-h-screen flex-col">
       <RedirectIfAuthenticated redirectTo={params?.redirectTo} />
       <div className="flex flex-1 items-stretch px-4 py-4 sm:px-6 lg:px-8">
-        <section className="mx-auto grid min-h-[calc(100vh-32px)] w-full max-w-7xl border border-line bg-ink/90 lg:grid-cols-[1fr_520px]">
-          <div className="relative grid content-between gap-12 overflow-hidden border-b border-line p-5 sm:p-7 lg:border-b-0 lg:border-r">
+        <section className="mx-auto grid min-h-[calc(100svh-32px)] w-full max-w-7xl overflow-hidden rounded-[28px] border border-line bg-ink/90 lg:grid-cols-[minmax(0,1fr)_460px] xl:grid-cols-[1fr_520px]">
+          <div className="relative hidden content-between gap-12 overflow-hidden border-r border-line p-7 lg:grid">
             <header className="flex items-center justify-between gap-4 font-mono text-xs font-bold uppercase">
               <Link className="flex items-center gap-3 transition hover:text-acid" href="/">
-                <span className="inline-flex h-2 w-2 rounded-full bg-acid shadow-[0_0_12px_rgba(255,106,61,0.5)]" />
+                <span className="inline-flex h-2 w-2 rounded-full bg-acid shadow-[0_0_12px_rgba(184,255,53,0.5)]" />
                 QLC
               </Link>
               <Link className="text-white/48 transition hover:text-acid" href="/register">
@@ -33,11 +33,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
             <div className="relative z-10">
               <p className="mb-5 font-mono text-xs font-bold uppercase text-acid">Вход</p>
-              <h1 className="max-w-4xl text-5xl font-black uppercase leading-[1.02] sm:text-7xl lg:text-8xl">
+              <p aria-hidden="true" className="max-w-4xl text-5xl font-black uppercase leading-[1.02] sm:text-7xl lg:text-6xl xl:text-8xl">
                 Доступ
                 <br />
                 к обучению.
-              </h1>
+              </p>
               <p className="mt-6 max-w-lg text-base leading-relaxed text-white/58">
                 Войдите, чтобы открывать курсы, отправлять решения и отслеживать прогресс в профиле.
               </p>
@@ -67,15 +67,28 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             />
           </div>
 
-          <aside className="grid content-center p-5 sm:p-7">
-            <div className="relative border border-line bg-panel/95 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.5)]">
-              <AuthForm mode="login" redirectTo={params?.redirectTo} />
+          <section className="grid grid-rows-[auto_1fr] gap-6 p-5 sm:p-7 lg:gap-0">
+            <header className="flex items-center justify-between gap-4 lg:hidden">
+              <Link className="flex items-center gap-3 font-black tracking-[-0.04em]" href="/">
+                <span className="grid h-8 w-8 rotate-45 place-items-center bg-phosphor">
+                  <span className="-rotate-45 text-[9px] font-black text-ink">Q</span>
+                </span>
+                QLC
+              </Link>
+              <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-white/68 transition hover:text-phosphor" href="/register">
+                Регистрация
+              </Link>
+            </header>
+            <div className="grid content-center" id="main-content" tabIndex={-1}>
+              <div className="relative rounded-[24px] border border-line bg-panel/95 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.36)] sm:p-7">
+                <AuthForm mode="login" redirectTo={params?.redirectTo} />
+              </div>
             </div>
-          </aside>
+          </section>
         </section>
       </div>
 
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1344px] px-4 sm:px-6 lg:px-8">
         <SiteFooter />
       </div>
     </main>

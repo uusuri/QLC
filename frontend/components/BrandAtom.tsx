@@ -23,7 +23,7 @@ export function BrandAtom() {
   return (
     <button
       aria-label="Запустить импульс атома QLC"
-      className={`qlc-atom relative mx-auto block aspect-square w-full max-w-[462px] cursor-pointer border-0 bg-transparent p-0 text-left ${
+      className={`qlc-atom relative mx-auto block aspect-square w-full max-w-[300px] cursor-pointer border-0 bg-transparent p-0 text-left sm:max-w-[390px] lg:max-w-[440px] ${
         energized ? "qlc-atom--energized" : ""
       }`}
       onClick={energize}
@@ -51,7 +51,7 @@ export function BrandAtom() {
       <span aria-hidden="true" className="qlc-atom__particle qlc-atom__particle--two" />
       <span aria-hidden="true" className="qlc-atom__particle qlc-atom__particle--three" />
       <span aria-hidden="true" className="qlc-atom__particle qlc-atom__particle--four" />
-      <p className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-white/38">
+      <p className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-white/48">
         теория · код · результат
       </p>
     </button>

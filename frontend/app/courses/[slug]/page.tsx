@@ -125,10 +125,9 @@ export default function CoursePage() {
   return (
     <main className="flex min-h-screen flex-col">
       <div className="flex-1 px-4 sm:px-6 lg:px-8">
+        <SiteHeader />
         <div className="mx-auto max-w-7xl">
-          <SiteHeader />
-
-          <div className="py-10 sm:py-14">
+          <div className="py-10 sm:py-14" id="main-content" tabIndex={-1}>
             <Link className="text-sm text-white/42 transition hover:text-white" href="/">
               ← Все курсы
             </Link>
@@ -273,8 +272,8 @@ export default function CoursePage() {
                                       {!isLoadingOutline && !taskOutlineError[lesson.id] && outlines.length > 0 && (
                                         <div className="grid gap-2">
                                           {outlines.map((task, taskIndex) => (
-                                            <div className="flex items-center justify-between gap-3 bg-black/20 px-3 py-2.5" key={task.id}>
-                                              <span className="text-sm text-white/68">
+                                            <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-xl bg-black/20 px-3 py-2.5" key={task.id}>
+                                              <span className="min-w-0 break-words text-sm text-white/72">
                                                 <span className="mr-2 font-mono text-xs text-phosphor">{String(taskIndex + 1).padStart(2, "0")}</span>
                                                 {getTaskOutlineTitle(task.statementMd, taskIndex)}
                                               </span>
@@ -310,7 +309,7 @@ export default function CoursePage() {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1344px] px-4 sm:px-6 lg:px-8">
         <SiteFooter />
       </div>
     </main>
@@ -333,9 +332,9 @@ function CourseStatePage({
 }) {
   return (
     <main className="flex min-h-screen flex-col px-4 sm:px-6 lg:px-8">
+      <SiteHeader />
       <div className="mx-auto w-full max-w-7xl">
-        <SiteHeader />
-        <section className="grid min-h-[70vh] content-center gap-5">
+        <section className="grid min-h-[70vh] content-center gap-5" id="main-content" tabIndex={-1}>
           <StatusBadge tone="warning">{eyebrow}</StatusBadge>
           <h1 className="max-w-3xl text-5xl font-bold tracking-[-0.05em] sm:text-7xl">{title}</h1>
           <p className="max-w-xl text-base text-white/56">{text}</p>

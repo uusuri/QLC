@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 
 import { AuthClientError, getLastAccountUsername, loginUser, loginWithTelegram, registerUser } from "@/services/api";
 import { Alert, Button } from "@/components/ui";
 import { TelegramLoginButton } from "@/components/TelegramLoginButton";
+import { getSafeInternalPath, isSafeInternalPath } from "@/services/navigation";
 import type { TelegramAuthPayload } from "@/types";
 
 type AuthFormMode = "login" | "register";
@@ -45,7 +46,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function getSwitchHref(mode: AuthFormMode, redirectTo?: string) {
   const target = mode === "login" ? "/register" : "/login";
-  return redirectTo ? `${target}?redirectTo=${encodeURIComponent(redirectTo)}` : target;
+  return isSafeInternalPath(redirectTo) ? `${target}?redirectTo=${encodeURIComponent(redirectTo)}` : target;
 }
 
 // Обработка ошибок auth-формы.
@@ -68,24 +69,24 @@ function getErrorState(error: unknown): { message: string; status: AuthFormStatu
     return { message: error.message, status: "backend" };
   }
 
-  return { message: "Не удалось выполнить auth-запрос.", status: "backend" };
+  return { message: "Не удалось выполнить запрос. Попробуйте ещё раз.", status: "backend" };
 }
 
-function validateFields(mode: AuthFormMode, fields: AuthFields): string | null {
+function validateFields(mode: AuthFormMode, fields: AuthFields): { field: keyof AuthFields; message: string } | null {
   if (!USERNAME_PATTERN.test(fields.username.trim())) {
-    return "Username: 3-32 символа, латиница, цифры или _.";
+    return { field: "username", message: "Логин: 3–32 символа, латиница, цифры или _." };
   }
 
   if (mode === "register" && !EMAIL_PATTERN.test(fields.email.trim())) {
-    return "Введите корректный email.";
+    return { field: "email", message: "Введите корректный email." };
   }
 
   if (fields.password.length < 8) {
-    return "Пароль должен быть минимум 8 символов.";
+    return { field: "password", message: "Пароль должен быть минимум 8 символов." };
   }
 
   if (mode === "register" && fields.password !== fields.repeatPassword) {
-    return "Пароли не совпадают.";
+    return { field: "repeatPassword", message: "Пароли не совпадают." };
   }
 
   return null;
@@ -93,7 +94,9 @@ function validateFields(mode: AuthFormMode, fields: AuthFields): string | null {
 
 export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const [fields, setFields] = useState<AuthFields>(initialFields);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof AuthFields, string>>>({});
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<AuthFormStatus>("idle");
   const [showPassword, setShowPassword] = useState(false);
@@ -104,7 +107,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const submitLabel = isRegister ? "Создать аккаунт" : "Войти";
   const title = isRegister ? "Регистрация" : "Вход";
   const switchText = isRegister ? "Уже есть аккаунт? Войти" : "Нет аккаунта? Зарегистрироваться";
-  const finalRedirect = redirectTo && redirectTo.startsWith("/") ? redirectTo : "/profile";
+  const finalRedirect = getSafeInternalPath(redirectTo, "/profile");
 
   useEffect(() => {
     if (mode !== "login") {
@@ -134,19 +137,36 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
       ...current,
       [name]: value
     }));
+    setFieldErrors((current) => {
+      if (!current[name]) return current;
+      const next = { ...current };
+      delete next[name];
+      return next;
+    });
+    if (status === "validation") {
+      setMessage("");
+      setStatus("idle");
+    }
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const validationMessage = validateFields(mode, fields);
+    const validationError = validateFields(mode, fields);
 
-    if (validationMessage) {
-      setMessage(validationMessage);
+    if (validationError) {
+      setFieldErrors({ [validationError.field]: validationError.message });
+      setMessage("Исправьте отмеченное поле.");
       setStatus("validation");
+      window.requestAnimationFrame(() => {
+        formRef.current
+          ?.querySelector<HTMLInputElement>(`[name="${validationError.field}"]`)
+          ?.focus();
+      });
       return;
     }
 
+    setFieldErrors({});
     setMessage("");
     setStatus("loading");
 
@@ -186,13 +206,13 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   };
 
   return (
-    <form className="grid gap-5" onSubmit={handleSubmit}>
+    <form aria-busy={isLoading} className="grid gap-5" noValidate onSubmit={handleSubmit} ref={formRef}>
       <div>
-        <p className="font-mono text-xs font-black uppercase text-acid">{title}</p>
-        <h2 className="mt-4 text-3xl font-black uppercase leading-[1.04] sm:text-5xl">
+        <p className="font-mono text-xs font-black uppercase tracking-[0.16em] text-acid">{title}</p>
+        <h1 className="mt-4 text-3xl font-bold leading-[1.04] tracking-[-0.04em] sm:text-5xl">
           {isRegister ? "Создайте аккаунт." : "Войдите в аккаунт."}
-        </h2>
-        <p className="mt-5 text-base leading-snug text-white/58">
+        </h1>
+        <p className="mt-5 text-base leading-relaxed text-white/64">
           {isRegister
             ? "Укажите логин, email и пароль. После регистрации можно покупать курсы и отслеживать прогресс."
             : "Введите логин и пароль, чтобы продолжить обучение."}
@@ -201,6 +221,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
 
       <InputField
         autoComplete="username"
+        error={fieldErrors.username}
         label="Логин"
         maxLength={32}
         name="username"
@@ -210,7 +231,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
       />
 
       {!isRegister && lastAccount && (
-        <p className="-mt-2 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-white/42">
+        <p className="-mt-2 font-mono text-xs font-bold text-white/52">
           Последний аккаунт · <span className="text-acid">@{lastAccount}</span>
         </p>
       )}
@@ -218,6 +239,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
       {isRegister && (
         <InputField
           autoComplete="email"
+          error={fieldErrors.email}
           label="Email"
           name="email"
           onChange={(value) => updateField("email", value)}
@@ -229,12 +251,13 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
 
       <InputField
         autoComplete={isRegister ? "new-password" : "current-password"}
+        error={fieldErrors.password}
         label="Пароль"
         minLength={8}
         name="password"
         onChange={(value) => updateField("password", value)}
         onToggleVisibility={() => setShowPassword((current) => !current)}
-        placeholder="минимум 8 символов"
+        placeholder="8+ символов"
         reveal={showPassword}
         type="password"
         value={fields.password}
@@ -243,6 +266,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
       {isRegister && (
         <InputField
           autoComplete="new-password"
+          error={fieldErrors.repeatPassword}
           label="Повтор пароля"
           minLength={8}
           name="repeatPassword"
@@ -276,7 +300,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
       </div>
 
       <Link
-        className="text-xs font-black uppercase text-white/48 transition hover:text-acid"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-white/62 transition hover:text-acid"
         href={getSwitchHref(mode, redirectTo)}
       >
         {switchText}
@@ -287,6 +311,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
 
 function InputField({
   autoComplete,
+  error,
   label,
   maxLength,
   minLength,
@@ -299,6 +324,7 @@ function InputField({
   value
 }: {
   autoComplete?: string;
+  error?: string;
   label: string;
   maxLength?: number;
   minLength?: number;
@@ -314,11 +340,13 @@ function InputField({
 
   return (
     <label className="grid gap-2">
-      <span className="font-mono text-xs font-black uppercase text-white/48">{label}</span>
+      <span className="font-mono text-xs font-bold text-white/62">{label}</span>
       <span className="relative">
         <input
+          aria-describedby={error ? `${name}-error` : undefined}
+          aria-invalid={error ? true : undefined}
           autoComplete={autoComplete}
-          className="min-h-12 w-full border border-line bg-panel/70 px-4 pr-12 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
+          className="min-h-12 w-full rounded-2xl border border-line bg-white/[0.035] px-4 pr-20 text-sm font-semibold text-white outline-none transition placeholder:text-white/52 hover:border-white/20 focus:border-acid focus:bg-ink aria-[invalid=true]:border-red-400"
           maxLength={maxLength}
           minLength={minLength}
           name={name}
@@ -331,15 +359,15 @@ function InputField({
         {type === "password" && onToggleVisibility && (
           <button
             aria-label={reveal ? "Скрыть пароль" : "Показать пароль"}
-            className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] font-black uppercase text-white/36 transition hover:text-acid"
+            className="absolute right-1.5 top-1/2 inline-flex min-h-11 min-w-16 -translate-y-1/2 items-center justify-center rounded-xl px-2 font-mono text-[10px] font-black uppercase text-white/52 transition hover:bg-white/[0.06] hover:text-acid"
             onClick={onToggleVisibility}
-            tabIndex={-1}
             type="button"
           >
             {reveal ? "скрыть" : "показать"}
           </button>
         )}
       </span>
+      {error ? <span className="text-xs font-semibold text-red-200" id={`${name}-error`}>{error}</span> : null}
     </label>
   );
 }

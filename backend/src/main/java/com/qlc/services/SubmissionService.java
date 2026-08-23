@@ -135,6 +135,11 @@ public class SubmissionService {
   public void recoverStuckSubmissions() {
     List<Submission> stuckSubmissions = submissionRepository.findTop50ByStatusAndCreatedAtBeforeOrderByCreatedAtAsc(
         SubmissionStatus.QUEUED, LocalDateTime.now().minusSeconds(10));
+
+    if (stuckSubmissions.isEmpty()) {
+      return;
+    }
+
     for (Submission s : stuckSubmissions) {
       try {
         redisQueueService.pushToStream(s);
@@ -159,8 +164,7 @@ public class SubmissionService {
       throw new org.springframework.security.access.AccessDeniedException("Submission belongs to another user");
     }
 
-    // Обрезка потенциально огромных логов компилятора под лимиты конфигурации
-    // сервера
+    // Обрезка логов компилятора под лимиты конфигураци сервера
     String safe = s.getSafeMessage();
     if (safe != null && safe.length() > maxLogLength) {
       safe = safe.substring(0, maxLogLength) + "\n[truncated]";

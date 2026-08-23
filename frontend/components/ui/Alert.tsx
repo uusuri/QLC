@@ -57,27 +57,28 @@ function getToneMarker(tone: AlertTone) {
 export function Alert({ children, className, title, tone = "info" }: AlertProps) {
   return (
     <div
+      aria-live={tone === "danger" ? "assertive" : "polite"}
       className={cn(
-        "relative border p-4 shadow-[0_0_40px_rgba(255,106,61,0.06)]",
+        "relative rounded-2xl border p-4 shadow-[0_18px_50px_rgba(0,0,0,0.12)]",
         getToneClassName(tone),
         className
       )}
-      role="status"
+      role={tone === "danger" ? "alert" : "status"}
     >
       <span
         aria-hidden="true"
         className="pointer-events-none absolute left-0 top-0 h-full w-px bg-gradient-to-b from-current to-transparent opacity-30"
       />
-      <p className="flex items-center gap-2 font-mono text-xs font-black uppercase">
+      <p className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-[0.08em]">
         <span
           aria-hidden="true"
-          className="inline-flex h-4 w-4 items-center justify-center border border-current text-[10px]"
+          className="inline-flex h-5 w-5 items-center justify-center rounded-md border border-current text-[10px]"
         >
           {getToneMarker(tone)}
         </span>
         {title}
       </p>
-      <div className="mt-3 text-sm leading-snug text-white/76">{children}</div>
+      <div className="mt-3 text-sm leading-relaxed text-white/80">{children}</div>
     </div>
   );
 }

@@ -45,22 +45,22 @@ function getToneClassName(tone: StatusTone) {
 // Возвращает маленький маркер состояния.
 function getToneDot(tone: StatusTone) {
   if (tone === "success") {
-    return <span className="h-1.5 w-1.5 rounded-full bg-ink" />;
+    return <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-ink" />;
   }
 
   if (tone === "warning") {
-    return <span className="h-1.5 w-1.5 rounded-full bg-yellow-300" />;
+    return <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-yellow-300" />;
   }
 
   if (tone === "danger") {
-    return <span className="h-1.5 w-1.5 rounded-full bg-red-400" />;
+    return <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />;
   }
 
   if (tone === "info") {
-    return <span className="h-1.5 w-1.5 rounded-full bg-cyan-300" />;
+    return <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300" />;
   }
 
-  return <span className="h-1.5 w-1.5 rounded-full bg-white/40" />;
+  return <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/40" />;
 }
 
 // Маленький бейдж для статусов API, задач, доступа и очереди.
@@ -68,13 +68,13 @@ export function StatusBadge({ children, className, tone = "neutral" }: StatusBad
   return (
     <span
       className={cn(
-        "inline-flex w-fit items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold",
+        "inline-flex w-fit max-w-full items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold",
         getToneClassName(tone),
         className
       )}
     >
       {getToneDot(tone)}
-      <span>{children}</span>
+      <span className="min-w-0 truncate">{children}</span>
     </span>
   );
 }

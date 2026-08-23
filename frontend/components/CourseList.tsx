@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 
 import { CourseCard } from "@/components/CourseCard";
-import { getMyCourses, getAuthToken } from "@/services/api";
+import { useAuth } from "@/components/AuthProvider";
+import { getMyCourses } from "@/services/api";
 import type { CourseDto } from "@/types";
 
 type CourseListProps = {
@@ -11,10 +12,16 @@ type CourseListProps = {
 };
 
 export function CourseList({ courses }: CourseListProps) {
+  const { loading, user } = useAuth();
   const [boughtIds, setBoughtIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
-    if (!getAuthToken()) {
+    if (loading) {
+      return;
+    }
+
+    if (!user) {
+      setBoughtIds(new Set());
       return;
     }
 
@@ -36,10 +43,10 @@ export function CourseList({ courses }: CourseListProps) {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [loading, user?.id]);
 
   return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
       {courses.map((course, index) => {
         const courseId = Number(course.slug.replace(/^course-/, ""));
         const isBought = Number.isSafeInteger(courseId) && courseId > 0 && boughtIds.has(courseId);

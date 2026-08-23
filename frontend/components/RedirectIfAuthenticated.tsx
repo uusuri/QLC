@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/components/AuthProvider";
+import { getSafeInternalPath } from "@/services/navigation";
 
 type RedirectIfAuthenticatedProps = {
   // Куда перейти, если пользователь уже авторизован.
@@ -25,10 +26,7 @@ export function RedirectIfAuthenticated({
       return;
     }
 
-    const target =
-      redirectTo && redirectTo.startsWith("/") ? redirectTo : fallback;
-
-    router.replace(target);
+    router.replace(getSafeInternalPath(redirectTo, fallback));
   }, [user, loading, redirectTo, fallback, router]);
 
   return null;

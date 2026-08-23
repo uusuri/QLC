@@ -1191,10 +1191,9 @@ export default function AdminContentPage() {
   return (
     <AdminGuard>
       <main className="flex min-h-screen flex-col px-4 py-4 sm:px-6 lg:px-8">
+      <SiteHeader compact />
       <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
-        <SiteHeader compact />
-
-        <section className="mt-4 flex-1 border border-line bg-ink/95">
+        <section className="mt-4 flex-1 border border-line bg-ink/95" id="main-content" tabIndex={-1}>
           <header className="relative overflow-hidden border-b border-line p-5 sm:p-7">
             <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">

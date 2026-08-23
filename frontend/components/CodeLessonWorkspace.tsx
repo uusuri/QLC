@@ -33,8 +33,8 @@ import type { AuthUserDto, LearnerTaskDto, SubmissionResponseDto } from "@/types
 // Monaco загружается client-only, чтобы production build не падал на SSR.
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   loading: () => (
-    <div className="grid min-h-[420px] place-items-center border border-line bg-ink text-xs font-black uppercase text-white/40">
-      Loading editor
+    <div className="grid min-h-[340px] place-items-center rounded-2xl border border-line bg-ink text-xs font-black uppercase text-white/52 sm:min-h-[420px]">
+      Загружаем редактор
     </div>
   ),
   ssr: false
@@ -74,9 +74,6 @@ const MAX_SOURCE_SIZE = 65_535;
 // Интервал polling в рамках требования 500-1000 мс.
 const POLLING_INTERVAL_MS = 800;
 
-// Ключ localStorage для завершенных уроков Sprint 2.
-const COMPLETED_LESSONS_KEY = "qlc:completed-lessons";
-
 // Фазы UI submission lifecycle.
 type SubmissionPhase =
   | "idle"
@@ -110,8 +107,6 @@ type SubmissionUiState = {
 
 // Props workspace.
 type CodeLessonWorkspaceProps = {
-  // lessonId нужен для локальной отметки completed.
-  lessonId: number;
   // task — основная CODE-задача урока.
   task: LearnerTaskDto;
 };
@@ -267,36 +262,36 @@ function isTerminalPhase(phase: SubmissionPhase) {
 function getPhaseCopy(phase: SubmissionPhase) {
   if (phase === "submitting") {
     return {
-      badge: "submitting",
-      description: "Отправляем исходник в backend.",
-      title: "Submitting",
+      badge: "Отправка",
+      description: "Передаём решение на проверку.",
+      title: "Отправляем решение",
       tone: "info" as const
     };
   }
 
   if (phase === "queued") {
     return {
-      badge: "queued",
-      description: "Submission принят и ждет worker.",
-      title: "Queued",
+      badge: "В очереди",
+      description: "Решение принято и ждёт своей очереди на проверку.",
+      title: "Решение в очереди",
       tone: "warning" as const
     };
   }
 
   if (phase === "compiling") {
     return {
-      badge: "compiling",
-      description: "Worker компилирует исходный код.",
-      title: "Compiling",
+      badge: "Компиляция",
+      description: "Компилируем исходный код.",
+      title: "Компилируем решение",
       tone: "info" as const
     };
   }
 
   if (phase === "running") {
     return {
-      badge: "running",
-      description: "Worker запускает скомпилированное решение на тестах.",
-      title: "Running tests",
+      badge: "Тесты",
+      description: "Запускаем решение на тестах.",
+      title: "Проверяем на тестах",
       tone: "info" as const
     };
   }
@@ -304,8 +299,8 @@ function getPhaseCopy(phase: SubmissionPhase) {
   if (phase === "ac") {
     return {
       badge: "AC",
-      description: "Accepted. Урок отмечен завершенным локально для Sprint 2.",
-      title: "Accepted",
+      description: "Проверяющий вернул AC. Сейчас это тестовый контур: полноценный sandbox ещё не подключён.",
+      title: "Результат получен",
       tone: "success" as const
     };
   }
@@ -313,8 +308,8 @@ function getPhaseCopy(phase: SubmissionPhase) {
   if (phase === "wa") {
     return {
       badge: "WA",
-      description: "Wrong Answer. Исправьте код и отправьте снова.",
-      title: "Wrong answer",
+      description: "Ответ не прошёл один или несколько тестов. Исправьте код и отправьте снова.",
+      title: "Неверный ответ",
       tone: "warning" as const
     };
   }
@@ -322,8 +317,8 @@ function getPhaseCopy(phase: SubmissionPhase) {
   if (phase === "ce") {
     return {
       badge: "CE",
-      description: "Compilation Error. Ниже показан ограниченный безопасный log.",
-      title: "Compilation error",
+      description: "Код не скомпилировался. Ниже показан безопасный фрагмент сообщения компилятора.",
+      title: "Ошибка компиляции",
       tone: "danger" as const
     };
   }
@@ -331,8 +326,8 @@ function getPhaseCopy(phase: SubmissionPhase) {
   if (phase === "tle") {
     return {
       badge: "TLE",
-      description: "Time Limit Exceeded. Решение слишком медленное.",
-      title: "Time limit",
+      description: "Решение работает дольше допустимого времени.",
+      title: "Превышено время",
       tone: "warning" as const
     };
   }
@@ -340,8 +335,8 @@ function getPhaseCopy(phase: SubmissionPhase) {
   if (phase === "mle") {
     return {
       badge: "MLE",
-      description: "Memory Limit Exceeded. Решение использует слишком много памяти.",
-      title: "Memory limit",
+      description: "Решение использует больше памяти, чем разрешено.",
+      title: "Превышена память",
       tone: "warning" as const
     };
   }
@@ -349,8 +344,8 @@ function getPhaseCopy(phase: SubmissionPhase) {
   if (phase === "re") {
     return {
       badge: "RE",
-      description: "Runtime Error. Программа упала во время выполнения.",
-      title: "Runtime error",
+      description: "Программа завершилась с ошибкой во время выполнения.",
+      title: "Ошибка выполнения",
       tone: "danger" as const
     };
   }
@@ -358,76 +353,63 @@ function getPhaseCopy(phase: SubmissionPhase) {
   if (phase === "ole") {
     return {
       badge: "OLE",
-      description: "Output Limit Exceeded. Программа выводит слишком много данных.",
-      title: "Output limit",
+      description: "Программа вывела больше данных, чем разрешено.",
+      title: "Превышен объём вывода",
       tone: "warning" as const
     };
   }
 
   if (phase === "network") {
     return {
-      badge: "network",
-      description: "Сеть или API недоступны. Это не student Runtime Error.",
-      title: "Network/API error",
+      badge: "Сеть",
+      description: "Не удалось связаться с сервером. Код можно не менять — попробуйте отправить ещё раз.",
+      title: "Нет связи с сервером",
       tone: "danger" as const
     };
   }
 
   if (phase === "infra") {
     return {
-      badge: "infra",
-      description: "Backend вернул INFRA_ERROR без student verdict.",
-      title: "Infrastructure error",
+      badge: "Сервис",
+      description: "Сервис проверки временно недоступен. Попробуйте повторить отправку позже.",
+      title: "Ошибка сервиса проверки",
       tone: "danger" as const
     };
   }
 
   if (phase === "cancelled") {
     return {
-      badge: "cancelled",
-      description: "Проверка была отменена backend или worker.",
-      title: "Submission cancelled",
+      badge: "Отменено",
+      description: "Проверка решения была отменена. Отправьте его ещё раз.",
+      title: "Проверка отменена",
       tone: "warning" as const
     };
   }
 
   if (phase === "unknown") {
     return {
-      badge: "unknown",
-      description: "Backend вернул неизвестный статус. UI не скрывает это состояние.",
-      title: "Unknown backend status",
+      badge: "Неизвестно",
+      description: "Сервер вернул неизвестный статус. Попробуйте обновить результат.",
+      title: "Неизвестный статус",
       tone: "warning" as const
     };
   }
 
   return {
-    badge: "idle",
+    badge: "Готово",
     description: "Напишите решение и отправьте на проверку.",
-    title: "Ready",
+    title: "Можно отправлять",
     tone: "neutral" as const
   };
 }
 
 // Ограничивает compiler log/safeMessage, чтобы UI не раздувался.
 function limitLog(message: string) {
-  return message.length > 1200 ? `${message.slice(0, 1200)}\n... log truncated` : message;
-}
-
-// Читает массив completed lessons из localStorage.
-function readCompletedLessons() {
-  try {
-    const raw = window.localStorage.getItem(COMPLETED_LESSONS_KEY);
-    const parsed: unknown = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed)
-      ? parsed.filter((item): item is number => typeof item === "number")
-      : [];
-  } catch {
-    return [];
-  }
+  return message.length > 1200 ? `${message.slice(0, 1200)}\n... сообщение сокращено` : message;
 }
 
 // CodeLessonWorkspace объединяет editor и submission lifecycle.
-export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps) {
+export function CodeLessonWorkspace({ task }: CodeLessonWorkspaceProps) {
   const taskVersion = task.testSetVersion ?? 1;
   const draftKey = `qlc:draft:task:${task.id}:v${taskVersion}`;
   const lastSubmissionKey = `qlc:last-submission:task:${task.id}:v${taskVersion}`;
@@ -437,7 +419,6 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
   const [source, setSource] = useState("");
   const [draftLoaded, setDraftLoaded] = useState(false);
   const [lastSubmissionId, setLastSubmissionId] = useState<string | null>(null);
-  const [completed, setCompleted] = useState(false);
   const [submission, setSubmission] = useState<SubmissionUiState>({ phase: "idle" });
   const abortRef = useRef<AbortController | null>(null);
   const timeoutRef = useRef<number | null>(null);
@@ -456,14 +437,12 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
   useEffect(() => {
     const savedDraft = window.localStorage.getItem(draftKey);
     const savedSubmissionId = window.localStorage.getItem(lastSubmissionKey);
-    const completedLessons = readCompletedLessons();
 
     setSource(savedDraft ?? initialCode);
     setLastSubmissionId(savedSubmissionId);
-    setCompleted(completedLessons.includes(lessonId));
     setSubmission({ phase: "idle", submissionId: savedSubmissionId ?? undefined });
     setDraftLoaded(true);
-  }, [draftKey, initialCode, lastSubmissionKey, lessonId]);
+  }, [draftKey, initialCode, lastSubmissionKey]);
 
   // Восстанавливает auth state и реагирует на login/logout в других компонентах.
   useEffect(() => {
@@ -502,20 +481,6 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
     []
   );
 
-  // Отмечает урок завершенным в локальном состоянии Sprint 2.
-  const markLessonCompleted = useCallback(() => {
-    const completedLessons = readCompletedLessons();
-
-    if (!completedLessons.includes(lessonId)) {
-      window.localStorage.setItem(
-        COMPLETED_LESSONS_KEY,
-        JSON.stringify([...completedLessons, lessonId])
-      );
-    }
-
-    setCompleted(true);
-  }, [lessonId]);
-
   // Останавливает предыдущий polling перед новым submit/resume.
   const stopPolling = useCallback(() => {
     if (timeoutRef.current !== null) {
@@ -541,10 +506,6 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
             submissionId
           });
 
-          if (nextPhase === "ac") {
-            markLessonCompleted();
-          }
-
           if (!isTerminalPhase(nextPhase)) {
             timeoutRef.current = window.setTimeout(tick, POLLING_INTERVAL_MS);
           }
@@ -563,7 +524,7 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
 
       void tick();
     },
-    [markLessonCompleted]
+    []
   );
 
   // Отправляет текущее решение.
@@ -633,36 +594,36 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
   };
 
   return (
-    <Panel className="flex h-full min-h-0 flex-col overflow-hidden" muted>
+    <Panel className="flex h-full min-h-0 flex-col !overflow-visible" muted>
       <PanelHeader>
         <div>
           <div className="mb-3 flex flex-wrap gap-2">
             {submission.phase !== "idle" && (
               <StatusBadge tone={phaseCopy.tone}>{phaseCopy.badge}</StatusBadge>
             )}
-            {completed && <StatusBadge tone="success">lesson completed</StatusBadge>}
             <StatusBadge tone="neutral">{language === "JAVA21" ? "Java 21" : "C++23"}</StatusBadge>
             {authUser ? (
-              <StatusBadge tone="success">@{authUser.username}</StatusBadge>
+              <StatusBadge className="max-w-full" tone="success"><span className="block max-w-[min(18rem,70vw)] truncate" title={authUser.username}>@{authUser.username}</span></StatusBadge>
             ) : (
-              <StatusBadge tone="warning">login required</StatusBadge>
+              <StatusBadge tone="warning">Нужен вход</StatusBadge>
             )}
           </div>
-          <h2 className="text-3xl font-black uppercase leading-tight">Решение задачи</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-snug text-white/56">
-            Черновик сохраняется автоматически.
+          <h2 className="text-3xl font-bold leading-tight tracking-[-0.035em]">Решение задачи</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/62">
+            Пишите решение в редакторе — черновик сохраняется автоматически.
           </p>
         </div>
       </PanelHeader>
 
       <PanelBody className="flex min-h-0 flex-1 flex-col gap-5">
-        <div className="min-h-[420px] flex-1 overflow-hidden border border-line">
+        <div className="h-[50dvh] min-h-[340px] max-h-[560px] flex-none overflow-hidden rounded-2xl border border-line sm:h-[520px] sm:min-h-[480px] xl:h-auto xl:max-h-none xl:min-h-[520px] xl:flex-1">
           <MonacoEditor
             beforeMount={defineQlcMonacoTheme}
             height="100%"
             language={language === "JAVA21" ? "java" : "cpp"}
             onChange={(value) => setSource(value ?? "")}
             options={{
+              ariaLabel: "Редактор решения задачи",
               fontFamily: "SFMono-Regular, Menlo, Monaco, Consolas, monospace",
               fontSize: 14,
               minimap: { enabled: false },
@@ -675,21 +636,22 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
           />
         </div>
 
-        <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-center">
-          <div className="grid gap-2 text-xs font-bold uppercase text-white/48">
+        <div className="sticky bottom-2 z-10 grid gap-3 rounded-2xl border border-white/8 bg-panel/95 p-3 shadow-[0_16px_50px_rgba(0,0,0,0.3)] backdrop-blur xl:static xl:grid-cols-[1fr_auto] xl:items-center xl:border-0 xl:bg-transparent xl:p-0 xl:shadow-none">
+          <div className="grid gap-2 text-xs font-semibold text-white/58">
             <span>
               Размер кода: {sourceSize} / {MAX_SOURCE_SIZE} байт
             </span>
             {!authUser && (
               <span className="text-yellow-100">Чтобы отправить решение, войдите в аккаунт.</span>
             )}
-            {sourceTooLarge && <span className="text-red-200">Source is too large</span>}
-            {!trimmedSource && <span className="text-yellow-100">Source cannot be empty</span>}
+            {sourceTooLarge && <span className="text-red-200">Код превышает допустимый размер.</span>}
+            {!trimmedSource && <span className="text-yellow-100">Введите решение перед отправкой.</span>}
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
             {authUser ? (
               <Button
+                className="col-span-2 w-full sm:w-auto"
                 disabled={!canSubmit}
                 loading={submission.phase === "submitting"}
                 onClick={handleSubmit}
@@ -697,21 +659,20 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
                 Отправить
               </Button>
             ) : (
-              <ButtonLink href={loginHref}>Войти</ButtonLink>
+              <ButtonLink className="col-span-2 w-full sm:w-auto" href={loginHref}>Войти</ButtonLink>
             )}
-            <Button disabled={!authUser || !lastSubmissionId || isBusy} onClick={handleResume} variant="secondary">
+            <Button className="w-full sm:w-auto" disabled={!authUser || !lastSubmissionId || isBusy} onClick={handleResume} variant="secondary">
               Обновить статус
             </Button>
-            <Button disabled={isBusy} onClick={handleResetDraft} variant="secondary">
+            <Button className="w-full sm:w-auto" disabled={isBusy} onClick={handleResetDraft} variant="secondary">
               Сбросить код
             </Button>
           </div>
         </div>
 
         {!authUser && (
-          <Alert title="auth required" tone="warning">
-            Чтобы отправить решение, войдите в аккаунт. Submission request body останется без
-            `userId`; frontend добавит только `Authorization: Bearer token`.
+          <Alert title="Нужен вход" tone="warning">
+            Войдите в аккаунт, чтобы отправить решение и сохранить результат в прогрессе курса.
           </Alert>
         )}
 
@@ -719,8 +680,8 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
           <Alert title={phaseCopy.title} tone={phaseCopy.tone}>
             <p>{phaseCopy.description}</p>
             {submission.response && (
-              <p className="mt-2 font-mono text-xs text-white/50">
-                status={submission.response.status}
+              <p className="mt-2 font-mono text-xs text-white/58">
+                Технические детали: status={submission.response.status}
                 {submission.response.verdict ? ` verdict=${submission.response.verdict}` : ""}
                 {submission.response.executionTime !== null
                   ? ` time=${submission.response.executionTime}ms`
@@ -734,7 +695,7 @@ export function CodeLessonWorkspace({ lessonId, task }: CodeLessonWorkspaceProps
         )}
 
         {safeLog && (
-          <pre className="max-h-64 overflow-auto border border-line bg-ink p-4 text-xs leading-relaxed text-white/72">
+          <pre className="max-h-64 overflow-auto rounded-2xl border border-line bg-ink p-4 text-xs leading-relaxed text-white/72">
             <code>{limitLog(safeLog)}</code>
           </pre>
         )}

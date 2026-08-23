@@ -22,7 +22,7 @@ export function Progress({ label, tone = "dark", value }: ProgressProps) {
 
   return (
     <div className="grid gap-2">
-      <div className="flex items-center justify-between gap-4 font-mono text-[10px] font-bold uppercase text-current opacity-55">
+      <div className="flex items-center justify-between gap-4 font-mono text-xs font-bold text-current opacity-70">
         <span>{label}</span>
         <span>{Math.round(percent)}%</span>
       </div>

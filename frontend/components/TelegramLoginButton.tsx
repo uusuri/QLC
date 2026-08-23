@@ -69,7 +69,7 @@ export function TelegramLoginButton({ disabled = false, onAuth, onError }: Teleg
 
   if (!botUsername) {
     return (
-      <p className="text-center font-mono text-[10px] font-bold uppercase leading-relaxed text-white/38">
+      <p className="text-center font-mono text-xs font-bold leading-relaxed text-white/52">
         Telegram-вход появится после настройки бота.
       </p>
     );
@@ -77,12 +77,12 @@ export function TelegramLoginButton({ disabled = false, onAuth, onError }: Teleg
 
   return (
     <div className={disabled || loading ? "pointer-events-none opacity-50" : ""}>
-      <div className="group relative min-h-14 overflow-hidden border border-[#54a9e7]/70 bg-[#54a9e7] transition hover:border-white hover:bg-[#65b9f1] focus-within:outline focus-within:outline-1 focus-within:outline-offset-4 focus-within:outline-[#54a9e7]">
+      <div className="group relative min-h-14 overflow-hidden rounded-2xl border border-[#54a9e7]/70 bg-[#54a9e7] transition hover:border-white hover:bg-[#65b9f1] focus-within:outline focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-[#54a9e7]">
         <div aria-hidden="true" className="pointer-events-none relative flex min-h-14 items-center justify-center gap-3 px-5 text-ink">
           <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current">
             <path d="M21.4 3.4 18.2 20c-.2 1.2-.9 1.5-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.3-8.4c.4-.4-.1-.6-.6-.3L5.6 13.5.7 12c-1.1-.3-1.1-1 .2-1.5L20 3.1c.9-.3 1.7.2 1.4.3Z" />
           </svg>
-          <span className="text-xs font-black uppercase tracking-[0.18em]">Продолжить с Telegram</span>
+          <span className="text-sm font-bold">Продолжить с Telegram</span>
         </div>
         <div
           aria-label="Войти через Telegram"
