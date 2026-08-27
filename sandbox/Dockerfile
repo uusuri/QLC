@@ -31,4 +31,11 @@ COPY --from=sandbox-build \
   /src/sandbox/build/sandbox \
   /usr/local/bin/qlc-sandbox
 
-WORKDIR /job
+COPY sandbox/runner.sh /usr/local/bin/qlc-runner
+
+RUN chmod 0555 /usr/local/bin/qlc-runner \
+  && mkdir -p /work
+
+WORKDIR /work
+
+ENTRYPOINT ["/usr/local/bin/qlc-runner"]
