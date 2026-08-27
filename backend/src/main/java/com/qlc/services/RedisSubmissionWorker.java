@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Range;
 import org.springframework.data.redis.connection.stream.*;
+import org.springframework.data.redis.core.StreamOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class RedisSubmissionWorker {
 
   private static final Logger log = LoggerFactory.getLogger(RedisSubmissionWorker.class);
   private static final String SUPPORTED_SCHEMA_VERSION = "1";
-  private static final int MAX_RETRY_COUNT = 3;
+  private static final int MAX_DELIVERY_ATTEMPTS = 3;
 
   private final StringRedisTemplate redisTemplate;
   private final SubmissionStreamProcessor processor;
@@ -38,25 +39,25 @@ public class RedisSubmissionWorker {
       SubmissionStreamProcessor processor,
       @Value("${app.submissions.stream-name:qlc:submissions}") String streamName,
       @Value("${app.submissions.worker.consumer-group:submission-workers}") String consumerGroup,
+      @Value("${app.submissions.worker.consumer-name:qlc-worker-1}") String consumerName,
       @Value("${app.submissions.worker.batch-size:10}") long batchSize) {
     this.redisTemplate = redisTemplate;
     this.processor = processor;
     this.streamName = streamName;
     this.consumerGroup = consumerGroup;
 
-    // Уникальное имя инстанса для безопасного масштабирования в Docker
-    this.consumerName = "qlc-worker-" + UUID.randomUUID().toString().substring(0, 8);
+    this.consumerName = consumerName;
     this.batchSize = batchSize;
 
-    log.info("Initialized RedisSubmissionWorker with unique consumer name: {}", this.consumerName);
+    log.info("Initialized RedisSubmissionWorker with consumer name: {}", this.consumerName);
   }
 
   @Scheduled(fixedDelayString = "${app.submissions.worker.poll-delay-ms:500}")
   public void poll() {
     try {
       ensureConsumerGroup();
-      consumePendingRecords(); // 1. Чистим зависшие хвосты
-      consumeNewRecords(); // 2. Читаем новые поступления
+      consumePendingRecords();
+      consumeNewRecords();
     } catch (DataAccessException exception) {
       consumerGroupReady = false;
       log.warn("Redis submission poll failed: {}", exception.getMessage());
@@ -67,7 +68,8 @@ public class RedisSubmissionWorker {
 
   @SuppressWarnings("unchecked")
   private void consumePendingRecords() {
-    List<MapRecord<String, String, String>> records = redisTemplate.<String, String>opsForStream().read(
+    StreamOperations<String, String, String> streamOperations = redisTemplate.opsForStream();
+    List<MapRecord<String, String, String>> records = streamOperations.read(
         Consumer.from(consumerGroup, consumerName),
         StreamReadOptions.empty().count(batchSize),
         StreamOffset.create(streamName, ReadOffset.from("0-0")));
@@ -79,8 +81,7 @@ public class RedisSubmissionWorker {
     for (MapRecord<String, String, String> record : records) {
       String messageIdStr = record.getId().getValue();
 
-      // Запрашиваем информацию о доставке конкретного ID через Range
-      PendingMessages pendingDetails = redisTemplate.opsForStream().pending(
+      PendingMessages pendingDetails = streamOperations.pending(
           streamName,
           consumerGroup,
           Range.just(messageIdStr),
@@ -91,11 +92,9 @@ public class RedisSubmissionWorker {
         deliveryCount = pendingDetails.get(0).getTotalDeliveryCount();
       }
 
-      // Защита от Poison Pill (бесконечного цикла падений)
-      if (deliveryCount > MAX_RETRY_COUNT) {
-        log.error("Poison pill detected! Message {} exceeded max retries ({}). Acknowledging to drop.",
-            record.getId(), deliveryCount);
-        acknowledge(record.getId());
+      if (deliveryCount > MAX_DELIVERY_ATTEMPTS) {
+        log.error("Message {} exceeded {} delivery attempts", record.getId(), MAX_DELIVERY_ATTEMPTS);
+        discardPoisonRecord(record);
         continue;
       }
 
@@ -105,7 +104,8 @@ public class RedisSubmissionWorker {
 
   @SuppressWarnings("unchecked")
   private void consumeNewRecords() {
-    List<MapRecord<String, String, String>> records = redisTemplate.<String, String>opsForStream().read(
+    StreamOperations<String, String, String> streamOperations = redisTemplate.opsForStream();
+    List<MapRecord<String, String, String>> records = streamOperations.read(
         Consumer.from(consumerGroup, consumerName),
         StreamReadOptions.empty().count(batchSize),
         StreamOffset.create(streamName, ReadOffset.lastConsumed()));
@@ -127,23 +127,36 @@ public class RedisSubmissionWorker {
     String rawTaskId = body.get("taskId");
     String sourceCode = body.get("sourceCode");
 
-    if (!SUPPORTED_SCHEMA_VERSION.equals(schemaVersion)) {
-      log.warn("Acknowledging message {} with unsupported schema version {}", record.getId(), schemaVersion);
+    UUID submissionId;
+    try {
+      submissionId = UUID.fromString(rawSubmissionId);
+    } catch (RuntimeException exception) {
+      log.warn("Acknowledging malformed message {} without a valid submissionId", record.getId());
       acknowledge(record.getId());
       return;
     }
 
-    UUID submissionId;
+    if (!SUPPORTED_SCHEMA_VERSION.equals(schemaVersion)) {
+      log.warn("Rejecting message {} with unsupported schema version {}", record.getId(), schemaVersion);
+      markInfrastructureFailureAndAcknowledge(
+          record.getId(),
+          submissionId,
+          SubmissionStreamProcessor.UNSUPPORTED_SCHEMA_MESSAGE);
+      return;
+    }
+
     Long taskId;
     try {
-      submissionId = UUID.fromString(rawSubmissionId);
       taskId = Long.valueOf(rawTaskId);
       if (taskId <= 0 || sourceCode == null || sourceCode.isBlank()) {
         throw new IllegalArgumentException("Invalid taskId or sourceCode");
       }
     } catch (RuntimeException exception) {
-      log.warn("Acknowledging malformed message {}: invalid UUID, taskId, or sourceCode", record.getId());
-      acknowledge(record.getId());
+      log.warn("Rejecting malformed message {} for submissionId={}", record.getId(), submissionId);
+      markInfrastructureFailureAndAcknowledge(
+          record.getId(),
+          submissionId,
+          SubmissionStreamProcessor.MALFORMED_MESSAGE);
       return;
     }
 
@@ -154,14 +167,46 @@ public class RedisSubmissionWorker {
       log.info("Processed submissionId={} taskId={} outcome={}", result.submissionId(), result.taskId(),
           result.outcome());
     } catch (RuntimeException exception) {
-      // Оставляем в pending, при следующем тике deliveryCount увеличится
       log.error("Submission processing failed for submissionId={}; message left pending for retry", submissionId,
           exception);
     }
   }
 
+  private void markInfrastructureFailureAndAcknowledge(
+      RecordId recordId,
+      UUID submissionId,
+      String safeMessage) {
+    try {
+      processor.markInfrastructureFailure(submissionId, safeMessage);
+      acknowledge(recordId);
+    } catch (RuntimeException exception) {
+      log.error("Failed to persist infrastructure error for message {}; leaving it pending", recordId, exception);
+    }
+  }
+
+  void discardPoisonRecord(MapRecord<String, String, String> record) {
+    String rawSubmissionId = record.getValue().get("submissionId");
+    if (rawSubmissionId == null) {
+      log.warn("Acknowledging poison message {} without a submissionId", record.getId());
+      acknowledge(record.getId());
+      return;
+    }
+
+    try {
+      UUID submissionId = UUID.fromString(rawSubmissionId);
+      markInfrastructureFailureAndAcknowledge(
+          record.getId(),
+          submissionId,
+          SubmissionStreamProcessor.RETRY_EXHAUSTED_MESSAGE);
+    } catch (IllegalArgumentException exception) {
+      log.warn("Acknowledging poison message {} without a valid submissionId", record.getId());
+      acknowledge(record.getId());
+    }
+  }
+
   private void acknowledge(RecordId recordId) {
-    redisTemplate.opsForStream().acknowledge(streamName, consumerGroup, recordId);
+    StreamOperations<String, String, String> streamOperations = redisTemplate.opsForStream();
+    streamOperations.acknowledge(streamName, consumerGroup, recordId);
   }
 
   private void ensureConsumerGroup() {
@@ -169,7 +214,8 @@ public class RedisSubmissionWorker {
       return;
     }
     try {
-      redisTemplate.opsForStream().createGroup(streamName, ReadOffset.from("0-0"), consumerGroup);
+      StreamOperations<String, String, String> streamOperations = redisTemplate.opsForStream();
+      streamOperations.createGroup(streamName, ReadOffset.from("0-0"), consumerGroup);
       consumerGroupReady = true;
     } catch (DataAccessException exception) {
       if (containsBusyGroup(exception)) {

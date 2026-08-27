@@ -24,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -241,7 +242,54 @@ class SubmissionServiceTest {
   }
 
   @Nested
-  @DisplayName("2. Submission Retrieval Pipeline (GET)")
+  @DisplayName("2. Redis publication recovery")
+  class RecoveryTests {
+
+    @Test
+    void queuedSubmissionIsPublishedAgainByRecoveryJob() {
+      Submission stuck = stuckSubmission();
+      when(submissionRepository.findTop50ByStatusAndCreatedAtBeforeOrderByCreatedAtAsc(
+          eq(SubmissionStatus.QUEUED), any(LocalDateTime.class)))
+          .thenReturn(List.of(stuck));
+
+      submissionService.recoverStuckSubmissions();
+
+      verify(redisQueueService).pushToStream(stuck);
+    }
+
+    @Test
+    void failedRecoveryRemainsEligibleForNextRun() {
+      Submission first = stuckSubmission();
+      Submission second = stuckSubmission();
+      when(submissionRepository.findTop50ByStatusAndCreatedAtBeforeOrderByCreatedAtAsc(
+          eq(SubmissionStatus.QUEUED), any(LocalDateTime.class)))
+          .thenReturn(List.of(first, second));
+      doThrow(new IllegalStateException("redis unavailable"))
+          .doNothing()
+          .when(redisQueueService)
+          .pushToStream(first);
+
+      submissionService.recoverStuckSubmissions();
+      submissionService.recoverStuckSubmissions();
+
+      verify(redisQueueService, times(2)).pushToStream(first);
+      verify(redisQueueService, times(1)).pushToStream(second);
+    }
+
+    private Submission stuckSubmission() {
+      Submission submission = new Submission();
+      submission.setId(UUID.randomUUID());
+      submission.setTask(sampleTask);
+      submission.setLanguage("CPP23");
+      submission.setSourceCode("int main() {}");
+      submission.setStatus(SubmissionStatus.QUEUED);
+      submission.setCreatedAt(LocalDateTime.now().minusMinutes(1));
+      return submission;
+    }
+  }
+
+  @Nested
+  @DisplayName("3. Submission Retrieval Pipeline (GET)")
   class GetSubmissionTests {
 
     private UUID submissionId;

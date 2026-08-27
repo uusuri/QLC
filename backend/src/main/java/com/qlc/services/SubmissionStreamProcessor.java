@@ -18,6 +18,9 @@ public class SubmissionStreamProcessor {
 
   static final String TEMPORARY_SUCCESS_MESSAGE = "Temporary worker stub: sandbox execution is not implemented; submission marked AC for integration testing.";
   static final String CONTRACT_MISMATCH_MESSAGE = "Redis Stream payload does not match the persisted submission metadata.";
+  static final String RETRY_EXHAUSTED_MESSAGE = "Submission processing failed after the maximum number of retries.";
+  static final String UNSUPPORTED_SCHEMA_MESSAGE = "Submission message uses an unsupported schema version.";
+  static final String MALFORMED_MESSAGE = "Submission message is malformed.";
 
   private final SubmissionRepository submissionRepository;
 
@@ -83,6 +86,21 @@ public class SubmissionStreamProcessor {
         submissionId,
         taskId,
         sourceSizeBytes);
+  }
+
+  @Transactional
+  public void markInfrastructureFailure(UUID submissionId, String safeMessage) {
+    Submission submission = submissionRepository.findByIdForUpdate(submissionId).orElse(null);
+    if (submission == null || isTerminal(submission.getStatus())) {
+      return;
+    }
+
+    submission.setStatus(SubmissionStatus.INFRA_ERROR);
+    submission.setVerdict(null);
+    submission.setExecutionTime(null);
+    submission.setMemoryUsed(null);
+    submission.setSafeMessage(safeMessage);
+    submissionRepository.save(submission);
   }
 
   private boolean isTerminal(SubmissionStatus status) {

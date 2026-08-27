@@ -11,6 +11,8 @@ import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.repositories.SubmissionRepository;
 import com.qlc.repositories.TaskRepository;
 import com.qlc.repositories.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,8 @@ import java.util.List;
 @Service
 @Transactional
 public class SubmissionService {
+
+  private static final Logger log = LoggerFactory.getLogger(SubmissionService.class);
 
   private final RedisQueueService redisQueueService;
   private final SubmissionRepository submissionRepository;
@@ -120,7 +124,8 @@ public class SubmissionService {
           try {
             redisQueueService.pushToStream(saved);
           } catch (Exception e) {
-            System.err.println("[Redis] Failed to publish submission after commit: " + e.getMessage());
+            log.warn("Failed to publish submissionId={} after commit; recovery will retry it",
+                saved.getId(), e);
           }
         }
       });
@@ -144,7 +149,8 @@ public class SubmissionService {
       try {
         redisQueueService.pushToStream(s);
       } catch (Exception e) {
-        System.err.println("[Redis] Failed to recover stuck submission: " + e.getMessage());
+        log.warn("Failed to recover submissionId={}; the next recovery run will retry it",
+            s.getId(), e);
         return;
       }
     }

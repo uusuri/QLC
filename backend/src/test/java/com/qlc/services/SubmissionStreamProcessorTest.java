@@ -130,6 +130,39 @@ class SubmissionStreamProcessorTest {
     verify(submissionRepository).save(submission);
   }
 
+  @Test
+  void retryExhaustionMarksActiveSubmissionAsInfrastructureError() {
+    UUID submissionId = UUID.randomUUID();
+    Submission submission = submission(submissionId, SubmissionStatus.QUEUED, "int main() {}");
+    when(submissionRepository.findByIdForUpdate(submissionId)).thenReturn(Optional.of(submission));
+
+    processor.markInfrastructureFailure(
+        submissionId,
+        SubmissionStreamProcessor.RETRY_EXHAUSTED_MESSAGE);
+
+    assertEquals(SubmissionStatus.INFRA_ERROR, submission.getStatus());
+    assertEquals(SubmissionStreamProcessor.RETRY_EXHAUSTED_MESSAGE, submission.getSafeMessage());
+    verify(submissionRepository).save(submission);
+  }
+
+  @Test
+  void retryExhaustionDoesNotOverwriteFinishedSubmission() {
+    UUID submissionId = UUID.randomUUID();
+    Submission submission = submission(submissionId, SubmissionStatus.FINISHED, "int main() {}");
+    submission.setVerdict(Verdict.AC);
+    submission.setSafeMessage("existing result");
+    when(submissionRepository.findByIdForUpdate(submissionId)).thenReturn(Optional.of(submission));
+
+    processor.markInfrastructureFailure(
+        submissionId,
+        SubmissionStreamProcessor.RETRY_EXHAUSTED_MESSAGE);
+
+    assertEquals(SubmissionStatus.FINISHED, submission.getStatus());
+    assertEquals(Verdict.AC, submission.getVerdict());
+    assertEquals("existing result", submission.getSafeMessage());
+    verify(submissionRepository, never()).save(submission);
+  }
+
   private Submission submission(UUID id, SubmissionStatus status, String sourceCode) {
     CodeTask task = new CodeTask();
     task.setId(42L);
