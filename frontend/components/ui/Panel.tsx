@@ -1,16 +1,12 @@
-"use client";
-
 import type { ReactNode } from "react";
+
+import { cn } from "@/utils/cn";
 
 type PanelProps = {
   children: ReactNode;
   className?: string;
   muted?: boolean;
 };
-
-function cn(...items: Array<string | false | null | undefined>) {
-  return items.filter(Boolean).join(" ");
-}
 
 export function Panel({ children, className, muted = false }: PanelProps) {
   return (

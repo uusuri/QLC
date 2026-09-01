@@ -5,7 +5,6 @@ export type CurrencyCode = "RUB";
 export type CourseAccessStatus = "open" | "locked" | "pending";
 
 // Статус курса внутри личного кабинета студента.
-export type StudentCourseStatus = "active" | "completed" | "locked";
 
 // Доступные способы оплаты в UI.
 export type PaymentMethodId = "stars" | "crypto";
@@ -117,50 +116,6 @@ export interface CourseAccessCopyDto {
   title: string;
   // Пояснение для пользователя.
   description: string;
-}
-
-// Общая статистика студента.
-export interface StudentStatsDto {
-  // Сколько задач студент решил.
-  solvedTasks: number;
-  // Сколько задач всего доступно в системе.
-  totalTasks: number;
-  // Средний прогресс активных курсов.
-  averageProgress: number;
-  // Текущий ранг в системе геймификации.
-  rank: string;
-  // Название текущего уровня.
-  level: string;
-  // Серия дней обучения.
-  streak: number;
-}
-
-// Прогресс конкретного курса в личном кабинете.
-export interface StudentCourseProgressDto {
-  // Ссылка на исходный курс из каталога.
-  courseSlug: string;
-  // Название курса.
-  title: string;
-  // Статус курса в кабинете.
-  status: StudentCourseStatus;
-  // Сколько задач решено внутри курса.
-  solvedTasks: number;
-  // Сколько задач всего внутри курса.
-  totalTasks: number;
-  // Процент прохождения курса.
-  progressPercent: number;
-  // Текущий уровень/трек внутри курса.
-  level: string;
-  // Следующий урок или состояние курса.
-  nextLesson: string;
-}
-
-// Профиль студента без личных данных.
-export interface StudentProfileDto {
-  // Сводная статистика студента.
-  stats: StudentStatsDto;
-  // Список купленных, активных и закрытых курсов.
-  courses: StudentCourseProgressDto[];
 }
 
 // Способ оплаты на checkout-странице.
@@ -372,10 +327,6 @@ export interface CourseLearningViewDto {
   course: AdminCourseDto;
   // Курс, замаппленный под витринные карточки.
   catalogCourse: CourseDto;
-  // Номер курса в текущем backend-каталоге.
-  courseIndex: number;
-  // Флаг доступности в Sprint 2: первым курсом можно пользоваться, остальные скоро.
-  isAvailable: boolean;
   // Модули и уроки выбранного курса.
   modules: CourseModuleWithLessonsDto[];
   // Первый доступный урок для CTA.
@@ -417,10 +368,6 @@ export interface MyCourseProgressDto {
 export interface LessonLearningViewDto {
   // Родительский курс урока.
   course: AdminCourseDto;
-  // Номер курса в текущем backend-каталоге.
-  courseIndex: number;
-  // Флаг доступности курса в пользовательском пути Sprint 2.
-  isCourseAvailable: boolean;
   // Родительский модуль урока.
   module: AdminModuleDto;
   // Сам урок.

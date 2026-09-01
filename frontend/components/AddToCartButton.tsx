@@ -3,15 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { addCourseToCart, getAuthToken } from "@/services/api";
 import { Button } from "@/components/ui";
+import { addCourseToCart, getAuthToken } from "@/services/api";
+import { cn } from "@/utils/cn";
 
 type AddToCartButtonProps = {
+  className?: string;
   courseId: number;
   courseSlug: string;
 };
 
-export function AddToCartButton({ courseId, courseSlug }: AddToCartButtonProps) {
+export function AddToCartButton({ className, courseId, courseSlug }: AddToCartButtonProps) {
   const router = useRouter();
   const [state, setState] = useState<"idle" | "loading" | "added" | "error">("idle");
   const [error, setError] = useState<string>("");
@@ -44,7 +46,7 @@ export function AddToCartButton({ courseId, courseSlug }: AddToCartButtonProps) 
     <>
       <Button
         aria-busy={state === "loading"}
-        className="w-full"
+        className={cn("w-full", className)}
         disabled={state === "loading"}
         loading={state === "loading"}
         onClick={handleClick}
@@ -55,7 +57,11 @@ export function AddToCartButton({ courseId, courseSlug }: AddToCartButtonProps) 
       <span aria-live="polite" className="sr-only">
         {state === "added" ? "Курс добавлен в корзину. Можно перейти к оплате." : ""}
       </span>
-      {error ? <p className="mt-2 text-xs font-bold text-red-300" role="alert">{error}</p> : null}
+      {error ? (
+        <p className="mt-2 text-xs font-bold text-red-300" role="alert">
+          {error}
+        </p>
+      ) : null}
     </>
   );
 }

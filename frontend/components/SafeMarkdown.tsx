@@ -1,6 +1,4 @@
-"use client";
-
-import type { ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 
 type MarkdownBlock =
   | {
@@ -295,8 +293,8 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
   );
 }
 
-export function SafeMarkdown({ markdown }: SafeMarkdownProps) {
+export const SafeMarkdown = memo(function SafeMarkdown({ markdown }: SafeMarkdownProps) {
   const blocks = parseMarkdown(markdown || "Описание скоро появится.");
 
   return <div className="grid w-full max-w-[80ch] gap-5">{blocks.map(renderBlock)}</div>;
-}
+});

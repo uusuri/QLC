@@ -1,7 +1,7 @@
-"use client";
-
 // ReactNode позволяет бейджу принимать текст с числами/inline JSX.
 import type { ReactNode } from "react";
+
+import { cn } from "@/utils/cn";
 
 // StatusBadge показывает статус текстом, формой и цветом, а не только цветом.
 export type StatusTone = "neutral" | "success" | "warning" | "danger" | "info";
@@ -15,11 +15,6 @@ type StatusBadgeProps = {
   // tone выбирает визуальный смысл статуса.
   tone?: StatusTone;
 };
-
-// Склеивает классы без clsx.
-function cn(...items: Array<string | false | null | undefined>) {
-  return items.filter(Boolean).join(" ");
-}
 
 // Возвращает цветовую схему статуса.
 function getToneClassName(tone: StatusTone) {

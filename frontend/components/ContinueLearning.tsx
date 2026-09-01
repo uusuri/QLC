@@ -1,10 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import { useAuth } from "@/components/AuthProvider";
+import { useLearningOverview } from "@/components/LearningOverviewProvider";
 import { ButtonLink, Panel, PanelBody, PanelHeader, Progress } from "@/components/ui";
-import { getMyLearningCourses } from "@/services/api";
 import { getNextLearningLesson, type NextLearningLesson } from "@/services/learningProgress";
 
 type ContinueLearningCardProps = {
@@ -40,28 +37,8 @@ export function ContinueLearningCard({ nextLesson }: ContinueLearningCardProps) 
 }
 
 export function HomeContinueLearning() {
-  const { user } = useAuth();
-  const [nextLesson, setNextLesson] = useState<NextLearningLesson | null>(null);
-
-  useEffect(() => {
-    if (!user) {
-      setNextLesson(null);
-      return;
-    }
-
-    let active = true;
-    getMyLearningCourses()
-      .then((courses) => {
-        if (active) setNextLesson(getNextLearningLesson(courses));
-      })
-      .catch(() => {
-        if (active) setNextLesson(null);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [user]);
+  const courses = useLearningOverview();
+  const nextLesson = getNextLearningLesson(courses);
 
   return nextLesson ? <ContinueLearningCard nextLesson={nextLesson} /> : null;
 }

@@ -11,10 +11,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 // API-запросы идут только через service layer.
 import {
   createSubmission,
-  getAuthChangeEventName,
-  getCurrentUser,
   getSubmission
 } from "@/services/api";
+
+import { useAuth } from "@/components/AuthProvider";
 
 // UI-kit компоненты фиксируют общий визуальный язык Sprint 2.
 import {
@@ -28,7 +28,7 @@ import {
 } from "@/components/ui";
 
 // Типы backend DTO и submission response.
-import type { AuthUserDto, LearnerTaskDto, SubmissionResponseDto } from "@/types";
+import type { LearnerTaskDto, SubmissionResponseDto } from "@/types";
 
 // Monaco загружается client-only, чтобы production build не падал на SSR.
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
@@ -410,11 +410,11 @@ function limitLog(message: string) {
 
 // CodeLessonWorkspace объединяет editor и submission lifecycle.
 export function CodeLessonWorkspace({ task }: CodeLessonWorkspaceProps) {
+  const { user: authUser } = useAuth();
   const taskVersion = task.testSetVersion ?? 1;
   const draftKey = `qlc:draft:task:${task.id}:v${taskVersion}`;
   const lastSubmissionKey = `qlc:last-submission:task:${task.id}:v${taskVersion}`;
   const initialCode = useMemo(() => getInitialCode(task), [task]);
-  const [authUser, setAuthUser] = useState<AuthUserDto | null>(null);
   const [currentPath, setCurrentPath] = useState("/");
   const [source, setSource] = useState("");
   const [draftLoaded, setDraftLoaded] = useState(false);
@@ -444,22 +444,9 @@ export function CodeLessonWorkspace({ task }: CodeLessonWorkspaceProps) {
     setDraftLoaded(true);
   }, [draftKey, initialCode, lastSubmissionKey]);
 
-  // Восстанавливает auth state и реагирует на login/logout в других компонентах.
+  // Текущий URL нужен только для безопасного возврата после входа.
   useEffect(() => {
-    const refreshAuth = () => {
-      setCurrentPath(`${window.location.pathname}${window.location.search}`);
-      void getCurrentUser().then(setAuthUser);
-    };
-
-    refreshAuth();
-
-    window.addEventListener("storage", refreshAuth);
-    window.addEventListener(getAuthChangeEventName(), refreshAuth);
-
-    return () => {
-      window.removeEventListener("storage", refreshAuth);
-      window.removeEventListener(getAuthChangeEventName(), refreshAuth);
-    };
+    setCurrentPath(`${window.location.pathname}${window.location.search}`);
   }, []);
 
   // После первой загрузки сохраняем draft при каждом изменении исходника.

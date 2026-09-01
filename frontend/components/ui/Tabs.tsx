@@ -3,6 +3,8 @@
 // ReactNode описывает label вкладки, если потом понадобится не только строка.
 import type { ReactNode } from "react";
 
+import { cn } from "@/utils/cn";
+
 // Одна вкладка в tabbar.
 export type TabItem<TValue extends string> = {
   // disabled блокирует вкладку.
@@ -24,11 +26,6 @@ type TabsProps<TValue extends string> = {
   // onChange вызывается при клике по доступной вкладке.
   onChange: (value: TValue) => void;
 };
-
-// Склеивает классы без внешней зависимости.
-function cn(...items: Array<string | false | null | undefined>) {
-  return items.filter(Boolean).join(" ");
-}
 
 // Tabs — общий рубленый tabbar для внутренних инструментов.
 export function Tabs<TValue extends string>({

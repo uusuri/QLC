@@ -4,38 +4,41 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { useAuth } from "@/components/AuthProvider";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ContinueLearningCard } from "@/components/ContinueLearning";
+import { PageState } from "@/components/PageState";
 import { Alert, ButtonLink, Progress, StatusBadge, Panel, PanelBody, PanelHeader } from "@/components/ui";
-import { formatCoursesLabel, getCurrentUser, getMyLearningCourses, getAuthToken } from "@/services/api";
+import { formatCoursesLabel, getMyLearningCourses } from "@/services/api";
 import { getNextLearningLesson } from "@/services/learningProgress";
-import type { AuthUserDto, MyCourseProgressDto } from "@/types";
+import type { MyCourseProgressDto } from "@/types";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const [user, setUser] = useState<AuthUserDto | null>(null);
+  const { loading: authLoading, user } = useAuth();
   const [courses, setCourses] = useState<MyCourseProgressDto[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!getAuthToken()) {
-      router.push(`/login?redirectTo=${encodeURIComponent("/profile")}`);
+    if (authLoading) {
+      return;
+    }
+
+    if (!user) {
+      router.replace("/login?redirectTo=%2Fprofile");
       return;
     }
 
     let ignore = false;
+    setError("");
 
     async function load() {
       try {
-        const [currentUser, myCourses] = await Promise.all([
-          getCurrentUser(),
-          getMyLearningCourses()
-        ]);
+        const myCourses = await getMyLearningCourses();
 
         if (!ignore) {
-          setUser(currentUser);
           setCourses(myCourses);
         }
       } catch (err) {
@@ -54,22 +57,23 @@ export default function ProfilePage() {
     return () => {
       ignore = true;
     };
-  }, [router]);
+  }, [authLoading, router, user?.id]);
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
-      <ProfileStatePage eyebrow="Загрузка" title="Загрузка..." text="Получаем данные профиля." />
+      <PageState eyebrow="Загрузка" title="Загрузка..." text="Получаем данные профиля." />
     );
   }
 
   if (error) {
-    return <ProfileStatePage eyebrow="Ошибка" title="Ошибка профиля" text={error} />;
+    return <PageState eyebrow="Ошибка" title="Ошибка профиля" text={error} />;
   }
 
   if (!user) {
     return (
-      <ProfileStatePage
+      <PageState
         eyebrow="Требуется вход"
+        showLoginAction
         title="Требуется вход"
         text="Войдите в аккаунт, чтобы увидеть свои курсы."
       />
@@ -222,45 +226,6 @@ export default function ProfilePage() {
                 </div>
               )}
             </section>
-          </section>
-        </div>
-      </div>
-
-      <div className="mx-auto w-full max-w-[1344px] px-4 sm:px-6 lg:px-8">
-        <SiteFooter />
-      </div>
-    </main>
-  );
-}
-
-function ProfileStatePage({
-  eyebrow,
-  text,
-  title
-}: {
-  eyebrow: string;
-  text: string;
-  title: string;
-}) {
-  return (
-    <main className="flex min-h-screen flex-col">
-      <div className="flex-1 px-4 py-4 sm:px-6 lg:px-8">
-        <SiteHeader />
-        <div className="mx-auto max-w-7xl">
-          <section className="mt-6 grid min-h-[70vh] content-center gap-6 rounded-[28px] border border-line bg-white/[0.025] p-5 sm:p-7" id="main-content" tabIndex={-1}>
-            <StatusBadge tone="warning">{eyebrow}</StatusBadge>
-            <h1 className="max-w-4xl text-5xl font-bold leading-[1.02] tracking-[-0.045em] sm:text-7xl">
-              {title}
-            </h1>
-            <p className="max-w-2xl text-base leading-relaxed text-white/66">
-              {text}
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <ButtonLink href="/">На главную</ButtonLink>
-              <ButtonLink href="/login" variant="secondary">
-                Вход
-              </ButtonLink>
-            </div>
           </section>
         </div>
       </div>

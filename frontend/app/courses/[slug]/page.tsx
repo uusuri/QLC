@@ -5,9 +5,16 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { AddToCartButton } from "@/components/AddToCartButton";
+import { PageState } from "@/components/PageState";
 import { SafeMarkdown } from "@/components/SafeMarkdown";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import {
+  TechBarcode,
+  TechCrosshair,
+  TechDotMatrix,
+  TechStripes
+} from "@/components/TechnicalMarks";
 import { Alert, ButtonLink, StatusBadge } from "@/components/ui";
 import {
   formatRussianCountWord,
@@ -71,16 +78,16 @@ export default function CoursePage() {
   }, [slug]);
 
   if (loading) {
-    return <CourseStatePage eyebrow="Загрузка" title="Загрузка курса" text="Получаем программу." />;
+    return <PageState eyebrow="Загрузка" title="Загрузка курса" text="Получаем программу." />;
   }
 
   if (loadError) {
-    return <CourseStatePage eyebrow="Ошибка" title="Курс недоступен" text={loadError} />;
+    return <PageState eyebrow="Ошибка" title="Курс недоступен" text={loadError} />;
   }
 
   if (!view) {
     return (
-      <CourseStatePage
+      <PageState
         eyebrow="Не найден"
         title="Курс не найден"
         text="Вернитесь в каталог и выберите другой курс."
@@ -145,32 +152,62 @@ export default function CoursePage() {
                 </div>
               </div>
 
-              <aside className="rounded-[28px] bg-[#dfffa8] p-6 text-ink sm:p-7" id="purchase">
-                <p className="text-sm font-medium text-ink/55">
-                  {view.catalogCourse.lessonsCount > 0
-                    ? view.catalogCourse.lessonsLabel
-                    : "Программа готовится"}
-                </p>
-                <p className="mt-2 text-4xl font-bold tracking-[-0.05em]">
-                  {canStudy ? "Можно начинать" : view.catalogCourse.price.formatted}
-                </p>
-                <p className="mt-4 text-sm leading-relaxed text-ink/60">
-                  {canStudy
-                    ? "Материалы и задания курса доступны в вашем аккаунте."
-                    : "Посмотрите программу ниже. Оплата понадобится только для доступа к урокам и задачам."}
-                </p>
-                <div className="mt-6">
-                  {canStudy ? (
-                    <ButtonLink
-                      className="w-full !text-ink"
-                      disabled={!view.firstLesson}
-                      href={`/lessons/${view.firstLesson?.id ?? ""}`}
-                    >
-                      Начать обучение
-                    </ButtonLink>
-                  ) : courseId !== null ? (
-                    <AddToCartButton courseId={courseId} courseSlug={slug} />
-                  ) : null}
+              <aside className="relative overflow-hidden rounded-[28px] bg-phosphor p-6 text-ink sm:p-7" id="purchase">
+                <div aria-hidden="true" className="pointer-events-none absolute inset-0 select-none overflow-hidden">
+                  <span className="qlc-signal-rail absolute inset-x-0 top-0 h-1.5" />
+                  <span className="absolute inset-y-0 right-0 w-[28%] border-l border-ink/10 bg-[#f4f5ec]/55" />
+                  <span className="absolute -bottom-2 right-5 text-[72px] font-black leading-none tracking-[-0.09em] text-ink/[0.045]">
+                    OPEN
+                  </span>
+                  <TechCrosshair className="right-5 top-5 text-ink/28" />
+                  <TechBarcode className="absolute right-5 top-20 hidden text-ink/22 sm:inline-flex" label="QLC-COURSE/PASS" />
+                  <TechDotMatrix className="bottom-5 right-5 text-ink/12" />
+                  <TechStripes className="absolute bottom-0 left-7 h-4 w-20 text-ink/45" />
+                </div>
+
+                <div className="relative z-10">
+                  <p className="text-sm font-medium text-ink/60">
+                    {view.catalogCourse.lessonsCount > 0
+                      ? view.catalogCourse.lessonsLabel
+                      : "Программа готовится"}
+                  </p>
+                  <p className="mt-2 max-w-[15rem] text-4xl font-bold tracking-[-0.05em]">
+                    {canStudy ? "Можно начинать" : view.catalogCourse.price.formatted}
+                  </p>
+                  <p className="mt-4 max-w-[16rem] text-sm leading-relaxed text-ink/60">
+                    {canStudy
+                      ? "Материалы и задания курса доступны в вашем аккаунте."
+                      : "Посмотрите программу ниже. Оплата понадобится только для доступа к урокам и задачам."}
+                  </p>
+
+                  <dl className="mt-5 grid max-w-[16rem] grid-cols-2 gap-4 border-y border-ink/12 py-3 font-mono uppercase">
+                    <div>
+                      <dt className="text-[10px] tracking-[0.14em] text-ink/65">Модулей</dt>
+                      <dd className="mt-1 text-xs font-black">{view.modules.length}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-[10px] tracking-[0.14em] text-ink/65">Доступ</dt>
+                      <dd className="mt-1 text-xs font-black">{canStudy ? "Открыт" : "По покупке"}</dd>
+                    </div>
+                  </dl>
+
+                  <div className="mt-6">
+                    {canStudy ? (
+                      <ButtonLink
+                        className="w-full !border-ink !bg-ink !text-white shadow-none hover:!border-white hover:!bg-white hover:!text-ink focus-visible:!outline-ink"
+                        disabled={!view.firstLesson}
+                        href={`/lessons/${view.firstLesson?.id ?? ""}`}
+                      >
+                        Начать обучение
+                      </ButtonLink>
+                    ) : courseId !== null ? (
+                      <AddToCartButton
+                        className="!border-ink !bg-ink !text-white shadow-none hover:!border-white hover:!bg-white hover:!text-ink focus-visible:!outline-ink"
+                        courseId={courseId}
+                        courseSlug={slug}
+                      />
+                    ) : null}
+                  </div>
                 </div>
               </aside>
             </section>
@@ -319,28 +356,4 @@ export default function CoursePage() {
 function getTaskOutlineTitle(statementMd: string, index: number) {
   const heading = statementMd.match(/^#{1,3}\s+(.+)$/m)?.[1];
   return heading?.replace(/[*`]/g, "") || `Задача ${index + 1}`;
-}
-
-function CourseStatePage({
-  eyebrow,
-  text,
-  title
-}: {
-  eyebrow: string;
-  text: string;
-  title: string;
-}) {
-  return (
-    <main className="flex min-h-screen flex-col px-4 sm:px-6 lg:px-8">
-      <SiteHeader />
-      <div className="mx-auto w-full max-w-7xl">
-        <section className="grid min-h-[70vh] content-center gap-5" id="main-content" tabIndex={-1}>
-          <StatusBadge tone="warning">{eyebrow}</StatusBadge>
-          <h1 className="max-w-3xl text-5xl font-bold tracking-[-0.05em] sm:text-7xl">{title}</h1>
-          <p className="max-w-xl text-base text-white/56">{text}</p>
-          <div><ButtonLink href="/">На главную</ButtonLink></div>
-        </section>
-      </div>
-    </main>
-  );
 }

@@ -4,11 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/components/AuthProvider";
-import type { AuthUserDto } from "@/types";
-
-export function isAdmin(user: AuthUserDto | null): boolean {
-  return user?.role === "ROLE_ADMIN";
-}
+import { isAdmin } from "@/services/auth";
 
 type AdminGuardProps = {
   children: React.ReactNode;

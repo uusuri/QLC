@@ -1,5 +1,3 @@
-"use client";
-
 // Props progress-bar.
 type ProgressProps = {
   // label делает progress понятным для screen reader и визуально.

@@ -15,6 +15,8 @@
   --muted: rgba(245, 245, 240, 0.64);
   --ember: #d7ff7d;
   --phosphor: #b8ff35;
+  --paper: #f4f5ec;
+  --signal-blue: #2454a6;
 }
 
 * {
@@ -260,6 +262,101 @@ p {
   background: var(--phosphor);
   box-shadow: 0 0 10px rgba(184, 255, 53, 0.5);
   animation: qlc-hero-signal 5s ease-in-out infinite;
+}
+
+.qlc-tech-barcode {
+  width: 76px;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.qlc-tech-barcode__bars {
+  display: block;
+  width: 100%;
+  height: 24px;
+  background:
+    linear-gradient(90deg, currentColor 0 2px, transparent 2px 5px, currentColor 5px 6px, transparent 6px 9px),
+    repeating-linear-gradient(90deg, currentColor 0 1px, transparent 1px 4px, currentColor 4px 7px, transparent 7px 10px);
+  background-size: 17px 100%, 31px 100%;
+}
+
+.qlc-tech-barcode__label {
+  overflow: hidden;
+  font-family: "IBM Plex Mono", "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.09em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.qlc-tech-crosshair {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+}
+
+.qlc-tech-crosshair::before,
+.qlc-tech-crosshair::after {
+  position: absolute;
+  content: "";
+  background: currentColor;
+}
+
+.qlc-tech-crosshair::before {
+  left: 0;
+  top: calc(50% - 0.5px);
+  width: 100%;
+  height: 1px;
+}
+
+.qlc-tech-crosshair::after {
+  left: calc(50% - 0.5px);
+  top: 0;
+  width: 1px;
+  height: 100%;
+}
+
+.qlc-tech-dots {
+  width: 48px;
+  height: 48px;
+  background-image: radial-gradient(circle, currentColor 1.15px, transparent 1.35px);
+  background-position: 0 0;
+  background-size: 8px 8px;
+}
+
+.qlc-tech-ruler {
+  height: 12px;
+  border-top: 1px solid currentColor;
+  background-image: repeating-linear-gradient(90deg, currentColor 0 1px, transparent 1px 18px);
+  background-position: 0 0;
+  background-size: auto 7px;
+  background-repeat: repeat-x;
+}
+
+.qlc-tech-stripes {
+  background-image: repeating-linear-gradient(135deg, currentColor 0 5px, transparent 5px 10px);
+}
+
+.qlc-signal-rail {
+  background: var(--signal-blue);
+}
+
+.qlc-tech-vertical {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.qlc-packaging-split {
+  background:
+    linear-gradient(90deg, rgba(184, 255, 53, 0.12) 0 45%, transparent 45%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.qlc-course-cover-split {
+  background: linear-gradient(90deg, var(--phosphor) 0 46%, var(--paper) 46% 100%);
 }
 
 @keyframes qlc-core-breathe {

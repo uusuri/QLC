@@ -28,7 +28,6 @@ import type {
   SubmissionCreatePayload,
   SubmissionCreatedResponseDto,
   SubmissionResponseDto,
-  StudentProfileDto,
   TelegramAuthPayload
 } from "@/types";
 
@@ -56,6 +55,16 @@ export class AuthClientError extends Error {
     super(message);
     this.code = code;
     this.name = "AuthClientError";
+  }
+}
+
+export class ApiClientError extends Error {
+  status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+    this.name = "ApiClientError";
   }
 }
 
@@ -102,10 +111,12 @@ async function apiRequest<TResponse>(
   options: ApiRequestOptions = {}
 ): Promise<TResponse> {
   const { auth = false, ...requestOptions } = options;
-
+  const method = (requestOptions.method ?? "GET").toUpperCase();
   const headers = new Headers(requestOptions.headers);
 
-  headers.set("Content-Type", "application/json");
+  if (requestOptions.body !== undefined && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
 
   if (auth) {
     const token = getAuthToken();
@@ -117,7 +128,7 @@ async function apiRequest<TResponse>(
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...requestOptions,
-    cache: "no-store",
+    ...(auth || method !== "GET" ? { cache: "no-store" as const } : {}),
     headers
   });
 
@@ -129,84 +140,11 @@ async function apiRequest<TResponse>(
       throw new AuthClientError("unauthorized", "Сессия истекла. Войдите снова.");
     }
 
-    throw new Error(await readErrorMessage(response));
+    throw new ApiClientError(response.status, await readErrorMessage(response));
   }
 
   return (await response.json()) as TResponse;
 }
-
-// Статичный каталог оставлен только для будущих локальных fallback-сценариев вне основного пути.
-const courseCatalogMock: CourseDto[] = [
-  // Первый курс в витрине и checkout.
-  {
-    slug: "frontend-typescript",
-    title: "Frontend TypeScript",
-    description:
-      "Компоненты, состояние, типизация, архитектура интерфейса и сборка проекта на современном фронте.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=900&q=80",
-    badge: "bestseller",
-    lessonsCount: 38,
-    lessonsLabel: "38 уроков",
-    price: {
-      amount: 4900,
-      currency: "RUB",
-      formatted: "4 900 ₽"
-    },
-    oldPrice: {
-      amount: 9800,
-      currency: "RUB",
-      formatted: "9 800 ₽"
-    },
-    access: "locked"
-  },
-  // Второй курс в витрине и checkout.
-  {
-    slug: "web-design-system",
-    title: "Web Design System",
-    description:
-      "Сетка, типографика, компоненты, визуальная дисциплина и premium tech стиль без лишнего шума.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
-    badge: "visual core",
-    lessonsCount: 24,
-    lessonsLabel: "24 урока",
-    price: {
-      amount: 3700,
-      currency: "RUB",
-      formatted: "3 700 ₽"
-    },
-    oldPrice: {
-      amount: 7400,
-      currency: "RUB",
-      formatted: "7 400 ₽"
-    },
-    access: "open"
-  },
-  // Третий курс в витрине и checkout.
-  {
-    slug: "landing-that-sells",
-    title: "Landing That Sells",
-    description:
-      "Оффер, структура страницы, блоки доверия, цена, CTA и быстрый запуск витрины под продажи.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80",
-    badge: "launch",
-    lessonsCount: 31,
-    lessonsLabel: "31 урок",
-    price: {
-      amount: 5500,
-      currency: "RUB",
-      formatted: "5 500 ₽"
-    },
-    oldPrice: {
-      amount: 11000,
-      currency: "RUB",
-      formatted: "11 000 ₽"
-    },
-    access: "pending"
-  }
-];
 
 // Приводит backend BigDecimal/number к безопасной сумме для карточки.
 function normalizeMoneyAmount(value: number | string | null | undefined): number {
@@ -336,65 +274,6 @@ function mapAdminTaskToLearnerTask(task: AdminTaskDto): LearnerTaskDto {
     options: task.options
   };
 }
-
-// TODO: Интегрировать с бэком, когда появится эндпоинт профиля студента.
-// Профиль анонимный: без имени, фамилии, аватарки и других персональных данных.
-const studentProfileMock: StudentProfileDto = {
-  stats: {
-    solvedTasks: 42,
-    totalTasks: 150,
-    averageProgress: 38,
-    rank: "RANK 04",
-    level: "Interface Runner",
-    streak: 9
-  },
-  courses: [
-    // Активный курс.
-    {
-      courseSlug: "frontend-typescript",
-      title: "Frontend TypeScript",
-      status: "active",
-      solvedTasks: 18,
-      totalTasks: 42,
-      progressPercent: 43,
-      level: "Middle Track",
-      nextLesson: "State, effects, data flow"
-    },
-    // Еще один активный курс.
-    {
-      courseSlug: "web-design-system",
-      title: "Web Design System",
-      status: "active",
-      solvedTasks: 14,
-      totalTasks: 36,
-      progressPercent: 39,
-      level: "Visual Core",
-      nextLesson: "Spacing scale and layout rhythm"
-    },
-    // Завершенный курс.
-    {
-      courseSlug: "landing-that-sells",
-      title: "Landing That Sells",
-      status: "completed",
-      solvedTasks: 10,
-      totalTasks: 10,
-      progressPercent: 100,
-      level: "Launch Ready",
-      nextLesson: "Final project archived"
-    },
-    // Закрытый курс без доступа.
-    {
-      courseSlug: "cpp-sandbox-basics",
-      title: "C++ Sandbox Basics",
-      status: "locked",
-      solvedTasks: 0,
-      totalTasks: 62,
-      progressPercent: 0,
-      level: "Locked",
-      nextLesson: "Requires course access"
-    }
-  ]
-};
 
 // Тексты состояний доступа в checkout.
 export const COURSE_ACCESS_COPY: Record<CourseAccessStatus, CourseAccessCopyDto> = {
@@ -585,17 +464,6 @@ export async function getCourseCatalog(): Promise<CourseDto[]> {
   );
 }
 
-// Возвращает статичный каталог только для будущих локальных fallback/debug-сценариев.
-export function getStaticCourseCatalog(): CourseDto[] {
-  return courseCatalogMock;
-}
-
-// Возвращает курс по slug или null, если slug отсутствует/не найден.
-export async function getCourseBySlug(slug?: string): Promise<CourseDto | null> {
-  const courses = await getCourseCatalog();
-  return courses.find((course) => course.slug === slug) ?? null;
-}
-
 // Собирает страницу курса: сам курс, модули, уроки и первый доступный урок.
 export async function getCourseLearningView(slug: string): Promise<CourseLearningViewDto | null> {
   const courseId = parseCourseIdFromSlug(slug);
@@ -604,15 +472,22 @@ export async function getCourseLearningView(slug: string): Promise<CourseLearnin
     return null;
   }
 
-  const courses = await getAdminCourses();
-  const courseIndex = courses.findIndex((course) => course.id === courseId);
-  const course = courseIndex >= 0 ? courses[courseIndex] : null;
+  let course: AdminCourseDto;
+  let modules: AdminModuleDto[];
 
-  if (!course) {
-    return null;
+  try {
+    [course, modules] = await Promise.all([
+      getAdminCourseById(courseId),
+      getAdminModules(courseId)
+    ]);
+  } catch (error) {
+    if (error instanceof ApiClientError && error.status === 404) {
+      return null;
+    }
+
+    throw error;
   }
 
-  const modules = await getAdminModules(course.id);
   const modulesWithLessons = await Promise.all(
     modules.map(async (module) => ({
       module,
@@ -632,8 +507,6 @@ export async function getCourseLearningView(slug: string): Promise<CourseLearnin
       course,
       modulesWithLessons.flatMap((item) => item.lessons).filter((lesson) => lesson.published).length
     ),
-    courseIndex,
-    isAvailable: courseIndex === 0,
     modules: modulesWithLessons,
     firstLesson
   };
@@ -657,25 +530,15 @@ export async function getLessonLearningView(id: number): Promise<LessonLearningV
   const { lesson, tasks } = await getLessonForUser(id);
   const module = await getAdminModuleById(lesson.moduleId);
   const course = await getAdminCourseById(module.courseId);
-  const courses = await getAdminCourses();
-  const courseIndex = courses.findIndex((item) => item.id === course.id);
   const mappedTasks = tasks.map(mapAdminTaskToLearnerTask);
 
   return {
     course,
-    courseIndex,
-    isCourseAvailable: courseIndex === 0,
     lesson,
     module,
     primaryTask: mappedTasks[0] ?? null,
     tasks: mappedTasks
   };
-}
-
-// Возвращает анонимный профиль студента для личного кабинета.
-export async function getStudentProfile(): Promise<StudentProfileDto> {
-  // TODO: Интегрировать с бэком, когда появится эндпоинт GET /api/profile.
-  return studentProfileMock;
 }
 
 // Возвращает доступные способы оплаты для checkout.
@@ -877,11 +740,6 @@ export async function purchaseCart(): Promise<AdminCourseDto[]> {
     auth: true,
     method: "POST"
   });
-}
-
-// Возвращает список курсов, купленных текущим пользователем.
-export async function getMyCourses(): Promise<AdminCourseDto[]> {
-  return apiRequest<AdminCourseDto[]>("/api/users/me/courses", { auth: true });
 }
 
 // Возвращает все купленные курсы, модули, уроки и реальный прогресс текущего ученика.

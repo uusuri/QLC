@@ -1,13 +1,8 @@
-"use client";
-
 import Link from "next/link";
 
-import { isAdmin } from "@/components/AdminGuard";
-import { useAuth } from "@/components/AuthProvider";
+import { FooterAuthLinks } from "@/components/FooterAuthLinks";
 
 export function SiteFooter() {
-  const { loading, user } = useAuth();
-
   return (
     <footer className="mt-16 border-t border-white/8 py-10 sm:mt-20 sm:py-12">
       <div className="flex flex-col justify-between gap-10 lg:flex-row lg:items-end">
@@ -28,10 +23,7 @@ export function SiteFooter() {
             <Link className="inline-flex min-h-11 items-center transition hover:text-phosphor" href="/#courses">Курсы</Link>
             <Link className="inline-flex min-h-11 items-center transition hover:text-phosphor" href="/#how">Как устроено</Link>
             <Link className="inline-flex min-h-11 items-center transition hover:text-phosphor" href="/profile">Моё обучение</Link>
-            {!loading && !user && <Link className="inline-flex min-h-11 items-center transition hover:text-phosphor" href="/login">Вход</Link>}
-            {isAdmin(user) && (
-              <Link className="inline-flex min-h-11 items-center transition hover:text-phosphor" href="/admin/content">Админ</Link>
-            )}
+            <FooterAuthLinks />
           </nav>
           <p className="mt-3 font-mono text-xs uppercase tracking-[0.12em] text-white/60 lg:text-right">
             © {new Date().getFullYear()} QLC · теория · код · результат

@@ -1,5 +1,3 @@
-"use client";
-
 // Props skeleton-блока.
 type SkeletonProps = {
   // className задает размер конкретного placeholder.

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { CodeLessonWorkspace } from "@/components/CodeLessonWorkspace";
+import { PageState } from "@/components/PageState";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SafeMarkdown } from "@/components/SafeMarkdown";
@@ -73,16 +74,16 @@ export default function LessonPage() {
   }, [lessonId, router]);
 
   if (loading) {
-    return <LessonStatePage eyebrow="Загрузка" title="Загрузка..." text="Получаем данные урока." />;
+    return <PageState eyebrow="Загрузка" title="Загрузка..." text="Получаем данные урока." />;
   }
 
   if (loadError) {
-    return <LessonStatePage eyebrow="Ошибка" title="Урок недоступен" text={loadError} />;
+    return <PageState eyebrow="Ошибка" title="Урок недоступен" text={loadError} />;
   }
 
   if (!view) {
     return (
-      <LessonStatePage
+      <PageState
         eyebrow="Не найден"
         title="Урок не найден"
         text="Урок не найден. Вернитесь на страницу курса."
@@ -96,7 +97,7 @@ export default function LessonPage() {
 
   if (isLocked) {
     return (
-      <LessonStatePage
+      <PageState
         eyebrow="Закрыто"
         title="Доступ к уроку закрыт"
         text="Чтобы открыть материал и задачи, купите курс."
@@ -112,7 +113,7 @@ export default function LessonPage() {
             К витрине
           </ButtonLink>
         </div>
-      </LessonStatePage>
+      </PageState>
     );
   }
 
@@ -251,45 +252,6 @@ export default function LessonPage() {
                 </>
               )}
             </section>
-          </section>
-        </section>
-      </div>
-
-      <div className="mx-auto w-full max-w-[1344px] px-4 sm:px-6 lg:px-8">
-        <SiteFooter />
-      </div>
-    </main>
-  );
-}
-
-function LessonStatePage({
-  eyebrow,
-  text,
-  title,
-  children
-}: {
-  eyebrow: string;
-  text: string;
-  title: string;
-  children?: React.ReactNode;
-}) {
-  return (
-    <main className="flex min-h-screen flex-col">
-      <div className="flex-1 px-4 py-4 sm:px-6 lg:px-8">
-        <SiteHeader />
-        <section className="mx-auto max-w-7xl">
-          <section className="mt-6 grid min-h-[70vh] content-center gap-6 rounded-[28px] border border-line bg-white/[0.025] p-5 sm:p-7" id="main-content" tabIndex={-1}>
-            <StatusBadge tone="warning">{eyebrow}</StatusBadge>
-            <h1 className="max-w-4xl text-5xl font-bold leading-[1.02] tracking-[-0.045em] sm:text-7xl">
-              {title}
-            </h1>
-            <p className="max-w-2xl text-base leading-relaxed text-white/66">
-              {text}
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <ButtonLink href="/">На главную</ButtonLink>
-            </div>
-            {children}
           </section>
         </section>
       </div>

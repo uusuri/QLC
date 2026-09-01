@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import { PageState } from "@/components/PageState";
 import { PaymentMethodSelector } from "@/components/PaymentMethodSelector";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -73,13 +74,13 @@ export function CheckoutClient({ courses, paymentMethods, requestedCourseSlug }:
     ? `/checkout?course=${encodeURIComponent(requestedCourseSlug)}`
     : "/checkout";
 
-  if (state === "loading") return <CheckoutState title="Загружаем корзину" text="Проверяем сохранённые курсы." />;
+  if (state === "loading") return <PageState eyebrow="Корзина" title="Загружаем корзину" text="Проверяем сохранённые курсы." />;
   if (state === "guest") {
-    return <CheckoutState actionHref={`/login?redirectTo=${encodeURIComponent(checkoutTarget)}`} actionText="Войти" title="Войдите, чтобы открыть корзину" text="Корзина привязана к вашему аккаунту и будет сохранена между устройствами." />;
+    return <PageState eyebrow="Корзина" actionHref={`/login?redirectTo=${encodeURIComponent(checkoutTarget)}`} actionText="Войти" title="Войдите, чтобы открыть корзину" text="Корзина привязана к вашему аккаунту и будет сохранена между устройствами." />;
   }
-  if (state === "error") return <CheckoutState title="Не удалось открыть корзину" text={error} />;
+  if (state === "error") return <PageState eyebrow="Корзина" title="Не удалось открыть корзину" text={error} />;
   if (coursesToPay.length === 0) {
-    return <CheckoutState title="Корзина пуста" text="Добавьте курс на витрине — он сохранится здесь даже после обновления страницы." />;
+    return <PageState eyebrow="Корзина" title="Корзина пуста" text="Добавьте курс на витрине — он сохранится здесь даже после обновления страницы." />;
   }
 
   const needsPayment = coursesToPay.some((course) => course.access === "locked");
@@ -133,25 +134,6 @@ export function CheckoutClient({ courses, paymentMethods, requestedCourseSlug }:
 
 function CourseItem({ course }: { course: CourseDto }) {
   return <Panel muted><PanelHeader className="flex flex-col items-start gap-4 sm:flex-row sm:justify-between"><div className="min-w-0"><p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-acid">В заказе</p><h2 className="mt-2 [overflow-wrap:anywhere] text-2xl font-black uppercase leading-tight">{course.title}</h2></div><StatusBadge tone={course.access === "locked" ? "warning" : "success"}>{course.access === "locked" ? "В заказе" : "Доступен"}</StatusBadge></PanelHeader><PanelBody className="grid gap-4"><p className="[overflow-wrap:anywhere] text-sm leading-relaxed text-white/60">{course.description}</p><div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4"><span className="font-mono text-xs font-black uppercase text-white/45">{course.lessonsLabel} · доступ навсегда</span><strong className="text-xl font-black text-acid">{course.price.formatted}</strong></div></PanelBody></Panel>;
-}
-
-function CheckoutState({ actionHref = "/", actionText = "На витрину", text, title }: { actionHref?: string; actionText?: string; text: string; title: string }) {
-  return (
-    <main className="flex min-h-screen flex-col">
-      <div className="flex-1 px-4 py-4 sm:px-6 lg:px-8">
-        <SiteHeader />
-        <section className="mx-auto max-w-7xl">
-          <section className="mt-6 grid min-h-[560px] content-center gap-6 rounded-[28px] border border-line bg-white/[0.025] p-5 sm:p-7" id="main-content" tabIndex={-1}>
-            <p className="font-mono text-xs font-black uppercase tracking-[0.16em] text-acid">Корзина</p>
-            <h1 className="max-w-4xl text-5xl font-bold leading-[1.02] tracking-[-0.045em] sm:text-7xl">{title}</h1>
-            <p className="max-w-2xl text-base leading-relaxed text-white/66">{text}</p>
-            <div><ButtonLink href={actionHref}>{actionText}</ButtonLink></div>
-          </section>
-        </section>
-      </div>
-      <div className="mx-auto w-full max-w-[1344px] px-4 sm:px-6 lg:px-8"><SiteFooter /></div>
-    </main>
-  );
 }
 
 function CheckoutStep({ number, text, title }: { number: string; text: string; title: string }) {

@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-import { isAdmin } from "@/components/AdminGuard";
 import { useAuth } from "@/components/AuthProvider";
 import { logoutUser } from "@/services/api";
+import { isAdmin } from "@/services/auth";
 
 export function AuthStatus() {
   const router = useRouter();

@@ -1,10 +1,10 @@
-"use client";
-
 // Link нужен для кнопок-ссылок, которые ведут между страницами Next.js без reload.
 import Link from "next/link";
 
 // ReactNode описывает любой JSX-контент внутри кнопки.
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+
+import { cn } from "@/utils/cn";
 
 // Варианты кнопки зафиксированы UI-kit карточкой S2-FE-01.
 export type ButtonVariant = "primary" | "secondary" | "danger";
@@ -35,11 +35,6 @@ type ButtonLinkProps = ButtonVisualProps & {
   // href — адрес перехода.
   href: string;
 };
-
-// Склеивает className без внешней зависимости clsx.
-function cn(...items: Array<string | false | null | undefined>) {
-  return items.filter(Boolean).join(" ");
-}
 
 // Возвращает Tailwind-классы для выбранного варианта.
 function getVariantClassName(variant: ButtonVariant) {

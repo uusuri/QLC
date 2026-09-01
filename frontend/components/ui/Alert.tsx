@@ -1,7 +1,7 @@
-"use client";
-
 // ReactNode позволяет передать в Alert текст, ссылки или маленькую разметку.
 import type { ReactNode } from "react";
+
+import { cn } from "@/utils/cn";
 
 // Варианты Alert по смыслу сообщения.
 export type AlertTone = "info" | "success" | "warning" | "danger" | "neutral";
@@ -17,11 +17,6 @@ type AlertProps = {
   // tone задает смысл и цвет.
   tone?: AlertTone;
 };
-
-// Склеивает className без отдельного пакета.
-function cn(...items: Array<string | false | null | undefined>) {
-  return items.filter(Boolean).join(" ");
-}
 
 // Возвращает классы по смыслу alert.
 function getToneClassName(tone: AlertTone) {
