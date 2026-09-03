@@ -1,31 +1,38 @@
 package com.qlc.services;
 
+import com.qlc.models.entities.CodeTask;
 import com.qlc.models.entities.Submission;
 import com.qlc.models.entities.Task;
 import com.qlc.models.enums.SubmissionStatus;
-import com.qlc.models.enums.Verdict;
 import com.qlc.models.messages.SubmissionStreamMessage;
 import com.qlc.repositories.SubmissionRepository;
+import com.qlc.runners.DockerCppRunner;
+import com.qlc.runners.RunRequest;
+import com.qlc.runners.Toolchain;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 
 @Service
 public class SubmissionStreamProcessor {
 
-  static final String TEMPORARY_SUCCESS_MESSAGE = "Temporary worker stub: sandbox execution is not implemented; submission marked AC for integration testing.";
+  static final String RUNNER_FINISHED_MESSAGE_PREFIX = "Docker runner finished with exit code ";
   static final String CONTRACT_MISMATCH_MESSAGE = "Redis Stream payload does not match the persisted submission metadata.";
   static final String RETRY_EXHAUSTED_MESSAGE = "Submission processing failed after the maximum number of retries.";
   static final String UNSUPPORTED_SCHEMA_MESSAGE = "Submission message uses an unsupported schema version.";
   static final String MALFORMED_MESSAGE = "Submission message is malformed.";
 
   private final SubmissionRepository submissionRepository;
+  private final DockerCppRunner dockerCppRunner;
 
-  public SubmissionStreamProcessor(SubmissionRepository submissionRepository) {
+  public SubmissionStreamProcessor(SubmissionRepository submissionRepository, DockerCppRunner dockerCppRunner) {
     this.submissionRepository = submissionRepository;
+    this.dockerCppRunner = dockerCppRunner;
   }
 
   @Transactional
@@ -72,12 +79,43 @@ public class SubmissionStreamProcessor {
           sourceSizeBytes);
     }
 
+    if (!(task instanceof CodeTask codeTask)) {
+      throw new IllegalStateException("Task " + taskId + " is not a code task");
+    }
+
+    Toolchain toolchain;
+    try {
+      toolchain = Toolchain.valueOf(submission.getLanguage());
+    } catch (IllegalArgumentException | NullPointerException exception) {
+      throw new IllegalStateException(
+          "Submission " + submissionId + " uses unsupported toolchain " + submission.getLanguage(),
+          exception);
+    }
+
+    RunRequest runRequest = new RunRequest(
+        sourceCode,
+        "",
+        codeTask.getMemoryLimitKb(),
+        Duration.ofMillis(codeTask.getTimeLimitMs()),
+        codeTask.getOutputLimitKb(),
+        toolchain);
+
     submission.setStatus(SubmissionStatus.COMPILING);
-    submission.setStatus(SubmissionStatus.RUNNING);
-    submission.setVerdict(Verdict.AC);
-    submission.setExecutionTime(0L);
-    submission.setMemoryUsed(0L);
-    submission.setSafeMessage(TEMPORARY_SUCCESS_MESSAGE);
+
+    int exitCode;
+    try {
+      exitCode = dockerCppRunner.run(runRequest);
+    } catch (InterruptedException exception) {
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException("Runner execution was interrupted", exception);
+    } catch (IOException exception) {
+      throw new IllegalStateException("Failed to start Docker runner", exception);
+    }
+
+    submission.setVerdict(null);
+    submission.setExecutionTime(null);
+    submission.setMemoryUsed(null);
+    submission.setSafeMessage(RUNNER_FINISHED_MESSAGE_PREFIX + exitCode);
     submission.setStatus(SubmissionStatus.FINISHED);
     submissionRepository.save(submission);
 

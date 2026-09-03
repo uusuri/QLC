@@ -1,57 +1,89 @@
 package com.qlc.runners;
 
+import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.Comparator;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
+@Component
 public class DockerCppRunner {
+  private static final System.Logger LOGGER = System.getLogger(DockerCppRunner.class.getName());
+
   public int run(RunRequest request) throws IOException, InterruptedException {
     validate(request);
     Path tempDir = null;
-    Path sourceFile = null;
-    String containerName = "cpp-runner " + UUID.randomUUID();
+    String containerName = "cpp-runner-" + UUID.randomUUID();
     int outputCode = -1;
 
-    Process compileProcess = null;
+    Process runnerProcess = null;
     try {
       tempDir = Files.createTempDirectory("cpp-runner-");
-      sourceFile = tempDir.resolve("main.cpp");
-      Files.writeString(sourceFile, request.sourceCode());
+      Files.writeString(tempDir.resolve("Main.cpp"), request.sourceCode());
+      Files.writeString(tempDir.resolve("input.txt"), request.stdin());
 
-      ProcessBuilder compileProcessBuilder = new ProcessBuilder(
+      String wallTimeLimitSeconds = String.format(
+          Locale.ROOT,
+          "%.3f",
+          request.timeLimit().toMillis() / 1000.0);
+
+      ProcessBuilder runnerProcessBuilder = new ProcessBuilder(
           "docker",
           "run",
           "--rm",
-          "-v",
-          tempDir.toAbsolutePath() + ":/usr/src/cpp-runner-",
           "--name",
           containerName,
           "--network",
           "none",
-          "-w",
-          "/usr/src/cpp-runner-",
-          "qlc-cpp-runner:dev",
-          "g++",
-          "-o",
-          "main",
-          "main.cpp");
+          "--read-only",
+          "--tmpfs",
+          "/work:rw,exec,nosuid,size=64m",
+          "--tmpfs",
+          "/tmp:rw,nosuid,size=32m",
+          "--mount",
+          "type=bind,src=" + tempDir.toAbsolutePath() + ",dst=/request,readonly",
+          "--env",
+          "QLC_WALL_TIME_LIMIT_SECONDS=" + wallTimeLimitSeconds,
+          "qlc-cpp-runner:dev");
 
-      compileProcess = compileProcessBuilder.start();
-      boolean finished = compileProcess.waitFor(2, TimeUnit.SECONDS);
+      runnerProcessBuilder.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+      runnerProcessBuilder.redirectError(ProcessBuilder.Redirect.DISCARD);
+
+      runnerProcess = runnerProcessBuilder.start();
+      long outerTimeoutMillis = request.timeLimit().plusSeconds(30).toMillis();
+      boolean finished = runnerProcess.waitFor(outerTimeoutMillis, TimeUnit.MILLISECONDS);
 
       if (!finished) {
-        compileProcess.destroyForcibly();
+        runnerProcess.destroyForcibly();
+        runnerProcess.waitFor();
       }
 
-      outputCode = compileProcess.exitValue();
+      outputCode = runnerProcess.exitValue();
     } finally {
-      if (compileProcess != null && compileProcess.isAlive()) {
-        compileProcess.destroyForcibly();
+      if (runnerProcess != null && runnerProcess.isAlive()) {
+        runnerProcess.destroyForcibly();
       }
       removeContainer(containerName);
+      deleteRecursively(tempDir);
     }
     return outputCode;
+  }
+
+  private void deleteRecursively(Path directory) {
+    if (directory == null || Files.notExists(directory)) {
+      return;
+    }
+
+    try (Stream<Path> paths = Files.walk(directory)) {
+      for (Path path : paths.sorted(Comparator.reverseOrder()).toList()) {
+        Files.deleteIfExists(path);
+      }
+    } catch (IOException exception) {
+      LOGGER.log(System.Logger.Level.WARNING, "Failed to delete runner directory " + directory, exception);
+    }
   }
 
   private void removeContainer(String containerName) throws IOException {
@@ -69,7 +101,7 @@ public class DockerCppRunner {
         cleanup.destroyForcibly();
       }
     } catch (IOException exception) {
-      throw new IOException("Remove Container IO exeption");
+      throw new IOException("Failed to remove container " + containerName, exception);
     } catch (InterruptedException exception) {
       Thread.currentThread().interrupt();
     }

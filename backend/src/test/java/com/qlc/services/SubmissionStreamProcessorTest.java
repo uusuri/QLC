@@ -6,6 +6,9 @@ import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.models.enums.Verdict;
 import com.qlc.models.messages.SubmissionStreamMessage;
 import com.qlc.repositories.SubmissionRepository;
+import com.qlc.runners.DockerCppRunner;
+import com.qlc.runners.RunRequest;
+import com.qlc.runners.Toolchain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +20,9 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,30 +33,35 @@ class SubmissionStreamProcessorTest {
   @Mock
   private SubmissionRepository submissionRepository;
 
+  @Mock
+  private DockerCppRunner dockerCppRunner;
+
   private SubmissionStreamProcessor processor;
 
   @BeforeEach
   void setUp() {
-    processor = new SubmissionStreamProcessor(submissionRepository);
+    processor = new SubmissionStreamProcessor(submissionRepository, dockerCppRunner);
   }
 
   @Test
-  void queuedSubmissionBecomesFinishedAndAccepted() {
+  void queuedSubmissionRunsInDockerAndBecomesFinished() throws Exception {
     UUID submissionId = UUID.randomUUID();
     Submission submission = submission(submissionId, SubmissionStatus.QUEUED, "int main() { return 0; }");
     when(submissionRepository.findByIdForUpdate(submissionId)).thenReturn(Optional.of(submission));
     when(submissionRepository.save(submission)).thenReturn(submission);
+    when(dockerCppRunner.run(any(RunRequest.class))).thenReturn(0);
 
     SubmissionStreamProcessor.ProcessingResult result = processor.process(message(submission));
 
     assertEquals(SubmissionStreamProcessor.ProcessingOutcome.COMPLETED, result.outcome());
     assertEquals(42L, result.taskId());
     assertEquals(SubmissionStatus.FINISHED, submission.getStatus());
-    assertEquals(Verdict.AC, submission.getVerdict());
-    assertEquals(0L, submission.getExecutionTime());
-    assertEquals(0L, submission.getMemoryUsed());
-    assertEquals(SubmissionStreamProcessor.TEMPORARY_SUCCESS_MESSAGE, submission.getSafeMessage());
+    assertNull(submission.getVerdict());
+    assertNull(submission.getExecutionTime());
+    assertNull(submission.getMemoryUsed());
+    assertEquals(SubmissionStreamProcessor.RUNNER_FINISHED_MESSAGE_PREFIX + "0", submission.getSafeMessage());
     assertFalse(submission.getSafeMessage().contains(submission.getSourceCode()));
+    verify(dockerCppRunner).run(any(RunRequest.class));
     verify(submissionRepository).save(submission);
   }
 
@@ -72,17 +82,18 @@ class SubmissionStreamProcessorTest {
   }
 
   @Test
-  void staleRunningSubmissionCanBeCompletedIdempotently() {
+  void staleRunningSubmissionCanBeCompletedIdempotently() throws Exception {
     UUID submissionId = UUID.randomUUID();
     Submission submission = submission(submissionId, SubmissionStatus.RUNNING, "int main() {}");
     when(submissionRepository.findByIdForUpdate(submissionId)).thenReturn(Optional.of(submission));
     when(submissionRepository.save(submission)).thenReturn(submission);
+    when(dockerCppRunner.run(any(RunRequest.class))).thenReturn(0);
 
     SubmissionStreamProcessor.ProcessingResult result = processor.process(message(submission));
 
     assertEquals(SubmissionStreamProcessor.ProcessingOutcome.COMPLETED, result.outcome());
     assertEquals(SubmissionStatus.FINISHED, submission.getStatus());
-    assertEquals(Verdict.AC, submission.getVerdict());
+    assertNull(submission.getVerdict());
   }
 
   @Test
