@@ -7,14 +7,13 @@ import java.util.concurrent.TimeUnit;
 
 public class DockerCppRunner {
   public int run(RunRequest request) throws IOException, InterruptedException {
+    validate(request);
     Path tempDir = null;
     Path sourceFile = null;
-
     String containerName = "cpp-runner " + UUID.randomUUID();
     int outputCode = -1;
 
-    validate(request);
-
+    Process compileProcess = null;
     try {
       tempDir = Files.createTempDirectory("cpp-runner-");
       sourceFile = tempDir.resolve("main.cpp");
@@ -38,7 +37,7 @@ public class DockerCppRunner {
           "main",
           "main.cpp");
 
-      Process compileProcess = compileProcessBuilder.start();
+      compileProcess = compileProcessBuilder.start();
       boolean finished = compileProcess.waitFor(2, TimeUnit.SECONDS);
 
       if (!finished) {
@@ -47,6 +46,9 @@ public class DockerCppRunner {
 
       outputCode = compileProcess.exitValue();
     } finally {
+      if (compileProcess != null && compileProcess.isAlive()) {
+        compileProcess.destroyForcibly();
+      }
       removeContainer(containerName);
     }
     return outputCode;
