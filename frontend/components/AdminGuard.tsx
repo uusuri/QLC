@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+import { PageState } from "@/components/PageState";
 import { useAuth } from "@/components/AuthProvider";
 import { isAdmin } from "@/services/auth";
 
@@ -25,14 +26,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
   }, [loading, router, user]);
 
   if (loading || !isAdmin(user)) {
-    return (
-      <div className="grid min-h-screen place-items-center px-4" id="main-content" tabIndex={-1}>
-        <div className="border border-line bg-panel/95 p-6 text-center">
-          <p className="font-mono text-xs font-black uppercase text-white/48">QLC</p>
-          <p className="mt-3 text-sm font-bold uppercase text-white/72">Проверка доступа...</p>
-        </div>
-      </div>
-    );
+    return <PageState eyebrow="Доступ" showPrimaryAction={false} title="Проверка доступа" text="Проверяем права для управления контентом." />;
   }
 
   return <>{children}</>;

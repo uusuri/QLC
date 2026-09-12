@@ -206,15 +206,20 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   };
 
   return (
-    <form aria-busy={isLoading} className="grid gap-5" noValidate onSubmit={handleSubmit} ref={formRef}>
+    <form aria-busy={isLoading} className="grid min-w-0 gap-5" noValidate onSubmit={handleSubmit} ref={formRef}>
       <div>
-        <p className="font-mono text-xs font-black uppercase tracking-[0.16em] text-acid">{title}</p>
-        <h1 className="mt-4 text-3xl font-bold leading-[1.04] tracking-[-0.04em] sm:text-5xl">
-          {isRegister ? "Создайте аккаунт." : "Войдите в аккаунт."}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/20 pb-4">
+          <p className="qlc-eyebrow text-acid">{title}</p>
+          <span className="font-mono text-[10px] font-black uppercase tracking-[0.14em] text-white/42">
+            QLC / ACCOUNT
+          </span>
+        </div>
+        <h1 className="kit-auth-title">
+          {isRegister ? "Создайте аккаунт" : "Вход в аккаунт"}
         </h1>
-        <p className="mt-5 text-base leading-relaxed text-white/64">
+        <p className="mt-4 text-sm leading-relaxed text-white/60">
           {isRegister
-            ? "Укажите логин, email и пароль. После регистрации можно покупать курсы и отслеживать прогресс."
+            ? "Один аккаунт для курсов, практики и вашего прогресса."
             : "Введите логин и пароль, чтобы продолжить обучение."}
         </p>
       </div>
@@ -226,7 +231,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         maxLength={32}
         name="username"
         onChange={(value) => updateField("username", value)}
-        placeholder="runner_01"
+        placeholder="your_name"
         value={fields.username}
       />
 
@@ -285,8 +290,8 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         </Alert>
       )}
 
-      <Button loading={isLoading} type="submit">
-        {submitLabel}
+      <Button className="mt-1 min-h-12 justify-between" loading={isLoading} type="submit">
+        {submitLabel}<span aria-hidden="true">↗</span>
       </Button>
 
       <div className="grid gap-3">
@@ -300,7 +305,7 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
       </div>
 
       <Link
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-white/62 transition hover:text-acid"
+        className="inline-flex min-h-11 items-center justify-center border-t border-white/15 pt-4 text-sm font-semibold text-white/70 transition hover:text-acid"
         href={getSwitchHref(mode, redirectTo)}
       >
         {switchText}
@@ -340,13 +345,13 @@ function InputField({
 
   return (
     <label className="grid gap-2">
-      <span className="font-mono text-xs font-bold text-white/62">{label}</span>
+      <span className="text-xs font-semibold text-white/75">{label}</span>
       <span className="relative">
         <input
           aria-describedby={error ? `${name}-error` : undefined}
           aria-invalid={error ? true : undefined}
           autoComplete={autoComplete}
-          className="min-h-12 w-full rounded-2xl border border-line bg-white/[0.035] px-4 pr-20 text-sm font-semibold text-white outline-none transition placeholder:text-white/52 hover:border-white/20 focus:border-acid focus:bg-ink aria-[invalid=true]:border-red-400"
+          className="kit-input pr-20"
           maxLength={maxLength}
           minLength={minLength}
           name={name}
@@ -359,7 +364,8 @@ function InputField({
         {type === "password" && onToggleVisibility && (
           <button
             aria-label={reveal ? "Скрыть пароль" : "Показать пароль"}
-            className="absolute right-1.5 top-1/2 inline-flex min-h-11 min-w-16 -translate-y-1/2 items-center justify-center rounded-xl px-2 font-mono text-[10px] font-black uppercase text-white/52 transition hover:bg-white/[0.06] hover:text-acid"
+            aria-pressed={reveal}
+            className="absolute right-1.5 top-1/2 inline-flex min-h-11 min-w-16 -translate-y-1/2 items-center justify-center px-2 font-mono text-[10px] font-black uppercase text-white/52 transition hover:bg-[#c4ff00]/10 hover:text-acid"
             onClick={onToggleVisibility}
             type="button"
           >

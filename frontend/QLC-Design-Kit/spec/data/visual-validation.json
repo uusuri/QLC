@@ -1,0 +1,6 @@
+{
+  "method": "AllSVG XML parsing; top-level text measured using local Arial/Menlo fallback. Does not prove all text overlap, nested geometry, Figma fonts or Auto Layout.",
+  "svgCount": 475,
+  "xmlErrors": [],
+  "textBoundaryIssues": []
+}

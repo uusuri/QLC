@@ -1,0 +1,89 @@
+{
+  "fileKey": "XRhj2StjAQ4JKIUQcVXONx",
+  "pageId": "9:22",
+  "pageName": "02 / Synthetic — на согласование",
+  "homeFrame": "9:23",
+  "headerFrame": "9:24",
+  "heroFrame": "10:22",
+  "copyFrame": "10:23",
+  "artFrame": "10:30",
+  "imageHash": "14ca927b6cd3c2060cdc8b84da88959a59842c4b",
+  "status": "Homepage desktop and mobile imported and arranged in Figma via native Zen UI. Expanded user brief now authorizes full application design and reusable UI kit; no frontend implementation authorized yet.",
+  "approvalGate": "User approval of the complete homepage mockup is required before website implementation.",
+  "catalogFrame": "17:3",
+  "graphicLine": "13:3",
+  "pendingImport": [],
+  "mobile": {
+    "width": 360,
+    "height": 2728,
+    "svg": "mobile-360.svg",
+    "preview": "mobile-360.png",
+    "heroPreview": "mobile-hero.png",
+    "artPlacement": {
+      "x": 0,
+      "y": 392,
+      "width": 360,
+      "height": 340,
+      "scaleMode": "FILL"
+    },
+    "validated": "SVG imported as editable native vectors and text plus unchanged approved raster art; revised course descriptions and All courses label visually checked on Figma canvas. Frame360x2728 at1800,100. Font property verification pending."
+  },
+  "methodFrame": "22:142",
+  "registrationFooterFrame": "34:1007",
+  "mobileFrame": "54:1075",
+  "uiKitPage": "56:1401",
+  "toolState": "MCP Starter call limit confirmed for get_libraries and get_metadata. Native editing available.",
+  "expandedBrief": "/Users/uusuri/.codex/attachments/623297b9-d7bd-4ee9-a557-80ca3bd6207c/pasted-text.txt",
+  "uiKit": {
+    "pageId": "56:1401",
+    "pageName": "QLC / UI KIT",
+    "progressLibrary": "57:1427",
+    "achievementLibrary": "59:3609",
+    "courseArtworkLibrary": "57:1692",
+    "progressGuide": "57:3552",
+    "nativeComponentCounts": {
+      "progress": 3,
+      "achievement": 30,
+      "courseArtwork": 20
+    },
+    "achievementContainerSize": [
+      128,
+      128
+    ],
+    "achievementValidation": "All30 selected; actual Width128Height128; native multiple components created; visual canvas reviewed. At100,1000. Instance resize/swap not yet tested.",
+    "deletedReplacedNodes": [
+      "57:1455",
+      "59:3596"
+    ],
+    "pendingLocalGuide": "library-usage-guide.svg",
+    "bindingsStatus": "Not audited; no claim of complete token/property bindings."
+  },
+  "latestScope": "Local complete UI/UX spec and editable UI elements. User allows Figma component creation, but asks to avoid time on full-screen composition. No site implementation.",
+  "specEntry": "spec/README.md",
+  "localRelease": {
+    "date": "2026-09-12",
+    "entry": "spec/index.html",
+    "readme": "spec/README.md",
+    "counts": {
+      "screenSpecs": 34,
+      "requiredMobileSpecs": 17,
+      "componentFamilies": 99,
+      "uiFamilies": 94,
+      "uiSpecimens": 475,
+      "courseConcepts": 20,
+      "reusedArtworks": 20,
+      "newCourseIcons": 20,
+      "newSmallSymbols": 20,
+      "achievementExamples": 38,
+      "reusedAchievementIcons": 30,
+      "utilityIcons": 22,
+      "tokens": 55,
+      "textStyles": 12,
+      "figmaImportFamilies": 94,
+      "previewBoards": 14
+    },
+    "newUiFigmaStatus": "Not imported. Local SVG sets prepared; native Components/Variants/Auto Layout and token bindings remain the import phase.",
+    "homepage": "Preserved",
+    "websiteCode": "Unchanged in this release"
+  }
+}

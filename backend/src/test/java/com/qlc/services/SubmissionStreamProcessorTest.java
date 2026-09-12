@@ -12,9 +12,12 @@ import com.qlc.runners.Toolchain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -61,8 +64,32 @@ class SubmissionStreamProcessorTest {
     assertNull(submission.getMemoryUsed());
     assertEquals(SubmissionStreamProcessor.RUNNER_FINISHED_MESSAGE_PREFIX + "0", submission.getSafeMessage());
     assertFalse(submission.getSafeMessage().contains(submission.getSourceCode()));
-    verify(dockerCppRunner).run(any(RunRequest.class));
+
+    ArgumentCaptor<RunRequest> requestCaptor = ArgumentCaptor.forClass(RunRequest.class);
+    verify(dockerCppRunner).run(requestCaptor.capture());
+    RunRequest runRequest = requestCaptor.getValue();
+    assertEquals(submission.getSourceCode(), runRequest.sourceCode());
+    assertEquals("", runRequest.stdin());
+    assertEquals(65_536, runRequest.memoryLimitInKb());
+    assertEquals(Duration.ofMillis(2_000), runRequest.timeLimit());
+    assertEquals(4_096, runRequest.outputLimitInKb());
+    assertEquals(Toolchain.CPP23, runRequest.toolchain());
     verify(submissionRepository).save(submission);
+  }
+
+  @Test
+  void dockerStartFailureLeavesMessageAvailableForRetry() throws Exception {
+    UUID submissionId = UUID.randomUUID();
+    Submission submission = submission(submissionId, SubmissionStatus.QUEUED, "int main() {}");
+    when(submissionRepository.findByIdForUpdate(submissionId)).thenReturn(Optional.of(submission));
+    when(dockerCppRunner.run(any(RunRequest.class))).thenThrow(new IOException("Docker is unavailable"));
+
+    IllegalStateException exception = assertThrows(
+        IllegalStateException.class,
+        () -> processor.process(message(submission)));
+
+    assertEquals("Failed to start Docker runner", exception.getMessage());
+    verify(submissionRepository, never()).save(submission);
   }
 
   @Test

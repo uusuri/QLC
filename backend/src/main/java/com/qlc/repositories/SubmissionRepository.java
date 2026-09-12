@@ -31,7 +31,9 @@ public interface SubmissionRepository extends JpaRepository<Submission, UUID> {
   }
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
-  @Query("select submission from Submission submission where submission.id = :id")
+  @Query("select submission from Submission submission "
+      + "join fetch submission.task "
+      + "where submission.id = :id")
   Optional<Submission> findByIdForUpdate(@Param("id") UUID id);
 
   List<Submission> findTop50ByStatusAndCreatedAtBeforeOrderByCreatedAtAsc(

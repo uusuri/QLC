@@ -9,13 +9,8 @@ import { PageState } from "@/components/PageState";
 import { SafeMarkdown } from "@/components/SafeMarkdown";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import {
-  TechBarcode,
-  TechCrosshair,
-  TechDotMatrix,
-  TechStripes
-} from "@/components/TechnicalMarks";
-import { Alert, ButtonLink, StatusBadge } from "@/components/ui";
+import { CourseArtwork, KitIcon } from "@/components/DesignKit";
+import { Alert, ButtonLink } from "@/components/ui";
 import {
   formatRussianCountWord,
   getAuthToken,
@@ -41,6 +36,10 @@ export default function CoursePage() {
 
   useEffect(() => {
     let ignore = false;
+    setLoading(true);
+    setHasAccess(false);
+    setLoadError("");
+    setExpandedLessonId(null);
 
     async function load() {
       try {
@@ -57,9 +56,10 @@ export default function CoursePage() {
         const courseId = parseCourseIdFromSlug(slug);
         if (data && courseId !== null && getAuthToken()) {
           try {
-            setHasAccess(await getCourseAccess(courseId));
+            const access = await getCourseAccess(courseId);
+            if (!ignore) setHasAccess(access);
           } catch {
-            setHasAccess(false);
+            if (!ignore) setHasAccess(false);
           }
         }
       } catch (error) {
@@ -130,226 +130,47 @@ export default function CoursePage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col">
-      <div className="flex-1 px-4 sm:px-6 lg:px-8">
-        <SiteHeader />
-        <div className="mx-auto max-w-7xl">
-          <div className="py-10 sm:py-14" id="main-content" tabIndex={-1}>
-            <Link className="text-sm text-white/42 transition hover:text-white" href="/">
-              ← Все курсы
-            </Link>
-
-            <section className="mt-10 grid gap-10 lg:grid-cols-[1fr_360px] lg:items-start">
-              <div>
-                <StatusBadge tone={canStudy ? "success" : "warning"}>
-                  {canStudy ? "Доступ открыт" : "Программа доступна для просмотра"}
-                </StatusBadge>
-                <h1 className="mt-5 max-w-4xl text-5xl font-bold leading-[0.97] tracking-[-0.055em] sm:text-7xl">
-                  {view.course.name}
-                </h1>
-                <div className="mt-6 max-w-2xl text-base leading-relaxed text-white/58">
-                  <SafeMarkdown markdown={view.course.description || "Описание пока не добавлено."} />
-                </div>
-              </div>
-
-              <aside className="relative overflow-hidden rounded-[28px] bg-phosphor p-6 text-ink sm:p-7" id="purchase">
-                <div aria-hidden="true" className="pointer-events-none absolute inset-0 select-none overflow-hidden">
-                  <span className="qlc-signal-rail absolute inset-x-0 top-0 h-1.5" />
-                  <span className="absolute inset-y-0 right-0 w-[28%] border-l border-ink/10 bg-[#f4f5ec]/55" />
-                  <span className="absolute -bottom-2 right-5 text-[72px] font-black leading-none tracking-[-0.09em] text-ink/[0.045]">
-                    OPEN
-                  </span>
-                  <TechCrosshair className="right-5 top-5 text-ink/28" />
-                  <TechBarcode className="absolute right-5 top-20 hidden text-ink/22 sm:inline-flex" label="QLC-COURSE/PASS" />
-                  <TechDotMatrix className="bottom-5 right-5 text-ink/12" />
-                  <TechStripes className="absolute bottom-0 left-7 h-4 w-20 text-ink/45" />
-                </div>
-
-                <div className="relative z-10">
-                  <p className="text-sm font-medium text-ink/60">
-                    {view.catalogCourse.lessonsCount > 0
-                      ? view.catalogCourse.lessonsLabel
-                      : "Программа готовится"}
-                  </p>
-                  <p className="mt-2 max-w-[15rem] text-4xl font-bold tracking-[-0.05em]">
-                    {canStudy ? "Можно начинать" : view.catalogCourse.price.formatted}
-                  </p>
-                  <p className="mt-4 max-w-[16rem] text-sm leading-relaxed text-ink/60">
-                    {canStudy
-                      ? "Материалы и задания курса доступны в вашем аккаунте."
-                      : "Посмотрите программу ниже. Оплата понадобится только для доступа к урокам и задачам."}
-                  </p>
-
-                  <dl className="mt-5 grid max-w-[16rem] grid-cols-2 gap-4 border-y border-ink/12 py-3 font-mono uppercase">
-                    <div>
-                      <dt className="text-[10px] tracking-[0.14em] text-ink/65">Модулей</dt>
-                      <dd className="mt-1 text-xs font-black">{view.modules.length}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-[10px] tracking-[0.14em] text-ink/65">Доступ</dt>
-                      <dd className="mt-1 text-xs font-black">{canStudy ? "Открыт" : "По покупке"}</dd>
-                    </div>
-                  </dl>
-
-                  <div className="mt-6">
-                    {canStudy ? (
-                      <ButtonLink
-                        className="w-full !border-ink !bg-ink !text-white shadow-none hover:!border-white hover:!bg-white hover:!text-ink focus-visible:!outline-ink"
-                        disabled={!view.firstLesson}
-                        href={`/lessons/${view.firstLesson?.id ?? ""}`}
-                      >
-                        Начать обучение
-                      </ButtonLink>
-                    ) : courseId !== null ? (
-                      <AddToCartButton
-                        className="!border-ink !bg-ink !text-white shadow-none hover:!border-white hover:!bg-white hover:!text-ink focus-visible:!outline-ink"
-                        courseId={courseId}
-                        courseSlug={slug}
-                      />
-                    ) : null}
-                  </div>
-                </div>
-              </aside>
-            </section>
-
-            <section className="mt-24">
-              <div className="flex flex-wrap items-end justify-between gap-4">
-                <div>
-                  <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-phosphor">
-                    Программа курса
-                  </p>
-                  <h2 className="mt-3 text-4xl font-bold tracking-[-0.04em] sm:text-6xl">
-                    Что будете изучать
-                  </h2>
-                </div>
-                <p className="text-sm text-white/38">
-                  {view.modules.length}{" "}
-                  {formatRussianCountWord(view.modules.length, ["модуль", "модуля", "модулей"])}
-                </p>
-              </div>
-
-              {view.modules.length === 0 ? (
-                <Alert className="mt-8" title="Программа готовится" tone="warning">
-                  В курсе пока нет модулей.
-                </Alert>
-              ) : (
-                <div className="mt-10 grid gap-5">
-                  {view.modules.map((item, moduleIndex) => {
-                    const publishedLessons = item.lessons.filter((lesson) => lesson.published);
-                    const isModuleExpanded = expandedModuleIds.includes(item.module.id);
-
-                    return (
-                      <section className="rounded-[28px] bg-white/[0.045] p-5 sm:p-7" key={item.module.id}>
-                        <button
-                          aria-expanded={isModuleExpanded}
-                          className="grid w-full gap-4 text-left sm:grid-cols-[60px_1fr_auto] sm:items-start"
-                          onClick={() => toggleModule(item.module.id)}
-                          type="button"
-                        >
-                          <span className="font-mono text-sm font-bold text-phosphor">
-                            {String(moduleIndex + 1).padStart(2, "0")}
-                          </span>
-                          <span>
-                            <span className="block text-2xl font-bold tracking-[-0.03em]">{item.module.name}</span>
-                            <span className="mt-2 block max-w-3xl text-sm leading-relaxed text-white/48">
-                              {item.module.description || "Описание модуля скоро появится."}
-                            </span>
-                          </span>
-                          <span className="flex items-center justify-between gap-4 text-sm text-white/36 sm:justify-end">
-                            <span>
-                              {publishedLessons.length}{" "}
-                              {formatRussianCountWord(publishedLessons.length, ["урок", "урока", "уроков"])}
-                            </span>
-                            <span
-                              aria-hidden="true"
-                              className={`grid h-8 w-8 place-items-center rounded-full border border-white/12 text-lg text-phosphor transition-transform ${
-                                isModuleExpanded ? "rotate-180" : ""
-                              }`}
-                            >
-                              ↓
-                            </span>
-                          </span>
-                        </button>
-
-                        {isModuleExpanded && publishedLessons.length > 0 && (
-                          <div className="mt-6 border-t border-white/8">
-                            {publishedLessons.map((lesson, lessonIndex) => {
-                              const isLessonExpanded = expandedLessonId === lesson.id;
-                              const outlines = taskOutlines[lesson.id] ?? [];
-                              const isLoadingOutline = taskOutlineLoadingId === lesson.id;
-
-                              return (
-                                <article className="border-b border-white/8 py-3 last:border-0" key={lesson.id}>
-                                  <button
-                                    aria-expanded={isLessonExpanded}
-                                    className="grid w-full gap-3 py-1 text-left transition hover:pl-2 sm:grid-cols-[40px_1fr_auto] sm:items-center"
-                                    onClick={() => void toggleLesson(lesson.id)}
-                                    type="button"
-                                  >
-                                  <span className="font-mono text-xs text-white/25">
-                                    {String(lessonIndex + 1).padStart(2, "0")}
-                                  </span>
-                                  <span className="text-base font-semibold text-white">{lesson.name}</span>
-                                  <span className="flex items-center justify-between gap-3 text-sm font-semibold text-phosphor sm:justify-end">
-                                    <span>{canStudy ? "Урок" : "В программе"}</span>
-                                    <span
-                                      aria-hidden="true"
-                                      className={`text-lg transition-transform ${isLessonExpanded ? "rotate-180" : ""}`}
-                                    >
-                                      ↓
-                                    </span>
-                                  </span>
-                                  </button>
-
-                                  {isLessonExpanded && (
-                                    <div className="mt-3 grid gap-4 border-l border-phosphor/30 pl-4 sm:ml-10">
-                                      {lesson.description && <p className="text-sm leading-relaxed text-white/52">{lesson.description}</p>}
-                                      {isLoadingOutline && <p className="text-sm text-white/42">Загружаем задачи…</p>}
-                                      {taskOutlineError[lesson.id] && <p className="text-sm text-red-200">{taskOutlineError[lesson.id]}</p>}
-                                      {!isLoadingOutline && !taskOutlineError[lesson.id] && outlines.length > 0 && (
-                                        <div className="grid gap-2">
-                                          {outlines.map((task, taskIndex) => (
-                                            <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-xl bg-black/20 px-3 py-2.5" key={task.id}>
-                                              <span className="min-w-0 break-words text-sm text-white/72">
-                                                <span className="mr-2 font-mono text-xs text-phosphor">{String(taskIndex + 1).padStart(2, "0")}</span>
-                                                {getTaskOutlineTitle(task.statementMd, taskIndex)}
-                                              </span>
-                                              <span className="font-mono text-[10px] font-bold uppercase text-white/36">{task.taskType}</span>
-                                            </div>
-                                          ))}
-                                        </div>
-                                      )}
-                                      {!isLoadingOutline && !taskOutlineError[lesson.id] && outlines.length === 0 && (
-                                        <p className="text-sm text-white/42">Задачи к уроку скоро появятся.</p>
-                                      )}
-                                      {canStudy ? (
-                                        <Link className="w-fit text-sm font-semibold text-phosphor transition hover:text-white" href={`/lessons/${lesson.id}`}>
-                                          Открыть урок →
-                                        </Link>
-                                      ) : (
-                                        <p className="text-sm text-white/42">Урок и редактор откроются после покупки курса.</p>
-                                      )}
-                                    </div>
-                                  )}
-                                </article>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </section>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto w-full max-w-[1344px] px-4 sm:px-6 lg:px-8">
-        <SiteFooter />
-      </div>
-    </main>
+    <div className="kit-shell">
+      <SiteHeader />
+      <main className="kit-page" id="main-content" tabIndex={-1}>
+        <nav aria-label="Хлебные крошки" className="flex flex-wrap items-center gap-3 text-sm text-muted"><Link className="qlc-text-link" href="/courses">Курсы</Link><span>/</span><span aria-current="page">{view.course.name}</span></nav>
+        <section className="kit-course-hero">
+          <div className="min-w-0"><p className="qlc-eyebrow text-acid">Программирование / Курс</p><h1 className="break-words">{view.course.name}</h1><SafeMarkdown markdown={view.course.description || "Описание пока не добавлено."} /><a className="qlc-text-link mt-6" href="#curriculum">Программа курса ↓</a></div>
+          <CourseArtwork title={view.course.name} />
+        </section>
+        <section className="kit-course-summary" id="purchase" aria-label="Доступ к курсу">
+          <dl><div><dt>Модулей</dt><dd>{view.modules.length}</dd></div><div><dt>Уроков</dt><dd>{view.catalogCourse.lessonsCount}</dd></div><div><dt>{canStudy ? "Статус" : "Стоимость"}</dt><dd>{canStudy ? "Доступ открыт" : view.catalogCourse.price.formatted}</dd></div></dl>
+          <div>{canStudy ? <ButtonLink className="w-full" disabled={!view.firstLesson} href={`/lessons/${view.firstLesson?.id ?? ""}`}>Открыть первый урок →</ButtonLink> : courseId !== null ? <AddToCartButton courseId={courseId} courseSlug={slug} /> : null}
+          {!view.firstLesson && canStudy && <p className="mt-3 text-xs text-muted">Первый урок скоро появится.</p>}</div>
+        </section>
+        <section id="curriculum">
+          <div className="kit-program-heading"><h2>Программа курса</h2>{view.modules.length > 0 && <button className="qlc-text-link text-muted" type="button" onClick={() => setExpandedModuleIds(expandedModuleIds.length === view.modules.length ? [] : view.modules.map(item => item.module.id))}>{expandedModuleIds.length === view.modules.length ? "Свернуть всё −" : "Раскрыть все модули +"}</button>}</div>
+          {!view.modules.length ? <Alert title="Программа готовится" tone="neutral">В курсе пока нет модулей.</Alert> : view.modules.map((item, moduleIndex) => {
+            const publishedLessons = item.lessons.filter(lesson => lesson.published);
+            const expanded = expandedModuleIds.includes(item.module.id);
+            return <section className="kit-module" key={item.module.id}>
+              <button className="kit-module-toggle" aria-controls={`module-${item.module.id}`} aria-expanded={expanded} onClick={() => toggleModule(item.module.id)} type="button">
+                <div className="min-w-0"><span className="qlc-eyebrow">{String(moduleIndex + 1).padStart(2, "0")} / Модуль</span><h3 className="break-words">{item.module.name}</h3>{item.module.description && <p>{item.module.description}</p>}<p className="mt-3">{publishedLessons.length} {formatRussianCountWord(publishedLessons.length, ["урок", "урока", "уроков"])}</p></div><span aria-hidden="true" className="text-xl text-muted">{expanded ? "−" : "+"}</span>
+              </button>
+              {expanded && <div id={`module-${item.module.id}`} className="kit-module-lessons">
+                {!publishedLessons.length ? <p className="py-5 text-sm text-muted">Уроки этого модуля скоро появятся.</p> : publishedLessons.map((lesson) => {
+                  const lessonExpanded = expandedLessonId === lesson.id;
+                  const outlines = taskOutlines[lesson.id] ?? [];
+                  return <article className="kit-lesson-row" key={lesson.id}>
+                    <div className="kit-lesson-line"><KitIcon name={canStudy ? "play" : "diamond"} className="text-muted" />{canStudy ? <Link href={`/lessons/${lesson.id}`}>{lesson.name}</Link> : <span>{lesson.name}</span>}<button className="min-h-11 min-w-11 text-muted" aria-label={`${lessonExpanded ? "Скрыть" : "Показать"} содержание урока «${lesson.name}»`} aria-expanded={lessonExpanded} aria-controls={`lesson-outline-${lesson.id}`} onClick={() => void toggleLesson(lesson.id)} type="button">{lessonExpanded ? "−" : "+"}</button></div>
+                    {lessonExpanded && <div className="kit-outline" id={`lesson-outline-${lesson.id}`}>
+                      {lesson.description && <p className="mb-4">{lesson.description}</p>}
+                      {taskOutlineLoadingId === lesson.id ? <p role="status">Загружаем задачи…</p> : taskOutlineError[lesson.id] ? <p role="alert" className="text-[#FF8074]">{taskOutlineError[lesson.id]}</p> : outlines.length ? outlines.map((task, taskIndex) => <div key={task.id} className="flex flex-wrap justify-between gap-2 border-b border-line py-3"><span>{getTaskOutlineTitle(task.statementMd, taskIndex)}</span><span className="text-xs">{task.taskType === "CODE" ? "Код" : task.taskType === "TEST" ? "Тест" : "Задание"}</span></div>) : <p>Задачи к уроку скоро появятся.</p>}
+                      {!canStudy && <a className="qlc-text-link text-acid" href="#purchase">Открыть доступ к урокам ↑</a>}
+                    </div>}
+                  </article>;
+                })}
+              </div>}
+            </section>;
+          })}
+        </section>
+      </main><SiteFooter />
+    </div>
   );
 }
 

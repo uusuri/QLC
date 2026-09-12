@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { CourseArtwork } from "@/components/DesignKit";
 import { useAuth } from "@/components/AuthProvider";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ContinueLearningCard } from "@/components/ContinueLearning";
 import { PageState } from "@/components/PageState";
-import { Alert, ButtonLink, Progress, StatusBadge, Panel, PanelBody, PanelHeader } from "@/components/ui";
-import { formatCoursesLabel, getMyLearningCourses } from "@/services/api";
+import { Alert, ButtonLink, Progress } from "@/components/ui";
+import { formatRussianCountWord, getMyLearningCourses } from "@/services/api";
 import { getNextLearningLesson } from "@/services/learningProgress";
 import type { MyCourseProgressDto } from "@/types";
 
@@ -82,157 +83,26 @@ export default function ProfilePage() {
 
   const courseList = courses ?? [];
   const nextLesson = getNextLearningLesson(courseList);
+  const solvedTasks = courseList.reduce((total, course) => total + course.solvedTasks, 0);
+  const totalTasks = courseList.reduce((total, course) => total + course.totalTasks, 0);
+  const overallProgress = totalTasks > 0 ? Math.round((solvedTasks / totalTasks) * 100) : 0;
 
-  return (
-    <main className="flex min-h-screen flex-col">
-      <div className="flex-1 px-4 py-4 sm:px-6 lg:px-8">
-        <SiteHeader />
-        <div className="mx-auto max-w-7xl">
-          <section className="mt-6 overflow-hidden rounded-[28px] border border-line bg-white/[0.025]" id="main-content" tabIndex={-1}>
-            {/* Hero header */}
-            <header className="grid gap-6 border-b border-line p-5 sm:p-7 lg:grid-cols-[1fr_auto]">
-              <div>
-                <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-acid">
-                  Профиль
-                </p>
-                <h1 className="mt-3 max-w-4xl break-words text-4xl font-black leading-[1.04] tracking-[-0.04em] [overflow-wrap:anywhere] sm:text-6xl lg:text-7xl">
-                  @{user.username}
-                </h1>
-                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/58">
-                  {user.email}
-                </p>
-              </div>
-
-              <div className="grid content-start gap-3">
-                <ButtonLink href="/" variant="secondary">
-                  К витрине
-                </ButtonLink>
-              </div>
-            </header>
-
-            {/* Courses list */}
-            <section className="p-5 sm:p-7">
-              {nextLesson && <div className="mb-7"><ContinueLearningCard nextLesson={nextLesson} /></div>}
-              <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-                <div>
-                  <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-acid">
-                    Купленные курсы
-                  </p>
-                  <h2 className="mt-2 text-3xl font-bold tracking-[-0.035em] sm:text-5xl">Мои курсы</h2>
-                </div>
-                <span className="font-mono text-xs font-black uppercase text-white/48">
-                  {formatCoursesLabel(courseList.length)}
-                </span>
-              </div>
-
-              {courseList.length === 0 ? (
-                <Alert title="Курсов пока нет" tone="warning">
-                  У вас пока нет курсов. Перейдите на витрину, чтобы выбрать первый трек.
-                </Alert>
-              ) : (
-                <div className="grid gap-6">
-                  {courseList.map((course) => (
-                    <Panel key={course.id} muted>
-                      <PanelHeader className="grid gap-4 sm:grid-cols-[1fr_auto]">
-                        <div>
-                          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-acid">
-                            Course / {course.solvedTasks} из {course.totalTasks} задач
-                          </p>
-                          <h3 className="text-2xl font-bold leading-[1.04] tracking-[-0.03em] sm:text-3xl">
-                            {course.name}
-                          </h3>
-                          <p className="mt-2 max-w-3xl text-sm leading-snug text-white/60">
-                            {course.description || "Описание пока не добавлено."}
-                          </p>
-                        </div>
-                        <StatusBadge tone="success">Доступно</StatusBadge>
-                      </PanelHeader>
-                      <PanelBody className="grid gap-6">
-                        <Progress label="Прогресс курса" value={course.progressPercent} />
-
-                        {course.modules.length === 0 ? (
-                          <Alert title="Программа готовится" tone="warning">
-                            В этом курсе пока нет модулей.
-                          </Alert>
-                        ) : (
-                          <div className="grid gap-4 xl:grid-cols-2">
-                            {course.modules.map((module, moduleIndex) => (
-                              <section className="overflow-hidden rounded-2xl border border-line bg-ink/70" key={module.id}>
-                                <header className="border-b border-line px-4 py-3">
-                                  <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
-                                    Модуль {moduleIndex + 1}
-                                  </p>
-                                  <h4 className="mt-1 text-lg font-bold leading-tight text-white">
-                                    {module.name}
-                                  </h4>
-                                </header>
-
-                                {module.lessons.length === 0 ? (
-                                  <p className="p-4 text-sm text-white/48">Уроки скоро появятся.</p>
-                                ) : (
-                                  <div className="grid gap-px bg-line">
-                                    {module.lessons.map((lesson, lessonIndex) => {
-                                      const isComplete = lesson.totalTasks > 0 && lesson.progressPercent === 100;
-                                      const isInProgress = lesson.solvedTasks > 0 && !isComplete;
-
-                                      return (
-                                        <Link
-                                          className="group grid gap-3 bg-panel p-4 transition hover:bg-white/[0.06]"
-                                          href={`/lessons/${lesson.id}`}
-                                          key={lesson.id}
-                                        >
-                                          <div className="grid grid-cols-[auto_1fr_auto] items-start gap-3">
-                                            <span
-                                              aria-label={isComplete ? "Урок завершён" : isInProgress ? "Урок в процессе" : "Урок не начат"}
-                                              className={`mt-1 inline-flex h-3 w-3 rounded-full border-2 ${
-                                                isComplete
-                                                  ? "border-acid bg-acid shadow-[0_0_12px_rgba(184,255,53,0.65)]"
-                                                  : isInProgress
-                                                    ? "border-ember bg-ember/30"
-                                                    : "border-white/25 bg-transparent"
-                                              }`}
-                                            />
-                                            <div className="min-w-0">
-                                              <p className="font-mono text-[10px] font-black uppercase text-white/40">
-                                                Урок {lessonIndex + 1}
-                                              </p>
-                                              <h5 className="mt-1 break-words text-base font-bold leading-tight text-white group-hover:text-acid sm:truncate">
-                                                {lesson.name}
-                                              </h5>
-                                            </div>
-                                            <span className="font-mono text-xs font-black text-white/70">
-                                              {lesson.solvedTasks}/{lesson.totalTasks}
-                                            </span>
-                                          </div>
-                                          <Progress label={`Прогресс: ${lesson.name}`} value={lesson.progressPercent} />
-                                        </Link>
-                                      );
-                                    })}
-                                  </div>
-                                )}
-                              </section>
-                            ))}
-                          </div>
-                        )}
-
-                        <div className="flex justify-end">
-                          <ButtonLink href={`/courses/course-${course.id}`}>
-                            Открыть курс
-                          </ButtonLink>
-                        </div>
-                      </PanelBody>
-                    </Panel>
-                  ))}
-                </div>
-              )}
-            </section>
-          </section>
-        </div>
-      </div>
-
-      <div className="mx-auto w-full max-w-[1344px] px-4 sm:px-6 lg:px-8">
-        <SiteFooter />
-      </div>
-    </main>
-  );
+  return <div className="kit-shell"><SiteHeader /><main className="kit-page" id="main-content" tabIndex={-1}>
+    <header className="kit-profile-header"><div aria-hidden="true" className="kit-avatar">{user.username.slice(0, 1).toUpperCase()}</div><div className="min-w-0"><p className="qlc-eyebrow">Личный кабинет</p><h1>@{user.username}</h1><p>{user.email}</p></div></header>
+    <dl className="kit-stats"><div><dt>Мои курсы</dt><dd>{courseList.length}</dd></div><div><dt>Решено задач</dt><dd>{solvedTasks}</dd></div><div><dt>Прогресс по задачам</dt><dd>{totalTasks > 0 ? `${overallProgress}%` : "—"}</dd></div></dl>
+    <Progress label={`Решено ${solvedTasks} из ${totalTasks} задач`} value={totalTasks > 0 ? solvedTasks / totalTasks * 100 : null} />
+    {nextLesson && <ContinueLearningCard nextLesson={nextLesson} />}
+    <section className="py-10"><div className="kit-program-heading"><h2>Мои курсы</h2><Link className="qlc-text-link text-muted" href="/courses">Найти новый курс ↗</Link></div>
+    {!courseList.length ? <Alert title="Здесь начнётся ваше обучение" tone="neutral"><p>Выберите первый курс. Здесь появятся уроки и прогресс по задачам.</p><ButtonLink className="mt-5" href="/courses">Выбрать курс →</ButtonLink></Alert> : <div className="kit-profile-courses">{courseList.map(course => {
+      const courseNext = getNextLearningLesson([course]);
+      return <article className="kit-learning-card" key={course.id}>
+        <header><CourseArtwork title={course.name} /><div className="min-w-0"><h3><Link href={`/courses/course-${course.id}`}>{course.name}</Link></h3><p>{course.modules.length} {formatRussianCountWord(course.modules.length, ["модуль", "модуля", "модулей"])} · {course.modules.reduce((sum, m) => sum + m.lessons.length, 0)} {formatRussianCountWord(course.modules.reduce((sum, m) => sum + m.lessons.length, 0), ["урок", "урока", "уроков"])}</p></div></header>
+        <Progress label={`${course.solvedTasks} / ${course.totalTasks} задач`} value={course.totalTasks > 0 ? course.solvedTasks / course.totalTasks * 100 : null} />
+        {courseNext && <p className="!mt-6">{courseNext.module.name} / {courseNext.lesson.name}</p>}
+        <ButtonLink className="mt-6 w-full" href={courseNext ? `/lessons/${courseNext.lesson.id}` : `/courses/course-${course.id}`}>{courseNext ? "Продолжить" : "Открыть курс"} →</ButtonLink>
+        <details><summary>Программа курса</summary>{course.modules.map(module => <div className="mt-4" key={module.id}><h4 className="text-sm">{module.name}</h4>{module.lessons.length ? module.lessons.map(lesson => <Link href={`/lessons/${lesson.id}`} key={lesson.id}><span>{lesson.name}</span><span className="shrink-0 text-muted">{lesson.solvedTasks}/{lesson.totalTasks}</span></Link>) : <p>Уроки скоро появятся.</p>}</div>)}</details>
+      </article>;
+    })}</div>}
+    </section>
+  </main><SiteFooter /></div>;
 }

@@ -1,0 +1,232 @@
+{
+  "version": 1,
+  "palette": [
+    "#0a0a0a",
+    "#f5f5ef",
+    "#c4ff00",
+    "#4433ee"
+  ],
+  "count": 20,
+  "assets": [
+    {
+      "file": "Course-01-Java.svg",
+      "topic": "Java",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Layered toroidal shell and quiet orbital core",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-02-Cpp.svg",
+      "topic": "Cpp",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Inclined laminar slab with crossing orbital contour",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-03-Python.svg",
+      "topic": "Python",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Interleaved continuous double-lobe ribbon",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-04-JavaScript.svg",
+      "topic": "JavaScript",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Radial fan of translucent folded planes",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-05-TypeScript.svg",
+      "topic": "TypeScript",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Nested faceted shell with folded interior plane",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-06-Go.svg",
+      "topic": "Go",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Parallel flowing channels and local transverse membrane",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-07-Rust.svg",
+      "topic": "Rust",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Scalloped printed annular shell",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-08-Spring.svg",
+      "topic": "Spring",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Helical translucent contour membrane",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-09-Backend.svg",
+      "topic": "Backend",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Three layered volumes joined by curved channels",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-10-Frontend.svg",
+      "topic": "Frontend",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Tessellated independent glass-like planes",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-11-SQL.svg",
+      "topic": "SQL",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Stacked concave slices intersected by translucent plane",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-12-PostgreSQL.svg",
+      "topic": "PostgreSQL",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Double curvature saddle lattice",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-13-Redis.svg",
+      "topic": "Redis",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Offset porous rhombi with swept filament trajectories",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-14-Docker.svg",
+      "topic": "Docker",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Nested folded extrusion and orbit",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-15-Kubernetes.svg",
+      "topic": "Kubernetes",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Polyhedral field with six satellite contour volumes",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-16-Linux.svg",
+      "topic": "Linux",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Staggered laminar arch and translucent cut plane",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-17-Git.svg",
+      "topic": "Git",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Bifurcating contour ribbon with faceted junctions",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-18-Algorithms.svg",
+      "topic": "Algorithms",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Recursive triangular shell with displaced layers",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-19-Computer-Science.svg",
+      "topic": "Computer-Science",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Interwoven orthogonal lattice and deliberate void",
+      "editable": true,
+      "raster": false
+    },
+    {
+      "file": "Course-20-Mathematics.svg",
+      "topic": "Mathematics",
+      "size": [
+        640,
+        300
+      ],
+      "composition": "Three-lobed continuous knot ribbon",
+      "editable": true,
+      "raster": false
+    }
+  ]
+}

@@ -20,8 +20,11 @@ type MarkdownBlock =
       text: string;
     };
 
+type MarkdownTone = "dark" | "paper";
+
 type SafeMarkdownProps = {
   markdown: string;
+  tone?: MarkdownTone;
 };
 
 const codeTokens = /\/\*[\s\S]*?\*\/|\/\/[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:abstract|boolean|break|case|catch|class|const|continue|default|do|double|else|enum|extends|final|float|for|if|implements|import|instanceof|int|interface|long|new|package|private|protected|public|return|short|static|switch|this|throw|throws|try|void|while)\b|\b(?:String|System|Scanner|Files|Path|HttpClient|Main|Integer|Double|Boolean)\b|\b(?:true|false|null)\b|\b\d+(?:\.\d+)?\b/g;
@@ -62,7 +65,7 @@ function renderCode(code: string): ReactNode[] {
 // Поддерживаем **жирный**, *курсив* и `inline code`; четыре звёздочки с
 // обеих сторон также считаем жирным текстом — такой вариант часто вводят
 // в редакторе по привычке.
-function renderInlineMarkdown(text: string): ReactNode[] {
+function renderInlineMarkdown(text: string, tone: MarkdownTone = "dark"): ReactNode[] {
   const nodes: ReactNode[] = [];
   let cursor = 0;
   let key = 0;
@@ -104,17 +107,17 @@ function renderInlineMarkdown(text: string): ReactNode[] {
 
     if (marker.startsWith("`")) {
       nodes.push(
-        <code className="break-all rounded bg-white/10 px-1.5 py-0.5 font-mono text-[0.9em] text-acid" key={key++}>
+        <code className={`break-all rounded-sm px-1.5 py-0.5 font-mono text-[0.9em] ${tone === "paper" ? "bg-ink/8 text-[#3c32f5]" : "bg-white/10 text-acid"}`} key={key++}>
           {content}
         </code>
       );
       continue;
     }
 
-    const children = renderInlineMarkdown(content);
+    const children = renderInlineMarkdown(content, tone);
     if (marker.length >= 2) {
       nodes.push(
-        <strong className="font-black text-white" key={key++}>
+        <strong className={`font-semibold ${tone === "paper" ? "text-ink" : "text-white"}`} key={key++}>
           {children}
         </strong>
       );
@@ -230,11 +233,12 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
   return blocks;
 }
 
-function renderBlock(block: MarkdownBlock, index: number): ReactNode {
+function renderBlock(block: MarkdownBlock, index: number, tone: MarkdownTone): ReactNode {
   if (block.kind === "code") {
     return (
       <pre
-        className="overflow-x-auto rounded-2xl border border-line bg-ink p-4 text-sm leading-relaxed text-white shadow-[0_0_40px_rgba(184,255,53,0.05)]"
+        className="min-w-0 overflow-x-auto rounded-sm border border-line bg-ink p-4 text-sm leading-7 text-white sm:p-5"
+        tabIndex={0}
         key={index}
       >
         {block.language && (
@@ -248,12 +252,12 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
   }
 
   if (block.kind === "heading") {
-    const className = "[overflow-wrap:anywhere] font-bold leading-tight tracking-[-0.025em] text-white";
+    const className = `[overflow-wrap:anywhere] font-semibold leading-tight tracking-[-0.025em] ${tone === "paper" ? "text-ink" : "text-white"}`;
 
     if (block.level === 1) {
       return (
         <h2 className={`${className} text-3xl`} key={index}>
-          {renderInlineMarkdown(block.text)}
+          {renderInlineMarkdown(block.text, tone)}
         </h2>
       );
     }
@@ -261,25 +265,25 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
     if (block.level === 2) {
       return (
         <h3 className={`${className} text-2xl`} key={index}>
-          {renderInlineMarkdown(block.text)}
+          {renderInlineMarkdown(block.text, tone)}
         </h3>
       );
     }
 
     return (
       <h4 className={`${className} text-xl`} key={index}>
-        {renderInlineMarkdown(block.text)}
+        {renderInlineMarkdown(block.text, tone)}
       </h4>
     );
   }
 
   if (block.kind === "list") {
     return (
-      <ul className="grid gap-2 text-sm leading-relaxed text-white/76" key={index}>
+      <ul className={`grid gap-3 text-base leading-7 ${tone === "paper" ? "text-ink/75" : "text-white/76"}`} key={index}>
         {block.items.map((item, itemIndex) => (
           <li className="grid grid-cols-[auto_1fr] gap-3" key={`${item}-${itemIndex}`}>
-            <span className="font-black text-acid">/</span>
-            <span className="min-w-0 [overflow-wrap:anywhere]">{renderInlineMarkdown(item)}</span>
+            <span aria-hidden="true" className={`font-mono ${tone === "paper" ? "text-ink/45" : "text-acid"}`}>/</span>
+            <span className="min-w-0 [overflow-wrap:anywhere]">{renderInlineMarkdown(item, tone)}</span>
           </li>
         ))}
       </ul>
@@ -287,14 +291,14 @@ function renderBlock(block: MarkdownBlock, index: number): ReactNode {
   }
 
   return (
-    <p className="[overflow-wrap:anywhere] text-sm leading-relaxed text-white/70 sm:text-base" key={index}>
-      {renderInlineMarkdown(block.text)}
+    <p className={`[overflow-wrap:anywhere] text-base leading-[1.8] ${tone === "paper" ? "text-ink/75" : "text-white/70"}`} key={index}>
+      {renderInlineMarkdown(block.text, tone)}
     </p>
   );
 }
 
-export const SafeMarkdown = memo(function SafeMarkdown({ markdown }: SafeMarkdownProps) {
+export const SafeMarkdown = memo(function SafeMarkdown({ markdown, tone = "dark" }: SafeMarkdownProps) {
   const blocks = parseMarkdown(markdown || "Описание скоро появится.");
 
-  return <div className="grid w-full max-w-[80ch] gap-5">{blocks.map(renderBlock)}</div>;
+  return <div className="kit-markdown grid w-full min-w-0 max-w-[74ch] gap-5">{blocks.map((block, index) => renderBlock(block, index, tone))}</div>;
 });

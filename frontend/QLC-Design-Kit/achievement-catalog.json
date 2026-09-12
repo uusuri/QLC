@@ -1,0 +1,227 @@
+{
+  "collection": "QLC / Achievement symbols",
+  "version": 1,
+  "size": [
+    128,
+    128
+  ],
+  "palette": {
+    "lime": "#C4FF00",
+    "paper": "#F5F5EF",
+    "cobalt": "#4433EE"
+  },
+  "background": "transparent",
+  "criteriaStatus": "Предлагаемые условия достижений; программная выдача не реализована в этом макете.",
+  "items": [
+    {
+      "id": "Achievement-01",
+      "title": "Первая тема",
+      "description": "Прочитана первая тема курса.",
+      "category": "Теория",
+      "file": "achievement-symbols/Achievement-01.svg"
+    },
+    {
+      "id": "Achievement-02",
+      "title": "Первая задача",
+      "description": "Решена первая задача.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-02.svg"
+    },
+    {
+      "id": "Achievement-03",
+      "title": "Пять решений",
+      "description": "Решены пять разных задач.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-03.svg"
+    },
+    {
+      "id": "Achievement-04",
+      "title": "Десять решений",
+      "description": "Решены десять разных задач.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-04.svg"
+    },
+    {
+      "id": "Achievement-05",
+      "title": "Двадцать пять решений",
+      "description": "Решены двадцать пять разных задач.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-05.svg"
+    },
+    {
+      "id": "Achievement-06",
+      "title": "Пятьдесят решений",
+      "description": "Решены пятьдесят разных задач.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-06.svg"
+    },
+    {
+      "id": "Achievement-07",
+      "title": "Первый модуль",
+      "description": "Завершён первый модуль курса.",
+      "category": "Курсы",
+      "file": "achievement-symbols/Achievement-07.svg"
+    },
+    {
+      "id": "Achievement-08",
+      "title": "Три модуля",
+      "description": "Завершены три модуля курса.",
+      "category": "Курсы",
+      "file": "achievement-symbols/Achievement-08.svg"
+    },
+    {
+      "id": "Achievement-09",
+      "title": "Пять модулей",
+      "description": "Завершены пять модулей курса.",
+      "category": "Курсы",
+      "file": "achievement-symbols/Achievement-09.svg"
+    },
+    {
+      "id": "Achievement-10",
+      "title": "Первый курс",
+      "description": "Завершён первый курс.",
+      "category": "Курсы",
+      "file": "achievement-symbols/Achievement-10.svg"
+    },
+    {
+      "id": "Achievement-11",
+      "title": "Два курса",
+      "description": "Завершены два курса.",
+      "category": "Курсы",
+      "file": "achievement-symbols/Achievement-11.svg"
+    },
+    {
+      "id": "Achievement-12",
+      "title": "Десять тем",
+      "description": "Прочитаны десять тем курса.",
+      "category": "Теория",
+      "file": "achievement-symbols/Achievement-12.svg"
+    },
+    {
+      "id": "Achievement-13",
+      "title": "Двадцать пять тем",
+      "description": "Прочитаны двадцать пять тем курса.",
+      "category": "Теория",
+      "file": "achievement-symbols/Achievement-13.svg"
+    },
+    {
+      "id": "Achievement-14",
+      "title": "Пятьдесят тем",
+      "description": "Прочитаны пятьдесят тем курса.",
+      "category": "Теория",
+      "file": "achievement-symbols/Achievement-14.svg"
+    },
+    {
+      "id": "Achievement-15",
+      "title": "Три дня практики",
+      "description": "Задачи решались три дня подряд.",
+      "category": "Регулярность",
+      "file": "achievement-symbols/Achievement-15.svg"
+    },
+    {
+      "id": "Achievement-16",
+      "title": "Неделя практики",
+      "description": "Задачи решались семь дней подряд.",
+      "category": "Регулярность",
+      "file": "achievement-symbols/Achievement-16.svg"
+    },
+    {
+      "id": "Achievement-17",
+      "title": "Две недели практики",
+      "description": "Задачи решались четырнадцать дней подряд.",
+      "category": "Регулярность",
+      "file": "achievement-symbols/Achievement-17.svg"
+    },
+    {
+      "id": "Achievement-18",
+      "title": "Месяц практики",
+      "description": "Задачи решались тридцать дней подряд.",
+      "category": "Регулярность",
+      "file": "achievement-symbols/Achievement-18.svg"
+    },
+    {
+      "id": "Achievement-19",
+      "title": "Возвращение к теме",
+      "description": "После изучения темы решена связанная с ней задача.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-19.svg"
+    },
+    {
+      "id": "Achievement-20",
+      "title": "Тема закреплена",
+      "description": "Решены все задачи одной темы.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-20.svg"
+    },
+    {
+      "id": "Achievement-21",
+      "title": "Разные темы",
+      "description": "Решены задачи из пяти разных тем.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-21.svg"
+    },
+    {
+      "id": "Achievement-22",
+      "title": "Послойная практика",
+      "description": "Решены задачи из десяти разных тем.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-22.svg"
+    },
+    {
+      "id": "Achievement-23",
+      "title": "Последовательность",
+      "description": "Решены все задачи трёх тем подряд.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-23.svg"
+    },
+    {
+      "id": "Achievement-24",
+      "title": "Полный обзор",
+      "description": "Прочитаны все темы одного модуля.",
+      "category": "Теория",
+      "file": "achievement-symbols/Achievement-24.svg"
+    },
+    {
+      "id": "Achievement-25",
+      "title": "Самостоятельная проверка",
+      "description": "Решение исправлено после неуспешной проверки.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-25.svg"
+    },
+    {
+      "id": "Achievement-26",
+      "title": "Пять исправлений",
+      "description": "Пять задач решены после исправления первоначального решения.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-26.svg"
+    },
+    {
+      "id": "Achievement-27",
+      "title": "Практика в модуле",
+      "description": "Решены все задачи одного модуля.",
+      "category": "Курсы",
+      "file": "achievement-symbols/Achievement-27.svg"
+    },
+    {
+      "id": "Achievement-28",
+      "title": "Практика в курсе",
+      "description": "Решены все задачи одного курса.",
+      "category": "Курсы",
+      "file": "achievement-symbols/Achievement-28.svg"
+    },
+    {
+      "id": "Achievement-29",
+      "title": "Устойчивый ритм",
+      "description": "За семь дней решены не менее десяти разных задач.",
+      "category": "Регулярность",
+      "file": "achievement-symbols/Achievement-29.svg"
+    },
+    {
+      "id": "Achievement-30",
+      "title": "Сто решений",
+      "description": "Решены сто разных задач.",
+      "category": "Практика",
+      "file": "achievement-symbols/Achievement-30.svg"
+    }
+  ]
+}

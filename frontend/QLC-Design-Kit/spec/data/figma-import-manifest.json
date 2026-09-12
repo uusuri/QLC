@@ -1,0 +1,660 @@
+[
+  {
+    "component": "Button/Primary",
+    "file": "figma-import/button-primary.svg",
+    "visualFrames": 18,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Button/Secondary",
+    "file": "figma-import/button-secondary.svg",
+    "visualFrames": 18,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Button/Ghost",
+    "file": "figma-import/button-ghost.svg",
+    "visualFrames": 18,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Button/Text",
+    "file": "figma-import/button-text.svg",
+    "visualFrames": 18,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Button/Danger",
+    "file": "figma-import/button-danger.svg",
+    "visualFrames": 18,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Button/Icon",
+    "file": "figma-import/button-icon.svg",
+    "visualFrames": 18,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Input/Text",
+    "file": "figma-import/input-text.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Input/Search",
+    "file": "figma-import/input-search.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Input/Password",
+    "file": "figma-import/input-password.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Input/Email",
+    "file": "figma-import/input-email.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Input/Number",
+    "file": "figma-import/input-number.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Input/Promo",
+    "file": "figma-import/input-promo.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Input/Code",
+    "file": "figma-import/input-code.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Textarea",
+    "file": "figma-import/textarea.svg",
+    "visualFrames": 5,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Select",
+    "file": "figma-import/select.svg",
+    "visualFrames": 5,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Checkbox",
+    "file": "figma-import/checkbox.svg",
+    "visualFrames": 5,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Radio",
+    "file": "figma-import/radio.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Switch",
+    "file": "figma-import/switch.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Filter/Chip",
+    "file": "figma-import/filter-chip.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Tabs",
+    "file": "figma-import/tabs.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Accordion",
+    "file": "figma-import/accordion.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Pagination",
+    "file": "figma-import/pagination.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "LoadMore",
+    "file": "figma-import/loadmore.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Breadcrumbs",
+    "file": "figma-import/breadcrumbs.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Menu",
+    "file": "figma-import/menu.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Dropdown",
+    "file": "figma-import/dropdown.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "ContextMenu",
+    "file": "figma-import/contextmenu.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Tooltip",
+    "file": "figma-import/tooltip.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Popover",
+    "file": "figma-import/popover.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Navigation/Header",
+    "file": "figma-import/navigation-header.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Navigation/Drawer",
+    "file": "figma-import/navigation-drawer.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Navigation/Sidebar",
+    "file": "figma-import/navigation-sidebar.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Section/Header",
+    "file": "figma-import/section-header.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Modal/Confirm",
+    "file": "figma-import/modal-confirm.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Modal/Content",
+    "file": "figma-import/modal-content.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Drawer",
+    "file": "figma-import/drawer.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Toast",
+    "file": "figma-import/toast.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Alert",
+    "file": "figma-import/alert.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Badge/Status",
+    "file": "figma-import/badge-status.svg",
+    "visualFrames": 7,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Badge/Difficulty",
+    "file": "figma-import/badge-difficulty.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Incident/Severity",
+    "file": "figma-import/incident-severity.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Spinner",
+    "file": "figma-import/spinner.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Skeleton",
+    "file": "figma-import/skeleton.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "EmptyState",
+    "file": "figma-import/emptystate.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "ErrorState",
+    "file": "figma-import/errorstate.svg",
+    "visualFrames": 8,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Progress/Linear",
+    "file": "figma-import/progress-linear.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Progress/XP",
+    "file": "figma-import/progress-xp.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Progress/Course",
+    "file": "figma-import/progress-course.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Progress/Module",
+    "file": "figma-import/progress-module.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Progress/Lesson",
+    "file": "figma-import/progress-lesson.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Progress/Skill",
+    "file": "figma-import/progress-skill.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Progress/Circular",
+    "file": "figma-import/progress-circular.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Level/Badge",
+    "file": "figma-import/level-badge.svg",
+    "visualFrames": 1,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "XP/Reward",
+    "file": "figma-import/xp-reward.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "XP/Summary",
+    "file": "figma-import/xp-summary.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "LevelUp/Modal",
+    "file": "figma-import/levelup-modal.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "SkillProgress/Spiral",
+    "file": "figma-import/skillprogress-spiral.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "SkillStage",
+    "file": "figma-import/skillstage.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "SkillMasteryBadge",
+    "file": "figma-import/skillmasterybadge.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Review/Due",
+    "file": "figma-import/review-due.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Course/Card",
+    "file": "figma-import/course-card.svg",
+    "visualFrames": 7,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Course/Progress",
+    "file": "figma-import/course-progress.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Module/Card",
+    "file": "figma-import/module-card.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Lesson/Row",
+    "file": "figma-import/lesson-row.svg",
+    "visualFrames": 5,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Activity/Card",
+    "file": "figma-import/activity-card.svg",
+    "visualFrames": 7,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Achievement/Card",
+    "file": "figma-import/achievement-card.svg",
+    "visualFrames": 8,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Achievement/Progress",
+    "file": "figma-import/achievement-progress.svg",
+    "visualFrames": 1,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Achievement/Grid",
+    "file": "figma-import/achievement-grid.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Avatar",
+    "file": "figma-import/avatar.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "User/MiniProfile",
+    "file": "figma-import/user-miniprofile.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Profile/Header",
+    "file": "figma-import/profile-header.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Profile/Stats",
+    "file": "figma-import/profile-stats.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Profile/Activity",
+    "file": "figma-import/profile-activity.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Content/Block",
+    "file": "figma-import/content-block.svg",
+    "visualFrames": 16,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Code/Block",
+    "file": "figma-import/code-block.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Table",
+    "file": "figma-import/table.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Divider",
+    "file": "figma-import/divider.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Task/EditorShell",
+    "file": "figma-import/task-editorshell.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Task/Status",
+    "file": "figma-import/task-status.svg",
+    "visualFrames": 16,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Task/Result",
+    "file": "figma-import/task-result.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Task/Transfer",
+    "file": "figma-import/task-transfer.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "CodeReview/Finding",
+    "file": "figma-import/codereview-finding.svg",
+    "visualFrames": 5,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "CodeReview/Result",
+    "file": "figma-import/codereview-result.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "CodeReview/Line",
+    "file": "figma-import/codereview-line.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Incident/Card",
+    "file": "figma-import/incident-card.svg",
+    "visualFrames": 5,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Incident/Evidence",
+    "file": "figma-import/incident-evidence.svg",
+    "visualFrames": 7,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Incident/Diagnosis",
+    "file": "figma-import/incident-diagnosis.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Incident/Result",
+    "file": "figma-import/incident-result.svg",
+    "visualFrames": 2,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Payment/Summary",
+    "file": "figma-import/payment-summary.svg",
+    "visualFrames": 4,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Payment/Method",
+    "file": "figma-import/payment-method.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Payment/Form",
+    "file": "figma-import/payment-form.svg",
+    "visualFrames": 5,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Payment/Success",
+    "file": "figma-import/payment-success.svg",
+    "visualFrames": 1,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Payment/Failed",
+    "file": "figma-import/payment-failed.svg",
+    "visualFrames": 3,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  },
+  {
+    "component": "Auth/Form",
+    "file": "figma-import/auth-form.svg",
+    "visualFrames": 6,
+    "status": "Native editable SVG frames; not pre-bound components",
+    "numericValues": "Only one determinate specimen; values remain data"
+  }
+]

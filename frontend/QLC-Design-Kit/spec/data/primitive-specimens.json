@@ -1,0 +1,2632 @@
+[
+  {
+    "component": "Button/Primary",
+    "state": "default",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-primary--default--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "default",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-primary--default--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "default",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-primary--default--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "hover",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-primary--hover--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "hover",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-primary--hover--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "hover",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-primary--hover--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "pressed",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-primary--pressed--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "pressed",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-primary--pressed--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "pressed",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-primary--pressed--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "focus",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-primary--focus--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "focus",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-primary--focus--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "focus",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-primary--focus--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "disabled",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-primary--disabled--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "disabled",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-primary--disabled--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "disabled",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-primary--disabled--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "loading",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-primary--loading--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "loading",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-primary--loading--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Primary",
+    "state": "loading",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-primary--loading--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "default",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-secondary--default--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "default",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-secondary--default--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "default",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-secondary--default--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "hover",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-secondary--hover--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "hover",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-secondary--hover--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "hover",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-secondary--hover--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "pressed",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-secondary--pressed--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "pressed",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-secondary--pressed--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "pressed",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-secondary--pressed--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "focus",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-secondary--focus--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "focus",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-secondary--focus--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "focus",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-secondary--focus--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "disabled",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-secondary--disabled--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "disabled",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-secondary--disabled--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "disabled",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-secondary--disabled--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "loading",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-secondary--loading--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "loading",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-secondary--loading--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Secondary",
+    "state": "loading",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-secondary--loading--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "default",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-ghost--default--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "default",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-ghost--default--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "default",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-ghost--default--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "hover",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-ghost--hover--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "hover",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-ghost--hover--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "hover",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-ghost--hover--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "pressed",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-ghost--pressed--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "pressed",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-ghost--pressed--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "pressed",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-ghost--pressed--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "focus",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-ghost--focus--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "focus",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-ghost--focus--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "focus",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-ghost--focus--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "disabled",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-ghost--disabled--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "disabled",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-ghost--disabled--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "disabled",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-ghost--disabled--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "loading",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-ghost--loading--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "loading",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-ghost--loading--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Ghost",
+    "state": "loading",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-ghost--loading--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "default",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-text--default--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "default",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-text--default--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "default",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-text--default--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "hover",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-text--hover--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "hover",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-text--hover--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "hover",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-text--hover--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "pressed",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-text--pressed--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "pressed",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-text--pressed--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "pressed",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-text--pressed--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "focus",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-text--focus--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "focus",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-text--focus--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "focus",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-text--focus--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "disabled",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-text--disabled--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "disabled",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-text--disabled--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "disabled",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-text--disabled--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "loading",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-text--loading--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "loading",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-text--loading--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Text",
+    "state": "loading",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-text--loading--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "default",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-danger--default--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "default",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-danger--default--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "default",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-danger--default--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "hover",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-danger--hover--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "hover",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-danger--hover--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "hover",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-danger--hover--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "pressed",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-danger--pressed--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "pressed",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-danger--pressed--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "pressed",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-danger--pressed--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "focus",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-danger--focus--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "focus",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-danger--focus--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "focus",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-danger--focus--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "disabled",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-danger--disabled--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "disabled",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-danger--disabled--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "disabled",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-danger--disabled--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "loading",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-danger--loading--S.svg",
+    "width": 216,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "loading",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-danger--loading--M.svg",
+    "width": 216,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Danger",
+    "state": "loading",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-danger--loading--L.svg",
+    "width": 216,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "default",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-icon--default--S.svg",
+    "width": 60,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "default",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-icon--default--M.svg",
+    "width": 64,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "default",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-icon--default--L.svg",
+    "width": 72,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "hover",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-icon--hover--S.svg",
+    "width": 60,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "hover",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-icon--hover--M.svg",
+    "width": 64,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "hover",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-icon--hover--L.svg",
+    "width": 72,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "pressed",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-icon--pressed--S.svg",
+    "width": 60,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "pressed",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-icon--pressed--M.svg",
+    "width": 64,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "pressed",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-icon--pressed--L.svg",
+    "width": 72,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "focus",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-icon--focus--S.svg",
+    "width": 60,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "focus",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-icon--focus--M.svg",
+    "width": 64,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "focus",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-icon--focus--L.svg",
+    "width": 72,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "disabled",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-icon--disabled--S.svg",
+    "width": 60,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "disabled",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-icon--disabled--M.svg",
+    "width": 64,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "disabled",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-icon--disabled--L.svg",
+    "width": 72,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "loading",
+    "sizeVariant": "S",
+    "file": "assets/ui/01-controls/button-icon--loading--S.svg",
+    "width": 60,
+    "height": 60,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "loading",
+    "sizeVariant": "M",
+    "file": "assets/ui/01-controls/button-icon--loading--M.svg",
+    "width": 64,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Button/Icon",
+    "state": "loading",
+    "sizeVariant": "L",
+    "file": "assets/ui/01-controls/button-icon--loading--L.svg",
+    "width": 72,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Text",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-text--empty.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Text",
+    "state": "focus",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-text--focus.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Text",
+    "state": "filled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-text--filled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Text",
+    "state": "error",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-text--error.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Text",
+    "state": "success",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-text--success.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Text",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-text--disabled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Search",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-search--empty.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Search",
+    "state": "focus",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-search--focus.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Search",
+    "state": "filled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-search--filled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Search",
+    "state": "error",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-search--error.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Search",
+    "state": "success",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-search--success.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Search",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-search--disabled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Password",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-password--empty.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Password",
+    "state": "focus",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-password--focus.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Password",
+    "state": "filled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-password--filled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Password",
+    "state": "error",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-password--error.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Password",
+    "state": "success",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-password--success.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Password",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-password--disabled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Email",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-email--empty.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Email",
+    "state": "focus",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-email--focus.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Email",
+    "state": "filled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-email--filled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Email",
+    "state": "error",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-email--error.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Email",
+    "state": "success",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-email--success.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Email",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-email--disabled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Number",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-number--empty.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Number",
+    "state": "focus",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-number--focus.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Number",
+    "state": "filled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-number--filled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Number",
+    "state": "error",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-number--error.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Number",
+    "state": "success",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-number--success.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Number",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-number--disabled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Promo",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-promo--empty.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Promo",
+    "state": "focus",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-promo--focus.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Promo",
+    "state": "filled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-promo--filled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Promo",
+    "state": "error",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-promo--error.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Promo",
+    "state": "success",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-promo--success.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Promo",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-promo--disabled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Code",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-code--empty.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Code",
+    "state": "focus",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-code--focus.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Code",
+    "state": "filled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-code--filled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Code",
+    "state": "error",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-code--error.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Code",
+    "state": "success",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-code--success.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Input/Code",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/input-code--disabled.svg",
+    "width": 360,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Textarea",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/textarea--empty.svg",
+    "width": 360,
+    "height": 228,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Textarea",
+    "state": "focus",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/textarea--focus.svg",
+    "width": 360,
+    "height": 228,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Textarea",
+    "state": "filled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/textarea--filled.svg",
+    "width": 360,
+    "height": 228,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Textarea",
+    "state": "error",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/textarea--error.svg",
+    "width": 360,
+    "height": 228,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Textarea",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/textarea--disabled.svg",
+    "width": 360,
+    "height": 228,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Select",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/select--default.svg",
+    "width": 360,
+    "height": 260,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Select",
+    "state": "open",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/select--open.svg",
+    "width": 360,
+    "height": 260,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Select",
+    "state": "selected",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/select--selected.svg",
+    "width": 360,
+    "height": 260,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Select",
+    "state": "error",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/select--error.svg",
+    "width": 360,
+    "height": 260,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Select",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/select--disabled.svg",
+    "width": 360,
+    "height": 260,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Checkbox",
+    "state": "unchecked",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/checkbox--unchecked.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Checkbox",
+    "state": "checked",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/checkbox--checked.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Checkbox",
+    "state": "mixed",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/checkbox--mixed.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Checkbox",
+    "state": "focus",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/checkbox--focus.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Checkbox",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/checkbox--disabled.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Radio",
+    "state": "unselected",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/radio--unselected.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Radio",
+    "state": "selected",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/radio--selected.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Radio",
+    "state": "focus",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/radio--focus.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Radio",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/radio--disabled.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Switch",
+    "state": "off",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/switch--off.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Switch",
+    "state": "on",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/switch--on.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Switch",
+    "state": "focus",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/switch--focus.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Switch",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/switch--disabled.svg",
+    "width": 360,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Filter/Chip",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/filter-chip--default.svg",
+    "width": 220,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Filter/Chip",
+    "state": "selected",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/filter-chip--selected.svg",
+    "width": 220,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Filter/Chip",
+    "state": "removable",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/filter-chip--removable.svg",
+    "width": 220,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Filter/Chip",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/01-controls/filter-chip--disabled.svg",
+    "width": 220,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Tabs",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/tabs--default.svg",
+    "width": 460,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Tabs",
+    "state": "selected",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/tabs--selected.svg",
+    "width": 460,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Tabs",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/tabs--disabled.svg",
+    "width": 460,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Accordion",
+    "state": "collapsed",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/accordion--collapsed.svg",
+    "width": 440,
+    "height": 200,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Accordion",
+    "state": "expanded",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/accordion--expanded.svg",
+    "width": 440,
+    "height": 200,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Accordion",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/accordion--disabled.svg",
+    "width": 440,
+    "height": 200,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Pagination",
+    "state": "first",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/pagination--first.svg",
+    "width": 400,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Pagination",
+    "state": "middle",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/pagination--middle.svg",
+    "width": 400,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Pagination",
+    "state": "last",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/pagination--last.svg",
+    "width": 400,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Pagination",
+    "state": "loading",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/pagination--loading.svg",
+    "width": 400,
+    "height": 64,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "LoadMore",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/loadmore--default.svg",
+    "width": 340,
+    "height": 80,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "LoadMore",
+    "state": "loading",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/loadmore--loading.svg",
+    "width": 340,
+    "height": 80,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "LoadMore",
+    "state": "end",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/loadmore--end.svg",
+    "width": 340,
+    "height": 80,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Breadcrumbs",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/breadcrumbs--default.svg",
+    "width": 480,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Breadcrumbs",
+    "state": "collapsed",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/breadcrumbs--collapsed.svg",
+    "width": 480,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Menu",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/menu--default.svg",
+    "width": 280,
+    "height": 242,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Menu",
+    "state": "selected",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/menu--selected.svg",
+    "width": 280,
+    "height": 242,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Menu",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/menu--disabled.svg",
+    "width": 280,
+    "height": 242,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Dropdown",
+    "state": "closed",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/dropdown--closed.svg",
+    "width": 280,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Dropdown",
+    "state": "open",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/dropdown--open.svg",
+    "width": 280,
+    "height": 242,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Dropdown",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/dropdown--empty.svg",
+    "width": 280,
+    "height": 242,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "ContextMenu",
+    "state": "open",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/contextmenu--open.svg",
+    "width": 280,
+    "height": 242,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "ContextMenu",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/contextmenu--disabled.svg",
+    "width": 280,
+    "height": 242,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Tooltip",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/tooltip--default.svg",
+    "width": 280,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Tooltip",
+    "state": "multiline",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/tooltip--multiline.svg",
+    "width": 280,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Popover",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/popover--default.svg",
+    "width": 320,
+    "height": 180,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Popover",
+    "state": "with-action",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/popover--with-action.svg",
+    "width": 320,
+    "height": 180,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Navigation/Header",
+    "state": "guest",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/navigation-header--guest.svg",
+    "width": 1040,
+    "height": 88,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Navigation/Header",
+    "state": "authenticated",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/navigation-header--authenticated.svg",
+    "width": 1040,
+    "height": 88,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Navigation/Drawer",
+    "state": "guest",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/navigation-drawer--guest.svg",
+    "width": 320,
+    "height": 500,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Navigation/Drawer",
+    "state": "authenticated",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/navigation-drawer--authenticated.svg",
+    "width": 320,
+    "height": 500,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Navigation/Sidebar",
+    "state": "expanded",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/navigation-sidebar--expanded.svg",
+    "width": 280,
+    "height": 450,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Navigation/Sidebar",
+    "state": "collapsed",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/navigation-sidebar--collapsed.svg",
+    "width": 72,
+    "height": 450,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Section/Header",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/section-header--default.svg",
+    "width": 640,
+    "height": 100,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Section/Header",
+    "state": "with-action",
+    "sizeVariant": null,
+    "file": "assets/ui/02-navigation/section-header--with-action.svg",
+    "width": 640,
+    "height": 100,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Modal/Confirm",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/modal-confirm--default.svg",
+    "width": 480,
+    "height": 310,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Modal/Confirm",
+    "state": "danger",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/modal-confirm--danger.svg",
+    "width": 480,
+    "height": 310,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Modal/Confirm",
+    "state": "processing",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/modal-confirm--processing.svg",
+    "width": 480,
+    "height": 310,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Modal/Content",
+    "state": "small",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/modal-content--small.svg",
+    "width": 320,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Modal/Content",
+    "state": "medium",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/modal-content--medium.svg",
+    "width": 480,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Modal/Content",
+    "state": "large",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/modal-content--large.svg",
+    "width": 640,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Drawer",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/drawer--default.svg",
+    "width": 360,
+    "height": 460,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Drawer",
+    "state": "loading",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/drawer--loading.svg",
+    "width": 360,
+    "height": 460,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Toast",
+    "state": "success",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/toast--success.svg",
+    "width": 420,
+    "height": 124,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Toast",
+    "state": "info",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/toast--info.svg",
+    "width": 420,
+    "height": 124,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Toast",
+    "state": "warning",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/toast--warning.svg",
+    "width": 420,
+    "height": 124,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Toast",
+    "state": "error",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/toast--error.svg",
+    "width": 420,
+    "height": 124,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Alert",
+    "state": "success",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/alert--success.svg",
+    "width": 440,
+    "height": 144,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Alert",
+    "state": "info",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/alert--info.svg",
+    "width": 440,
+    "height": 144,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Alert",
+    "state": "warning",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/alert--warning.svg",
+    "width": 440,
+    "height": 144,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Alert",
+    "state": "error",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/alert--error.svg",
+    "width": 440,
+    "height": 144,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Badge/Status",
+    "state": "new",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/badge-status--new.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Badge/Status",
+    "state": "popular",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/badge-status--popular.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Badge/Status",
+    "state": "sale",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/badge-status--sale.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Badge/Status",
+    "state": "locked",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/badge-status--locked.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Badge/Status",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/badge-status--completed.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Badge/Status",
+    "state": "in-progress",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/badge-status--in-progress.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Badge/Status",
+    "state": "review-due",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/badge-status--review-due.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Badge/Difficulty",
+    "state": "easy",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/badge-difficulty--easy.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Badge/Difficulty",
+    "state": "medium",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/badge-difficulty--medium.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Badge/Difficulty",
+    "state": "hard",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/badge-difficulty--hard.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Severity",
+    "state": "sev-1",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/incident-severity--sev-1.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Severity",
+    "state": "sev-2",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/incident-severity--sev-2.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Severity",
+    "state": "sev-3",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/incident-severity--sev-3.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Spinner",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/spinner--default.svg",
+    "width": 120,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Spinner",
+    "state": "reduced-motion",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/spinner--reduced-motion.svg",
+    "width": 120,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Skeleton",
+    "state": "page",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/skeleton--page.svg",
+    "width": 360,
+    "height": 220,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Skeleton",
+    "state": "course-card",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/skeleton--course-card.svg",
+    "width": 360,
+    "height": 220,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Skeleton",
+    "state": "lesson",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/skeleton--lesson.svg",
+    "width": 360,
+    "height": 220,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Skeleton",
+    "state": "profile",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/skeleton--profile.svg",
+    "width": 360,
+    "height": 220,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Skeleton",
+    "state": "achievement",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/skeleton--achievement.svg",
+    "width": 360,
+    "height": 220,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Skeleton",
+    "state": "task",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/skeleton--task.svg",
+    "width": 360,
+    "height": 220,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "EmptyState",
+    "state": "no-courses",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/emptystate--no-courses.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "EmptyState",
+    "state": "no-active-courses",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/emptystate--no-active-courses.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "EmptyState",
+    "state": "no-achievements",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/emptystate--no-achievements.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "EmptyState",
+    "state": "no-results",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/emptystate--no-results.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "EmptyState",
+    "state": "no-activity",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/emptystate--no-activity.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "EmptyState",
+    "state": "no-payments",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/emptystate--no-payments.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "ErrorState",
+    "state": "generic",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/errorstate--generic.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "ErrorState",
+    "state": "network",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/errorstate--network.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "ErrorState",
+    "state": "403",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/errorstate--403.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "ErrorState",
+    "state": "404",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/errorstate--404.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "ErrorState",
+    "state": "500",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/errorstate--500.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "ErrorState",
+    "state": "maintenance",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/errorstate--maintenance.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "ErrorState",
+    "state": "offline",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/errorstate--offline.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "ErrorState",
+    "state": "reconnecting",
+    "sizeVariant": null,
+    "file": "assets/ui/03-feedback/errorstate--reconnecting.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  }
+]

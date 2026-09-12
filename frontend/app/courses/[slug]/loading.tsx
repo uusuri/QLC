@@ -1,15 +1,6 @@
-// SkeletonStack показывает loading state, пока Next грузит route data.
-import { Panel, PanelBody, SkeletonStack } from "@/components/ui";
+import { PageState } from "@/components/PageState";
 
 // Loading UI для /courses/[slug].
 export default function CourseLoading() {
-  return (
-    <main className="min-h-screen px-4 py-4 sm:px-6 lg:px-8" id="main-content" tabIndex={-1}>
-      <Panel className="mx-auto max-w-7xl">
-        <PanelBody>
-          <SkeletonStack />
-        </PanelBody>
-      </Panel>
-    </main>
-  );
+  return <PageState eyebrow="Курс / загрузка" showPrimaryAction={false} title="Загружаем курс" text="Собираем программу, модули и доступные задания." />;
 }

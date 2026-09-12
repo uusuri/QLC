@@ -1,0 +1,560 @@
+{
+  "purpose": "Named compositions referenced by screen specs; reuse these primitives instead of inventing new base components. These are assembly recipes, not additional delivered Figma components.",
+  "recipes": [
+    {
+      "name": "Achievement/Detail",
+      "components": [
+        "Achievement/Card",
+        "Progress/Linear",
+        "Modal/Content"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Activity/Header",
+      "components": [
+        "Section/Header",
+        "Badge/Status",
+        "XP/Reward"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Activity/Timeline",
+      "components": [
+        "Profile/Activity"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Auth/Shell",
+      "components": [
+        "Auth/Form"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Avatar/Upload",
+      "components": [
+        "Avatar",
+        "Button/Secondary",
+        "Input/Text"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Badge",
+      "components": [
+        "Badge/Status"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Button",
+      "components": [
+        "Button/Primary"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Checkout/Header",
+      "components": [
+        "Section/Header",
+        "Breadcrumbs"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Course/Header",
+      "components": [
+        "Course/Icon",
+        "Course/Artwork",
+        "Section/Header",
+        "Progress/Course"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Course/Meta",
+      "components": [
+        "Badge/Difficulty",
+        "Divider"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Course/Requirements",
+      "components": [
+        "Content/Block"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Details/Explanation",
+      "components": [
+        "Content/Block",
+        "Accordion"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Discovery/Section",
+      "components": [
+        "Section/Header",
+        "Course/Card"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Editor/ExistingMonacoShell",
+      "components": [
+        "Task/EditorShell"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Evidence/Reference",
+      "components": [
+        "Code/Block",
+        "Badge/Status"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Evidence/Viewer",
+      "components": [
+        "Incident/Evidence"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Filter/Group",
+      "components": [
+        "Select",
+        "Checkbox",
+        "Radio",
+        "Filter/Chip",
+        "Input/Number"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Footer",
+      "components": [],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Existing protected homepage node from ../figma-state.json",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Form/Errors",
+      "components": [
+        "Alert",
+        "Input/Text"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Home/Hero (protected)",
+      "components": [],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Existing protected homepage node from ../figma-state.json",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "HowItWorks/Section",
+      "components": [],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Existing protected homepage node from ../figma-state.json",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Incident/Brief",
+      "components": [
+        "Incident/Card",
+        "Content/Block"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Incident/EvidenceTabs",
+      "components": [
+        "Tabs",
+        "Incident/Evidence"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Incident/Header",
+      "components": [
+        "Section/Header",
+        "Incident/Severity",
+        "Badge/Status"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Incident/Hypothesis",
+      "components": [
+        "Incident/Diagnosis"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Input",
+      "components": [
+        "Input/Text"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Learning/Format",
+      "components": [
+        "Activity/Card",
+        "Divider"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Learning/Sidebar",
+      "components": [
+        "Navigation/Sidebar"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Lesson/Block",
+      "components": [
+        "Content/Block"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Lesson/Header",
+      "components": [
+        "Section/Header",
+        "XP/Reward",
+        "Progress/Lesson"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Lesson/Navigation",
+      "components": [
+        "Button/Secondary",
+        "Button/Primary",
+        "Checkbox"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Modal",
+      "components": [
+        "Modal/Content"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Module/Header",
+      "components": [
+        "Module/Card"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Module/Navigation",
+      "components": [
+        "Lesson/Row"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Page/State",
+      "components": [
+        "Skeleton",
+        "EmptyState",
+        "ErrorState"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Payment/History",
+      "components": [
+        "Table",
+        "Payment/Success"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Payment/Price",
+      "components": [
+        "Payment/Summary"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Payment/ProviderSlot",
+      "components": [
+        "Payment/Method",
+        "Payment/Form"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Payment/Receipt",
+      "components": [
+        "Payment/Success"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Profile/UserMini",
+      "components": [
+        "User/MiniProfile"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Project/Brief",
+      "components": [
+        "Task/Transfer",
+        "Content/Block"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Project/Milestone",
+      "components": [
+        "Module/Card",
+        "Activity/Card"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Quiz/Question",
+      "components": [
+        "Content/Block",
+        "Radio",
+        "Checkbox",
+        "Button/Primary"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Review/Card",
+      "components": [
+        "Review/Due"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Review/Code",
+      "components": [
+        "CodeReview/Line",
+        "Code/Block"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Review/Finding",
+      "components": [
+        "CodeReview/Finding"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Review/FindingComposer",
+      "components": [
+        "CodeReview/Finding",
+        "Textarea",
+        "Select"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Review/Summary",
+      "components": [
+        "CodeReview/Result"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Skill/Progress",
+      "components": [
+        "SkillProgress/Spiral"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "SocialAuth/Slot",
+      "components": [
+        "Button/Secondary",
+        "Icon/Utility"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Submission/Composer",
+      "components": [
+        "Textarea",
+        "Input/Text",
+        "Button/Primary"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Task/Brief",
+      "components": [
+        "Content/Block",
+        "Badge/Difficulty",
+        "XP/Reward"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Task/Toolbar",
+      "components": [
+        "Button/Secondary",
+        "Button/Icon",
+        "Badge/Status"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Terminal/Placeholder",
+      "components": [
+        "Code/Block"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Transfer/Brief",
+      "components": [
+        "Task/Transfer"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Transfer/Constraints",
+      "components": [
+        "Content/Block"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    },
+    {
+      "name": "Verification/Status",
+      "components": [
+        "Auth/Form",
+        "Alert"
+      ],
+      "layout": "Vertical/horizontal Auto Layout from screen spec; slot data varies.",
+      "source": "Local component-inventory",
+      "statePolicy": "Children retain independent states; composite screen states in screens.json."
+    }
+  ]
+}

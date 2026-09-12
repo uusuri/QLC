@@ -7,7 +7,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AdminGuard } from "@/components/AdminGuard";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-
 import {
   createAdminCourse,
   createAdminLesson,
@@ -148,25 +147,25 @@ const adminSteps: Array<{
 }> = [
     {
       id: "course",
-      label: "Course",
-      subtitle: "GET/POST /api/courses"
+      label: "01 / Курс",
+      subtitle: "Название и стоимость"
     },
     {
       id: "module",
-      label: "Module",
-      subtitle: "GET/POST /api/courses/{courseId}/modules",
+      label: "02 / Модуль",
+      subtitle: "Структура программы",
       blockedBy: "course"
     },
     {
       id: "lesson",
-      label: "Lesson",
-      subtitle: "GET/POST /api/modules/{moduleId}/lessons",
+      label: "03 / Урок",
+      subtitle: "Материалы и публикация",
       blockedBy: "module"
     },
     {
       id: "task",
-      label: "Task",
-      subtitle: "GET/POST /api/lessons/{lessonId}/tasks",
+      label: "04 / Задача",
+      subtitle: "Практика и проверка",
       blockedBy: "lesson"
     }
   ];
@@ -1190,43 +1189,22 @@ export default function AdminContentPage() {
 
   return (
     <AdminGuard>
-      <main className="flex min-h-screen flex-col px-4 py-4 sm:px-6 lg:px-8">
+      <main className="kit-shell kit-admin">
       <SiteHeader compact />
       <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
-        <section className="mt-4 flex-1 border border-line bg-ink/95" id="main-content" tabIndex={-1}>
-          <header className="relative overflow-hidden border-b border-line p-5 sm:p-7">
-            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <StatusBadge tone="success">internal tool</StatusBadge>
-                <StatusBadge tone="info">
-                  {!workspaceStorageReady
-                    ? "restoring workspace"
-                    : lastSavedAt
-                      ? `draft ${new Date(lastSavedAt).toLocaleTimeString("ru-RU", {
-                          hour: "2-digit",
-                          minute: "2-digit"
-                        })}`
-                      : "draft ready"}
-                </StatusBadge>
-              </div>
-              <Link
-                className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-white/48 transition hover:text-acid"
-                href="/"
-              >
-                ← На витрину
-              </Link>
+        <section className="relative mt-4 flex-1 border border-line bg-ink" id="main-content" tabIndex={-1}>
+          <header className="grid gap-5 border-b border-line bg-surface p-5 text-paper sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end sm:p-7">
+            <div>
+              <p className="qlc-eyebrow text-muted">QLC / Управление контентом</p>
+              <h1 className="mt-4 font-display text-4xl font-medium leading-none tracking-[-0.02em] sm:text-5xl">Редактор обучения<span className="text-[#B3ACFF]">.</span></h1>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">Курс → модуль → урок → задача. Выберите материал слева, затем измените поля в форме.</p>
             </div>
-            <h1 className="relative z-10 mt-4 max-w-4xl text-4xl font-black uppercase leading-none sm:text-6xl">
-              Admin Content Builder
-            </h1>
-            <p className="relative z-10 mt-4 max-w-3xl text-sm leading-snug text-white/64">
-              Пошаговая панель для Course → Module → Lesson → Task. Выбирайте родителя, редактируйте
-              все поля DTO и сразу проверяйте, что update сохраняет именно то, что видно в форме.
-            </p>
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-acid/10 blur-3xl"
-            />
+            <div className="grid justify-items-start gap-4 sm:justify-items-end">
+              <Link className="inline-flex min-h-10 items-center border-b border-line/30 text-xs font-semibold transition hover:border-paper" href="/">На сайт ↗</Link>
+              <span className="border border-line/20 bg-surface-raised px-3 py-2 font-mono text-[10px] text-muted" role="status">
+                {!workspaceStorageReady ? "Восстанавливаем черновик…" : lastSavedAt ? `Черновик сохранён · ${new Date(lastSavedAt).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}` : "Черновик готов"}
+              </span>
+            </div>
           </header>
 
           <SelectedPath
@@ -1237,7 +1215,7 @@ export default function AdminContentPage() {
             createdTaskId={createdTaskId}
           />
 
-          <nav className="grid border-b border-line bg-panel/40 sm:grid-cols-4">
+          <nav aria-label="Этапы редактирования" className="grid grid-cols-2 border-b border-line bg-panel sm:grid-cols-4">
           {adminSteps.map((step) => (
             <TabButton
               active={activeStep === step.id}
@@ -1250,25 +1228,25 @@ export default function AdminContentPage() {
           ))}
         </nav>
 
-        <section className="p-5 sm:p-7">
+        <section className="p-4 sm:p-6">
           {activeStep === "course" && (
             <WorkspacePanel
               state={courseState}
-              subtitle="Course step"
-              title="Select or create Course"
+              subtitle="01 / Курс"
+              title="Выберите или создайте курс"
             >
               <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px]">
                 <div className="grid content-start gap-4">
                   <SearchInput
-                    label="Search courses"
+                    label="Поиск по курсам"
                     value={courseSearch}
                     onChange={setCourseSearch}
                   />
                   <EntityList
                     emptyText={
                       courseSearch
-                        ? "No courses match current search."
-                        : "No courses yet. Create the first course."
+                        ? "По вашему запросу ничего не найдено."
+                        : "Курсов пока нет. Создайте первый курс."
                     }
                     items={filteredCourses.map((course) => ({
                       id: course.id,
@@ -1281,8 +1259,8 @@ export default function AdminContentPage() {
                   />
                 </div>
 
-                <form className="grid content-start gap-3 border border-line bg-panel/60 p-4" onSubmit={handleCreateCourse}>
-                  <FormTitle title="Create Course" idLabel={selectedCourseId} />
+                <form className="grid content-start gap-4 border border-white/20 bg-panel p-4 sm:p-5" onSubmit={handleCreateCourse}>
+                  <FormTitle title="Данные курса" idLabel={selectedCourseId} />
                   <TextInput
                     label="name"
                     value={courseForm.name}
@@ -1318,10 +1296,10 @@ export default function AdminContentPage() {
                   </div>
                   <FormActions
                     busy={courseState.loading}
-                    createLabel="Create Course"
+                    createLabel="Создать новый курс"
                     onUpdate={handleUpdateCourse}
                     updateDisabled={selectedCourseId === null}
-                    updateLabel="Update selected Course"
+                    updateLabel="Сохранить выбранный курс"
                   />
                 </form>
               </div>
@@ -1329,27 +1307,27 @@ export default function AdminContentPage() {
           )}
 
           {activeStep === "module" && (
-            <WorkspacePanel state={moduleState} subtitle="Module step" title="Select or create Module">
+            <WorkspacePanel state={moduleState} subtitle="02 / Модуль" title="Модули курса">
               {!selectedCourse ? (
                 <BlockedMessage text="Сначала выберите курс" />
               ) : (
                 <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px]">
                   <div className="grid content-start gap-4">
                     <ContextNote
-                      label="Creating inside Course"
+                      label="Курс"
                       title={selectedCourse.name}
                       id={selectedCourse.id}
                     />
                     <SearchInput
-                      label="Search modules"
+                      label="Поиск по модулям"
                       value={moduleSearch}
                       onChange={setModuleSearch}
                     />
                     <EntityList
                       emptyText={
                         moduleSearch
-                          ? "No modules match current search."
-                          : "No modules for selected course."
+                          ? "По вашему запросу ничего не найдено."
+                          : "В выбранном курсе пока нет модулей."
                       }
                       items={filteredModules.map((moduleItem) => ({
                         id: moduleItem.id,
@@ -1362,8 +1340,8 @@ export default function AdminContentPage() {
                     />
                   </div>
 
-                  <form className="grid content-start gap-3 border border-line bg-panel/60 p-4" onSubmit={handleCreateModule}>
-                    <FormTitle title="Create Module" idLabel={selectedModuleId} />
+                  <form className="grid content-start gap-4 border border-white/20 bg-panel p-4 sm:p-5" onSubmit={handleCreateModule}>
+                    <FormTitle title="Данные модуля" idLabel={selectedModuleId} />
                     <TextInput
                       label="name"
                       value={moduleForm.name}
@@ -1389,10 +1367,10 @@ export default function AdminContentPage() {
                     />
                     <FormActions
                       busy={moduleState.loading}
-                      createLabel="Create Module"
+                      createLabel="Создать новый модуль"
                       onUpdate={handleUpdateModule}
                       updateDisabled={selectedModuleId === null}
-                      updateLabel="Update selected Module"
+                      updateLabel="Сохранить выбранный модуль"
                     />
                   </form>
                 </div>
@@ -1401,7 +1379,7 @@ export default function AdminContentPage() {
           )}
 
           {activeStep === "lesson" && (
-            <WorkspacePanel state={lessonState} subtitle="Lesson step" title="Select or create Lesson">
+            <WorkspacePanel state={lessonState} subtitle="03 / Урок" title="Уроки модуля">
               {!selectedModule ? (
                 <BlockedMessage text="Сначала выберите модуль" />
               ) : (
@@ -1410,27 +1388,27 @@ export default function AdminContentPage() {
                     <div className="grid gap-3 sm:grid-cols-2">
                       {selectedCourse && (
                         <ContextNote
-                          label="Course"
+                          label="Курс"
                           title={selectedCourse.name}
                           id={selectedCourse.id}
                         />
                       )}
                       <ContextNote
-                        label="Creating inside Module"
+                        label="Модуль"
                         title={selectedModule.name}
                         id={selectedModule.id}
                       />
                     </div>
                     <SearchInput
-                      label="Search lessons"
+                      label="Поиск по урокам"
                       value={lessonSearch}
                       onChange={setLessonSearch}
                     />
                     <EntityList
                       emptyText={
                         lessonSearch
-                          ? "No lessons match current search."
-                          : "No lessons for selected module."
+                          ? "По вашему запросу ничего не найдено."
+                          : "В выбранном модуле пока нет уроков."
                       }
                       items={filteredLessons.map((lesson) => ({
                         id: lesson.id,
@@ -1443,8 +1421,8 @@ export default function AdminContentPage() {
                     />
                   </div>
 
-                  <form className="grid content-start gap-3 border border-line bg-panel/60 p-4" onSubmit={handleCreateLesson}>
-                    <FormTitle title="Create Lesson" idLabel={selectedLessonId} />
+                  <form className="grid content-start gap-4 border border-white/20 bg-panel p-4 sm:p-5" onSubmit={handleCreateLesson}>
+                    <FormTitle title="Данные урока" idLabel={selectedLessonId} />
                     <TextInput
                       label="name"
                       value={lessonForm.name}
@@ -1486,10 +1464,10 @@ export default function AdminContentPage() {
                     />
                     <FormActions
                       busy={lessonState.loading}
-                      createLabel="Create Lesson"
+                      createLabel="Создать новый урок"
                       onUpdate={handleUpdateLesson}
                       updateDisabled={selectedLessonId === null}
-                      updateLabel="Update selected Lesson"
+                      updateLabel="Сохранить выбранный урок"
                     />
                   </form>
                 </div>
@@ -1498,7 +1476,7 @@ export default function AdminContentPage() {
           )}
 
           {activeStep === "task" && (
-            <WorkspacePanel state={taskState} subtitle="Task step" title="Create Task">
+            <WorkspacePanel state={taskState} subtitle="04 / Задача" title="Задачи урока">
               {!selectedLesson ? (
                 <BlockedMessage text="Сначала выберите урок" />
               ) : (
@@ -1506,13 +1484,13 @@ export default function AdminContentPage() {
                   <div className="grid content-start gap-4">
                     <div className="grid gap-3 xl:grid-cols-3">
                       {selectedCourse && (
-                        <ContextNote label="Course" title={selectedCourse.name} id={selectedCourse.id} />
+                        <ContextNote label="Курс" title={selectedCourse.name} id={selectedCourse.id} />
                       )}
                       {selectedModule && (
-                        <ContextNote label="Module" title={selectedModule.name} id={selectedModule.id} />
+                        <ContextNote label="Модуль" title={selectedModule.name} id={selectedModule.id} />
                       )}
                       <ContextNote
-                        label="Creating inside Lesson"
+                        label="Урок"
                         title={selectedLesson.name}
                         id={selectedLesson.id}
                       />
@@ -1535,15 +1513,15 @@ export default function AdminContentPage() {
                     )}
 
                     <SearchInput
-                      label="Search tasks"
+                      label="Поиск по задачам"
                       value={taskSearch}
                       onChange={setTaskSearch}
                     />
                     <EntityList
                       emptyText={
                         taskSearch
-                          ? "No tasks match current search."
-                          : "No tasks for selected lesson."
+                          ? "По вашему запросу ничего не найдено."
+                          : "В выбранном уроке пока нет задач."
                       }
                       items={filteredTasks.map((task) => ({
                         id: task.id,
@@ -1556,8 +1534,8 @@ export default function AdminContentPage() {
                     />
                   </div>
 
-                  <form className="grid content-start gap-3 border border-line bg-panel/60 p-4" onSubmit={handleCreateTask}>
-                    <FormTitle title={`Create ${taskForm.taskType} Task`} idLabel={selectedTaskId} />
+                  <form className="grid content-start gap-4 border border-white/20 bg-panel p-4 sm:p-5" onSubmit={handleCreateTask}>
+                    <FormTitle title={`Данные задачи · ${taskForm.taskType}`} idLabel={selectedTaskId} />
                     <TaskTypeSelector
                       value={taskForm.taskType}
                       onChange={(taskType) =>
@@ -1565,10 +1543,10 @@ export default function AdminContentPage() {
                       }
                     />
                     <div className="border border-acid/50 bg-acid/10 p-3">
-                      <p className="font-mono text-[10px] font-bold uppercase text-acid">
+                      <p className="font-mono text-[10px] font-medium text-acid">
                         statementMd / Markdown
                       </p>
-                      <p className="mt-2 text-xs font-bold uppercase leading-snug text-white/62">
+                      <p className="mt-2 text-xs font-medium leading-snug text-white/62">
                         Условие хранится как Markdown. Заголовки, списки и fenced code blocks
                         отобразятся студенту через безопасный renderer.
                       </p>
@@ -1586,7 +1564,7 @@ export default function AdminContentPage() {
                     {taskForm.taskType === "CODE" && (
                       <div className="grid gap-3 border-t border-line pt-3">
                         <label className="grid gap-2">
-                          <span className="font-mono text-[10px] font-bold uppercase text-white/58">language</span>
+                          <span className="font-mono text-[11px] text-white/65">language</span>
                           <select
                             className="min-h-12 border border-line bg-panel/70 px-3 text-sm font-bold text-white outline-none transition focus:border-acid focus:bg-ink"
                             onChange={(event) =>
@@ -1672,7 +1650,7 @@ export default function AdminContentPage() {
                             setTaskForm((current) => ({ ...current, correctNumericAnswer: value }))
                           }
                         />
-                        <p className="text-xs font-bold uppercase leading-snug text-white/46">
+                        <p className="text-xs leading-relaxed text-white/55">
                           Ответ сохраняется в backend, но learner UI его не получает из интерфейса и
                           не отображает.
                         </p>
@@ -1702,7 +1680,7 @@ export default function AdminContentPage() {
                         />
                         {parseTestOptions(taskForm.optionsText).length > 0 && (
                           <div className="grid gap-2 border border-line bg-ink p-3">
-                            <p className="font-mono text-[10px] font-bold uppercase text-white/48">
+                            <p className="font-mono text-[10px] font-medium text-white/48">
                               Correct option indexes
                             </p>
                             {parseTestOptions(taskForm.optionsText).map((option, index) => (
@@ -1716,7 +1694,7 @@ export default function AdminContentPage() {
                               >
                                 <input
                                   checked={taskForm.correctOptionIndexes.includes(index)}
-                                  className="mt-0.5 accent-[#9ef651]"
+                                  className="mt-0.5 accent-[#c4ff00]"
                                   onChange={(event) =>
                                     setTaskForm((current) => ({
                                       ...current,
@@ -1740,10 +1718,10 @@ export default function AdminContentPage() {
 
                     <FormActions
                       busy={taskState.loading}
-                      createLabel={`Create ${taskForm.taskType} Task`}
+                      createLabel={`Создать задачу · ${taskForm.taskType}`}
                       onUpdate={handleUpdateTask}
                       updateDisabled={selectedTaskId === null}
-                      updateLabel={`Update selected ${taskForm.taskType} Task`}
+                      updateLabel="Сохранить выбранную задачу"
                     />
                   </form>
                 </div>
@@ -1785,17 +1763,17 @@ function SelectedPath({
   task: AdminTaskDto | null;
 }) {
   return (
-    <section className="grid gap-px border-b border-line bg-line sm:grid-cols-4">
-      <PathCell label="Course" title={course?.name ?? "Not selected"} id={course?.id ?? null} />
+    <section aria-label="Выбранные материалы" className="grid grid-cols-2 gap-px border-b border-line bg-line sm:grid-cols-4">
+      <PathCell label="Курс" title={course?.name ?? "Не выбран"} id={course?.id ?? null} />
       <PathCell
-        label="Module"
-        title={moduleItem?.name ?? "Not selected"}
+        label="Модуль"
+        title={moduleItem?.name ?? "Не выбран"}
         id={moduleItem?.id ?? null}
       />
-      <PathCell label="Lesson" title={lesson?.name ?? "Not selected"} id={lesson?.id ?? null} />
+      <PathCell label="Урок" title={lesson?.name ?? "Не выбран"} id={lesson?.id ?? null} />
       <PathCell
-        label="Task"
-        title={createdTaskId !== null ? "Created task" : task?.statementMd ?? "Not selected"}
+        label="Задача"
+        title={createdTaskId !== null ? "Созданная задача" : task?.statementMd ?? "Не выбран"}
         id={createdTaskId ?? task?.id ?? null}
       />
     </section>
@@ -1805,13 +1783,13 @@ function SelectedPath({
 // Одна ячейка selected path.
 function PathCell({ id, label, title }: { id: number | null; label: string; title: string }) {
   return (
-    <div className="min-w-0 bg-panel/90 p-4">
-      <p className="font-mono text-[10px] font-bold uppercase text-white/50">{label}</p>
-      <p className="mt-2 line-clamp-2 min-h-10 text-sm font-black uppercase leading-tight text-white">
+    <div className="min-w-0 bg-ink px-4 py-3">
+      <p className="font-mono text-[10px] font-medium text-white/50">{label}</p>
+      <p className="mt-2 line-clamp-1 text-sm font-medium leading-snug text-white">
         {title}
       </p>
-      <p className="mt-3 font-mono text-xs font-bold uppercase text-acid">
-        {id === null ? "ID: none" : `ID: ${id}`}
+      <p className="mt-2 font-mono text-[10px] text-white/40">
+        {id === null ? "—" : `ID: ${id}`}
       </p>
     </div>
   );
@@ -1833,22 +1811,23 @@ function TabButton({
 }) {
   return (
     <button
-      className={`grid gap-2 border-b p-4 text-left transition sm:border-b-0 sm:border-r ${active
-        ? "border-acid bg-acid text-ink"
-        : "border-line bg-ink text-white hover:bg-white/8"
+      aria-pressed={active}
+      className={`grid min-h-20 gap-2 border-b p-4 text-left transition focus-visible:outline-acid sm:border-b-0 sm:border-r ${active
+        ? "border-[#3c32f5] bg-[#3c32f5] text-white"
+        : "border-line bg-panel text-white/70 hover:bg-white/8 hover:text-white"
         }`}
       onClick={onClick}
       type="button"
     >
       <span className="flex items-center justify-between gap-3">
-        <span className="text-sm font-black uppercase">{label}</span>
+        <span className="text-sm font-medium">{label}</span>
         {blocked && (
-          <span className="border border-current px-2 py-1 font-mono text-[9px] font-bold uppercase opacity-70">
-            locked
+          <span className="border border-current px-2 py-1 font-mono text-[9px] font-medium opacity-70">
+            нужен выбор
           </span>
         )}
       </span>
-      <span className="font-mono text-[10px] font-bold uppercase opacity-60">{subtitle}</span>
+      <span className="font-mono text-[10px] font-medium opacity-60">{subtitle}</span>
     </button>
   );
 }
@@ -1906,17 +1885,17 @@ function WorkspacePanel({
   title: string;
 }) {
   return (
-    <Panel>
-      <PanelHeader>
+    <Panel className="!border-0 !bg-transparent">
+      <PanelHeader className="!px-0 !pt-0">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="font-mono text-[10px] font-bold uppercase text-acid">{subtitle}</p>
-            <h2 className="mt-2 text-3xl font-black uppercase leading-none">{title}</h2>
+            <p className="qlc-eyebrow text-white/45">{subtitle}</p>
+            <h2 className="mt-3 font-display text-3xl font-medium leading-none sm:text-4xl">{title}</h2>
           </div>
-          {state.loading && <StatusBadge tone="info">loading</StatusBadge>}
+          {state.loading && <StatusBadge tone="info">Загрузка…</StatusBadge>}
         </div>
       </PanelHeader>
-      <PanelBody className="grid gap-5">
+      <PanelBody className="grid gap-5 !px-0 !pb-0">
         {state.error && <StatusMessage tone="error" text={state.error} />}
         {state.success && <StatusMessage tone="success" text={state.success} />}
 
@@ -1930,9 +1909,9 @@ function WorkspacePanel({
 function FormTitle({ idLabel, title }: { idLabel: number | null; title: string }) {
   return (
     <div className="flex items-center justify-between gap-4 border-b border-line pb-3">
-      <h3 className="text-lg font-black uppercase">{title}</h3>
-      <span className="font-mono text-[10px] font-bold uppercase text-white/50">
-        {idLabel === null ? "selected: none" : `selected: ${idLabel}`}
+      <h3 className="text-base font-semibold">{title}</h3>
+      <span className="font-mono text-[10px] font-medium text-white/50">
+        {idLabel === null ? "Новый материал" : `ID: ${idLabel}`}
       </span>
     </div>
   );
@@ -1941,12 +1920,12 @@ function FormTitle({ idLabel, title }: { idLabel: number | null; title: string }
 // Небольшой блок контекста внутри зависимых шагов.
 function ContextNote({ id, label, title }: { id: number; label: string; title: string }) {
   return (
-    <div className="min-w-0 border border-line bg-panel/70 p-3">
-      <p className="font-mono text-[10px] font-bold uppercase text-white/48">{label}</p>
-      <p className="mt-2 line-clamp-2 text-sm font-black uppercase leading-tight text-white">
+    <div className="min-w-0 border-l-2 border-[#3c32f5] bg-panel p-3">
+      <p className="font-mono text-[10px] font-medium text-white/48">{label}</p>
+      <p className="mt-2 line-clamp-2 text-sm font-semibold leading-snug text-white">
         {title}
       </p>
-      <p className="mt-2 font-mono text-[10px] font-bold uppercase text-acid">ID: {id}</p>
+      <p className="mt-2 font-mono text-[10px] font-medium text-acid">ID: {id}</p>
     </div>
   );
 }
@@ -1954,9 +1933,9 @@ function ContextNote({ id, label, title }: { id: number; label: string; title: s
 // Сообщение о заблокированной вложенной форме.
 function BlockedMessage({ text }: { text: string }) {
   return (
-    <Alert className="p-5" title="step locked" tone="warning">
-      <p className="text-2xl font-black uppercase leading-tight text-white">{text}</p>
-      <p className="mt-3 max-w-xl text-sm font-bold uppercase leading-snug text-white/58">
+    <Alert className="p-5" title="Выберите родительский материал" tone="warning">
+      <p className="text-2xl font-medium leading-tight text-white">{text}</p>
+      <p className="mt-3 max-w-xl text-sm font-medium leading-snug text-white/58">
         Выберите родительскую сущность в предыдущей вкладке, и этот шаг станет доступен.
       </p>
     </Alert>
@@ -1966,7 +1945,7 @@ function BlockedMessage({ text }: { text: string }) {
 // Универсальное сообщение success/error.
 function StatusMessage({ text, tone }: { text: string; tone: "error" | "success" }) {
   return (
-    <Alert className="p-4" title={tone === "error" ? "update failed" : "update saved"} tone={tone === "error" ? "danger" : "success"}>
+    <Alert className="p-4" title={tone === "error" ? "Не удалось сохранить" : "Сохранено"} tone={tone === "error" ? "danger" : "success"}>
       {text}
     </Alert>
   );
@@ -1983,7 +1962,7 @@ function TaskCreatedBlock({
   taskId: number;
 }) {
   return (
-    <Panel className="border-acid bg-acid text-ink">
+    <Panel className="border-acid bg-surface text-acid">
       <PanelHeader className="border-white/10">
         <div className="flex items-center justify-between gap-3">
           <StatusBadge tone="neutral">
@@ -1995,8 +1974,8 @@ function TaskCreatedBlock({
         </div>
       </PanelHeader>
       <PanelBody className="grid gap-3">
-        <p className="text-sm font-black uppercase">Task created. ID: {taskId}</p>
-        <p className="text-xs font-bold uppercase">
+        <p className="text-sm font-medium">Task created. ID: {taskId}</p>
+        <p className="text-xs font-medium">
           Use for POST /api/v1/tasks/{taskId}/submissions
         </p>
         <div className="flex flex-wrap items-center gap-3">
@@ -2029,8 +2008,8 @@ function SelectedTaskBlock({
         </div>
       </PanelHeader>
       <PanelBody className="grid gap-3">
-        <p className="text-sm font-black uppercase text-white">Selected task. ID: {taskId}</p>
-        <p className="text-xs font-bold uppercase text-white/58">
+        <p className="text-sm font-medium text-white">Selected task. ID: {taskId}</p>
+        <p className="text-xs font-medium text-white/58">
           Use for POST /api/v1/tasks/{taskId}/submissions
         </p>
         <div className="flex flex-wrap items-center gap-3">
@@ -2067,30 +2046,31 @@ function EntityList({
 }) {
   if (loading) {
     return (
-      <div className="border border-line bg-panel/60 p-4 font-mono text-xs font-bold uppercase text-white/58">
-        Loading list...
+      <div className="border border-line bg-panel/60 p-4 font-mono text-xs font-medium text-white/58">
+        Загружаем список…
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="border border-line bg-panel/60 p-4 font-mono text-xs font-bold uppercase text-white/58">
+      <div className="border border-line bg-panel/60 p-4 font-mono text-xs font-medium text-white/58">
         {emptyText}
       </div>
     );
   }
 
   return (
-    <div className="grid max-h-[340px] gap-px overflow-y-auto border border-line bg-line">
+    <div className="grid max-h-[520px] gap-px overflow-y-auto border border-white/20 bg-line">
       {items.map((item) => {
         const isSelected = item.id === selectedId;
 
         return (
           <button
-            className={`grid gap-2 border border-transparent p-3 text-left transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid ${
+            aria-pressed={isSelected}
+            className={`grid min-h-20 gap-2 border border-transparent p-4 text-left transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid ${
               isSelected
-                ? "border-acid bg-acid text-ink"
+                ? "border-acid bg-surface text-acid"
                 : "bg-panel text-white hover:border-white/20 hover:bg-white/8"
             }`}
             key={item.id}
@@ -2098,10 +2078,10 @@ function EntityList({
             title={item.title}
             type="button"
           >
-            <span className="line-clamp-2 text-sm font-black uppercase leading-tight">
+            <span className="line-clamp-2 text-sm font-semibold leading-snug">
               {item.title}
             </span>
-            <span className="font-mono text-[10px] font-bold uppercase opacity-70">
+            <span className="font-mono text-[10px] leading-relaxed opacity-60">
               {item.meta}
             </span>
           </button>
@@ -2123,11 +2103,11 @@ function SearchInput({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="font-mono text-[10px] font-bold uppercase text-white/58">{label}</span>
+      <span className="font-mono text-[11px] text-white/65">{label}</span>
       <input
-        className="min-h-12 border border-line bg-panel/70 px-3 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
+        className="min-h-12 rounded-none border border-white/25 bg-ink px-3 text-sm text-white outline-none transition placeholder:text-white/35 hover:border-white/40 focus:border-acid focus:ring-1 focus:ring-acid"
         onChange={(event) => onChange(event.target.value)}
-        placeholder="Type to filter..."
+        placeholder="Начните вводить название…"
         value={value}
       />
     </label>
@@ -2146,16 +2126,16 @@ function TaskTypeSelector({
 
   return (
     <fieldset className="grid gap-2">
-      <legend className="font-mono text-[10px] font-bold uppercase text-white/58">
+      <legend className="font-mono text-[11px] text-white/65">
         taskType
       </legend>
       <div className="grid gap-px border border-line bg-line sm:grid-cols-3">
         {taskTypes.map((taskType) => (
           <button
             aria-pressed={value === taskType}
-            className={`min-h-12 px-3 text-xs font-black uppercase transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid ${
+            className={`min-h-12 px-3 text-xs font-medium transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid ${
               value === taskType
-                ? "bg-acid text-ink"
+                ? "bg-surface text-acid"
                 : "bg-ink text-white/68 hover:bg-white/8 hover:text-acid"
             }`}
             key={taskType}
@@ -2184,9 +2164,9 @@ function TextInput({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="font-mono text-[10px] font-bold uppercase text-white/58">{label}</span>
+      <span className="font-mono text-[11px] text-white/65">{label}</span>
       <input
-        className="min-h-12 border border-line bg-panel/70 px-3 text-sm font-bold text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
+        className="min-h-12 rounded-none border border-white/25 bg-ink px-3 text-sm text-white outline-none transition placeholder:text-white/35 hover:border-white/40 focus:border-acid focus:ring-1 focus:ring-acid"
         inputMode={inputMode}
         onChange={(event) => onChange(event.target.value)}
         value={value}
@@ -2211,14 +2191,14 @@ function TextArea({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="font-mono text-[10px] font-bold uppercase text-white/58">{label}</span>
+      <span className="font-mono text-[11px] text-white/65">{label}</span>
       <textarea
-        className="resize-y border border-line bg-panel/70 px-3 py-3 font-mono text-sm text-white outline-none transition placeholder:text-white/22 focus:border-acid focus:bg-ink"
+        className="resize-y rounded-none border border-white/25 bg-ink px-3 py-3 font-mono text-sm leading-relaxed text-white outline-none transition placeholder:text-white/35 hover:border-white/40 focus:border-acid focus:ring-1 focus:ring-acid"
         onChange={(event) => onChange(event.target.value)}
         rows={rows}
         value={value}
       />
-      {help && <span className="text-xs font-bold uppercase leading-snug text-white/46">{help}</span>}
+      {help && <span className="text-xs leading-relaxed text-white/55">{help}</span>}
     </label>
   );
 }
@@ -2235,12 +2215,12 @@ function ToggleInput({
 }) {
   return (
     <label className="flex min-h-12 cursor-pointer items-center justify-between gap-4 border border-line bg-panel/70 px-3 transition hover:border-white/30">
-      <span className="font-mono text-[10px] font-bold uppercase text-white/58">{label}</span>
-      <span className="flex items-center gap-3 font-mono text-[10px] font-black uppercase">
+      <span className="font-mono text-[11px] text-white/65">{label}</span>
+      <span className="flex items-center gap-3 font-mono text-[10px] font-medium">
         <span className={checked ? "text-acid" : "text-white/42"}>{checked ? "true" : "false"}</span>
         <input
           checked={checked}
-          className="h-5 w-5 accent-[#9ef651]"
+          className="h-5 w-5 accent-[#c4ff00]"
           onChange={(event) => onChange(event.target.checked)}
           type="checkbox"
         />
@@ -2264,7 +2244,7 @@ function FormActions({
   updateLabel: string;
 }) {
   return (
-    <div className="grid gap-2 sm:grid-cols-2">
+    <div className="grid gap-2 border-t border-line pt-4">
       <Button loading={busy} type="submit">
         {createLabel}
       </Button>

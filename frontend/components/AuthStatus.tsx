@@ -31,7 +31,7 @@ export function AuthStatus() {
     return (
       <span
         aria-label="Проверяем сессию"
-        className="block h-11 w-[72px] animate-pulse rounded-full bg-white/[0.07]"
+        className="block h-11 w-[72px] animate-pulse rounded-[2px] bg-white/[0.07]"
         role="status"
       />
     );
@@ -42,16 +42,16 @@ export function AuthStatus() {
 
     return (
       <div className="flex items-center gap-1">
-        <span
-          className={`hidden min-h-11 max-w-44 items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold sm:inline-flex ${
+        <Link href="/profile"
+          className={`hidden min-h-11 max-w-44 items-center gap-1.5 rounded-[2px] px-3 py-2 text-xs font-semibold sm:inline-flex ${
             admin ? "bg-phosphor text-ink" : "bg-white/[0.06] text-white/72"
           }`}
         >
-          {admin && <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-ink" />}
+          {admin && <span aria-hidden="true" className="h-1.5 w-1.5 rounded-[2px] bg-ink" />}
           <span className="truncate">@{user.username}</span>
-        </span>
+        </Link>
         <button
-          className="min-h-11 rounded-full px-3 py-2 text-xs font-semibold text-white/62 transition hover:bg-white/[0.06] hover:text-white"
+          className="min-h-11 rounded-[2px] px-3 py-2 text-xs font-semibold text-white/62 transition hover:bg-white/[0.06] hover:text-white"
           onClick={handleLogout}
           type="button"
         >
@@ -63,10 +63,10 @@ export function AuthStatus() {
 
   return (
     <Link
-      className="inline-flex min-h-11 items-center rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-ink transition hover:bg-phosphor"
+      className="inline-flex min-h-11 items-center gap-4 px-3 text-[13px] text-paper transition hover:text-acid"
       href={loginHref}
     >
-      Войти
+      Войти ↗
     </Link>
   );
 }

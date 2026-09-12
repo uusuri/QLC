@@ -5,15 +5,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        acid: "#b8ff35",
-        ink: "#0b0d0f",
-        panel: "#15191c",
-        surface: "#111416",
-        "surface-raised": "#1c2023",
-        line: "rgba(255, 255, 255, 0.12)",
-        muted: "rgba(245, 245, 240, 0.64)",
+        acid: "#c4ff00",
+        ink: "#0A0A0A",
+        panel: "#101210",
+        surface: "#101210",
+        "surface-raised": "#171A16",
+        line: "#32372E",
+        muted: "#A6A6A0",
         ember: "#d7ff7d",
-        phosphor: "#b8ff35"
+        phosphor: "#c4ff00",
+        paper: "#F5F5EF",
+        cobalt: "#4433EE",
+        coral: "#ff6652"
       },
       fontFamily: {
         mono: ["IBM Plex Mono", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
@@ -21,7 +24,7 @@ const config: Config = {
         sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Arial", "sans-serif"]
       },
       boxShadow: {
-        acid: "0 18px 50px rgba(184, 255, 53, 0.14)",
+        acid: "none",
         "panel-inset": "inset 0 0 60px rgba(184, 255, 53, 0.03)",
         hud: "0 24px 80px rgba(0, 0, 0, 0.32)"
       },

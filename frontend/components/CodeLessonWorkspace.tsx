@@ -23,17 +23,37 @@ import {
   ButtonLink,
   Panel,
   PanelBody,
-  PanelHeader,
-  StatusBadge
+  PanelHeader
 } from "@/components/ui";
 
 // Типы backend DTO и submission response.
 import type { LearnerTaskDto, SubmissionResponseDto } from "@/types";
 
 // Monaco загружается client-only, чтобы production build не падал на SSR.
-const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
+// Локальная сборка редактора не зависит от доступности внешнего CDN.
+const MonacoEditor = dynamic(async () => {
+  const [{ default: Editor, loader }, monaco] = await Promise.all([
+    import("@monaco-editor/react"),
+    import("monaco-editor/esm/vs/editor/editor.api.js")
+  ]);
+  const editorWindow = window as Window & {
+    MonacoEnvironment?: { getWorker: () => Worker };
+  };
+  editorWindow.MonacoEnvironment = {
+    getWorker: () => new Worker(
+      new URL("monaco-editor/esm/vs/editor/editor.worker.js", import.meta.url),
+      { type: "module", name: "qlc-editor" }
+    )
+  };
+  await Promise.all([
+    import("monaco-editor/esm/vs/basic-languages/java/java.contribution.js"),
+    import("monaco-editor/esm/vs/basic-languages/cpp/cpp.contribution.js")
+  ]);
+  loader.config({ monaco });
+  return Editor;
+}, {
   loading: () => (
-    <div className="grid min-h-[340px] place-items-center rounded-2xl border border-line bg-ink text-xs font-black uppercase text-white/52 sm:min-h-[420px]">
+    <div className="grid min-h-[340px] place-items-center border border-line bg-ink text-sm text-white/52 sm:min-h-[420px]">
       Загружаем редактор
     </div>
   ),
@@ -45,20 +65,20 @@ function defineQlcMonacoTheme(monaco: Monaco) {
     base: "vs-dark",
     inherit: true,
     colors: {
-      "editor.background": "#0b0d0f",
+      "editor.background": "#0a0a0a",
       "editor.foreground": "#e8ece8",
-      "editorCursor.foreground": "#b8ff35",
-      "editor.lineHighlightBackground": "#111714",
-      "editorLineNumber.activeForeground": "#b8ff35",
-      "editorLineNumber.foreground": "#4b574d",
+      "editorCursor.foreground": "#c4ff00",
+      "editor.lineHighlightBackground": "#171a10",
+      "editorLineNumber.activeForeground": "#c4ff00",
+      "editorLineNumber.foreground": "#89968d",
       "editor.selectionBackground": "#314615",
       "editor.inactiveSelectionBackground": "#222f14",
       "editorIndentGuide.background1": "#202a22",
       "editorIndentGuide.activeBackground1": "#4d6c23"
     },
     rules: [
-      { token: "comment", foreground: "6f8174" },
-      { token: "keyword", foreground: "b8ff35" },
+      { token: "comment", foreground: "89968d" },
+      { token: "keyword", foreground: "c4ff00" },
       { token: "string", foreground: "f6c177" },
       { token: "number", foreground: "8bd5ca" },
       { token: "type.identifier", foreground: "8aadf4" },
@@ -109,6 +129,7 @@ type SubmissionUiState = {
 type CodeLessonWorkspaceProps = {
   // task — основная CODE-задача урока.
   task: LearnerTaskDto;
+  onSubmissionStart?: () => void;
 };
 
 // Проверяет AbortError без any.
@@ -409,7 +430,7 @@ function limitLog(message: string) {
 }
 
 // CodeLessonWorkspace объединяет editor и submission lifecycle.
-export function CodeLessonWorkspace({ task }: CodeLessonWorkspaceProps) {
+export function CodeLessonWorkspace({ task, onSubmissionStart }: CodeLessonWorkspaceProps) {
   const { user: authUser } = useAuth();
   const taskVersion = task.testSetVersion ?? 1;
   const draftKey = `qlc:draft:task:${task.id}:v${taskVersion}`;
@@ -420,6 +441,7 @@ export function CodeLessonWorkspace({ task }: CodeLessonWorkspaceProps) {
   const [draftLoaded, setDraftLoaded] = useState(false);
   const [lastSubmissionId, setLastSubmissionId] = useState<string | null>(null);
   const [submission, setSubmission] = useState<SubmissionUiState>({ phase: "idle" });
+  const resetDialogRef = useRef<HTMLDialogElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const timeoutRef = useRef<number | null>(null);
 
@@ -432,6 +454,7 @@ export function CodeLessonWorkspace({ task }: CodeLessonWorkspaceProps) {
   const canSubmit = Boolean(authUser) && trimmedSource.length > 0 && !sourceTooLarge && !isBusy;
   const safeLog = submission.response?.safeMessage ?? submission.errorMessage ?? "";
   const loginHref = `/login?redirectTo=${encodeURIComponent(currentPath)}`;
+  const fileName = language === "JAVA21" ? "Main.java" : "main.cpp";
 
   // При смене task один раз загружаем draft или backend starterCode/templateCode.
   useEffect(() => {
@@ -528,6 +551,7 @@ export function CodeLessonWorkspace({ task }: CodeLessonWorkspaceProps) {
     const controller = new AbortController();
     abortRef.current = controller;
     setSubmission({ phase: "submitting" });
+    onSubmissionStart?.();
 
     try {
       const created = await createSubmission(
@@ -576,117 +600,31 @@ export function CodeLessonWorkspace({ task }: CodeLessonWorkspaceProps) {
 
   // Сбрасывает editor к backend starterCode/templateCode.
   const handleResetDraft = () => {
+    resetDialogRef.current?.close();
     setSource(initialCode);
     window.localStorage.setItem(draftKey, initialCode);
   };
 
-  return (
-    <Panel className="flex h-full min-h-0 flex-col !overflow-visible" muted>
-      <PanelHeader>
-        <div>
-          <div className="mb-3 flex flex-wrap gap-2">
-            {submission.phase !== "idle" && (
-              <StatusBadge tone={phaseCopy.tone}>{phaseCopy.badge}</StatusBadge>
-            )}
-            <StatusBadge tone="neutral">{language === "JAVA21" ? "Java 21" : "C++23"}</StatusBadge>
-            {authUser ? (
-              <StatusBadge className="max-w-full" tone="success"><span className="block max-w-[min(18rem,70vw)] truncate" title={authUser.username}>@{authUser.username}</span></StatusBadge>
-            ) : (
-              <StatusBadge tone="warning">Нужен вход</StatusBadge>
-            )}
-          </div>
-          <h2 className="text-3xl font-bold leading-tight tracking-[-0.035em]">Решение задачи</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/62">
-            Пишите решение в редакторе — черновик сохраняется автоматически.
-          </p>
+  return <div className="kit-workspace grid min-w-0 gap-6">
+    <Panel className="kit-editor-panel">
+      <PanelHeader><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-xl">Ваше решение</h2><span className="font-mono text-xs text-muted">{language === "JAVA21" ? "Java 21" : "C++23"} · {fileName}</span></div><div className="mt-2 flex flex-wrap items-center justify-between gap-2"><p className="text-xs text-muted">Черновик сохраняется на этом устройстве</p><button className="min-h-11 text-xs text-muted hover:text-paper" disabled={isBusy} onClick={() => resetDialogRef.current?.showModal()} type="button">Сбросить код</button></div></PanelHeader>
+      <PanelBody className="!pt-0">
+        <div className="h-[50dvh] min-h-[340px] max-h-[640px] min-w-0 overflow-hidden rounded-sm border border-line sm:h-[480px]">
+          <MonacoEditor beforeMount={defineQlcMonacoTheme} height="100%" language={language === "JAVA21" ? "java" : "cpp"} loading={<span className="text-sm text-muted">Подготавливаем редактор…</span>} onChange={value => setSource(value ?? "")} options={{ ariaLabel:"Редактор решения задачи", automaticLayout:true, fontFamily:"IBM Plex Mono, Menlo, monospace", fontSize:14, lineHeight:23, minimap:{enabled:false}, padding:{bottom:18,top:18}, scrollBeyondLastLine:false, tabSize:2, wordWrap:"on" }} theme="qlc-night" value={source} />
         </div>
-      </PanelHeader>
-
-      <PanelBody className="flex min-h-0 flex-1 flex-col gap-5">
-        <div className="h-[50dvh] min-h-[340px] max-h-[560px] flex-none overflow-hidden rounded-2xl border border-line sm:h-[520px] sm:min-h-[480px] xl:h-auto xl:max-h-none xl:min-h-[520px] xl:flex-1">
-          <MonacoEditor
-            beforeMount={defineQlcMonacoTheme}
-            height="100%"
-            language={language === "JAVA21" ? "java" : "cpp"}
-            onChange={(value) => setSource(value ?? "")}
-            options={{
-              ariaLabel: "Редактор решения задачи",
-              fontFamily: "SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-              fontSize: 14,
-              minimap: { enabled: false },
-              scrollBeyondLastLine: false,
-              tabSize: 2,
-              wordWrap: "on"
-            }}
-            theme="qlc-night"
-            value={source}
-          />
-        </div>
-
-        <div className="sticky bottom-2 z-10 grid gap-3 rounded-2xl border border-white/8 bg-panel/95 p-3 shadow-[0_16px_50px_rgba(0,0,0,0.3)] backdrop-blur xl:static xl:grid-cols-[1fr_auto] xl:items-center xl:border-0 xl:bg-transparent xl:p-0 xl:shadow-none">
-          <div className="grid gap-2 text-xs font-semibold text-white/58">
-            <span>
-              Размер кода: {sourceSize} / {MAX_SOURCE_SIZE} байт
-            </span>
-            {!authUser && (
-              <span className="text-yellow-100">Чтобы отправить решение, войдите в аккаунт.</span>
-            )}
-            {sourceTooLarge && <span className="text-red-200">Код превышает допустимый размер.</span>}
-            {!trimmedSource && <span className="text-yellow-100">Введите решение перед отправкой.</span>}
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
-            {authUser ? (
-              <Button
-                className="col-span-2 w-full sm:w-auto"
-                disabled={!canSubmit}
-                loading={submission.phase === "submitting"}
-                onClick={handleSubmit}
-              >
-                Отправить
-              </Button>
-            ) : (
-              <ButtonLink className="col-span-2 w-full sm:w-auto" href={loginHref}>Войти</ButtonLink>
-            )}
-            <Button className="w-full sm:w-auto" disabled={!authUser || !lastSubmissionId || isBusy} onClick={handleResume} variant="secondary">
-              Обновить статус
-            </Button>
-            <Button className="w-full sm:w-auto" disabled={isBusy} onClick={handleResetDraft} variant="secondary">
-              Сбросить код
-            </Button>
-          </div>
-        </div>
-
-        {!authUser && (
-          <Alert title="Нужен вход" tone="warning">
-            Войдите в аккаунт, чтобы отправить решение и сохранить результат в прогрессе курса.
-          </Alert>
-        )}
-
-        {submission.phase !== "idle" && (
-          <Alert title={phaseCopy.title} tone={phaseCopy.tone}>
-            <p>{phaseCopy.description}</p>
-            {submission.response && (
-              <p className="mt-2 font-mono text-xs text-white/58">
-                Технические детали: status={submission.response.status}
-                {submission.response.verdict ? ` verdict=${submission.response.verdict}` : ""}
-                {submission.response.executionTime !== null
-                  ? ` time=${submission.response.executionTime}ms`
-                  : ""}
-                {submission.response.memoryUsed !== null
-                  ? ` memory=${submission.response.memoryUsed}`
-                  : ""}
-              </p>
-            )}
-          </Alert>
-        )}
-
-        {safeLog && (
-          <pre className="max-h-64 overflow-auto rounded-2xl border border-line bg-ink p-4 text-xs leading-relaxed text-white/72">
-            <code>{limitLog(safeLog)}</code>
-          </pre>
-        )}
+        <p className="mt-4 text-xs text-muted">{sourceSize.toLocaleString("ru-RU")} / {MAX_SOURCE_SIZE.toLocaleString("ru-RU")} байт</p>
+        {sourceTooLarge && <p className="mt-2 text-sm text-[#FF8074]" role="alert">Код превышает допустимый размер.</p>}
+        {!trimmedSource && <p className="mt-2 text-xs text-muted">Введите решение перед отправкой.</p>}
+        <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-5">{authUser ? <Button disabled={!canSubmit} loading={submission.phase === "submitting"} onClick={handleSubmit}>{isBusy ? "Проверяем решение" : "Проверить решение"} →</Button> : <ButtonLink href={loginHref}>Войти и отправить решение →</ButtonLink>}<Button disabled={!authUser || !lastSubmissionId || isBusy} onClick={handleResume} variant="secondary">Обновить статус</Button></div>
+        <p className="mt-5 text-xs text-muted">Проверка решения не удаляет черновик.</p>
       </PanelBody>
     </Panel>
-  );
+    <section className="kit-result-panel grid min-w-0 gap-4" aria-label="Результат проверки">
+      {!authUser && <Alert title="Войдите для проверки" tone="warning">Редактор доступен сейчас. Войдите в аккаунт, чтобы отправить решение и сохранить результат.</Alert>}
+      <Alert title={phaseCopy.title} tone={phaseCopy.tone}><p>{phaseCopy.description}</p>{submission.response && <details className="mt-3 text-xs"><summary className="min-h-11 cursor-pointer py-3">Сведения о проверке</summary><p className="mt-2 break-words font-mono">Статус: {submission.response.status}{submission.response.verdict ? ` / ${submission.response.verdict}` : ""}{submission.response.executionTime !== null ? ` · Время: ${submission.response.executionTime} мс` : ""}{submission.response.memoryUsed !== null ? ` · Память: ${submission.response.memoryUsed}` : ""}</p></details>}
+      {submission.phase === "network" && <Button className="mt-4" variant="secondary" disabled={!authUser || !lastSubmissionId || isBusy} onClick={handleResume}>Обновить статус</Button>}</Alert>
+      {safeLog && <section className="min-w-0 overflow-hidden rounded-sm border border-line bg-surface"><h3 className="border-b border-line p-4 text-sm">Вывод проверки</h3><pre aria-label="Вывод проверки решения" className="max-h-64 overflow-auto p-4 font-mono text-xs leading-6" tabIndex={0}><code>{limitLog(safeLog)}</code></pre></section>}
+    </section>
+    <dialog className="kit-dialog" ref={resetDialogRef}><h2>Сбросить код?</h2><p>Текущий черновик будет заменён стартовым кодом задачи. Это действие нельзя отменить.</p><div className="flex flex-wrap gap-3"><Button autoFocus onClick={() => resetDialogRef.current?.close()} variant="secondary">Сохранить черновик</Button><Button onClick={handleResetDraft} variant="danger">Сбросить код</Button></div></dialog>
+  </div>;
 }

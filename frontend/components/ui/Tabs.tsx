@@ -35,19 +35,20 @@ export function Tabs<TValue extends string>({
   onChange
 }: TabsProps<TValue>) {
   return (
-    <div className={cn("grid gap-px border border-line bg-line sm:grid-cols-4", className)}>
+    <div className={cn("kit-tabs", className)}>
       {items.map((item) => {
         const isActive = item.value === activeValue;
 
         return (
           <button
             className={cn(
-              "min-h-12 px-4 text-left text-xs font-black uppercase tracking-[0.18em] transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid",
+              "min-h-12 px-4 text-left text-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
               isActive
-                ? "bg-acid text-ink shadow-[0_0_24px_rgba(184,255,53,0.18)]"
-                : "bg-panel text-white/70 hover:bg-white/8 hover:text-acid",
+                ? "border-b-2 border-acid text-acid"
+                : "text-muted hover:text-paper",
               item.disabled && "cursor-not-allowed bg-ink text-white/28 hover:text-white/28"
             )}
+            aria-pressed={isActive}
             disabled={item.disabled}
             key={item.value}
             onClick={() => onChange(item.value)}

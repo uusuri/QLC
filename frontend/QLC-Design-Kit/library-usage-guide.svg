@@ -1,0 +1,206 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1512" viewBox="0 0 1200 1512">
+<rect id="Background" width="1200" height="1512" fill="#0A0A0A"/>
+<g id="Header">
+<text x="48" y="55" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">QLC / БИБЛИОТЕКА РЕСУРСОВ</text>
+<text x="48" y="116" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="500" fill="#F5F5EF">Как пользоваться библиотекой</text>
+<text x="48" y="156" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="400" fill="#A6A6A0">Знаки достижений, обложки курсов и непрерывный прогресс.</text>
+<path d="M48 187H1152" stroke="#343434" stroke-width="1"/>
+<path d="M1116 42h28M1130 28v28" stroke="#C4FF00" stroke-width="2"/></g>
+<path d="M408 217L408 529" stroke="#343434" stroke-width="1"/>
+<path d="M784 217L784 529" stroke="#343434" stroke-width="1"/>
+<g id="Achievement-Usage">
+<g transform="translate(64 220)"><path d="M0 16V0h16M48 0h16v16M64 48v16H48M16 64H0V48" fill="none" stroke="#F5F5EF" stroke-width="3"/><path d="M24 14h16v10h10v16H40v10H24V40H14V24h10z" fill="#C4FF00"/><rect x="58" y="0" width="6" height="6" fill="#4433EE"/></g>
+<text x="158" y="258" font-family="IBM Plex Mono, Menlo, monospace" font-size="20" font-weight="400" fill="#C4FF00">128 → 64 → 32</text>
+<text x="64" y="326" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="500" fill="#F5F5EF">30 знаков</text>
+<text x="64" y="363" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Слот: 128 × 128.</text>
+<text x="64" y="395" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Размеры: 32 / 64 / 128.</text>
+<text x="64" y="427" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#A6A6A0">Смена знака: Instance swap.</text>
+<text x="64" y="459" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#A6A6A0">Масштабирование: K → Scale.</text>
+<text x="64" y="491" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#A6A6A0">Ищите по имени в таблице.</text>
+</g><g id="Cover-Usage">
+<g transform="translate(440 225)"><rect width="104" height="49" fill="none" stroke="#F5F5EF"/><path d="M18 36L40 10L82 16L62 40Z M24 36L43 14L76 19L59 36Z M31 33L46 19L68 22L56 32Z" fill="none" stroke="#C4FF00"/><path d="M13 17L91 33" stroke="#4433EE"/></g>
+<text x="568" y="258" font-family="IBM Plex Mono, Menlo, monospace" font-size="20" font-weight="400" fill="#C4FF00">640 × 300</text>
+<text x="440" y="326" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="500" fill="#F5F5EF">20 обложек</text>
+<text x="440" y="363" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Пропорции: 640 × 300.</text>
+<text x="440" y="395" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">У каждой — своя композиция.</text>
+<text x="440" y="427" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#A6A6A0">Меняйте instance обложки.</text>
+<text x="440" y="459" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#A6A6A0">Сохраняйте пропорции.</text>
+<text x="440" y="491" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#A6A6A0">При обрезке берегите центр.</text>
+</g><g id="Progress-Usage">
+<rect x="816" y="239" width="210" height="7" fill="#343434"/><rect x="816" y="239" width="78.96" height="7" fill="#C4FF00"/>
+<text x="1048" y="250" font-family="IBM Plex Mono, Menlo, monospace" font-size="20" font-weight="400" fill="#C4FF00">37,6%</text>
+<text x="816" y="326" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="500" fill="#F5F5EF">3 формы прогресса</text>
+<text x="816" y="363" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Linear / XP / Circular.</text>
+<text x="816" y="395" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Любое число от 0 до 100.</text>
+<text x="816" y="427" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#A6A6A0">Дробные значения допустимы.</text>
+<text x="816" y="459" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#A6A6A0">Не variant для каждого %.</text>
+<text x="816" y="491" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#A6A6A0">Плавность — позже в TypeScript.</text>
+</g>
+<path d="M48 550H1152" stroke="#343434" stroke-width="1"/>
+<g id="Symbol-Index">
+<text x="48" y="600" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="500" fill="#F5F5EF">Имена знаков для поиска</text>
+<text x="48" y="635" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="400" fill="#A6A6A0">Название достижения можно менять отдельно от значка.</text>
+<text x="48" y="684" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#A6A6A0">КОМПОНЕНТ</text>
+<text x="230" y="684" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#A6A6A0">НАЗВАНИЕ</text>
+<path d="M48 699H584" stroke="#343434" stroke-width="1"/>
+<g id="Index-Achievement-01">
+<text x="48" y="732" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-01</text>
+<text x="230" y="732" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Первая тема</text>
+<path d="M48 745H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-02">
+<text x="48" y="770" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-02</text>
+<text x="230" y="770" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Первая задача</text>
+<path d="M48 783H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-03">
+<text x="48" y="808" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-03</text>
+<text x="230" y="808" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Пять решений</text>
+<path d="M48 821H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-04">
+<text x="48" y="846" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-04</text>
+<text x="230" y="846" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Десять решений</text>
+<path d="M48 859H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-05">
+<text x="48" y="884" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-05</text>
+<text x="230" y="884" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Двадцать пять решений</text>
+<path d="M48 897H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-06">
+<text x="48" y="922" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-06</text>
+<text x="230" y="922" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Пятьдесят решений</text>
+<path d="M48 935H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-07">
+<text x="48" y="960" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-07</text>
+<text x="230" y="960" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Первый модуль</text>
+<path d="M48 973H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-08">
+<text x="48" y="998" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-08</text>
+<text x="230" y="998" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Три модуля</text>
+<path d="M48 1011H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-09">
+<text x="48" y="1036" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-09</text>
+<text x="230" y="1036" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Пять модулей</text>
+<path d="M48 1049H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-10">
+<text x="48" y="1074" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-10</text>
+<text x="230" y="1074" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Первый курс</text>
+<path d="M48 1087H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-11">
+<text x="48" y="1112" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-11</text>
+<text x="230" y="1112" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Два курса</text>
+<path d="M48 1125H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-12">
+<text x="48" y="1150" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-12</text>
+<text x="230" y="1150" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Десять тем</text>
+<path d="M48 1163H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-13">
+<text x="48" y="1188" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-13</text>
+<text x="230" y="1188" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Двадцать пять тем</text>
+<path d="M48 1201H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-14">
+<text x="48" y="1226" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-14</text>
+<text x="230" y="1226" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Пятьдесят тем</text>
+<path d="M48 1239H584" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-15">
+<text x="48" y="1264" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-15</text>
+<text x="230" y="1264" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Три дня практики</text>
+<path d="M48 1277H584" stroke="#262626" stroke-width="1"/>
+</g>
+<text x="616" y="684" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#A6A6A0">КОМПОНЕНТ</text>
+<text x="798" y="684" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#A6A6A0">НАЗВАНИЕ</text>
+<path d="M616 699H1152" stroke="#343434" stroke-width="1"/>
+<g id="Index-Achievement-16">
+<text x="616" y="732" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-16</text>
+<text x="798" y="732" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Неделя практики</text>
+<path d="M616 745H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-17">
+<text x="616" y="770" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-17</text>
+<text x="798" y="770" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Две недели практики</text>
+<path d="M616 783H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-18">
+<text x="616" y="808" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-18</text>
+<text x="798" y="808" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Месяц практики</text>
+<path d="M616 821H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-19">
+<text x="616" y="846" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-19</text>
+<text x="798" y="846" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Возвращение к теме</text>
+<path d="M616 859H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-20">
+<text x="616" y="884" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-20</text>
+<text x="798" y="884" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Тема закреплена</text>
+<path d="M616 897H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-21">
+<text x="616" y="922" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-21</text>
+<text x="798" y="922" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Разные темы</text>
+<path d="M616 935H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-22">
+<text x="616" y="960" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-22</text>
+<text x="798" y="960" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Послойная практика</text>
+<path d="M616 973H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-23">
+<text x="616" y="998" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-23</text>
+<text x="798" y="998" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Последовательность</text>
+<path d="M616 1011H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-24">
+<text x="616" y="1036" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-24</text>
+<text x="798" y="1036" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Полный обзор</text>
+<path d="M616 1049H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-25">
+<text x="616" y="1074" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-25</text>
+<text x="798" y="1074" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Самостоятельная проверка</text>
+<path d="M616 1087H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-26">
+<text x="616" y="1112" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-26</text>
+<text x="798" y="1112" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Пять исправлений</text>
+<path d="M616 1125H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-27">
+<text x="616" y="1150" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-27</text>
+<text x="798" y="1150" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Практика в модуле</text>
+<path d="M616 1163H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-28">
+<text x="616" y="1188" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-28</text>
+<text x="798" y="1188" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Практика в курсе</text>
+<path d="M616 1201H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-29">
+<text x="616" y="1226" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-29</text>
+<text x="798" y="1226" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Устойчивый ритм</text>
+<path d="M616 1239H1152" stroke="#262626" stroke-width="1"/>
+</g>
+<g id="Index-Achievement-30">
+<text x="616" y="1264" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">Achievement-30</text>
+<text x="798" y="1264" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#F5F5EF">Сто решений</text>
+<path d="M616 1277H1152" stroke="#262626" stroke-width="1"/>
+</g>
+</g>
+<g id="Scope-Note">
+<path d="M48 1328H1152" stroke="#4433EE" stroke-width="2"/>
+<text x="48" y="1372" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="500" fill="#F5F5EF">Это библиотека ресурсов</text>
+<text x="48" y="1410" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="400" fill="#A6A6A0">Полный UI kit, состояния компонентов и экраны пока находятся в плане.</text>
+<text x="48" y="1444" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="400" fill="#A6A6A0">Следующий этап — карточки, формы и страницы на основе этих ресурсов.</text>
+<text x="48" y="1483" font-family="IBM Plex Mono, Menlo, monospace" font-size="18" font-weight="400" fill="#C4FF00">План расширения: build-plan.json</text>
+</g></svg>

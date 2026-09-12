@@ -55,3 +55,21 @@ export function TechStripes({ className }: MarkProps) {
     />
   );
 }
+
+export function TechStarburst({ className }: MarkProps) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn("qlc-tech-starburst pointer-events-none block select-none", className)}
+    />
+  );
+}
+
+export function TechTarget({ className }: MarkProps) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn("qlc-tech-target pointer-events-none block select-none", className)}
+    />
+  );
+}

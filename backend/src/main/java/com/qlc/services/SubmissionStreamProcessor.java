@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -85,7 +86,7 @@ public class SubmissionStreamProcessor {
 
     Toolchain toolchain;
     try {
-      toolchain = Toolchain.valueOf(submission.getLanguage());
+      toolchain = Toolchain.valueOf(submission.getLanguage().trim().toUpperCase(Locale.ROOT));
     } catch (IllegalArgumentException | NullPointerException exception) {
       throw new IllegalStateException(
           "Submission " + submissionId + " uses unsupported toolchain " + submission.getLanguage(),
