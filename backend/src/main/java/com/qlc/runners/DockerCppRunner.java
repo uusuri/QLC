@@ -13,11 +13,15 @@ import java.util.stream.Stream;
 public class DockerCppRunner {
   private static final System.Logger LOGGER = System.getLogger(DockerCppRunner.class.getName());
 
-  public int run(RunRequest request) throws IOException, InterruptedException {
+  public DockerRunnerResult run(RunRequest request) throws IOException, InterruptedException {
     validate(request);
     Path tempDir = null;
     String containerName = "cpp-runner-" + UUID.randomUUID();
     int outputCode = -1;
+    String stdout = "";
+    String stderr = "";
+    long startTime = 0;
+    long endTime = 0;
 
     Process runnerProcess = null;
     try {
@@ -49,10 +53,8 @@ public class DockerCppRunner {
           "QLC_WALL_TIME_LIMIT_SECONDS=" + wallTimeLimitSeconds,
           "qlc-cpp-runner:dev");
 
-      runnerProcessBuilder.redirectOutput(ProcessBuilder.Redirect.DISCARD);
-      runnerProcessBuilder.redirectError(ProcessBuilder.Redirect.DISCARD);
-
       runnerProcess = runnerProcessBuilder.start();
+      startTime = System.currentTimeMillis();
       long outerTimeoutMillis = request.timeLimit().plusSeconds(30).toMillis();
       boolean finished = runnerProcess.waitFor(outerTimeoutMillis, TimeUnit.MILLISECONDS);
 
@@ -60,8 +62,10 @@ public class DockerCppRunner {
         runnerProcess.destroyForcibly();
         runnerProcess.waitFor();
       }
-
+      stdout = runnerProcessBuilder.redirectOutput().toString();
+      stderr = runnerProcessBuilder.redirectError().toString();
       outputCode = runnerProcess.exitValue();
+      endTime = System.currentTimeMillis();
     } finally {
       if (runnerProcess != null && runnerProcess.isAlive()) {
         runnerProcess.destroyForcibly();
@@ -69,7 +73,9 @@ public class DockerCppRunner {
       removeContainer(containerName);
       deleteRecursively(tempDir);
     }
-    return outputCode;
+
+    DockerRunnerResult result = new DockerRunnerResult(outputCode, stdout, stderr, endTime - startTime);
+    return result;
   }
 
   private void deleteRecursively(Path directory) {
