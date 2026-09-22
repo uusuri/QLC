@@ -7,6 +7,7 @@ import com.qlc.models.enums.Verdict;
 import com.qlc.models.messages.SubmissionStreamMessage;
 import com.qlc.repositories.SubmissionRepository;
 import com.qlc.runners.DockerCppRunner;
+import com.qlc.runners.DockerRunnerResult;
 import com.qlc.runners.RunRequest;
 import com.qlc.runners.Toolchain;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,10 +24,10 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -43,7 +44,8 @@ class SubmissionStreamProcessorTest {
 
   @BeforeEach
   void setUp() {
-    processor = new SubmissionStreamProcessor(submissionRepository, dockerCppRunner);
+    SubmissionExecutionTransactions transactions = new SubmissionExecutionTransactions(submissionRepository);
+    processor = new SubmissionStreamProcessor(transactions, dockerCppRunner);
   }
 
   @Test
@@ -52,29 +54,36 @@ class SubmissionStreamProcessorTest {
     Submission submission = submission(submissionId, SubmissionStatus.QUEUED, "int main() { return 0; }");
     when(submissionRepository.findByIdForUpdate(submissionId)).thenReturn(Optional.of(submission));
     when(submissionRepository.save(submission)).thenReturn(submission);
-    when(dockerCppRunner.run(any(RunRequest.class))).thenReturn(0);
+    when(dockerCppRunner.run(any(RunRequest.class))).thenReturn(new DockerRunnerResult(
+        Verdict.AC,
+        2,
+        2,
+        17,
+        2_048L,
+        "Пройдено тестов: 2 из 2."));
 
     SubmissionStreamProcessor.ProcessingResult result = processor.process(message(submission));
 
     assertEquals(SubmissionStreamProcessor.ProcessingOutcome.COMPLETED, result.outcome());
     assertEquals(42L, result.taskId());
     assertEquals(SubmissionStatus.FINISHED, submission.getStatus());
-    assertNull(submission.getVerdict());
-    assertNull(submission.getExecutionTime());
-    assertNull(submission.getMemoryUsed());
-    assertEquals(SubmissionStreamProcessor.RUNNER_FINISHED_MESSAGE_PREFIX + "0", submission.getSafeMessage());
+    assertEquals(Verdict.AC, submission.getVerdict());
+    assertEquals(17L, submission.getExecutionTime());
+    assertEquals(2_048L, submission.getMemoryUsed());
+    assertEquals("Пройдено тестов: 2 из 2.", submission.getSafeMessage());
     assertFalse(submission.getSafeMessage().contains(submission.getSourceCode()));
 
     ArgumentCaptor<RunRequest> requestCaptor = ArgumentCaptor.forClass(RunRequest.class);
     verify(dockerCppRunner).run(requestCaptor.capture());
     RunRequest runRequest = requestCaptor.getValue();
     assertEquals(submission.getSourceCode(), runRequest.sourceCode());
-    assertEquals("", runRequest.stdin());
+    assertEquals(submission.getTask() instanceof CodeTask codeTask ? codeTask.getTestCases() : null,
+        runRequest.testCasesJson());
     assertEquals(65_536, runRequest.memoryLimitInKb());
     assertEquals(Duration.ofMillis(2_000), runRequest.timeLimit());
     assertEquals(4_096, runRequest.outputLimitInKb());
     assertEquals(Toolchain.CPP23, runRequest.toolchain());
-    verify(submissionRepository).save(submission);
+    verify(submissionRepository, times(2)).save(submission);
   }
 
   @Test
@@ -88,8 +97,9 @@ class SubmissionStreamProcessorTest {
         IllegalStateException.class,
         () -> processor.process(message(submission)));
 
-    assertEquals("Failed to start Docker runner", exception.getMessage());
-    verify(submissionRepository, never()).save(submission);
+    assertEquals("Failed to execute judge container", exception.getMessage());
+    assertEquals(SubmissionStatus.COMPILING, submission.getStatus());
+    verify(submissionRepository).save(submission);
   }
 
   @Test
@@ -114,13 +124,20 @@ class SubmissionStreamProcessorTest {
     Submission submission = submission(submissionId, SubmissionStatus.RUNNING, "int main() {}");
     when(submissionRepository.findByIdForUpdate(submissionId)).thenReturn(Optional.of(submission));
     when(submissionRepository.save(submission)).thenReturn(submission);
-    when(dockerCppRunner.run(any(RunRequest.class))).thenReturn(0);
+    when(dockerCppRunner.run(any(RunRequest.class))).thenReturn(new DockerRunnerResult(
+        Verdict.WA,
+        1,
+        2,
+        9,
+        1_024L,
+        "Неверный ответ на тесте 2."));
 
     SubmissionStreamProcessor.ProcessingResult result = processor.process(message(submission));
 
     assertEquals(SubmissionStreamProcessor.ProcessingOutcome.COMPLETED, result.outcome());
     assertEquals(SubmissionStatus.FINISHED, submission.getStatus());
-    assertNull(submission.getVerdict());
+    assertEquals(Verdict.WA, submission.getVerdict());
+    assertEquals(1_024L, submission.getMemoryUsed());
   }
 
   @Test
@@ -205,6 +222,7 @@ class SubmissionStreamProcessorTest {
     CodeTask task = new CodeTask();
     task.setId(42L);
     task.setStatementMd("Temporary task");
+    task.setTestCases("[{\"input\":\"\",\"output\":\"\"}]");
 
     Submission submission = new Submission();
     submission.setId(id);

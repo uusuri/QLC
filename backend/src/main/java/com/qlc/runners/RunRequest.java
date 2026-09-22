@@ -4,7 +4,7 @@ import java.time.Duration;
 
 public record RunRequest(
     String sourceCode,
-    String stdin,
+    String testCasesJson,
     long memoryLimitInKb,
     Duration timeLimit,
     long outputLimitInKb,

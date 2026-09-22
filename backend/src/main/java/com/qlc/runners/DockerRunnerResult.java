@@ -1,8 +1,12 @@
 package com.qlc.runners;
 
+import com.qlc.models.enums.Verdict;
+
 public record DockerRunnerResult(
-    int exitCode,
-    String stdout,
-    String stderr,
-    long executionTimeMs) {
+    Verdict verdict,
+    int passedTests,
+    int totalTests,
+    long executionTimeMs,
+    Long memoryUsedKb,
+    String safeMessage) {
 }
