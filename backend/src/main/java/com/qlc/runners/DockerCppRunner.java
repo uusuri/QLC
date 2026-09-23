@@ -23,6 +23,9 @@ public class DockerCppRunner {
   private static final System.Logger LOGGER = System.getLogger(DockerCppRunner.class.getName());
   private static final String IMAGE_NAME = "qlc-cpp-runner:dev";
   private static final int MAX_TEST_CASES = 100;
+  private static final long BYTES_PER_KIBIBYTE = 1_024L;
+  private static final long JUDGE_MEMORY_OVERHEAD_KB = 256L * 1_024L;
+  private static final String CONTAINER_CPU_LIMIT = "1.0";
 
   private final ObjectMapper objectMapper;
 
@@ -47,6 +50,7 @@ public class DockerCppRunner {
 
       Files.writeString(sourceFile, request.sourceCode(), StandardCharsets.UTF_8);
       makeReadableByContainer(requestDirectory, sourceFile);
+      String containerMemoryLimit = Long.toString(containerMemoryLimitInBytes(request.memoryLimitInKb()));
 
       ProcessBuilder processBuilder = new ProcessBuilder(
           "docker",
@@ -64,6 +68,12 @@ public class DockerCppRunner {
           "no-new-privileges",
           "--pids-limit",
           "64",
+          "--memory",
+          containerMemoryLimit,
+          "--memory-swap",
+          containerMemoryLimit,
+          "--cpus",
+          CONTAINER_CPU_LIMIT,
           "--user",
           "65534:65534",
           "--tmpfs",
@@ -254,6 +264,16 @@ public class DockerCppRunner {
     }
     if (request.toolchain() != Toolchain.CPP23) {
       throw new IllegalArgumentException("Unsupported toolchain: " + request.toolchain());
+    }
+    containerMemoryLimitInBytes(request.memoryLimitInKb());
+  }
+
+  static long containerMemoryLimitInBytes(long taskMemoryLimitInKb) {
+    try {
+      long totalLimitInKb = Math.addExact(taskMemoryLimitInKb, JUDGE_MEMORY_OVERHEAD_KB);
+      return Math.multiplyExact(totalLimitInKb, BYTES_PER_KIBIBYTE);
+    } catch (ArithmeticException exception) {
+      throw new IllegalArgumentException("Memory limit is too large", exception);
     }
   }
 
