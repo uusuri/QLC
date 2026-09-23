@@ -14,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
 public class CourseController {
 
   private final CourseService courseService;
@@ -28,6 +27,20 @@ public class CourseController {
     return ResponseEntity.ok()
         .header("Cache-Control", "max-age=60")
         .body(courseService.getAllCourses());
+  }
+
+  @GetMapping("/catalog/courses")
+  public ResponseEntity<List<CourseCatalogDTO>> getPublishedCatalog() {
+    return ResponseEntity.ok()
+        .header("Cache-Control", "public, max-age=60")
+        .body(courseService.getPublishedCatalog());
+  }
+
+  @GetMapping("/catalog/courses/{id}")
+  public ResponseEntity<CourseStructureDTO> getCourseStructure(@PathVariable Long id) {
+    return ResponseEntity.ok()
+        .header("Cache-Control", "public, max-age=60")
+        .body(courseService.getCourseStructure(id));
   }
 
   @GetMapping("/courses/{id}")
@@ -144,6 +157,7 @@ public class CourseController {
   }
 
   @GetMapping("/lessons/{lessonId}/tasks")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<List<TaskDTO>> getTasksByLessonId(@PathVariable Long lessonId) {
     return ResponseEntity.ok(courseService.getTasksByLessonId(lessonId));
   }
@@ -154,6 +168,7 @@ public class CourseController {
   }
 
   @GetMapping("/tasks/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
     return ResponseEntity.ok(courseService.getTaskById(id));
   }

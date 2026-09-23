@@ -1,6 +1,7 @@
 package com.qlc.repositories;
 
 import com.qlc.models.entities.Submission;
+import com.qlc.models.dtos.SubmissionResultDTO;
 import com.qlc.models.enums.SubmissionStatus;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +21,16 @@ public interface SubmissionRepository extends JpaRepository<Submission, UUID> {
   Optional<Submission> findByIdempotencyKey(String key);
 
   Optional<Submission> findByIdempotencyKeyAndUserId(String key, Long userId);
+
+  @Query("select new com.qlc.models.dtos.SubmissionResultDTO("
+      + "submission.id, task.id, user.id, submission.language, submission.status, "
+      + "submission.verdict, submission.executionTime, submission.memoryUsed, "
+      + "submission.safeMessage, submission.createdAt) "
+      + "from Submission submission "
+      + "join submission.task task "
+      + "left join submission.user user "
+      + "where submission.id = :id")
+  Optional<SubmissionResultDTO> findResultById(@Param("id") UUID id);
 
   @Query("select distinct submission.task.id from Submission submission "
       + "where submission.user.id = :userId and submission.verdict = :verdict")

@@ -1,6 +1,8 @@
 package com.qlc.services;
 
 import com.qlc.models.dtos.CourseDTO;
+import com.qlc.models.dtos.CourseCatalogDTO;
+import com.qlc.models.dtos.CourseStructureDTO;
 import com.qlc.models.dtos.LessonDTO;
 import com.qlc.models.dtos.ModuleDTO;
 import com.qlc.models.dtos.TaskDTO;
@@ -96,6 +98,39 @@ class CourseServiceTest {
     void getCourseById_NotFound_ShouldThrow() {
       when(courseRepository.findByIdAndPublishedTrue(1L)).thenReturn(Optional.empty());
       assertThrows(RuntimeException.class, () -> courseService.getCourseById(1L));
+    }
+
+    @Test
+    void getPublishedCatalog_UsesAggregatedRepositoryResult() {
+      CourseCatalogDTO catalogItem = new CourseCatalogDTO(
+          1L,
+          "Java Core",
+          "Base course",
+          BigDecimal.TEN,
+          new BigDecimal("100"),
+          12L);
+      when(courseRepository.findPublishedCatalog()).thenReturn(List.of(catalogItem));
+
+      List<CourseCatalogDTO> result = courseService.getPublishedCatalog();
+
+      assertEquals(List.of(catalogItem), result);
+      verifyNoInteractions(moduleRepository, lessonRepository);
+    }
+
+    @Test
+    void getCourseStructure_LoadsAllLessonsInOneRepositoryCall() {
+      sampleModule.setPosition(0);
+      sampleLesson.setPosition(0);
+      when(courseRepository.findByIdAndPublishedTrue(1L)).thenReturn(Optional.of(sampleCourse));
+      when(moduleRepository.findByCourseIdOrderByPositionAsc(1L)).thenReturn(List.of(sampleModule));
+      when(lessonRepository.findByCourseIdOrdered(1L)).thenReturn(List.of(sampleLesson));
+
+      CourseStructureDTO result = courseService.getCourseStructure(1L);
+
+      assertEquals(1, result.modules().size());
+      assertEquals(1, result.modules().get(0).lessons().size());
+      assertNull(result.modules().get(0).lessons().get(0).contentMd());
+      verify(lessonRepository, times(1)).findByCourseIdOrdered(1L);
     }
 
     @Test

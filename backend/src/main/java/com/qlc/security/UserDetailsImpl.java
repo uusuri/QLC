@@ -37,6 +37,11 @@ public class UserDetailsImpl implements UserDetails {
         roleName, auth);
   }
 
+  public static UserDetailsImpl fromToken(Long id, String username, String email, String role) {
+    List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+    return new UserDetailsImpl(id, null, username, email, "", role, authorities);
+  }
+
   public Long getId() { return id; }
   public Long getTgId() { return tgId; }
   public String getEmail() { return email; }

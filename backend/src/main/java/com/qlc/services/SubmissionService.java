@@ -3,6 +3,7 @@ package com.qlc.services;
 import com.qlc.models.requests.SubmissionRequest;
 import com.qlc.models.responses.SubmissionCreatedResponse;
 import com.qlc.models.responses.SubmissionResponse;
+import com.qlc.models.dtos.SubmissionResultDTO;
 import com.qlc.models.entities.CodeTask;
 import com.qlc.models.entities.Submission;
 import com.qlc.models.entities.Task;
@@ -163,29 +164,29 @@ public class SubmissionService {
 
   @Transactional(readOnly = true)
   public SubmissionResponse getSubmissionById(UUID id, Long userId, boolean isAdmin) {
-    Submission s = submissionRepository.findById(id)
+    SubmissionResultDTO submission = submissionRepository.findResultById(id)
         .orElseThrow(() -> new RuntimeException("Submission not found with id: " + id));
 
-    if (!isAdmin && (s.getUser() == null || !Objects.equals(s.getUser().getId(), userId))) {
+    if (!isAdmin && (submission.userId() == null || !Objects.equals(submission.userId(), userId))) {
       throw new org.springframework.security.access.AccessDeniedException("Submission belongs to another user");
     }
 
     // Обрезка логов компилятора под лимиты конфигураци сервера
-    String safe = s.getSafeMessage();
+    String safe = submission.safeMessage();
     if (safe != null && safe.length() > maxLogLength) {
       safe = safe.substring(0, maxLogLength) + "\n[truncated]";
     }
 
     return new SubmissionResponse(
-        s.getId(),
-        s.getTask().getId(),
-        s.getLanguage(),
-        s.getStatus().name(),
-        s.getVerdict() != null ? s.getVerdict().name() : null,
-        s.getExecutionTime(),
-        s.getMemoryUsed(),
+        submission.id(),
+        submission.taskId(),
+        submission.language(),
+        submission.status().name(),
+        submission.verdict() != null ? submission.verdict().name() : null,
+        submission.executionTime(),
+        submission.memoryUsed(),
         safe,
-        s.getCreatedAt());
+        submission.createdAt());
   }
 
   private boolean isSupportedLanguage(String language) {

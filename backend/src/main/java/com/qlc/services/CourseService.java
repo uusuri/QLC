@@ -3,8 +3,12 @@ package com.qlc.services;
 import com.qlc.models.entities.*;
 
 import com.qlc.models.dtos.CourseDTO;
+import com.qlc.models.dtos.CourseCatalogDTO;
+import com.qlc.models.dtos.CourseStructureDTO;
+import com.qlc.models.dtos.LearnerTaskDTO;
 import com.qlc.models.dtos.LessonDTO;
 import com.qlc.models.dtos.ModuleDTO;
+import com.qlc.models.dtos.ModuleWithLessonsDTO;
 import com.qlc.models.dtos.TaskDTO;
 import com.qlc.models.dtos.TaskOutlineDTO;
 import com.qlc.models.responses.LessonLearnResponse;
@@ -14,15 +18,17 @@ import com.qlc.repositories.LessonRepository;
 import com.qlc.repositories.ModuleRepository;
 import com.qlc.repositories.TaskRepository;
 
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class CourseService {
 
   private final CourseRepository courseRepository;
@@ -54,6 +60,32 @@ public class CourseService {
     return mapToCourseDTO(c);
   }
 
+  public List<CourseCatalogDTO> getPublishedCatalog() {
+    return courseRepository.findPublishedCatalog();
+  }
+
+  public CourseStructureDTO getCourseStructure(Long courseId) {
+    Course course = courseRepository.findByIdAndPublishedTrue(courseId)
+        .orElseThrow(() -> new RuntimeException("Course not found"));
+    List<com.qlc.models.entities.Module> modules =
+        moduleRepository.findByCourseIdOrderByPositionAsc(courseId);
+    Map<Long, List<LessonDTO>> lessonsByModule = new LinkedHashMap<>();
+
+    for (Lesson lesson : lessonRepository.findByCourseIdOrdered(courseId)) {
+      lessonsByModule.computeIfAbsent(lesson.getModule().getId(), ignored -> new ArrayList<>())
+          .add(mapToLessonSummaryDTO(lesson));
+    }
+
+    List<ModuleWithLessonsDTO> moduleDtos = modules.stream()
+        .map(module -> new ModuleWithLessonsDTO(
+            mapToModuleDTO(module),
+            lessonsByModule.getOrDefault(module.getId(), List.of())))
+        .toList();
+
+    return new CourseStructureDTO(mapToCourseDTO(course), moduleDtos);
+  }
+
+  @Transactional
   public CourseDTO createCourse(CourseDTO dto) {
     Course course = new Course();
     course.setName(dto.name());
@@ -63,6 +95,7 @@ public class CourseService {
     return mapToCourseDTO(courseRepository.save(course));
   }
 
+  @Transactional
   public CourseDTO updateCourse(Long courseId, CourseDTO dto) {
     Course course = courseRepository.findById(courseId)
         .orElseThrow(() -> new RuntimeException("Course not found"));
@@ -75,6 +108,7 @@ public class CourseService {
     return mapToCourseDTO(courseRepository.save(course));
   }
 
+  @Transactional
   public void deleteCourse(Long courseId) {
     courseRepository.deleteById(courseId);
   }
@@ -100,6 +134,7 @@ public class CourseService {
         .orElseThrow(() -> new RuntimeException("Module not found")));
   }
 
+  @Transactional
   public ModuleDTO createModule(Long courseId, ModuleDTO dto) {
     Course course = courseRepository.findById(courseId)
         .orElseThrow(() -> new RuntimeException("Course not found"));
@@ -111,6 +146,7 @@ public class CourseService {
     return mapToModuleDTO(moduleRepository.save(module));
   }
 
+  @Transactional
   public ModuleDTO updateModule(Long moduleId, ModuleDTO dto) {
     com.qlc.models.entities.Module module = moduleRepository.findById(moduleId)
         .orElseThrow(() -> new RuntimeException("Module not found"));
@@ -120,6 +156,7 @@ public class CourseService {
     return mapToModuleDTO(moduleRepository.save(module));
   }
 
+  @Transactional
   public void deleteModule(Long moduleId) {
     moduleRepository.deleteById(moduleId);
   }
@@ -153,7 +190,7 @@ public class CourseService {
   }
 
   public LessonDTO getLessonForUser(Long lessonId, Long userId) {
-    Lesson lesson = lessonRepository.findById(lessonId)
+    Lesson lesson = lessonRepository.findByIdWithModuleAndCourse(lessonId)
         .orElseThrow(() -> new RuntimeException("Lesson not found"));
 
     Course course = lesson.getModule().getCourse();
@@ -180,7 +217,7 @@ public class CourseService {
   }
 
   public LessonLearnResponse getLessonWithTasksForUser(Long lessonId, Long userId) {
-    Lesson lesson = lessonRepository.findById(lessonId)
+    Lesson lesson = lessonRepository.findByIdWithModuleAndCourse(lessonId)
         .orElseThrow(() -> new RuntimeException("Lesson not found"));
 
     Course course = lesson.getModule().getCourse();
@@ -197,15 +234,20 @@ public class CourseService {
         visible ? lesson.getContentMd() : null,
         lesson.isPublished());
 
-    List<TaskDTO> tasks = visible
+    List<LearnerTaskDTO> tasks = visible
         ? taskRepository.findByLessonId(lesson.getId()).stream()
-            .map(this::mapToTaskDTO)
+            .map(this::mapToLearnerTaskDTO)
             .toList()
         : List.of();
 
-    return new LessonLearnResponse(lessonDto, tasks);
+    return new LessonLearnResponse(
+        mapToCourseDTO(course),
+        mapToModuleDTO(lesson.getModule()),
+        lessonDto,
+        tasks);
   }
 
+  @Transactional
   public LessonDTO createLesson(Long moduleId, LessonDTO dto) {
     com.qlc.models.entities.Module module = moduleRepository.findById(moduleId)
         .orElseThrow(() -> new RuntimeException("Module not found"));
@@ -219,6 +261,7 @@ public class CourseService {
     return mapToLessonDTO(lessonRepository.save(lesson));
   }
 
+  @Transactional
   public LessonDTO updateLesson(Long lessonId, LessonDTO dto) {
     Lesson lesson = lessonRepository.findById(lessonId)
         .orElseThrow(() -> new RuntimeException("Lesson not found"));
@@ -232,6 +275,7 @@ public class CourseService {
     return mapToLessonDTO(lessonRepository.save(lesson));
   }
 
+  @Transactional
   public void deleteLesson(Long lessonId) {
     lessonRepository.deleteById(lessonId);
   }
@@ -245,6 +289,17 @@ public class CourseService {
         l.getPosition(),
         l.isPublished() ? l.getContentMd() : null,
         l.isPublished());
+  }
+
+  private LessonDTO mapToLessonSummaryDTO(Lesson lesson) {
+    return new LessonDTO(
+        lesson.getId(),
+        lesson.getModule().getId(),
+        lesson.getName(),
+        lesson.getDescription(),
+        lesson.getPosition(),
+        null,
+        lesson.isPublished());
   }
 
   // --- Task CRUD ---
@@ -266,6 +321,7 @@ public class CourseService {
     return mapToTaskDTO(t);
   }
 
+  @Transactional
   public TaskDTO createTask(Long lessonId, TaskDTO dto) {
     Lesson lesson = lessonRepository.findById(lessonId)
         .orElseThrow(() -> new RuntimeException("Lesson not found"));
@@ -277,6 +333,7 @@ public class CourseService {
     return mapToTaskDTO(taskRepository.save(task));
   }
 
+  @Transactional
   public TaskDTO updateTask(Long taskId, TaskDTO dto) {
     Task task = taskRepository.findById(taskId)
         .orElseThrow(() -> new RuntimeException("Task not found"));
@@ -284,6 +341,7 @@ public class CourseService {
     return mapToTaskDTO(taskRepository.save(task));
   }
 
+  @Transactional
   public void deleteTask(Long taskId) {
     taskRepository.deleteById(taskId);
   }
@@ -379,6 +437,43 @@ public class CourseService {
         options,
         correctOptionIndexes,
         correctNumericAnswer);
+  }
+
+  private LearnerTaskDTO mapToLearnerTaskDTO(Task task) {
+    String language = null;
+    String starterCode = null;
+    String templateCode = null;
+    Integer timeLimitMs = null;
+    Integer memoryLimitKb = null;
+    Integer outputLimitKb = null;
+    Integer testSetVersion = null;
+    List<String> options = null;
+
+    if (task instanceof CodeTask codeTask) {
+      language = codeTask.getLanguage();
+      starterCode = codeTask.getStarterCode();
+      templateCode = codeTask.getTemplateCode();
+      timeLimitMs = codeTask.getTimeLimitMs();
+      memoryLimitKb = codeTask.getMemoryLimitKb();
+      outputLimitKb = codeTask.getOutputLimitKb();
+      testSetVersion = codeTask.getTestSetVersion();
+    } else if (task instanceof TestTask testTask) {
+      options = testTask.getOptions();
+    }
+
+    return new LearnerTaskDTO(
+        task.getId(),
+        task.getLesson().getId(),
+        task.getTaskType(),
+        language,
+        task.getStatementMd(),
+        starterCode,
+        timeLimitMs,
+        memoryLimitKb,
+        outputLimitKb,
+        testSetVersion,
+        templateCode,
+        options);
   }
 
   private boolean isCourseFree(Course course) {

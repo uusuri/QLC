@@ -2,9 +2,12 @@ package com.qlc.controllers;
 
 import tools.jackson.databind.ObjectMapper;
 import com.qlc.models.dtos.CourseDTO;
+import com.qlc.models.dtos.CourseCatalogDTO;
+import com.qlc.models.dtos.CourseStructureDTO;
 import com.qlc.models.dtos.LessonDTO;
 import com.qlc.models.dtos.ModuleDTO;
 import com.qlc.models.responses.LessonLearnResponse;
+import com.qlc.models.entities.CodeTask;
 import com.qlc.models.entities.Course;
 import com.qlc.models.entities.User;
 import com.qlc.models.requests.AuthRegisterRequest;
@@ -13,6 +16,7 @@ import com.qlc.models.responses.AuthResponse;
 import com.qlc.repositories.CourseRepository;
 import com.qlc.repositories.LessonRepository;
 import com.qlc.repositories.ModuleRepository;
+import com.qlc.repositories.TaskRepository;
 import com.qlc.repositories.UserRepository;
 import com.qlc.services.CartService;
 import org.junit.jupiter.api.AfterEach;
@@ -65,6 +69,9 @@ class CoursePurchaseIntegrationTest {
   private LessonRepository lessonRepository;
 
   @Autowired
+  private TaskRepository taskRepository;
+
+  @Autowired
   private CartService cartService;
 
   @Autowired
@@ -115,6 +122,43 @@ class CoursePurchaseIntegrationTest {
     lesson.setModule(module);
     lesson = lessonRepository.save(lesson);
 
+    CodeTask task = new CodeTask();
+    task.setLesson(lesson);
+    task.setStatementMd("Add two numbers");
+    task.setLanguage("CPP23");
+    task.setStarterCode("int main() {}\n");
+    task.setTestCases("[{\"input\":\"1 2\\n\",\"output\":\"3\\n\"}]");
+    task = (CodeTask) taskRepository.save(task);
+
+    Long savedCourseId = course.getId();
+    Long savedModuleId = module.getId();
+    Long savedLessonId = lesson.getId();
+    Long savedTaskId = task.getId();
+
+    MvcResult catalogResult = mockMvc.perform(get("/api/catalog/courses"))
+        .andExpect(status().isOk())
+        .andReturn();
+    List<CourseCatalogDTO> catalog = objectMapper.readValue(
+        catalogResult.getResponse().getContentAsString(),
+        objectMapper.getTypeFactory().constructCollectionType(List.class, CourseCatalogDTO.class));
+    assertThat(catalog).singleElement().satisfies(item -> {
+      assertThat(item.id()).isEqualTo(savedCourseId);
+      assertThat(item.lessonsCount()).isEqualTo(1L);
+    });
+
+    MvcResult structureResult = mockMvc.perform(get("/api/catalog/courses/{id}", savedCourseId))
+        .andExpect(status().isOk())
+        .andReturn();
+    CourseStructureDTO structure = objectMapper.readValue(
+        structureResult.getResponse().getContentAsString(), CourseStructureDTO.class);
+    assertThat(structure.modules()).singleElement().satisfies(item -> {
+      assertThat(item.module().id()).isEqualTo(savedModuleId);
+      assertThat(item.lessons()).singleElement().satisfies(summary -> {
+        assertThat(summary.id()).isEqualTo(savedLessonId);
+        assertThat(summary.contentMd()).isNull();
+      });
+    });
+
     // === Register and login a buyer ===
     String token = registerAndGetToken("buyer01", "buyer01@example.com", "password123");
 
@@ -128,6 +172,8 @@ class CoursePurchaseIntegrationTest {
         beforeResult.getResponse().getContentAsString(), LessonLearnResponse.class);
     LessonDTO beforeLesson = beforeResponse.lesson();
 
+    assertThat(beforeResponse.course().id()).isEqualTo(savedCourseId);
+    assertThat(beforeResponse.module().id()).isEqualTo(savedModuleId);
     assertThat(beforeLesson.contentMd()).isNull();
     assertThat(beforeResponse.tasks()).isEmpty();
 
@@ -163,6 +209,13 @@ class CoursePurchaseIntegrationTest {
     LessonDTO afterLesson = afterResponse.lesson();
 
     assertThat(afterLesson.contentMd()).isEqualTo("# Secret content");
+    assertThat(afterResponse.tasks()).singleElement().satisfies(item -> {
+      assertThat(item.id()).isEqualTo(savedTaskId);
+      assertThat(item.statementMd()).isEqualTo("Add two numbers");
+    });
+    assertThat(afterResult.getResponse().getContentAsString())
+        .doesNotContain("testCases")
+        .doesNotContain("1 2\\n");
 
     // === Assert (c): user's bought courses list contains the course ===
     MvcResult myCoursesResult = mockMvc.perform(get("/api/users/me/courses")

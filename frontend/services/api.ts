@@ -12,14 +12,15 @@ import type {
   AuthUserDto,
   CartResponseDto,
   CourseAccessResponseDto,
+  CourseCatalogBackendDto,
   CourseLearningViewDto,
+  CourseStructureResponseDto,
   MyCourseProgressDto,
   CourseAccessCopyDto,
   CourseAccessStatus,
   CourseDto,
   LessonLearnResponseDto,
   LessonLearningViewDto,
-  LearnerTaskDto,
   LessonTaskOutlineDto,
   LoginUserPayload,
   LoginNoteDto,
@@ -257,24 +258,6 @@ function mapAdminCourseToCatalogCourse(course: AdminCourseDto, lessonsCount = 0)
   };
 }
 
-// Удаляет приватные judge-поля до сериализации server component в браузер.
-function mapAdminTaskToLearnerTask(task: AdminTaskDto): LearnerTaskDto {
-  return {
-    id: task.id,
-    lessonId: task.lessonId,
-    taskType: task.taskType,
-    language: task.language,
-    statementMd: task.statementMd,
-    starterCode: task.starterCode,
-    timeLimitMs: task.timeLimitMs,
-    memoryLimitKb: task.memoryLimitKb,
-    outputLimitKb: task.outputLimitKb,
-    testSetVersion: task.testSetVersion,
-    templateCode: task.templateCode,
-    options: task.options
-  };
-}
-
 // Тексты состояний доступа в checkout.
 export const COURSE_ACCESS_COPY: Record<CourseAccessStatus, CourseAccessCopyDto> = {
   open: {
@@ -451,17 +434,8 @@ export function logoutUser() {
 
 // Возвращает каталог курсов для главной и checkout-страницы.
 export async function getCourseCatalog(): Promise<CourseDto[]> {
-  const courses = await getAdminCourses();
-
-  return Promise.all(
-    courses.map(async (course) => {
-      const modules = await getAdminModules(course.id);
-      const lessonsByModule = await Promise.all(modules.map((module) => getAdminLessons(module.id)));
-      const lessonsCount = lessonsByModule.flat().filter((lesson) => lesson.published).length;
-
-      return mapAdminCourseToCatalogCourse(course, lessonsCount);
-    })
-  );
+  const courses = await apiRequest<CourseCatalogBackendDto[]>("/api/catalog/courses");
+  return courses.map((course) => mapAdminCourseToCatalogCourse(course, course.lessonsCount));
 }
 
 // Собирает страницу курса: сам курс, модули, уроки и первый доступный урок.
@@ -472,14 +446,10 @@ export async function getCourseLearningView(slug: string): Promise<CourseLearnin
     return null;
   }
 
-  let course: AdminCourseDto;
-  let modules: AdminModuleDto[];
+  let structure: CourseStructureResponseDto;
 
   try {
-    [course, modules] = await Promise.all([
-      getAdminCourseById(courseId),
-      getAdminModules(courseId)
-    ]);
+    structure = await apiRequest<CourseStructureResponseDto>(`/api/catalog/courses/${courseId}`);
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 404) {
       return null;
@@ -488,23 +458,15 @@ export async function getCourseLearningView(slug: string): Promise<CourseLearnin
     throw error;
   }
 
-  const modulesWithLessons = await Promise.all(
-    modules.map(async (module) => ({
-      module,
-      // Backend возвращает и опубликованные уроки, и черновики.
-      // Страница курса должна показывать всю структуру, поэтому здесь нельзя
-      // отбрасывать published: false: новые уроки создаются именно с таким статусом.
-      lessons: await getAdminLessons(module.id)
-    }))
-  );
+  const modulesWithLessons = structure.modules;
   // Главная CTA открывает только опубликованный урок, содержимое которого backend не скрывает.
   const firstLesson =
     modulesWithLessons.flatMap((item) => item.lessons).find((lesson) => lesson.published) ?? null;
 
   return {
-    course,
+    course: structure.course,
     catalogCourse: mapAdminCourseToCatalogCourse(
-      course,
+      structure.course,
       modulesWithLessons.flatMap((item) => item.lessons).filter((lesson) => lesson.published).length
     ),
     modules: modulesWithLessons,
@@ -527,17 +489,14 @@ export async function getCourseAccess(courseId: number): Promise<boolean> {
 
 // Собирает страницу урока: урок, родительский модуль/курс и задачи урока.
 export async function getLessonLearningView(id: number): Promise<LessonLearningViewDto | null> {
-  const { lesson, tasks } = await getLessonForUser(id);
-  const module = await getAdminModuleById(lesson.moduleId);
-  const course = await getAdminCourseById(module.courseId);
-  const mappedTasks = tasks.map(mapAdminTaskToLearnerTask);
+  const { course, module, lesson, tasks } = await getLessonForUser(id);
 
   return {
     course,
     lesson,
     module,
-    primaryTask: mappedTasks[0] ?? null,
-    tasks: mappedTasks
+    primaryTask: tasks[0] ?? null,
+    tasks
   };
 }
 

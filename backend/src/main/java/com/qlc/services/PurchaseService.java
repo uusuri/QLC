@@ -2,6 +2,7 @@ package com.qlc.services;
 
 import com.qlc.models.entities.Course;
 import com.qlc.models.entities.User;
+import com.qlc.models.dtos.CourseDTO;
 import com.qlc.repositories.CourseRepository;
 import com.qlc.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -53,11 +54,11 @@ public class PurchaseService {
 
   @Transactional(readOnly = true)
   public boolean hasAccess(Long userId, Long courseId) {
-    User user = userRepository.findById(userId).orElse(null);
-    if (user == null) {
-      return false;
-    }
-    return user.getBoughtCourses().stream()
-        .anyMatch(course -> course.getId() == courseId);
+    return courseRepository.existsByIdAndStudents_Id(courseId, userId);
+  }
+
+  @Transactional(readOnly = true)
+  public List<CourseDTO> getPurchasedCourses(Long userId) {
+    return courseRepository.findPurchasedDtosByUserId(userId);
   }
 }

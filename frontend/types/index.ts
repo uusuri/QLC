@@ -128,8 +128,10 @@ export interface CourseAccessResponseDto {
 }
 
 export interface LessonLearnResponseDto {
+  course: AdminCourseDto;
+  module: AdminModuleDto;
   lesson: AdminLessonDto;
-  tasks: AdminTaskDto[];
+  tasks: LearnerTaskDto[];
 }
 
 export interface PaymentMethodDto {
@@ -168,6 +170,10 @@ export interface AdminCourseDto {
   price: number | null;
   // Цена в Telegram Stars, backend хранит BigDecimal.
   priceInStars: number | null;
+}
+
+export interface CourseCatalogBackendDto extends AdminCourseDto {
+  lessonsCount: number;
 }
 
 // Payload для POST /api/courses.
@@ -319,6 +325,11 @@ export interface CourseModuleWithLessonsDto {
   module: AdminModuleDto;
   // Уроки только этого модуля.
   lessons: AdminLessonDto[];
+}
+
+export interface CourseStructureResponseDto {
+  course: AdminCourseDto;
+  modules: CourseModuleWithLessonsDto[];
 }
 
 // Полная структура страницы курса.

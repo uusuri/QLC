@@ -11,6 +11,12 @@ spring:
   jackson:
     default-property-inclusion: non_null
 
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        default_batch_fetch_size: 64
+
 # Можно переопределить в окружении через JWT_EXPIRATION (значение в миллисекундах).
 jwt:
   expiration: ${JWT_EXPIRATION:86400000}
@@ -29,3 +35,9 @@ app:
       consumer-name: "${WORKER_ID:qlc-worker-1}"
       poll-delay-ms: 500
       batch-size: 10
+
+server:
+  compression:
+    enabled: true
+    min-response-size: 1024
+    mime-types: application/json,text/html,text/plain,text/css,application/javascript

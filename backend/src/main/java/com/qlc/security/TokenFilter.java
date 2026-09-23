@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import io.jsonwebtoken.Claims;
 
 @Component
 public class TokenFilter extends OncePerRequestFilter {
@@ -33,11 +34,19 @@ public class TokenFilter extends OncePerRequestFilter {
     if (authHeader != null && authHeader.startsWith("Bearer ")) {
       String jwt = authHeader.substring(7);
       try {
-        String username = jwtCore.extractUsername(jwt);
+        Claims claims = jwtCore.parseClaims(jwt);
+        if (jwtCore.isTokenValid(claims)) {
+          String username = claims.getSubject();
+          String role = claims.get("role", String.class);
+          String email = claims.get("email", String.class);
+          Number rawUserId = claims.get("userId", Number.class);
+          if (role == null || rawUserId == null) {
+            throw new IllegalArgumentException("Token is missing required claims");
+          }
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-        if (jwtCore.isTokenValid(jwt, userDetails)) {
+          UserDetails userDetails = email == null
+              ? userDetailsService.loadUserByUsername(username)
+              : UserDetailsImpl.fromToken(rawUserId.longValue(), username, email, role);
           UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
               userDetails, null, userDetails.getAuthorities());
           SecurityContextHolder.getContext().setAuthentication(auth);

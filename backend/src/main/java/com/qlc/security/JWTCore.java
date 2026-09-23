@@ -40,6 +40,7 @@ public class JWTCore {
         .subject(username)
         .claim("role", role)
         .claim("userId", userId)
+        .claim("email", userDetails != null ? userDetails.getEmail() : null)
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
         .signWith(getSigningKey()) // Алгоритм HS512 либа выберет автоматически на основе длины ключа
@@ -55,7 +56,8 @@ public class JWTCore {
   }
 
   public Long extractUserId(String token) {
-    return getClaims(token).get("userId", Long.class);
+    Number userId = getClaims(token).get("userId", Number.class);
+    return userId == null ? null : userId.longValue();
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -67,6 +69,16 @@ public class JWTCore {
     } catch (Exception e) {
       return false;
     }
+  }
+
+  public Claims parseClaims(String token) {
+    return getClaims(token);
+  }
+
+  public boolean isTokenValid(Claims claims) {
+    return claims.getSubject() != null
+        && claims.getExpiration() != null
+        && claims.getExpiration().after(new Date());
   }
 
   private Claims getClaims(String token) {

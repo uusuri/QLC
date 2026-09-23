@@ -3,6 +3,7 @@ package com.qlc.services;
 import com.qlc.models.requests.SubmissionRequest;
 import com.qlc.models.responses.SubmissionCreatedResponse;
 import com.qlc.models.responses.SubmissionResponse;
+import com.qlc.models.dtos.SubmissionResultDTO;
 import com.qlc.models.entities.Submission;
 import com.qlc.models.entities.Task;
 import com.qlc.models.entities.CodeTask;
@@ -316,7 +317,7 @@ class SubmissionServiceTest {
       baseSubmission.setMemoryUsed(1024L); // 1024 KB
       baseSubmission.setSafeMessage("All test cases completed successfully.");
 
-      when(submissionRepository.findById(submissionId)).thenReturn(Optional.of(baseSubmission));
+      when(submissionRepository.findResultById(submissionId)).thenReturn(Optional.of(toResult(baseSubmission)));
 
       // Act
       SubmissionResponse response = submissionService.getSubmissionById(submissionId);
@@ -341,7 +342,7 @@ class SubmissionServiceTest {
       baseSubmission.setExecutionTime(null);
       baseSubmission.setMemoryUsed(null);
 
-      when(submissionRepository.findById(submissionId)).thenReturn(Optional.of(baseSubmission));
+      when(submissionRepository.findResultById(submissionId)).thenReturn(Optional.of(toResult(baseSubmission)));
 
       // Act
       SubmissionResponse response = submissionService.getSubmissionById(submissionId);
@@ -365,7 +366,7 @@ class SubmissionServiceTest {
       String hugeCompilerLog = "Internal compiler error: layout mismatch in struct initialization context.";
       baseSubmission.setSafeMessage(hugeCompilerLog);
 
-      when(submissionRepository.findById(submissionId)).thenReturn(Optional.of(baseSubmission));
+      when(submissionRepository.findResultById(submissionId)).thenReturn(Optional.of(toResult(baseSubmission)));
 
       // Act
       SubmissionResponse response = submissionService.getSubmissionById(submissionId);
@@ -386,13 +387,27 @@ class SubmissionServiceTest {
     void getSubmissionById_NotFound_ThrowsException() {
       // Arrange
       UUID fakeId = UUID.randomUUID();
-      when(submissionRepository.findById(fakeId)).thenReturn(Optional.empty());
+      when(submissionRepository.findResultById(fakeId)).thenReturn(Optional.empty());
 
       // Act & Assert
       RuntimeException ex = assertThrows(RuntimeException.class,
           () -> submissionService.getSubmissionById(fakeId));
 
       assertEquals("Submission not found with id: " + fakeId, ex.getMessage());
+    }
+
+    private SubmissionResultDTO toResult(Submission submission) {
+      return new SubmissionResultDTO(
+          submission.getId(),
+          submission.getTask().getId(),
+          submission.getUser() == null ? null : submission.getUser().getId(),
+          submission.getLanguage(),
+          submission.getStatus(),
+          submission.getVerdict(),
+          submission.getExecutionTime(),
+          submission.getMemoryUsed(),
+          submission.getSafeMessage(),
+          submission.getCreatedAt());
     }
   }
 }
