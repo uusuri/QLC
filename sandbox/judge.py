@@ -14,6 +14,12 @@ WORK_DIRECTORY = Path("/work")
 SANDBOX_EXECUTABLE = "/usr/local/bin/qlc-sandbox"
 MAX_TEST_CASES = 100
 MAX_DIAGNOSTIC_BYTES = 16 * 1024
+MEMORY_FAILURE_MARKERS = (
+    "std::bad_alloc",
+    "cannot allocate memory",
+    "memory allocation failed",
+    "out of memory",
+)
 
 
 class JudgeConfigurationError(RuntimeError):
@@ -94,6 +100,23 @@ def read_peak_memory_kb(path: Path) -> int | None:
     except (OSError, ValueError):
         return None
     return value if value >= 0 else None
+
+
+def is_memory_limit_exceeded(
+    return_code: int,
+    diagnostic: str,
+    peak_memory_kb: int | None,
+    memory_limit_kb: int,
+) -> bool:
+    normalized_diagnostic = diagnostic.casefold()
+    allocation_failed = any(
+        marker in normalized_diagnostic for marker in MEMORY_FAILURE_MARKERS
+    )
+    killed_by_memory_controller = return_code == 137
+    reached_reported_limit = (
+        peak_memory_kb is not None and peak_memory_kb >= memory_limit_kb
+    )
+    return allocation_failed or killed_by_memory_controller or reached_reported_limit
 
 
 def emit_result(
@@ -201,6 +224,13 @@ def run_test_case(
         return "TLE", "Превышено ограничение времени.", elapsed_ms, peak_memory_kb
     if completed.returncode == 153 or stdout_path.stat().st_size > output_limit_kb * 1024:
         return "OLE", "Превышено ограничение вывода.", elapsed_ms, peak_memory_kb
+    if completed.returncode != 0 and is_memory_limit_exceeded(
+        completed.returncode,
+        diagnostic,
+        peak_memory_kb,
+        memory_limit_kb,
+    ):
+        return "MLE", "Превышено ограничение памяти.", elapsed_ms, peak_memory_kb
     if completed.returncode != 0:
         message = "Ошибка выполнения."
         if diagnostic:

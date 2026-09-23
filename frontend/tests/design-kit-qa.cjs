@@ -18,13 +18,15 @@ async function fixture(context, role='ROLE_USER') {
     if(path==='/api/auth/me') body={id:999,username:'design_tester',email:'visual-test@example.invalid',role};
     else if(path==='/api/users/me/learning-courses') body=progress;
     else if(path==='/api/cart') body={courseIds:[1]};
+    else if(path==='/api/catalog/courses') body=[{...course,lessonsCount:1}];
+    else if(path==='/api/catalog/courses/2') body={course,modules:[{module:moduleItem,lessons:[lesson]}]};
     else if(path==='/api/courses') body=[course];
     else if(path==='/api/courses/2') body=course;
     else if(path==='/api/courses/2/access') body={access:true};
     else if(path==='/api/courses/2/modules') body=[moduleItem];
     else if(path==='/api/modules/201') body=moduleItem;
     else if(path==='/api/modules/201/lessons') body=[lesson];
-    else if(path==='/api/lessons/301/learn') body={lesson,tasks:[task]};
+    else if(path==='/api/lessons/301/learn') body={course,module:moduleItem,lesson,tasks:[task]};
     else if(path==='/api/lessons/301/task-outline'||path==='/api/lessons/301/tasks') body=[task];
     else if(path==='/api/tasks/401/submissions') body={id:'fixture-submission',status:'QUEUED'};
     else if(path==='/api/submissions/fixture-submission') body={id:'fixture-submission',status:'FINISHED',verdict:'AC',executionTime:14,memoryUsed:1024,safeMessage:'Тестовые данные проверки интерфейса.'};
@@ -77,7 +79,8 @@ async function inspect(page, name, width) {
     await p.getByRole('button',{name:'Сбросить код',exact:true}).click();await p.getByRole('dialog').waitFor();await inspect(p,'reset-confirm',width);await p.getByRole('button',{name:'Сохранить черновик'}).click();
     assert((await p.evaluate(()=>localStorage.getItem('qlc:draft:task:401:v1'))).includes('preserved draft'));
     await p.getByRole('button',{name:'Проверить решение',exact:false}).click();
-    await p.getByText('Тестовые данные проверки интерфейса.').waitFor();
+    await p.getByText('AC / Время 14 мс / Память 1 МБ').waitFor();
+    assert.equal(await p.getByText('Вывод проверки',{exact:true}).count(),0,'Debug output panel must stay hidden');
     await inspect(p,'result-success',width);
     await p.reload({waitUntil:'networkidle'});assert((await p.evaluate(()=>localStorage.getItem('qlc:draft:task:401:v1'))).includes('preserved draft'));
     await auth.close();

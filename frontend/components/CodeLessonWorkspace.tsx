@@ -115,8 +115,6 @@ type SubmissionPhase =
 
 // Локальное состояние submission UI.
 type SubmissionUiState = {
-  // errorMessage хранит сетевую/API ошибку.
-  errorMessage?: string;
   // phase управляет статусом и disabled-состояниями.
   phase: SubmissionPhase;
   // response — последний ответ GET /api/submissions/{id}.
@@ -135,11 +133,6 @@ type CodeLessonWorkspaceProps = {
 // Проверяет AbortError без any.
 function isAbortError(error: unknown) {
   return error instanceof DOMException && error.name === "AbortError";
-}
-
-// Достает читаемый текст ошибки.
-function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Network/API error";
 }
 
 // Возвращает размер исходника в байтах, если среда поддерживает Blob.
@@ -320,8 +313,8 @@ function getPhaseCopy(phase: SubmissionPhase) {
   if (phase === "ac") {
     return {
       badge: "AC",
-      description: "Проверяющий вернул AC. Сейчас это тестовый контур: полноценный sandbox ещё не подключён.",
-      title: "Результат получен",
+      description: "Все тесты пройдены.",
+      title: "Решение принято",
       tone: "success" as const
     };
   }
@@ -424,9 +417,41 @@ function getPhaseCopy(phase: SubmissionPhase) {
   };
 }
 
-// Ограничивает compiler log/safeMessage, чтобы UI не раздувался.
-function limitLog(message: string) {
-  return message.length > 1200 ? `${message.slice(0, 1200)}\n... сообщение сокращено` : message;
+function isValidMetric(value: number | null | undefined): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0;
+}
+
+function formatMemory(memoryUsedKb: number | null | undefined) {
+  if (!isValidMetric(memoryUsedKb)) {
+    return null;
+  }
+
+  if (memoryUsedKb < 1024) {
+    return `${memoryUsedKb.toLocaleString("ru-RU")} КБ`;
+  }
+
+  return `${(memoryUsedKb / 1024).toLocaleString("ru-RU", {
+    maximumFractionDigits: 1
+  })} МБ`;
+}
+
+function formatResultSummary(response: SubmissionResponseDto, verdict: string) {
+  if (verdict === "CE") {
+    return verdict;
+  }
+
+  const parts = [verdict];
+
+  if (isValidMetric(response.executionTime)) {
+    parts.push(`Время ${response.executionTime.toLocaleString("ru-RU")} мс`);
+  }
+
+  const memory = formatMemory(response.memoryUsed);
+  if (memory !== null) {
+    parts.push(`Память ${memory}`);
+  }
+
+  return parts.join(" / ");
 }
 
 // CodeLessonWorkspace объединяет editor и submission lifecycle.
@@ -452,7 +477,9 @@ export function CodeLessonWorkspace({ task, onSubmissionStart }: CodeLessonWorks
   const isBusy = ["submitting", "queued", "compiling", "running"].includes(submission.phase);
   const sourceTooLarge = sourceSize > MAX_SOURCE_SIZE;
   const canSubmit = Boolean(authUser) && trimmedSource.length > 0 && !sourceTooLarge && !isBusy;
-  const safeLog = submission.response?.safeMessage ?? submission.errorMessage ?? "";
+  const resultSummary = submission.response?.verdict
+    ? formatResultSummary(submission.response, phaseCopy.badge)
+    : null;
   const loginHref = `/login?redirectTo=${encodeURIComponent(currentPath)}`;
   const fileName = language === "JAVA21" ? "Main.java" : "main.cpp";
 
@@ -525,7 +552,6 @@ export function CodeLessonWorkspace({ task, onSubmissionStart }: CodeLessonWorks
           }
 
           setSubmission({
-            errorMessage: getErrorMessage(error),
             phase: "network",
             submissionId
           });
@@ -576,7 +602,6 @@ export function CodeLessonWorkspace({ task, onSubmissionStart }: CodeLessonWorks
       }
 
       setSubmission({
-        errorMessage: getErrorMessage(error),
         phase: "network"
       });
     }
@@ -621,9 +646,8 @@ export function CodeLessonWorkspace({ task, onSubmissionStart }: CodeLessonWorks
     </Panel>
     <section className="kit-result-panel grid min-w-0 gap-4" aria-label="Результат проверки">
       {!authUser && <Alert title="Войдите для проверки" tone="warning">Редактор доступен сейчас. Войдите в аккаунт, чтобы отправить решение и сохранить результат.</Alert>}
-      <Alert title={phaseCopy.title} tone={phaseCopy.tone}><p>{phaseCopy.description}</p>{submission.response && <details className="mt-3 text-xs"><summary className="min-h-11 cursor-pointer py-3">Сведения о проверке</summary><p className="mt-2 break-words font-mono">Статус: {submission.response.status}{submission.response.verdict ? ` / ${submission.response.verdict}` : ""}{submission.response.executionTime !== null ? ` · Время: ${submission.response.executionTime} мс` : ""}{submission.response.memoryUsed !== null ? ` · Память: ${submission.response.memoryUsed}` : ""}</p></details>}
+      <Alert title={phaseCopy.title} tone={phaseCopy.tone}>{resultSummary ? <p className="font-mono text-xs text-muted sm:text-sm">{resultSummary}</p> : <p>{phaseCopy.description}</p>}
       {submission.phase === "network" && <Button className="mt-4" variant="secondary" disabled={!authUser || !lastSubmissionId || isBusy} onClick={handleResume}>Обновить статус</Button>}</Alert>
-      {safeLog && <section className="min-w-0 overflow-hidden rounded-sm border border-line bg-surface"><h3 className="border-b border-line p-4 text-sm">Вывод проверки</h3><pre aria-label="Вывод проверки решения" className="max-h-64 overflow-auto p-4 font-mono text-xs leading-6" tabIndex={0}><code>{limitLog(safeLog)}</code></pre></section>}
     </section>
     <dialog className="kit-dialog" ref={resetDialogRef}><h2>Сбросить код?</h2><p>Текущий черновик будет заменён стартовым кодом задачи. Это действие нельзя отменить.</p><div className="flex flex-wrap gap-3"><Button autoFocus onClick={() => resetDialogRef.current?.close()} variant="secondary">Сохранить черновик</Button><Button onClick={handleResetDraft} variant="danger">Сбросить код</Button></div></dialog>
   </div>;

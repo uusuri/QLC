@@ -452,7 +452,7 @@ export interface SubmissionResponseDto {
   verdict: BackendVerdict | null;
   // Время выполнения в миллисекундах, если backend уже знает значение.
   executionTime: number | null;
-  // Память в килобайтах/байтах по backend-контракту, если значение есть.
+  // Пиковая память в килобайтах, если backend уже знает значение.
   memoryUsed: number | null;
   // Безопасное сообщение backend: compiler log, ошибка или пояснение.
   safeMessage: string | null;

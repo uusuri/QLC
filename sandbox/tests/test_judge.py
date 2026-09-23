@@ -56,6 +56,25 @@ class JudgeTest(unittest.TestCase):
             command,
         )
 
+    def test_classifies_unhandled_bad_alloc_as_memory_limit_exceeded(self):
+        self.assertTrue(
+            judge.is_memory_limit_exceeded(
+                134,
+                "terminate called after throwing an instance of 'std::bad_alloc'",
+                2048,
+                32768,
+            )
+        )
+
+    def test_classifies_memory_controller_kill_as_memory_limit_exceeded(self):
+        self.assertTrue(judge.is_memory_limit_exceeded(137, "", None, 32768))
+
+    def test_keeps_plain_abort_as_runtime_error(self):
+        self.assertFalse(judge.is_memory_limit_exceeded(134, "", 2048, 32768))
+
+    def test_classifies_reported_peak_at_limit_as_memory_limit_exceeded(self):
+        self.assertTrue(judge.is_memory_limit_exceeded(1, "", 32768, 32768))
+
 
 if __name__ == "__main__":
     unittest.main()

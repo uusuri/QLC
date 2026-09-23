@@ -117,24 +117,22 @@ class DockerCppRunnerIntegrationTest {
   void enforcesMemoryLimitFromRequest() throws Exception {
     DockerRunnerResult result = runner.run(request(
         """
-            #include <new>
             #include <iostream>
-            #include <vector>
             int main() {
-              try {
-                std::vector<unsigned char> memory(128 * 1024 * 1024, 1);
-                std::cout << static_cast<int>(memory.front()) << '\\n';
-              } catch (const std::bad_alloc&) {
-                return 77;
+              long* values = new long[10'000'000];
+              for (long index = 0; index < 10'000'000; ++index) {
+                values[index] = 1;
               }
+              std::cout << values[0] << '\\n';
+              delete[] values;
             }
             """,
         "[{\"input\":\"\",\"output\":\"1\\n\"}]",
-        32_768,
+        65_536,
         Duration.ofSeconds(2),
         4_096));
 
-    assertEquals(Verdict.RE, result.verdict(), result.safeMessage());
+    assertEquals(Verdict.MLE, result.verdict(), result.safeMessage());
   }
 
   private RunRequest request(String sourceCode, String testCases, Duration timeLimit) {
