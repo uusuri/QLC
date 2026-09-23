@@ -94,13 +94,65 @@ class DockerCppRunnerIntegrationTest {
     assertTrue(result.memoryUsedKb() >= 8 * 1_024, "Expected at least 8 MiB of peak RSS");
   }
 
+  @Test
+  void enforcesOutputLimitFromRequest() throws Exception {
+    DockerRunnerResult result = runner.run(request(
+        """
+            #include <iostream>
+            int main() {
+              for (int index = 0; index < 2'048; ++index) {
+                std::cout << 'x';
+              }
+            }
+            """,
+        "[{\"input\":\"\",\"output\":\"\"}]",
+        65_536,
+        Duration.ofSeconds(2),
+        1));
+
+    assertEquals(Verdict.OLE, result.verdict(), result.safeMessage());
+  }
+
+  @Test
+  void enforcesMemoryLimitFromRequest() throws Exception {
+    DockerRunnerResult result = runner.run(request(
+        """
+            #include <new>
+            #include <iostream>
+            #include <vector>
+            int main() {
+              try {
+                std::vector<unsigned char> memory(128 * 1024 * 1024, 1);
+                std::cout << static_cast<int>(memory.front()) << '\\n';
+              } catch (const std::bad_alloc&) {
+                return 77;
+              }
+            }
+            """,
+        "[{\"input\":\"\",\"output\":\"1\\n\"}]",
+        32_768,
+        Duration.ofSeconds(2),
+        4_096));
+
+    assertEquals(Verdict.RE, result.verdict(), result.safeMessage());
+  }
+
   private RunRequest request(String sourceCode, String testCases, Duration timeLimit) {
+    return request(sourceCode, testCases, 65_536, timeLimit, 4_096);
+  }
+
+  private RunRequest request(
+      String sourceCode,
+      String testCases,
+      long memoryLimitInKb,
+      Duration timeLimit,
+      long outputLimitInKb) {
     return new RunRequest(
         sourceCode,
         testCases,
-        65_536,
+        memoryLimitInKb,
         timeLimit,
-        4_096,
+        outputLimitInKb,
         Toolchain.CPP23);
   }
 }

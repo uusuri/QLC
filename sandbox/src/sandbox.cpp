@@ -1,5 +1,6 @@
 #include "sandbox/sandbox.hpp"
 
+#include <algorithm>
 #include <array>
 #include <cerrno>
 #include <csignal>
@@ -9,6 +10,7 @@
 #include <type_traits>
 #include <span>
 #include <string>
+#include <thread>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -76,14 +78,81 @@ namespace sandbox
             return result;
         }
 
+        struct WaitResult
+        {
+            ChildStatus status;
+            bool wall_time_exceeded;
+        };
+
         [[nodiscard]]
-        std::expected<ChildStatus, SystemError> wait_for_child(
-            pid_t child_pid)
+        ChildStatus decode_child_status(int status)
+        {
+            if (WIFEXITED(status))
+            {
+                return ChildStatus{Exited{WEXITSTATUS(status)}};
+            }
+            return ChildStatus{Signaled{WTERMSIG(status)}};
+        }
+
+        [[nodiscard]]
+        std::expected<void, SystemError> kill_process_group(pid_t child_pid)
+        {
+            if (::kill(-child_pid, SIGKILL) == 0)
+            {
+                return {};
+            }
+
+            const int group_error = errno;
+            if (group_error != ESRCH)
+            {
+                return std::unexpected(
+                    make_system_error(Operation::KillProcessGroup, group_error));
+            }
+
+            if (::kill(child_pid, SIGKILL) == 0 || errno == ESRCH)
+            {
+                return {};
+            }
+            return std::unexpected(
+                make_system_error(Operation::KillProcessGroup, errno));
+        }
+
+        [[nodiscard]]
+        std::expected<WaitResult, SystemError> wait_for_child(
+            pid_t child_pid,
+            std::optional<std::chrono::milliseconds> wall_time)
         {
             int status = 0;
+
+            if (!wall_time.has_value())
+            {
+                while (true)
+                {
+                    const pid_t result = ::waitpid(child_pid, &status, 0);
+                    if (result == child_pid)
+                    {
+                        return WaitResult{
+                            .status = decode_child_status(status),
+                            .wall_time_exceeded = false,
+                        };
+                    }
+                    if (result == -1 && errno == EINTR)
+                    {
+                        continue;
+                    }
+                    if (result == -1)
+                    {
+                        return std::unexpected(
+                            make_system_error(Operation::Waitpid, errno));
+                    }
+                }
+            }
+
+            const auto deadline = std::chrono::steady_clock::now() + *wall_time;
+
             while (true)
             {
-                pid_t result = ::waitpid(child_pid, &status, 0);
+                pid_t result = ::waitpid(child_pid, &status, WNOHANG);
 
                 if (result == -1)
                 {
@@ -97,23 +166,49 @@ namespace sandbox
                             Operation::Waitpid,
                             saved_errno));
                 }
-                else
+                if (result == child_pid)
                 {
-                    break;
+                    return WaitResult{
+                        .status = decode_child_status(status),
+                        .wall_time_exceeded = false,
+                    };
                 }
+
+                const auto now = std::chrono::steady_clock::now();
+                if (now >= deadline)
+                {
+                    auto kill_result = kill_process_group(child_pid);
+                    if (!kill_result)
+                    {
+                        return std::unexpected(kill_result.error());
+                    }
+
+                    while (true)
+                    {
+                        result = ::waitpid(child_pid, &status, 0);
+                        if (result == child_pid)
+                        {
+                            return WaitResult{
+                                .status = decode_child_status(status),
+                                .wall_time_exceeded = true,
+                            };
+                        }
+                        if (result == -1 && errno == EINTR)
+                        {
+                            continue;
+                        }
+                        if (result == -1)
+                        {
+                            return std::unexpected(
+                                make_system_error(Operation::Waitpid, errno));
+                        }
+                    }
+                }
+
+                const auto remaining = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    deadline - now);
+                std::this_thread::sleep_for(std::min(remaining, std::chrono::milliseconds{1}));
             }
-            if (WIFEXITED(status))
-            {
-                int code = WEXITSTATUS(status);
-                return ChildStatus{Exited{code}};
-            }
-            {
-                int code = WTERMSIG(status);
-                return ChildStatus{Signaled{code}};
-            }
-            return std::unexpected(SystemError{
-                Operation::Waitpid,
-                std::make_error_code(std::errc::state_not_recoverable)});
         }
 
         [[nodiscard]]
@@ -605,7 +700,7 @@ namespace sandbox
         pipe.write_end.reset();
         auto child_error_result = read_child_error_packet(pipe.read_end.get());
         if (!child_error_result) {
-            auto status_result = wait_for_child(child_pid);
+            auto status_result = wait_for_child(child_pid, request.limits.wall_time);
 
             if (!status_result)
             {
@@ -617,7 +712,7 @@ namespace sandbox
         auto packet = *child_error_result;
 
         if (packet.has_value()) {
-            auto status_result = wait_for_child(child_pid);
+            auto status_result = wait_for_child(child_pid, request.limits.wall_time);
 
             if (!status_result)
             {
@@ -626,11 +721,11 @@ namespace sandbox
             const auto finished_at = std::chrono::steady_clock::now();
 
             return RunResult{
-                .status = *status_result,
+                .status = status_result->status,
                 .reason = TerminationReason::ChildSetupFailed,
                 .elapsed_wall_time = std::chrono::duration_cast<std::chrono::milliseconds>(
                     finished_at - started_at),
-                .watchdog_sent_sigkill = false,
+                .watchdog_sent_sigkill = status_result->wall_time_exceeded,
                 .child_setup_error = make_system_error(
                     packet->operation,
                     packet->error_number
@@ -638,21 +733,23 @@ namespace sandbox
             };
         }
 
-        auto status_result = wait_for_child(child_pid);
+        auto status_result = wait_for_child(child_pid, request.limits.wall_time);
 
         if (!status_result)
         {
             return std::unexpected(status_result.error());
         }
-        ChildStatus status = *status_result;
-        TerminationReason reason = classify_termination_reason(status);
+        ChildStatus status = status_result->status;
+        TerminationReason reason = status_result->wall_time_exceeded
+            ? TerminationReason::WallTimeExceeded
+            : classify_termination_reason(status);
         const auto finished_at = std::chrono::steady_clock::now();
         return RunResult{
             .status = status,
             .reason = reason,
             .elapsed_wall_time = std::chrono::duration_cast<std::chrono::milliseconds>(
                 finished_at - started_at),
-            .watchdog_sent_sigkill = false,
+            .watchdog_sent_sigkill = status_result->wall_time_exceeded,
             .child_setup_error = std::nullopt,
         };
     }

@@ -24,6 +24,7 @@ namespace sandbox {
         SetCpuLimit,
         SetAddressSpaceLimit,
         SetFileSizeLimit,
+        KillProcessGroup,
     };
 
     enum class TerminationReason {

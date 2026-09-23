@@ -25,6 +25,8 @@ FROM ubuntu:24.04 AS runtime
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
   g++ \
+  python3 \
+  time \
   && rm -rf /var/lib/apt/lists/*
 
 COPY --from=sandbox-build \
@@ -32,8 +34,10 @@ COPY --from=sandbox-build \
   /usr/local/bin/qlc-sandbox
 
 COPY sandbox/runner.sh /usr/local/bin/qlc-runner
+COPY sandbox/judge.py /usr/local/lib/qlc/judge.py
 
 RUN chmod 0555 /usr/local/bin/qlc-runner \
+  && chmod 0444 /usr/local/lib/qlc/judge.py \
   && mkdir -p /work
 
 WORKDIR /work
