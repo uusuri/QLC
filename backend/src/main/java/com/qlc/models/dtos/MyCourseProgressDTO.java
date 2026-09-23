@@ -10,5 +10,7 @@ public record MyCourseProgressDTO(
     int solvedTasks,
     int totalTasks,
     int progressPercent,
+    Long lastLessonId,
+    Long lastTaskId,
     List<ModuleProgressDTO> modules) {
 }

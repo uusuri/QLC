@@ -703,5 +703,23 @@ export async function purchaseCart(): Promise<AdminCourseDto[]> {
 
 // Возвращает все купленные курсы, модули, уроки и реальный прогресс текущего ученика.
 export async function getMyLearningCourses(): Promise<MyCourseProgressDto[]> {
+  await learningPositionWrite.catch(() => undefined);
   return apiRequest<MyCourseProgressDto[]>("/api/users/me/learning-courses", { auth: true });
+}
+
+// Serialize position writes so fast task switching cannot restore an older task.
+let learningPositionWrite: Promise<unknown> = Promise.resolve();
+
+export function rememberLearningTask(taskId: number): Promise<void> {
+  const token = getAuthToken();
+  const write = learningPositionWrite.catch(() => undefined).then(async () => {
+    if (!token || getAuthToken() !== token) return;
+    await apiRequest<{ taskId: number }>(`/api/users/me/learning-position/tasks/${taskId}`, {
+      auth: true,
+      method: "PUT"
+    });
+    window.dispatchEvent(new Event("qlc:learning-updated"));
+  });
+  learningPositionWrite = write;
+  return write;
 }

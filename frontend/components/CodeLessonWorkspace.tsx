@@ -543,6 +543,10 @@ export function CodeLessonWorkspace({ task, onSubmissionStart }: CodeLessonWorks
             submissionId
           });
 
+          if (response.verdict === "AC") {
+            window.dispatchEvent(new Event("qlc:learning-updated"));
+          }
+
           if (!isTerminalPhase(nextPhase)) {
             timeoutRef.current = window.setTimeout(tick, POLLING_INTERVAL_MS);
           }

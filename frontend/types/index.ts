@@ -366,6 +366,8 @@ export interface ModuleProgressDto {
 
 // Полная карта обучения для одного купленного курса.
 export interface MyCourseProgressDto {
+  lastLessonId?: number | null;
+  lastTaskId?: number | null;
   id: number;
   name: string;
   description: string;

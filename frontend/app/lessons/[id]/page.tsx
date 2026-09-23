@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { AddToCartButton } from "@/components/AddToCartButton";
@@ -11,7 +11,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SafeMarkdown } from "@/components/SafeMarkdown";
 import { Alert, ButtonLink } from "@/components/ui";
-import { getAdminLessons, getLessonLearningView, parseCourseIdFromSlug, getAuthToken } from "@/services/api";
+import { getAdminLessons, getLessonLearningView, parseCourseIdFromSlug, getAuthToken, rememberLearningTask } from "@/services/api";
 import { Tabs } from "@/components/ui";
 import type { AdminLessonDto, LearnerTaskDto, LessonLearningViewDto } from "@/types";
 
@@ -28,6 +28,8 @@ function getTaskTitle(task: LearnerTaskDto, index: number) {
 export default function LessonPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedTaskId = Number(searchParams.get("task"));
   const lessonId = Number(params.id);
 
   const [siblingLessons, setSiblingLessons] = useState<AdminLessonDto[]>([]);
@@ -35,6 +37,7 @@ export default function LessonPage() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+  const [positionError, setPositionError] = useState("");
   const [taskView, setTaskView] = useState<"task" | "code" | "result">("task");
   const [activeSection, setActiveSection] = useState<"theory" | "practice">("theory");
 
@@ -42,6 +45,8 @@ export default function LessonPage() {
     setLoading(true);
     setLoadError("");
     setSiblingLessons([]);
+    setView(null);
+    setSelectedTaskId(null);
     if (!Number.isSafeInteger(lessonId) || lessonId <= 0) {
       setLoadError("ID урока должен быть положительным числом.");
       setLoading(false);
@@ -49,7 +54,7 @@ export default function LessonPage() {
     }
 
     if (!getAuthToken()) {
-      router.push(`/login?redirectTo=${encodeURIComponent(`/lessons/${lessonId}`)}`);
+      router.push(`/login?redirectTo=${encodeURIComponent(`/lessons/${lessonId}${requestedTaskId > 0 ? `?task=${requestedTaskId}` : ""}`)}`);
       return;
     }
 
@@ -60,8 +65,10 @@ export default function LessonPage() {
         const data = await getLessonLearningView(lessonId);
         if (!ignore) {
           setView(data);
-          setSelectedTaskId(data?.primaryTask?.id ?? data?.tasks[0]?.id ?? null);
-          setActiveSection("theory");
+          const requestedTask = data?.tasks.find((task) => task.id === requestedTaskId);
+          setSelectedTaskId(requestedTask?.id ?? data?.primaryTask?.id ?? data?.tasks[0]?.id ?? null);
+          setActiveSection(requestedTask ? "practice" : "theory");
+          setTaskView("task");
         }
         if (data) {
           const lessons = await getAdminLessons(data.module.id).catch(() => []);
@@ -83,7 +90,18 @@ export default function LessonPage() {
     return () => {
       ignore = true;
     };
-  }, [lessonId, router]);
+  }, [lessonId, requestedTaskId, router]);
+
+  useEffect(() => {
+    if (loading || view?.lesson.id !== lessonId || selectedTaskId === null) return;
+    if (!view.tasks.some((task) => task.id === selectedTaskId)) return;
+    let active = true;
+    setPositionError("");
+    void rememberLearningTask(selectedTaskId).catch(() => {
+      if (active) setPositionError("Не удалось сохранить место в обучении. Проверьте соединение и откройте задачу ещё раз.");
+    });
+    return () => { active = false; };
+  }, [lessonId, loading, selectedTaskId, view]);
 
   if (loading) {
     return <PageState eyebrow="Загрузка" title="Загрузка..." text="Получаем данные урока." />;
@@ -137,6 +155,7 @@ export default function LessonPage() {
   return <div className="kit-shell"><SiteHeader compact /><main className="kit-page" id="main-content" tabIndex={-1}>
     <nav aria-label="Навигация по уроку" className="flex flex-wrap justify-between gap-4 text-sm text-muted"><Link className="qlc-text-link" href={`/courses/${courseSlug}`}>← {view.course.name}</Link><Link className="qlc-text-link" href="/profile">Моё обучение ↗</Link></nav>
     <header className="kit-lesson-header"><p className="qlc-eyebrow text-muted">{view.module.name} / Урок {lessonCode}</p><h1 className="break-words">{view.lesson.name}</h1><p>{view.lesson.description || "Изучите материал, затем закрепите его на практике."}</p></header>
+    {positionError && <Alert title="Место не сохранено" tone="warning">{positionError}</Alert>}
     <Tabs activeValue={activeSection} items={[{value:"theory",label:"Материал"},{value:"practice",label:`Практика · ${view.tasks.length}`}]} onChange={setActiveSection} />
     <section className={activeSection === "theory" ? "kit-reading" : "hidden"} aria-label="Материал урока">
       <aside><p className="qlc-eyebrow">Модуль</p><h2 className="mb-4 text-xl">{view.module.name}</h2><details className="kit-lesson-outline" open><summary>Уроки модуля</summary><nav aria-label="Уроки модуля">{siblingLessons.map(item => <Link aria-current={item.id === lessonId ? "page" : undefined} className={`flex min-h-11 items-center border-l-2 px-3 py-3 text-sm ${item.id === lessonId ? "border-acid text-acid" : "border-line text-muted hover:text-paper"}`} href={`/lessons/${item.id}`} key={item.id}>{item.name}</Link>)}</nav></details><Link className="qlc-text-link text-muted" href={`/courses/${courseSlug}#curriculum`}>Программа курса →</Link><button className="qlc-text-link text-acid" onClick={() => setActiveSection("practice")} type="button">Перейти к практике →</button></aside>

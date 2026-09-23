@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 
 import { KitIcon } from "@/components/DesignKit";
+import { ContinueLearningCard } from "@/components/ContinueLearning";
+import { getNextLearningLesson } from "@/services/learningProgress";
 import { CourseCard } from "@/components/CourseCard";
 import { useLearningOverview } from "@/components/LearningOverviewProvider";
 import { parseCourseIdFromSlug } from "@/services/api";
@@ -20,6 +22,7 @@ export function CourseList({ courses, home = false }: CourseListProps) {
     const courseId = parseCourseIdFromSlug(course.slug);
     return courseId !== null && boughtIds.has(courseId);
   };
+  const nextLesson = getNextLearningLesson(learningCourses);
   const normalizedQuery = query.trim().toLocaleLowerCase("ru");
   const visibleCourses = courses.filter((course) => (
     (filter === "all" || (filter === "open" && course.access === "open") || (filter === "bought" && isBought(course))) &&
@@ -43,6 +46,7 @@ export function CourseList({ courses, home = false }: CourseListProps) {
         </label>
       </div>
       }<p aria-live="polite" className="sr-only">Найдено курсов: {visibleCourses.length}</p>
+      {filter === "bought" && nextLesson && <ContinueLearningCard nextLesson={nextLesson} />}
       {visibleCourses.length > 0 ? (
         <div className={home ? "grid gap-8 md:grid-cols-2" : "kit-catalog-results"}>
           {visibleCourses.map((course) => <CourseCard course={course} index={courses.indexOf(course)} isBought={isBought(course)} home={home} key={course.slug} />)}

@@ -9,9 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -36,5 +39,13 @@ public class UserController {
   public ResponseEntity<List<MyCourseProgressDTO>> getMyLearningCourses(
       @AuthenticationPrincipal UserDetailsImpl principal) {
     return ResponseEntity.ok(learningProgressService.getPurchasedCoursesProgress(principal.getId()));
+  }
+
+  @PutMapping("/me/learning-position/tasks/{taskId}")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<Map<String, Long>> rememberLearningTask(
+      @PathVariable Long taskId, @AuthenticationPrincipal UserDetailsImpl principal) {
+    learningProgressService.rememberTask(principal.getId(), taskId);
+    return ResponseEntity.ok(Map.of("taskId", taskId));
   }
 }

@@ -33,7 +33,9 @@ public interface SubmissionRepository extends JpaRepository<Submission, UUID> {
   Optional<SubmissionResultDTO> findResultById(@Param("id") UUID id);
 
   @Query("select distinct submission.task.id from Submission submission "
-      + "where submission.user.id = :userId and submission.verdict = :verdict")
+      + "where submission.user.id = :userId and submission.verdict = :verdict "
+      + "and submission.status = com.qlc.models.enums.SubmissionStatus.FINISHED "
+      + "and submission.countsForProgress = true")
   Set<Long> findTaskIdsByUserIdAndVerdict(@Param("userId") Long userId,
       @Param("verdict") Verdict verdict);
 

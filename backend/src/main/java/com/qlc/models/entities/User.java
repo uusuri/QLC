@@ -46,6 +46,10 @@ public class User {
   @ManyToMany(mappedBy = "students")
   private Set<Course> boughtCourses = new HashSet<>();
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "last_learning_task_id")
+  private Task lastLearningTask;
+
   @Column(name = "registration_date", nullable = false)
   private LocalDateTime registrationDate;
 }

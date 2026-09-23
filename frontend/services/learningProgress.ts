@@ -4,9 +4,19 @@ export type NextLearningLesson = {
   course: MyCourseProgressDto;
   module: ModuleProgressDto;
   lesson: LessonProgressDto;
+  taskId?: number;
 };
 
 export function getNextLearningLesson(courses: MyCourseProgressDto[]): NextLearningLesson | null {
+  // A saved position takes priority, even when the task already has an AC.
+  for (const course of courses) {
+    if (course.lastLessonId == null || course.lastTaskId == null) continue;
+    for (const module of course.modules) {
+      const lesson = module.lessons.find((item) => item.id === course.lastLessonId);
+      if (lesson) return { course, module, lesson, taskId: course.lastTaskId };
+    }
+  }
+
   const orderedCourses = [...courses].sort((left, right) => left.id - right.id);
 
   for (const course of orderedCourses) {
@@ -21,4 +31,9 @@ export function getNextLearningLesson(courses: MyCourseProgressDto[]): NextLearn
   }
 
   return null;
+}
+
+export function getLearningHref(nextLesson: NextLearningLesson): string {
+  const path = `/lessons/${nextLesson.lesson.id}`;
+  return nextLesson.taskId == null ? path : `${path}?task=${nextLesson.taskId}`;
 }

@@ -47,6 +47,11 @@ public class Submission {
   @Column(length = 50)
   private Verdict verdict;
 
+  // Historical attempts remain available after the one-time learning progress reset.
+  @Builder.Default
+  @Column(name = "counts_for_progress", nullable = false)
+  private boolean countsForProgress = true;
+
   @Column(name = "execution_time")
   private Long executionTime;
 
