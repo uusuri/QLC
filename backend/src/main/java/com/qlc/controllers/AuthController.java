@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.ThreadLocalRandom;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -54,13 +53,11 @@ public class AuthController {
   @PostMapping("/register")
   public ResponseEntity<?> register(@Valid @RequestBody AuthRegisterRequest request) {
     if (userRepository.existsByUsername(request.username())) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body("Username is already taken");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already taken");
     }
 
     if (userRepository.existsByEmail(request.email())) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body("Email is already in use");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is already in use");
     }
 
     User user = new User();
@@ -68,7 +65,6 @@ public class AuthController {
     user.setEmail(request.email());
     user.setPassword(passwordEncoder.encode(request.password()));
     user.setRole(Role.ROLE_USER);
-    user.setTgId(generateUniqueTgId());
     user.setRegistrationDate(LocalDateTime.now());
 
     User saved = userRepository.save(user);
@@ -87,8 +83,7 @@ public class AuthController {
       auth = authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(request.username(), request.password()));
     } catch (BadCredentialsException e) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body("Invalid username or password");
+      throw new BadCredentialsException("Invalid username or password");
     }
 
     String jwt = jwtCore.generateToken(auth);
@@ -132,7 +127,4 @@ public class AuthController {
     return jwtCore.generateToken(auth);
   }
 
-  private Long generateUniqueTgId() {
-    return System.nanoTime() + ThreadLocalRandom.current().nextLong(1_000_000);
-  }
 }

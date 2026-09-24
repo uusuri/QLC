@@ -1,5 +1,7 @@
 # Secrets and environment
 .env
+.env.*
+!.env.example
 .envrc
 *.env.[a-zA-Z]*
 !*.env.example

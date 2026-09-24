@@ -1,5 +1,7 @@
 package com.qlc.services;
 
+import com.qlc.exceptions.ResourceNotFoundException;
+
 import com.qlc.models.requests.SubmissionRequest;
 import com.qlc.models.responses.SubmissionCreatedResponse;
 import com.qlc.models.responses.SubmissionResponse;
@@ -86,7 +88,7 @@ public class SubmissionService {
 
     // 3. Проверяем, существует ли целевая таска
     Task task = taskRepository.findById(taskId)
-        .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+        .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + taskId));
 
     if (!(task instanceof CodeTask)) {
       throw new IllegalArgumentException("Source-code submissions are only supported for CODE tasks");
@@ -109,7 +111,7 @@ public class SubmissionService {
     submission.setIdempotencyKey(idempotencyKey);
     if (userId != null) {
       User user = userRepository.findById(userId)
-          .orElseThrow(() -> new RuntimeException("User not found"));
+          .orElseThrow(() -> new ResourceNotFoundException("User not found"));
       submission.setUser(user);
     }
 
@@ -165,7 +167,7 @@ public class SubmissionService {
   @Transactional(readOnly = true)
   public SubmissionResponse getSubmissionById(UUID id, Long userId, boolean isAdmin) {
     SubmissionResultDTO submission = submissionRepository.findResultById(id)
-        .orElseThrow(() -> new RuntimeException("Submission not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Submission not found with id: " + id));
 
     if (!isAdmin && (submission.userId() == null || !Objects.equals(submission.userId(), userId))) {
       throw new org.springframework.security.access.AccessDeniedException("Submission belongs to another user");

@@ -1,5 +1,7 @@
 package com.qlc.services;
 
+import com.qlc.exceptions.ResourceNotFoundException;
+
 import com.qlc.models.entities.Course;
 import com.qlc.models.entities.User;
 import com.qlc.models.dtos.CourseDTO;
@@ -29,16 +31,16 @@ public class PurchaseService {
   @Transactional
   public List<Course> checkout(Long userId) {
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new RuntimeException("User not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
     Set<Long> courseIds = cartService.getCourseIds(userId);
     if (courseIds.isEmpty()) {
-      throw new RuntimeException("Cart is empty");
+      throw new IllegalArgumentException("Cart is empty");
     }
 
     List<Course> courses = courseRepository.findAllById(courseIds);
     if (courses.isEmpty()) {
-      throw new RuntimeException("No courses found in cart");
+      throw new ResourceNotFoundException("No courses found in cart");
     }
 
     for (Course course : courses) {

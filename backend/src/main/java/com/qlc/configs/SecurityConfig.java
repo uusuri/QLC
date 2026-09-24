@@ -1,6 +1,8 @@
 package com.qlc.configs;
 
 import com.qlc.security.TokenFilter;
+import com.qlc.models.dtos.ErrorDTO;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +19,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.cors.CorsConfiguration;
@@ -50,7 +51,7 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http, ObjectMapper objectMapper) throws Exception {
     http
         .csrf(AbstractHttpConfigurer::disable)
         .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(request -> {
@@ -62,10 +63,15 @@ public class SecurityConfig {
           return config;
         }))
         .exceptionHandling(exceptions -> exceptions
-            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            .authenticationEntryPoint((request, response, exception) -> {
+              response.setStatus(HttpStatus.UNAUTHORIZED.value());
+              response.setContentType("application/json");
+              objectMapper.writeValue(response.getWriter(), ErrorDTO.of("UNAUTHORIZED", "Authentication required"));
+            })
             .accessDeniedHandler((request, response, accessDeniedException) -> {
               response.setStatus(HttpStatus.FORBIDDEN.value());
-              response.getWriter().write("Access Denied");
+              response.setContentType("application/json");
+              objectMapper.writeValue(response.getWriter(), ErrorDTO.of("FORBIDDEN", "Access denied"));
             }))
         .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests((authorize) -> authorize

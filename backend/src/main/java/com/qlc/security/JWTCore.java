@@ -17,16 +17,19 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JWTCore {
 
-  // Ключ должен быть длинным (минимум 64 символа для HS512)
-  @Value("${jwt.secret:UusuriKeyForJWTTokenGenerationAndValidation1234567890_SuperLongSecretKeyForHS512Algorithm}")
-  private String jwtSecret;
+  private final SecretKey signingKey;
+  private final long jwtExpiration;
 
-  // 24 часа по умолчанию: 60 секунд приводили к постоянным 401 в админке.
-  @Value("${jwt.expiration:86400000}")
-  private Long jwtExpiration;
-
-  private SecretKey getSigningKey() {
-    return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+  public JWTCore(@Value("${jwt.secret}") String jwtSecret,
+      @Value("${jwt.expiration:86400000}") long jwtExpiration) {
+    if (jwtSecret.isBlank() || jwtSecret.getBytes(StandardCharsets.UTF_8).length < 64) {
+      throw new IllegalArgumentException("JWT_SECRET must contain at least 64 UTF-8 bytes");
+    }
+    if (jwtExpiration <= 0) {
+      throw new IllegalArgumentException("JWT_EXPIRATION must be positive");
+    }
+    this.signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    this.jwtExpiration = jwtExpiration;
   }
 
   public String generateToken(Authentication authentication) {
@@ -43,7 +46,7 @@ public class JWTCore {
         .claim("email", userDetails != null ? userDetails.getEmail() : null)
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
-        .signWith(getSigningKey()) // Алгоритм HS512 либа выберет автоматически на основе длины ключа
+        .signWith(signingKey, Jwts.SIG.HS512)
         .compact();
   }
 
@@ -83,7 +86,7 @@ public class JWTCore {
 
   private Claims getClaims(String token) {
     return Jwts.parser()
-        .verifyWith(getSigningKey())
+        .verifyWith(signingKey)
         .build()
         .parseSignedClaims(token)
         .getPayload();

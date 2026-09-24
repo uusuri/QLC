@@ -11,6 +11,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
@@ -86,7 +87,7 @@ public class TelegramAuthService {
     user.setTgId(request.id());
     user.setUsername(nextUsername(request));
     user.setEmail("telegram-" + request.id() + "@telegram.local");
-    user.setPassword(passwordEncoder.encode("telegram:" + request.id() + ":" + botToken));
+    user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
     user.setRole(Role.ROLE_USER);
     user.setRegistrationDate(java.time.LocalDateTime.now());
     return user;

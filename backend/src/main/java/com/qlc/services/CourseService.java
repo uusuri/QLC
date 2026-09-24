@@ -1,5 +1,7 @@
 package com.qlc.services;
 
+import com.qlc.exceptions.ResourceNotFoundException;
+
 import com.qlc.models.entities.*;
 
 import com.qlc.models.dtos.CourseDTO;
@@ -56,7 +58,7 @@ public class CourseService {
 
   public CourseDTO getCourseById(Long courseId) {
     Course c = courseRepository.findByIdAndPublishedTrue(courseId)
-        .orElseThrow(() -> new RuntimeException("Course not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
     return mapToCourseDTO(c);
   }
 
@@ -66,7 +68,7 @@ public class CourseService {
 
   public CourseStructureDTO getCourseStructure(Long courseId) {
     Course course = courseRepository.findByIdAndPublishedTrue(courseId)
-        .orElseThrow(() -> new RuntimeException("Course not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
     List<com.qlc.models.entities.Module> modules =
         moduleRepository.findByCourseIdOrderByPositionAsc(courseId);
     Map<Long, List<LessonDTO>> lessonsByModule = new LinkedHashMap<>();
@@ -98,7 +100,7 @@ public class CourseService {
   @Transactional
   public CourseDTO updateCourse(Long courseId, CourseDTO dto) {
     Course course = courseRepository.findById(courseId)
-        .orElseThrow(() -> new RuntimeException("Course not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
     course.setName(dto.name());
     course.setDescription(dto.description());
     if (dto.price() != null)
@@ -131,13 +133,13 @@ public class CourseService {
 
   public ModuleDTO getModuleById(Long moduleId) {
     return mapToModuleDTO(moduleRepository.findById(moduleId)
-        .orElseThrow(() -> new RuntimeException("Module not found")));
+        .orElseThrow(() -> new ResourceNotFoundException("Module not found")));
   }
 
   @Transactional
   public ModuleDTO createModule(Long courseId, ModuleDTO dto) {
     Course course = courseRepository.findById(courseId)
-        .orElseThrow(() -> new RuntimeException("Course not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
     com.qlc.models.entities.Module module = new com.qlc.models.entities.Module();
     module.setName(dto.name());
     module.setDescription(dto.description());
@@ -149,7 +151,7 @@ public class CourseService {
   @Transactional
   public ModuleDTO updateModule(Long moduleId, ModuleDTO dto) {
     com.qlc.models.entities.Module module = moduleRepository.findById(moduleId)
-        .orElseThrow(() -> new RuntimeException("Module not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Module not found"));
     module.setName(dto.name());
     module.setDescription(dto.description());
     module.setPosition(dto.position() != null ? dto.position() : module.getPosition());
@@ -186,12 +188,12 @@ public class CourseService {
 
   public LessonDTO getLessonById(Long lessonId) {
     return mapToLessonDTO(lessonRepository.findById(lessonId)
-        .orElseThrow(() -> new RuntimeException("Lesson not found")));
+        .orElseThrow(() -> new ResourceNotFoundException("Lesson not found")));
   }
 
   public LessonDTO getLessonForUser(Long lessonId, Long userId) {
     Lesson lesson = lessonRepository.findByIdWithModuleAndCourse(lessonId)
-        .orElseThrow(() -> new RuntimeException("Lesson not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
 
     Course course = lesson.getModule().getCourse();
     boolean hasAccess = isCourseFree(course) || purchaseService.hasAccess(userId, course.getId());
@@ -209,7 +211,7 @@ public class CourseService {
 
   public boolean hasUserAccessToCourse(Long courseId, Long userId) {
     Course course = courseRepository.findById(courseId)
-        .orElseThrow(() -> new RuntimeException("Course not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
     if (isCourseFree(course)) {
       return true;
     }
@@ -218,7 +220,7 @@ public class CourseService {
 
   public LessonLearnResponse getLessonWithTasksForUser(Long lessonId, Long userId) {
     Lesson lesson = lessonRepository.findByIdWithModuleAndCourse(lessonId)
-        .orElseThrow(() -> new RuntimeException("Lesson not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
 
     Course course = lesson.getModule().getCourse();
     boolean freeCourse = isCourseFree(course);
@@ -250,7 +252,7 @@ public class CourseService {
   @Transactional
   public LessonDTO createLesson(Long moduleId, LessonDTO dto) {
     com.qlc.models.entities.Module module = moduleRepository.findById(moduleId)
-        .orElseThrow(() -> new RuntimeException("Module not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Module not found"));
     Lesson lesson = new Lesson();
     lesson.setName(dto.name());
     lesson.setDescription(dto.description());
@@ -264,7 +266,7 @@ public class CourseService {
   @Transactional
   public LessonDTO updateLesson(Long lessonId, LessonDTO dto) {
     Lesson lesson = lessonRepository.findById(lessonId)
-        .orElseThrow(() -> new RuntimeException("Lesson not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
     lesson.setName(dto.name());
     lesson.setDescription(dto.description());
     lesson.setPosition(dto.position() != null ? dto.position() : lesson.getPosition());
@@ -317,14 +319,14 @@ public class CourseService {
 
   public TaskDTO getTaskById(Long taskId) {
     Task t = taskRepository.findById(taskId)
-        .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+        .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + taskId));
     return mapToTaskDTO(t);
   }
 
   @Transactional
   public TaskDTO createTask(Long lessonId, TaskDTO dto) {
     Lesson lesson = lessonRepository.findById(lessonId)
-        .orElseThrow(() -> new RuntimeException("Lesson not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
 
     Task task = instantiateTask(dto.taskType());
     task.setLesson(lesson);
@@ -336,7 +338,7 @@ public class CourseService {
   @Transactional
   public TaskDTO updateTask(Long taskId, TaskDTO dto) {
     Task task = taskRepository.findById(taskId)
-        .orElseThrow(() -> new RuntimeException("Task not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
     updateTaskFields(task, dto);
     return mapToTaskDTO(taskRepository.save(task));
   }

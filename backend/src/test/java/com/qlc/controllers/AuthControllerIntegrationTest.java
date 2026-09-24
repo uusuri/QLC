@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @SpringBootTest
@@ -84,6 +84,7 @@ class AuthControllerIntegrationTest {
     assertThat(response.user().id()).isNotNull();
 
     User savedUser = userRepository.findByUsername("runner01").orElseThrow();
+    assertThat(savedUser.getTgId()).isNull();
     assertThat(savedUser.getEmail()).isEqualTo("runner@example.com");
     assertThat(savedUser.getRole().name()).isEqualTo("ROLE_USER");
     assertThat(passwordEncoder.matches("password123", savedUser.getPassword())).isTrue();
@@ -119,7 +120,6 @@ class AuthControllerIntegrationTest {
 
     MvcResult result = mockMvc.perform(get("/api/auth/me")
         .header("Authorization", "Bearer " + token))
-        .andDo(print())
         .andExpect(status().isOk())
         .andReturn();
 
@@ -141,7 +141,9 @@ class AuthControllerIntegrationTest {
     mockMvc.perform(post("/api/auth/register")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
+        .andExpect(jsonPath("$.message").isNotEmpty());
   }
 
   @Test
@@ -153,7 +155,9 @@ class AuthControllerIntegrationTest {
     mockMvc.perform(post("/api/auth/register")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
+        .andExpect(jsonPath("$.message").isNotEmpty());
   }
 
   @Test
@@ -165,13 +169,23 @@ class AuthControllerIntegrationTest {
     mockMvc.perform(post("/api/auth/login")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isUnauthorized());
+        .andExpect(status().isUnauthorized())
+        .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
   }
 
   @Test
   void me_withoutToken_returnsUnauthorized() throws Exception {
     mockMvc.perform(get("/api/auth/me"))
-        .andExpect(status().isUnauthorized());
+        .andExpect(status().isUnauthorized())
+        .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
+  }
+
+  @Test
+  void multiplePasswordAccountsHaveNoTelegramIdentity() throws Exception {
+    registerAndGetToken("ordinary01", "ordinary01@example.com", "password123");
+    registerAndGetToken("ordinary02", "ordinary02@example.com", "password123");
+    assertThat(userRepository.findByUsername("ordinary01").orElseThrow().getTgId()).isNull();
+    assertThat(userRepository.findByUsername("ordinary02").orElseThrow().getTgId()).isNull();
   }
 
   private void registerDirectly(String username, String email, String password) {
@@ -180,7 +194,6 @@ class AuthControllerIntegrationTest {
     user.setEmail(email);
     user.setPassword(passwordEncoder.encode(password));
     user.setRole(com.qlc.models.enums.Role.ROLE_USER);
-    user.setTgId(System.nanoTime());
     user.setRegistrationDate(java.time.LocalDateTime.now());
     userRepository.save(user);
   }
