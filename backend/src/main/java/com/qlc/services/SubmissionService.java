@@ -17,8 +17,8 @@ import com.qlc.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -46,6 +46,9 @@ public class SubmissionService {
 
   @Value("${app.submissions.max-log-length:10000}")
   private int maxLogLength;
+
+  @Value("${app.submissions.recovery.execution-timeout-ms:900000}")
+  private long executionTimeoutMs = 900000;
 
   public SubmissionService(SubmissionRepository submissionRepository, TaskRepository taskRepository,
       RedisQueueService redisQueueService, UserRepository userRepository) {
@@ -117,9 +120,7 @@ public class SubmissionService {
 
     Submission saved = submissionRepository.save(submission);
 
-    // 5. Best-effort publish после commit. Это НЕ transactional outbox: если Redis
-    // недоступен после фиксации БД, запись останется QUEUED без сообщения до
-    // появления отдельного recovery scan/outbox механизма.
+    // Best-effort publication after commit; the database recovery scan retries Redis failures.
     if (TransactionSynchronizationManager.isSynchronizationActive()) {
       TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
         @Override
@@ -139,21 +140,49 @@ public class SubmissionService {
     return new SubmissionCreatedResponse(saved.getId(), saved.getStatus().name());
   }
 
-  @Scheduled(fixedDelay = 5000)
   public void recoverStuckSubmissions() {
-    List<Submission> stuckSubmissions = submissionRepository.findTop50ByStatusAndCreatedAtBeforeOrderByCreatedAtAsc(
-        SubmissionStatus.QUEUED, LocalDateTime.now().minusSeconds(10));
-
-    if (stuckSubmissions.isEmpty()) {
-      return;
+    LocalDateTime now = LocalDateTime.now();
+    if (executionTimeoutMs <= 0) throw new IllegalStateException("Execution recovery timeout must be positive");
+    LocalDateTime cutoff = now.minus(java.time.Duration.ofMillis(executionTimeoutMs));
+    for (UUID id : submissionRepository.findExpiredExecutionIds(cutoff, PageRequest.of(0, 50))) {
+      Submission submission = submissionRepository.findByIdForUpdate(id).orElse(null);
+      if (submission == null) continue;
+      LocalDateTime started = submission.getStartedAt() == null ? submission.getCreatedAt() : submission.getStartedAt();
+      if ((submission.getStatus() == SubmissionStatus.COMPILING || submission.getStatus() == SubmissionStatus.RUNNING)
+          && started.isBefore(cutoff)) {
+        submission.setStatus(SubmissionStatus.QUEUED);
+        submission.setStartedAt(null);
+        submission.setExecutionToken(null);
+        submission.setQueuedAt(null);
+        submissionRepository.save(submission);
+      }
     }
 
-    for (Submission s : stuckSubmissions) {
+    List<Submission> queued = submissionRepository.findQueuedForRecovery(now.minusSeconds(10), PageRequest.of(0, 50));
+    // Move this batch to the end of the scan even when Redis is unavailable.
+    // Otherwise the first 50 entries can starve the rest of a large backlog.
+    for (Submission submission : queued) {
+      submission.setQueuedAt(now);
+      submissionRepository.save(submission);
+    }
+    if (TransactionSynchronizationManager.isSynchronizationActive()) {
+      TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+        @Override
+        public void afterCommit() {
+          republish(queued);
+        }
+      });
+    } else {
+      republish(queued);
+    }
+  }
+
+  private void republish(List<Submission> submissions) {
+    for (Submission submission : submissions) {
       try {
-        redisQueueService.pushToStream(s);
-      } catch (Exception e) {
-        log.warn("Failed to recover submissionId={}; the next recovery run will retry it",
-            s.getId(), e);
+        redisQueueService.pushToStream(submission);
+      } catch (Exception exception) {
+        log.warn("Failed to recover submissionId={}; the next recovery run will retry it", submission.getId(), exception);
         return;
       }
     }

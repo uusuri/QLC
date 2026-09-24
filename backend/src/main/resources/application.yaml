@@ -3,6 +3,10 @@ spring:
     name: qlc-backend
   profiles:
     active: dev
+  task:
+    scheduling:
+      pool:
+        size: 2
   data: 
     redis:
       host: ${REDIS_HOST:localhost}
@@ -30,12 +34,17 @@ app:
     max-size: 65535
     max-log-length: 10000
     stream-name: "qlc:submissions"
+    recovery:
+      enabled: true
+      poll-delay-ms: 5000
+      execution-timeout-ms: 900000
     worker:
       enabled: true
       consumer-group: "submission-workers"
-      consumer-name: "${WORKER_ID:qlc-worker-1}"
+      consumer-name: "${WORKER_ID:}"
       poll-delay-ms: 500
       batch-size: 10
+      reclaim-min-idle-ms: 900000
 
 server:
   compression:

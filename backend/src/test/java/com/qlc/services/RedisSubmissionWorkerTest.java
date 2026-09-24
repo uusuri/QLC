@@ -1,234 +1,128 @@
 package com.qlc.services;
 
 import com.qlc.models.messages.SubmissionStreamMessage;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.connection.stream.MapRecord;
-import org.springframework.data.redis.connection.stream.Consumer;
-import org.springframework.data.redis.connection.stream.PendingMessage;
-import org.springframework.data.redis.connection.stream.PendingMessages;
-import org.springframework.data.redis.connection.stream.ReadOffset;
-import org.springframework.data.redis.connection.stream.RecordId;
-import org.springframework.data.redis.connection.stream.StreamOffset;
-import org.springframework.data.redis.connection.stream.StreamReadOptions;
+import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.StreamOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.Map;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RedisSubmissionWorkerTest {
-
   private static final String STREAM = "qlc:submissions";
   private static final String GROUP = "submission-workers";
   private static final String CONSUMER = "qlc-worker-test";
-  private static final RecordId RECORD_ID = RecordId.of("1-0");
-
-  @Mock
-  private StringRedisTemplate redisTemplate;
-
-  @Mock
-  private StreamOperations<String, String, String> streamOperations;
-
-  @Mock
-  private SubmissionStreamProcessor processor;
-
-  @Mock
-  private PendingMessages pendingMessages;
-
-  @Mock
-  private PendingMessage pendingMessage;
-
+  private static final RecordId ID = RecordId.of("1-0");
+  @Mock StringRedisTemplate redis;
+  @Mock StreamOperations<String, String, String> ops;
+  @Mock RedisSubmissionStream stream;
+  @Mock SubmissionStreamProcessor processor;
   private RedisSubmissionWorker worker;
 
   @BeforeEach
-  void setUp() {
-    worker = new RedisSubmissionWorker(redisTemplate, processor, STREAM, GROUP, CONSUMER, 10L);
+  void setup() {
+    worker = new RedisSubmissionWorker(redis, processor, stream, STREAM, GROUP, CONSUMER, 10, 900000);
   }
 
   @Test
-  void validRecordIsProcessedAndAcknowledged() {
-    UUID submissionId = UUID.randomUUID();
+  void completedRecordIsAcknowledgedAndDeleted() {
+    UUID id = UUID.randomUUID();
+    when(processor.process(any())).thenReturn(result(id, SubmissionStreamProcessor.ProcessingOutcome.COMPLETED));
+    worker.processRecord(record(id));
+    verify(stream).acknowledgeAndDelete(STREAM, GROUP, ID);
+  }
 
-    MapRecord<String, String, String> record = createMockRecord(
-        "1", submissionId.toString(), "42", "int main() {}");
+  @Test
+  void missingAndTerminalSubmissionsAreCleanedUpToo() {
+    for (var outcome : List.of(SubmissionStreamProcessor.ProcessingOutcome.NOT_FOUND,
+        SubmissionStreamProcessor.ProcessingOutcome.ALREADY_TERMINAL)) {
+      UUID id = UUID.randomUUID();
+      when(processor.process(any())).thenReturn(result(id, outcome));
+      worker.processRecord(record(id));
+    }
+    verify(stream, times(2)).acknowledgeAndDelete(STREAM, GROUP, ID);
+  }
 
-    SubmissionStreamMessage message = new SubmissionStreamMessage("1", submissionId, 42L, "int main() {}");
+  @Test
+  void busyAndSupersededExecutionsStayPending() {
+    for (var outcome : List.of(SubmissionStreamProcessor.ProcessingOutcome.ALREADY_PROCESSING,
+        SubmissionStreamProcessor.ProcessingOutcome.STALE_ATTEMPT)) {
+      UUID id = UUID.randomUUID();
+      when(processor.process(any())).thenReturn(result(id, outcome));
+      worker.processRecord(record(id));
+    }
+    verifyNoInteractions(stream);
+  }
 
-    when(processor.process(message)).thenReturn(new SubmissionStreamProcessor.ProcessingResult(
-        SubmissionStreamProcessor.ProcessingOutcome.COMPLETED,
-        submissionId,
-        42L,
-        21));
+  @Test
+  void processingOrDatabaseFailureDoesNotAcknowledge() {
+    when(processor.process(any())).thenThrow(new IllegalStateException("database unavailable"));
+    worker.processRecord(record(UUID.randomUUID()));
+    verifyNoInteractions(stream);
+  }
 
-    when(redisTemplate.<String, String>opsForStream()).thenReturn(streamOperations);
-    when(streamOperations.acknowledge(STREAM, GROUP, RECORD_ID)).thenReturn(1L);
+  @Test
+  void malformedUuidIsRemoved() {
+    worker.processRecord(MapRecord.create(STREAM, Map.of("submissionId", "invalid")).withId(ID));
+    verifyNoInteractions(processor);
+    verify(stream).acknowledgeAndDelete(STREAM, GROUP, ID);
+  }
 
+  @Test
+  void unsupportedSchemaRequiresPersistedFailureBeforeCleanup() {
+    UUID id = UUID.randomUUID();
+    var record = MapRecord.create(STREAM, Map.of("submissionId", id.toString(), "schemaVersion", "2")).withId(ID);
+    when(processor.markInfrastructureFailure(id, SubmissionStreamProcessor.UNSUPPORTED_SCHEMA_MESSAGE))
+        .thenReturn(false, true);
     worker.processRecord(record);
-
-    verify(processor).process(message);
-    verify(streamOperations).acknowledge(STREAM, GROUP, RECORD_ID);
-  }
-
-  @Test
-  void malformedUuidIsAcknowledgedAsPoisonMessage() {
-    MapRecord<String, String, String> record = createMockRecord(
-        "1", "not-a-uuid", "42", "int main() {}");
-
-    when(redisTemplate.<String, String>opsForStream()).thenReturn(streamOperations);
-    when(streamOperations.acknowledge(STREAM, GROUP, RECORD_ID)).thenReturn(1L);
-
+    verifyNoInteractions(stream);
     worker.processRecord(record);
-
-    verify(processor, never()).process(org.mockito.ArgumentMatchers.any());
-    verify(streamOperations).acknowledge(STREAM, GROUP, RECORD_ID);
+    verify(stream).acknowledgeAndDelete(STREAM, GROUP, ID);
   }
 
   @Test
-  void unsupportedSchemaIsAcknowledgedWithoutProcessing() {
-    UUID submissionId = UUID.randomUUID();
-    MapRecord<String, String, String> record = createMockRecord(
-        "2", submissionId.toString(), "42", "int main() {}");
-
-    when(redisTemplate.<String, String>opsForStream()).thenReturn(streamOperations);
-    when(streamOperations.acknowledge(STREAM, GROUP, RECORD_ID)).thenReturn(1L);
-
+  void malformedTaskRequiresPersistedFailureBeforeCleanup() {
+    UUID id = UUID.randomUUID();
+    var record = MapRecord.create(STREAM, Map.of("submissionId", id.toString(), "schemaVersion", "1",
+        "taskId", "invalid", "sourceCode", "int main() {}")).withId(ID);
+    when(processor.markInfrastructureFailure(id, SubmissionStreamProcessor.MALFORMED_MESSAGE)).thenReturn(true);
     worker.processRecord(record);
-
-    verify(processor, never()).process(org.mockito.ArgumentMatchers.any());
-    verify(processor).markInfrastructureFailure(
-        submissionId,
-        SubmissionStreamProcessor.UNSUPPORTED_SCHEMA_MESSAGE);
-    verify(streamOperations).acknowledge(STREAM, GROUP, RECORD_ID);
-  }
-
-  @Test
-  void processingFailureLeavesMessagePending() {
-    UUID submissionId = UUID.randomUUID();
-    MapRecord<String, String, String> record = createMockRecord(
-        "1", submissionId.toString(), "42", "int main() {}");
-
-    when(processor.process(eq(new SubmissionStreamMessage("1", submissionId, 42L, "int main() {}"))))
-        .thenThrow(new IllegalStateException("database unavailable"));
-
-    worker.processRecord(record);
-
-    // Убеждаемся, что acknowledge НЕ вызывается при падении бизнес-логики
-    verify(streamOperations, never()).acknowledge(STREAM, GROUP, RECORD_ID);
-  }
-
-  @Test
-  void invalidLongTaskIdIsAcknowledgedWithoutProcessing() {
-    UUID submissionId = UUID.randomUUID();
-    MapRecord<String, String, String> record = createMockRecord(
-        "1", submissionId.toString(), "not-a-long", "int main() {}");
-
-    when(redisTemplate.<String, String>opsForStream()).thenReturn(streamOperations);
-    when(streamOperations.acknowledge(STREAM, GROUP, RECORD_ID)).thenReturn(1L);
-
-    worker.processRecord(record);
-
-    verify(processor, never()).process(org.mockito.ArgumentMatchers.any());
-    verify(processor).markInfrastructureFailure(
-        submissionId,
-        SubmissionStreamProcessor.MALFORMED_MESSAGE);
-    verify(streamOperations).acknowledge(STREAM, GROUP, RECORD_ID);
-  }
-
-  @Test
-  void poisonRecordMarksSubmissionAsInfrastructureErrorBeforeAcknowledging() {
-    UUID submissionId = UUID.randomUUID();
-    MapRecord<String, String, String> record = createMockRecord(
-        "1", submissionId.toString(), "42", "int main() {}");
-
-    when(redisTemplate.<String, String>opsForStream()).thenReturn(streamOperations);
-    when(streamOperations.acknowledge(STREAM, GROUP, RECORD_ID)).thenReturn(1L);
-
-    worker.discardPoisonRecord(record);
-
-    verify(processor).markInfrastructureFailure(
-        submissionId,
-        SubmissionStreamProcessor.RETRY_EXHAUSTED_MESSAGE);
-    verify(streamOperations).acknowledge(STREAM, GROUP, RECORD_ID);
-  }
-
-  @Test
-  void poisonRecordStaysPendingWhenFailureStatusCannotBeSaved() {
-    UUID submissionId = UUID.randomUUID();
-    MapRecord<String, String, String> record = createMockRecord(
-        "1", submissionId.toString(), "42", "int main() {}");
-    org.mockito.Mockito.doThrow(new IllegalStateException("database unavailable"))
-        .when(processor)
-        .markInfrastructureFailure(submissionId, SubmissionStreamProcessor.RETRY_EXHAUSTED_MESSAGE);
-
-    worker.discardPoisonRecord(record);
-
-    verify(streamOperations, never()).acknowledge(STREAM, GROUP, RECORD_ID);
+    verify(stream).acknowledgeAndDelete(STREAM, GROUP, ID);
   }
 
   @Test
   @SuppressWarnings("unchecked")
-  void pollRetriesPendingRecordWithConfiguredConsumerName() {
-    UUID submissionId = UUID.randomUUID();
-    MapRecord<String, String, String> record = createMockRecord(
-        "1", submissionId.toString(), "42", "int main() {}");
-
-    when(redisTemplate.<String, String>opsForStream()).thenReturn(streamOperations);
-    when(streamOperations.createGroup(STREAM, ReadOffset.from("0-0"), GROUP)).thenReturn("OK");
-    when(streamOperations.read(
-        eq(Consumer.from(GROUP, CONSUMER)),
-        any(StreamReadOptions.class),
-        any(StreamOffset[].class)))
-        .thenReturn(List.of(record), List.of());
-    when(streamOperations.pending(
-        eq(STREAM),
-        eq(GROUP),
-        any(org.springframework.data.domain.Range.class),
-        eq(1L)))
-        .thenReturn(pendingMessages);
-    when(pendingMessages.isEmpty()).thenReturn(false);
-    when(pendingMessages.get(0)).thenReturn(pendingMessage);
-    when(pendingMessage.getTotalDeliveryCount()).thenReturn(2L);
-    SubmissionStreamMessage message = new SubmissionStreamMessage(
-        "1", submissionId, 42L, "int main() {}");
-    when(processor.process(message)).thenReturn(new SubmissionStreamProcessor.ProcessingResult(
-        SubmissionStreamProcessor.ProcessingOutcome.COMPLETED,
-        submissionId,
-        42L,
-        21));
-
+  void reclaimUsesReturnedCursorEvenWhenScanBatchIsEmpty() {
+    when(redis.<String, String>opsForStream()).thenReturn(ops);
+    when(stream.reclaim(STREAM, GROUP, CONSUMER, Duration.ofMinutes(15), "0-0", 10))
+        .thenReturn(new RedisSubmissionStream.ClaimBatch("100-0", List.of()));
+    when(stream.reclaim(STREAM, GROUP, CONSUMER, Duration.ofMinutes(15), "100-0", 10))
+        .thenReturn(new RedisSubmissionStream.ClaimBatch("0-0", List.of(record(UUID.randomUUID()))));
+    when(processor.process(any())).thenReturn(result(UUID.randomUUID(), SubmissionStreamProcessor.ProcessingOutcome.COMPLETED));
     worker.poll();
-
-    verify(streamOperations, times(2)).read(
-        eq(Consumer.from(GROUP, CONSUMER)),
-        any(StreamReadOptions.class),
-        any(StreamOffset[].class));
-    verify(processor).process(message);
-    verify(streamOperations).acknowledge(STREAM, GROUP, RECORD_ID);
+    worker.poll();
+    verify(processor).process(any());
+    verify(stream).acknowledgeAndDelete(STREAM, GROUP, ID);
+    verify(ops, times(1)).createGroup(STREAM, ReadOffset.from("0-0"), GROUP);
+    verify(ops, times(4)).read(eq(Consumer.from(GROUP, CONSUMER)), any(StreamReadOptions.class), any(StreamOffset[].class));
   }
 
-  private MapRecord<String, String, String> createMockRecord(
-      String schemaVersion,
-      String submissionId,
-      String taskId,
-      String sourceCode) {
-    return MapRecord.create(STREAM, Map.of(
-        "schemaVersion", schemaVersion,
-        "submissionId", submissionId,
-        "taskId", taskId,
-        "sourceCode", sourceCode))
-        .withId(RECORD_ID);
+  private SubmissionStreamProcessor.ProcessingResult result(UUID id, SubmissionStreamProcessor.ProcessingOutcome outcome) {
+    return new SubmissionStreamProcessor.ProcessingResult(outcome, id, 42L, 13);
+  }
+
+  private MapRecord<String, String, String> record(UUID id) {
+    return MapRecord.create(STREAM, Map.of("schemaVersion", "1", "submissionId", id.toString(),
+        "taskId", "42", "sourceCode", "int main() {}")).withId(ID);
   }
 }

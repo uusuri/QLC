@@ -5,6 +5,7 @@ import com.qlc.models.dtos.SubmissionResultDTO;
 import com.qlc.models.enums.SubmissionStatus;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -49,7 +50,15 @@ public interface SubmissionRepository extends JpaRepository<Submission, UUID> {
       + "where submission.id = :id")
   Optional<Submission> findByIdForUpdate(@Param("id") UUID id);
 
-  List<Submission> findTop50ByStatusAndCreatedAtBeforeOrderByCreatedAtAsc(
-      SubmissionStatus status,
-      LocalDateTime cutoff);
+  @Query("select s from Submission s join fetch s.task "
+      + "where s.status = com.qlc.models.enums.SubmissionStatus.QUEUED "
+      + "and coalesce(s.queuedAt, s.createdAt) < :cutoff "
+      + "order by coalesce(s.queuedAt, s.createdAt), s.id")
+  List<Submission> findQueuedForRecovery(@Param("cutoff") LocalDateTime cutoff, Pageable pageable);
+
+  @Query("select s.id from Submission s where s.status in "
+      + "(com.qlc.models.enums.SubmissionStatus.COMPILING, com.qlc.models.enums.SubmissionStatus.RUNNING) "
+      + "and coalesce(s.startedAt, s.createdAt) < :cutoff "
+      + "order by coalesce(s.startedAt, s.createdAt), s.id")
+  List<UUID> findExpiredExecutionIds(@Param("cutoff") LocalDateTime cutoff, Pageable pageable);
 }

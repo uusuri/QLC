@@ -39,17 +39,23 @@ public class SubmissionStreamProcessor {
     try {
       runnerResult = dockerCppRunner.run(preparation.runRequest());
     } catch (InterruptedException exception) {
+      transactions.retryExecution(preparation.submissionId(), preparation.executionToken());
       Thread.currentThread().interrupt();
       throw new IllegalStateException("Runner execution was interrupted", exception);
     } catch (IOException exception) {
+      transactions.retryExecution(preparation.submissionId(), preparation.executionToken());
       throw new IllegalStateException("Failed to execute judge container", exception);
+    } catch (RuntimeException exception) {
+      transactions.retryExecution(preparation.submissionId(), preparation.executionToken());
+      throw exception;
     }
 
     SubmissionExecutionTransactions.CompletionOutcome completion =
-        transactions.complete(preparation.submissionId(), runnerResult);
+        transactions.complete(preparation.submissionId(), preparation.executionToken(), runnerResult);
 
     return new ProcessingResult(
         switch (completion) {
+          case STALE_ATTEMPT -> ProcessingOutcome.STALE_ATTEMPT;
           case COMPLETED -> ProcessingOutcome.COMPLETED;
           case ALREADY_TERMINAL -> ProcessingOutcome.ALREADY_TERMINAL;
           case NOT_FOUND -> ProcessingOutcome.NOT_FOUND;
@@ -59,12 +65,13 @@ public class SubmissionStreamProcessor {
         preparation.sourceSizeBytes());
   }
 
-  public void markInfrastructureFailure(UUID submissionId, String safeMessage) {
-    transactions.markInfrastructureFailure(submissionId, safeMessage);
+  public boolean markInfrastructureFailure(UUID submissionId, String safeMessage) {
+    return transactions.markInfrastructureFailure(submissionId, safeMessage);
   }
 
   private ProcessingResult resultFor(SubmissionExecutionTransactions.Preparation preparation) {
     ProcessingOutcome outcome = switch (preparation.outcome()) {
+      case ALREADY_PROCESSING -> ProcessingOutcome.ALREADY_PROCESSING;
       case ALREADY_TERMINAL -> ProcessingOutcome.ALREADY_TERMINAL;
       case NOT_FOUND -> ProcessingOutcome.NOT_FOUND;
       case CONTRACT_MISMATCH -> ProcessingOutcome.CONTRACT_MISMATCH;
@@ -79,6 +86,8 @@ public class SubmissionStreamProcessor {
 
   public enum ProcessingOutcome {
     COMPLETED,
+    ALREADY_PROCESSING,
+    STALE_ATTEMPT,
     ALREADY_TERMINAL,
     NOT_FOUND,
     CONTRACT_MISMATCH

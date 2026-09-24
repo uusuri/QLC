@@ -249,8 +249,8 @@ class SubmissionServiceTest {
     @Test
     void queuedSubmissionIsPublishedAgainByRecoveryJob() {
       Submission stuck = stuckSubmission();
-      when(submissionRepository.findTop50ByStatusAndCreatedAtBeforeOrderByCreatedAtAsc(
-          eq(SubmissionStatus.QUEUED), any(LocalDateTime.class)))
+      when(submissionRepository.findQueuedForRecovery(
+          any(LocalDateTime.class), any(org.springframework.data.domain.Pageable.class)))
           .thenReturn(List.of(stuck));
 
       submissionService.recoverStuckSubmissions();
@@ -262,8 +262,8 @@ class SubmissionServiceTest {
     void failedRecoveryRemainsEligibleForNextRun() {
       Submission first = stuckSubmission();
       Submission second = stuckSubmission();
-      when(submissionRepository.findTop50ByStatusAndCreatedAtBeforeOrderByCreatedAtAsc(
-          eq(SubmissionStatus.QUEUED), any(LocalDateTime.class)))
+      when(submissionRepository.findQueuedForRecovery(
+          any(LocalDateTime.class), any(org.springframework.data.domain.Pageable.class)))
           .thenReturn(List.of(first, second));
       doThrow(new IllegalStateException("redis unavailable"))
           .doNothing()

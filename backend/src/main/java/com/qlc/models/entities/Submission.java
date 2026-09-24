@@ -64,11 +64,24 @@ public class Submission {
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
 
+  @Column(name = "started_at")
+  private LocalDateTime startedAt;
+
+  @Column(name = "queued_at")
+  private LocalDateTime queuedAt;
+
+  @Column(name = "execution_token")
+  private UUID executionToken;
+
+  @Column(name = "retry_count", nullable = false)
+  private int retryCount;
+
   @PrePersist
   protected void onCreate() {
     if (this.id == null) {
       this.id = UUID.randomUUID();
     }
     this.createdAt = LocalDateTime.now();
+    this.queuedAt = this.createdAt;
   }
 }

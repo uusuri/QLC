@@ -15,12 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
 @Service
 public class SubmissionExecutionTransactions {
+
+  private static final int MAX_EXECUTION_ATTEMPTS = 3;
 
   private final SubmissionRepository submissionRepository;
 
@@ -34,21 +37,14 @@ public class SubmissionExecutionTransactions {
     Submission submission = submissionRepository.findByIdForUpdate(submissionId).orElse(null);
 
     if (submission == null) {
-      return new Preparation(PreparationOutcome.NOT_FOUND, submissionId, null, 0, null);
+      return new Preparation(PreparationOutcome.NOT_FOUND, submissionId, null, 0, null, null);
     }
 
     Task task = submission.getTask();
     String sourceCode = submission.getSourceCode();
 
-    if (task == null) {
-      throw new IllegalStateException("Submission " + submissionId + " has no task");
-    }
-    if (sourceCode == null || sourceCode.isBlank()) {
-      throw new IllegalStateException("Submission " + submissionId + " has no source code");
-    }
-
-    int sourceSizeBytes = sourceCode.getBytes(StandardCharsets.UTF_8).length;
-    Long taskId = task.getId();
+    int sourceSizeBytes = sourceCode == null ? 0 : sourceCode.getBytes(StandardCharsets.UTF_8).length;
+    Long taskId = task == null ? null : task.getId();
 
     if (isTerminal(submission.getStatus())) {
       return new Preparation(
@@ -56,9 +52,25 @@ public class SubmissionExecutionTransactions {
           submissionId,
           taskId,
           sourceSizeBytes,
-          null);
+          null, null);
     }
 
+    if (submission.getStatus() != SubmissionStatus.QUEUED) {
+      return new Preparation(PreparationOutcome.ALREADY_PROCESSING, submissionId, taskId,
+          sourceSizeBytes, null, null);
+    }
+    if (submission.getRetryCount() >= MAX_EXECUTION_ATTEMPTS) {
+      fail(submission, SubmissionStreamProcessor.RETRY_EXHAUSTED_MESSAGE);
+      return new Preparation(PreparationOutcome.ALREADY_TERMINAL, submissionId, taskId,
+          sourceSizeBytes, null, null);
+    }
+
+    if (task == null) {
+      return reject(submission, SubmissionStreamProcessor.MALFORMED_MESSAGE);
+    }
+    if (sourceCode == null || sourceCode.isBlank()) {
+      return reject(submission, SubmissionStreamProcessor.MALFORMED_MESSAGE);
+    }
     if (!Objects.equals(taskId, message.taskId()) || !sourceCode.equals(message.sourceCode())) {
       submission.setStatus(SubmissionStatus.INFRA_ERROR);
       submission.setVerdict(null);
@@ -71,23 +83,21 @@ public class SubmissionExecutionTransactions {
           submissionId,
           taskId,
           sourceSizeBytes,
-          null);
+          null, null);
     }
 
     if (!(task instanceof CodeTask codeTask)) {
-      throw new IllegalStateException("Task " + taskId + " is not a code task");
+      return reject(submission, "Task does not support code execution.");
     }
     if (codeTask.getTestCases() == null || codeTask.getTestCases().isBlank()) {
-      throw new IllegalStateException("Code task " + taskId + " has no test cases");
+      return reject(submission, "Task has no judge test cases.");
     }
 
     Toolchain toolchain;
     try {
       toolchain = Toolchain.valueOf(submission.getLanguage().trim().toUpperCase(Locale.ROOT));
     } catch (IllegalArgumentException | NullPointerException exception) {
-      throw new IllegalStateException(
-          "Submission " + submissionId + " uses unsupported toolchain " + submission.getLanguage(),
-          exception);
+      return reject(submission, "Task uses an unsupported toolchain.");
     }
 
     RunRequest runRequest = new RunRequest(
@@ -99,23 +109,30 @@ public class SubmissionExecutionTransactions {
         toolchain);
 
     submission.setStatus(SubmissionStatus.COMPILING);
+    submission.setStartedAt(LocalDateTime.now());
+    submission.setExecutionToken(UUID.randomUUID());
+    submission.setRetryCount(submission.getRetryCount() + 1);
     submissionRepository.save(submission);
     return new Preparation(
         PreparationOutcome.READY,
         submissionId,
         taskId,
         sourceSizeBytes,
-        runRequest);
+        runRequest, submission.getExecutionToken());
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public CompletionOutcome complete(UUID submissionId, DockerRunnerResult runnerResult) {
+  public CompletionOutcome complete(UUID submissionId, UUID executionToken, DockerRunnerResult runnerResult) {
     Submission submission = submissionRepository.findByIdForUpdate(submissionId).orElse(null);
     if (submission == null) {
       return CompletionOutcome.NOT_FOUND;
     }
     if (isTerminal(submission.getStatus())) {
       return CompletionOutcome.ALREADY_TERMINAL;
+    }
+
+    if (!ownsExecution(submission, executionToken)) {
+      return CompletionOutcome.STALE_ATTEMPT;
     }
 
     submission.setVerdict(runnerResult.verdict());
@@ -128,12 +145,46 @@ public class SubmissionExecutionTransactions {
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public void markInfrastructureFailure(UUID submissionId, String safeMessage) {
+  public boolean markInfrastructureFailure(UUID submissionId, String safeMessage) {
     Submission submission = submissionRepository.findByIdForUpdate(submissionId).orElse(null);
     if (submission == null || isTerminal(submission.getStatus())) {
-      return;
+      return true;
     }
+    // A poison/duplicate message must never cancel another worker's live attempt.
+    if (submission.getStatus() != SubmissionStatus.QUEUED) {
+      return false;
+    }
+    fail(submission, safeMessage);
+    return true;
+  }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public void retryExecution(UUID submissionId, UUID executionToken) {
+    Submission submission = submissionRepository.findByIdForUpdate(submissionId).orElse(null);
+    if (submission == null || !ownsExecution(submission, executionToken)) return;
+    if (submission.getRetryCount() >= MAX_EXECUTION_ATTEMPTS) {
+      fail(submission, SubmissionStreamProcessor.RETRY_EXHAUSTED_MESSAGE);
+    } else {
+      submission.setStatus(SubmissionStatus.QUEUED);
+      submission.setStartedAt(null);
+      submission.setExecutionToken(null);
+      submission.setQueuedAt(LocalDateTime.now());
+      submissionRepository.save(submission);
+    }
+  }
+
+  private Preparation reject(Submission submission, String safeMessage) {
+    fail(submission, safeMessage);
+    return new Preparation(PreparationOutcome.CONTRACT_MISMATCH, submission.getId(),
+        submission.getTask() == null ? null : submission.getTask().getId(), 0, null, null);
+  }
+
+  private boolean ownsExecution(Submission submission, UUID token) {
+    return token != null && token.equals(submission.getExecutionToken())
+        && (submission.getStatus() == SubmissionStatus.COMPILING || submission.getStatus() == SubmissionStatus.RUNNING);
+  }
+
+  private void fail(Submission submission, String safeMessage) {
     submission.setStatus(SubmissionStatus.INFRA_ERROR);
     submission.setVerdict(null);
     submission.setExecutionTime(null);
@@ -150,6 +201,7 @@ public class SubmissionExecutionTransactions {
 
   public enum PreparationOutcome {
     READY,
+    ALREADY_PROCESSING,
     ALREADY_TERMINAL,
     NOT_FOUND,
     CONTRACT_MISMATCH
@@ -157,6 +209,7 @@ public class SubmissionExecutionTransactions {
 
   public enum CompletionOutcome {
     COMPLETED,
+    STALE_ATTEMPT,
     ALREADY_TERMINAL,
     NOT_FOUND
   }
@@ -166,6 +219,7 @@ public class SubmissionExecutionTransactions {
       UUID submissionId,
       Long taskId,
       int sourceSizeBytes,
-      RunRequest runRequest) {
+      RunRequest runRequest,
+      UUID executionToken) {
   }
 }

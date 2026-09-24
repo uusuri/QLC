@@ -98,8 +98,8 @@ class SubmissionStreamProcessorTest {
         () -> processor.process(message(submission)));
 
     assertEquals("Failed to execute judge container", exception.getMessage());
-    assertEquals(SubmissionStatus.COMPILING, submission.getStatus());
-    verify(submissionRepository).save(submission);
+    assertEquals(SubmissionStatus.QUEUED, submission.getStatus());
+    verify(submissionRepository, times(2)).save(submission);
   }
 
   @Test
@@ -119,25 +119,14 @@ class SubmissionStreamProcessorTest {
   }
 
   @Test
-  void staleRunningSubmissionCanBeCompletedIdempotently() throws Exception {
+  void duplicateRunningMessageDoesNotStartAnotherExecution() {
     UUID submissionId = UUID.randomUUID();
     Submission submission = submission(submissionId, SubmissionStatus.RUNNING, "int main() {}");
     when(submissionRepository.findByIdForUpdate(submissionId)).thenReturn(Optional.of(submission));
-    when(submissionRepository.save(submission)).thenReturn(submission);
-    when(dockerCppRunner.run(any(RunRequest.class))).thenReturn(new DockerRunnerResult(
-        Verdict.WA,
-        1,
-        2,
-        9,
-        1_024L,
-        "Неверный ответ на тесте 2."));
-
     SubmissionStreamProcessor.ProcessingResult result = processor.process(message(submission));
-
-    assertEquals(SubmissionStreamProcessor.ProcessingOutcome.COMPLETED, result.outcome());
-    assertEquals(SubmissionStatus.FINISHED, submission.getStatus());
-    assertEquals(Verdict.WA, submission.getVerdict());
-    assertEquals(1_024L, submission.getMemoryUsed());
+    assertEquals(SubmissionStreamProcessor.ProcessingOutcome.ALREADY_PROCESSING, result.outcome());
+    assertEquals(SubmissionStatus.RUNNING, submission.getStatus());
+    org.mockito.Mockito.verifyNoInteractions(dockerCppRunner);
   }
 
   @Test
@@ -161,8 +150,8 @@ class SubmissionStreamProcessorTest {
     Submission submission = submission(submissionId, SubmissionStatus.QUEUED, " ");
     when(submissionRepository.findByIdForUpdate(submissionId)).thenReturn(Optional.of(submission));
 
-    assertThrows(IllegalStateException.class, () -> processor.process(message(submission)));
-    verify(submissionRepository, never()).save(submission);
+    assertEquals(SubmissionStreamProcessor.ProcessingOutcome.CONTRACT_MISMATCH, processor.process(message(submission)).outcome());
+    assertEquals(SubmissionStatus.INFRA_ERROR, submission.getStatus());
   }
 
   @Test

@@ -24,5 +24,7 @@ jwt:
 
 app:
   submissions:
+    recovery:
+      enabled: false
     worker:
       enabled: false
