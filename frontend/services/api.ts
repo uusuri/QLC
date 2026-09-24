@@ -614,7 +614,7 @@ export async function updateAdminLesson(
 
 // Загружает задачи только для выбранного урока.
 export async function getAdminTasks(lessonId: number): Promise<AdminTaskDto[]> {
-  return apiRequest<AdminTaskDto[]>(`/api/lessons/${lessonId}/tasks`);
+  return apiRequest<AdminTaskDto[]>(`/api/lessons/${lessonId}/tasks`, { auth: true });
 }
 
 export async function getLessonTaskOutlines(lessonId: number): Promise<LessonTaskOutlineDto[]> {
@@ -623,7 +623,7 @@ export async function getLessonTaskOutlines(lessonId: number): Promise<LessonTas
 
 // Загружает одну задачу по backend ID.
 export async function getAdminTaskById(id: number): Promise<AdminTaskDto> {
-  return apiRequest<AdminTaskDto>(`/api/tasks/${id}`);
+  return apiRequest<AdminTaskDto>(`/api/tasks/${id}`, { auth: true });
 }
 
 // Создает задачу внутри выбранного урока.

@@ -28,8 +28,9 @@ frontend/
 - `GET /api/courses/{courseId}/modules`
 - `GET /api/modules/{id}`
 - `GET /api/modules/{moduleId}/lessons`
-- `GET /api/lessons/{id}`
-- `GET /api/lessons/{lessonId}/tasks`
+- `GET /api/lessons/{id}` — описание без материала урока
+- `GET /api/lessons/{lessonId}/task-outline` — ID и типы задач без условий
+- `GET /api/lessons/{id}/learn` — материалы для вошедшего пользователя с доступом к курсу
 
 Данные из backend `CourseDTO` маппятся в frontend-карточки курса. Если backend возвращает пустой массив, главная и checkout показывают empty state и ссылку на `/admin/content`. Если backend недоступен, страницы показывают понятный error state без stack trace.
 

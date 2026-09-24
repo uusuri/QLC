@@ -187,7 +187,12 @@ public class CourseService {
   }
 
   public LessonDTO getLessonById(Long lessonId) {
-    return mapToLessonDTO(lessonRepository.findById(lessonId)
+    return mapToLessonSummaryDTO(lessonRepository.findById(lessonId)
+        .orElseThrow(() -> new ResourceNotFoundException("Lesson not found")));
+  }
+
+  public LessonDTO getLessonForAdmin(Long lessonId) {
+    return mapToAdminLessonDTO(lessonRepository.findById(lessonId)
         .orElseThrow(() -> new ResourceNotFoundException("Lesson not found")));
   }
 
@@ -195,9 +200,7 @@ public class CourseService {
     Lesson lesson = lessonRepository.findByIdWithModuleAndCourse(lessonId)
         .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
 
-    Course course = lesson.getModule().getCourse();
-    boolean hasAccess = isCourseFree(course) || purchaseService.hasAccess(userId, course.getId());
-    boolean visible = lesson.isPublished() && hasAccess;
+    boolean visible = canReadLesson(lesson, userId);
 
     return new LessonDTO(
         lesson.getId(),
@@ -223,9 +226,7 @@ public class CourseService {
         .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
 
     Course course = lesson.getModule().getCourse();
-    boolean freeCourse = isCourseFree(course);
-    boolean hasAccess = freeCourse || purchaseService.hasAccess(userId, course.getId());
-    boolean visible = lesson.isPublished() && hasAccess;
+    boolean visible = canReadLesson(lesson, userId);
 
     LessonDTO lessonDto = new LessonDTO(
         lesson.getId(),
@@ -249,6 +250,12 @@ public class CourseService {
         tasks);
   }
 
+  private boolean canReadLesson(Lesson lesson, Long userId) {
+    Course course = lesson.getModule().getCourse();
+    return lesson.isPublished() && course.isPublished()
+        && (isCourseFree(course) || (userId != null && purchaseService.hasAccess(userId, course.getId())));
+  }
+
   @Transactional
   public LessonDTO createLesson(Long moduleId, LessonDTO dto) {
     com.qlc.models.entities.Module module = moduleRepository.findById(moduleId)
@@ -260,7 +267,7 @@ public class CourseService {
     lesson.setContentMd(dto.contentMd());
     lesson.setPublished(dto.published() != null ? dto.published() : true);
     lesson.setModule(module);
-    return mapToLessonDTO(lessonRepository.save(lesson));
+    return mapToAdminLessonDTO(lessonRepository.save(lesson));
   }
 
   @Transactional
@@ -274,7 +281,7 @@ public class CourseService {
     if (dto.published() != null) {
       lesson.setPublished(dto.published());
     }
-    return mapToLessonDTO(lessonRepository.save(lesson));
+    return mapToAdminLessonDTO(lessonRepository.save(lesson));
   }
 
   @Transactional
@@ -282,14 +289,14 @@ public class CourseService {
     lessonRepository.deleteById(lessonId);
   }
 
-  private LessonDTO mapToLessonDTO(Lesson l) {
+  private LessonDTO mapToAdminLessonDTO(Lesson l) {
     return new LessonDTO(
         l.getId(),
         l.getModule().getId(),
         l.getName(),
         l.getDescription(),
         l.getPosition(),
-        l.isPublished() ? l.getContentMd() : null,
+        l.getContentMd(),
         l.isPublished());
   }
 
@@ -312,8 +319,13 @@ public class CourseService {
   }
 
   public List<TaskOutlineDTO> getTaskOutlinesByLessonId(Long lessonId) {
+    Lesson lesson = lessonRepository.findByIdWithModuleAndCourse(lessonId)
+        .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
+    if (!lesson.isPublished() || !lesson.getModule().getCourse().isPublished()) {
+      return List.of();
+    }
     return taskRepository.findByLessonId(lessonId).stream()
-        .map(task -> new TaskOutlineDTO(task.getId(), task.getTaskType(), task.getStatementMd()))
+        .map(task -> new TaskOutlineDTO(task.getId(), task.getTaskType()))
         .toList();
   }
 

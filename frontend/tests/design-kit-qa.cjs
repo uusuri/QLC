@@ -27,7 +27,8 @@ async function fixture(context, role='ROLE_USER') {
     else if(path==='/api/modules/201') body=moduleItem;
     else if(path==='/api/modules/201/lessons') body=[lesson];
     else if(path==='/api/lessons/301/learn') body={course,module:moduleItem,lesson,tasks:[task]};
-    else if(path==='/api/lessons/301/task-outline'||path==='/api/lessons/301/tasks') body=[task];
+    else if(path==='/api/lessons/301/task-outline') body=[{id:task.id,taskType:task.taskType}];
+    else if(path==='/api/lessons/301/tasks') body=[task];
     else if(path==='/api/tasks/401/submissions') body={id:'fixture-submission',status:'QUEUED'};
     else if(path==='/api/submissions/fixture-submission') body={id:'fixture-submission',status:'FINISHED',verdict:'AC',executionTime:14,memoryUsed:1024,safeMessage:'Тестовые данные проверки интерфейса.'};
     else return route.fulfill({status:404,contentType:'application/json',body:JSON.stringify({message:'QA fixture not defined'})});

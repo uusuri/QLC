@@ -1,4 +1,5 @@
 package com.qlc.models.dtos;
 
-public record TaskOutlineDTO(Long id, String taskType, String statementMd) {
+/** Public task metadata; statements are only available through authorized learning/admin APIs. */
+public record TaskOutlineDTO(Long id, String taskType) {
 }

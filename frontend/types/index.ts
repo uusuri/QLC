@@ -316,7 +316,6 @@ export type LearnerTaskDto = Omit<
 export interface LessonTaskOutlineDto {
   id: number;
   taskType: AdminTaskType;
-  statementMd: string;
 }
 
 // Модуль курса вместе с уроками, которые нужны странице курса.

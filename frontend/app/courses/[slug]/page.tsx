@@ -160,7 +160,7 @@ export default function CoursePage() {
                     <div className="kit-lesson-line"><KitIcon name={canStudy ? "play" : "diamond"} className="text-muted" />{canStudy ? <Link href={`/lessons/${lesson.id}`}>{lesson.name}</Link> : <span>{lesson.name}</span>}<button className="min-h-11 min-w-11 text-muted" aria-label={`${lessonExpanded ? "Скрыть" : "Показать"} содержание урока «${lesson.name}»`} aria-expanded={lessonExpanded} aria-controls={`lesson-outline-${lesson.id}`} onClick={() => void toggleLesson(lesson.id)} type="button">{lessonExpanded ? "−" : "+"}</button></div>
                     {lessonExpanded && <div className="kit-outline" id={`lesson-outline-${lesson.id}`}>
                       {lesson.description && <p className="mb-4">{lesson.description}</p>}
-                      {taskOutlineLoadingId === lesson.id ? <p role="status">Загружаем задачи…</p> : taskOutlineError[lesson.id] ? <p role="alert" className="text-[#FF8074]">{taskOutlineError[lesson.id]}</p> : outlines.length ? outlines.map((task, taskIndex) => <div key={task.id} className="flex flex-wrap justify-between gap-2 border-b border-line py-3"><span>{getTaskOutlineTitle(task.statementMd, taskIndex)}</span><span className="text-xs">{task.taskType === "CODE" ? "Код" : task.taskType === "TEST" ? "Тест" : "Задание"}</span></div>) : <p>Задачи к уроку скоро появятся.</p>}
+                      {taskOutlineLoadingId === lesson.id ? <p role="status">Загружаем задачи…</p> : taskOutlineError[lesson.id] ? <p role="alert" className="text-[#FF8074]">{taskOutlineError[lesson.id]}</p> : outlines.length ? outlines.map((task, taskIndex) => <div key={task.id} className="flex flex-wrap justify-between gap-2 border-b border-line py-3"><span>Задача {taskIndex + 1}</span><span className="text-xs">{task.taskType === "CODE" ? "Код" : task.taskType === "TEST" ? "Тест" : "Задание"}</span></div>) : <p>Задачи к уроку скоро появятся.</p>}
                       {!canStudy && <a className="qlc-text-link text-acid" href="#purchase">Открыть доступ к урокам ↑</a>}
                     </div>}
                   </article>;
@@ -172,9 +172,4 @@ export default function CoursePage() {
       </main><SiteFooter />
     </div>
   );
-}
-
-function getTaskOutlineTitle(statementMd: string, index: number) {
-  const heading = statementMd.match(/^#{1,3}\s+(.+)$/m)?.[1];
-  return heading?.replace(/[*`]/g, "") || `Задача ${index + 1}`;
 }

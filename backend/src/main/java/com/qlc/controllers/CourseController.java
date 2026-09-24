@@ -128,13 +128,17 @@ public class CourseController {
   @PreAuthorize("isAuthenticated()")
   public ResponseEntity<LessonLearnResponse> getLessonForUser(@PathVariable Long id,
       @AuthenticationPrincipal UserDetailsImpl principal) {
-    return ResponseEntity.ok(courseService.getLessonWithTasksForUser(id, principal.getId()));
+    return ResponseEntity.ok()
+        .header("Cache-Control", "private, no-store")
+        .body(courseService.getLessonWithTasksForUser(id, principal.getId()));
   }
 
   @GetMapping("/admin/lessons/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<LessonDTO> getLessonForAdmin(@PathVariable Long id) {
-    return ResponseEntity.ok(courseService.getLessonById(id));
+    return ResponseEntity.ok()
+        .header("Cache-Control", "private, no-store")
+        .body(courseService.getLessonForAdmin(id));
   }
 
   @PostMapping("/modules/{moduleId}/lessons")
