@@ -1,5 +1,7 @@
 import { memo, type ReactNode } from "react";
 
+type TableAlignment = "left" | "center" | "right";
+
 type MarkdownBlock =
   | {
       code: string;
@@ -14,6 +16,12 @@ type MarkdownBlock =
   | {
       items: string[];
       kind: "list";
+    }
+  | {
+      kind: "table";
+      headers: string[];
+      alignments: TableAlignment[];
+      rows: string[][];
     }
   | {
       kind: "paragraph";
@@ -72,12 +80,23 @@ function renderInlineMarkdown(text: string, tone: MarkdownTone = "dark"): ReactN
 
   const appendText = (value: string) => {
     if (value) {
-      nodes.push(value);
+      const last = nodes.length - 1;
+      if (typeof nodes[last] === "string") nodes[last] += value;
+      else nodes.push(value);
     }
   };
 
   while (cursor < text.length) {
     const rest = text.slice(cursor);
+    const link = rest.match(/^\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/);
+    if (link) {
+      nodes.push(<a key={key++} href={link[2]} target="_blank" rel="noopener noreferrer"
+        className={`underline underline-offset-4 break-words ${tone === "paper" ? "text-[#3c32f5]" : "text-acid"}`}>
+        {link[1]}
+      </a>);
+      cursor += link[0].length;
+      continue;
+    }
     const token = rest.match(/^(`+|\*{1,}|_{1,})/);
 
     if (!token) {
@@ -133,6 +152,50 @@ function renderInlineMarkdown(text: string, tone: MarkdownTone = "dark"): ReactN
   return nodes;
 }
 
+// Pipes escaped with a backslash or contained in an inline code span belong
+// to the cell. A plain pipe separates cells; outer pipes are optional.
+function splitTableRow(line: string) {
+  const text = line.trim();
+  const cells: string[] = [];
+  let cell = "";
+  let lastSeparator = -1;
+  let cursor = 0;
+
+  while (cursor < text.length) {
+    if (text[cursor] === "\\" && (text[cursor + 1] === "|" || text[cursor + 1] === "\\")) {
+      cell += text[cursor + 1];
+      cursor += 2;
+      continue;
+    }
+    if (text[cursor] === "`") {
+      const marker = text.slice(cursor).match(/^`+/)![0];
+      const rest = text.slice(cursor + marker.length);
+      const closing = [...rest.matchAll(/`+/g)].find((match) => match[0].length === marker.length);
+      if (closing) {
+        const end = cursor + marker.length + closing.index! + marker.length;
+        cell += text.slice(cursor, end).replace(/\\\|/g, "|");
+        cursor = end;
+        continue;
+      }
+      cell += marker;
+      cursor += marker.length;
+      continue;
+    }
+    if (text[cursor] === "|") {
+      cells.push(cell.trim());
+      cell = "";
+      lastSeparator = cursor;
+    } else {
+      cell += text[cursor];
+    }
+    cursor += 1;
+  }
+  cells.push(cell.trim());
+  if (text.startsWith("|")) cells.shift();
+  if (lastSeparator === text.length - 1) cells.pop();
+  return { cells, hasSeparator: lastSeparator >= 0 };
+}
+
 function parseMarkdown(markdown: string): MarkdownBlock[] {
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
   const blocks: MarkdownBlock[] = [];
@@ -159,7 +222,8 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
     }
   };
 
-  for (const rawLine of lines) {
+  for (let lineIndex = 0; lineIndex < lines.length; lineIndex += 1) {
+    const rawLine = lines[lineIndex];
     const line = rawLine.trimEnd();
     const trimmed = line.trim();
 
@@ -188,6 +252,33 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
     if (!trimmed) {
       flushTextBlocks();
       continue;
+    }
+
+    if (lineIndex + 1 < lines.length) {
+      const header = splitTableRow(line);
+      const separator = splitTableRow(lines[lineIndex + 1]);
+      if (
+        (header.hasSeparator || separator.hasSeparator) && header.cells.length > 0 &&
+        header.cells.length === separator.cells.length &&
+        separator.cells.every((cell) => /^:?-{3,}:?$/.test(cell))
+      ) {
+        flushTextBlocks();
+        const alignments: TableAlignment[] = separator.cells.map((cell) =>
+          cell.endsWith(":") ? (cell.startsWith(":") ? "center" : "right") : "left"
+        );
+        const rows: string[][] = [];
+        lineIndex += 1;
+        while (lineIndex + 1 < lines.length) {
+          const next = lines[lineIndex + 1].trim();
+          if (!next || /^(#{1,3}\s|[-*]\s|```)/.test(next)) break;
+          const row = splitTableRow(next);
+          if (!row.hasSeparator) break;
+          rows.push(header.cells.map((_, column) => row.cells[column] ?? ""));
+          lineIndex += 1;
+        }
+        blocks.push({ kind: "table", headers: header.cells, alignments, rows });
+        continue;
+      }
     }
 
     if (trimmed.startsWith("### ")) {
@@ -234,6 +325,42 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
 }
 
 function renderBlock(block: MarkdownBlock, index: number, tone: MarkdownTone): ReactNode {
+  if (block.kind === "table") {
+    const border = tone === "paper" ? "border-ink/15" : "border-white/15";
+    return (
+      <div
+        className={`min-w-0 max-w-full overflow-x-auto rounded-sm border ${border} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+        role="region"
+        aria-label={`Таблица: ${block.headers.join(", ")}`}
+        tabIndex={0}
+        key={index}
+      >
+        <table className={`w-full border-collapse text-sm leading-6 ${tone === "paper" ? "text-ink/80" : "text-white/80"}`}>
+          <thead className={tone === "paper" ? "bg-ink/5 text-ink" : "bg-white/5 text-white"}>
+            <tr>
+              {block.headers.map((header, column) => (
+                <th className={`min-w-[5rem] border-b px-4 py-3 align-top font-semibold ${border}`} scope="col" style={{ textAlign: block.alignments[column] }} key={column}>
+                  {renderInlineMarkdown(header, tone)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {block.rows.map((row, rowIndex) => (
+              <tr className={rowIndex < block.rows.length - 1 ? `border-b ${border}` : undefined} key={rowIndex}>
+                {row.map((cell, column) => (
+                  <td className="px-4 py-3 align-top [overflow-wrap:anywhere]" style={{ textAlign: block.alignments[column] }} key={column}>
+                    {renderInlineMarkdown(cell, tone)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
   if (block.kind === "code") {
     return (
       <pre

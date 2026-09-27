@@ -1,0 +1,54 @@
+[
+  {
+    "verdict": "AC",
+    "passedTests": 49,
+    "totalTests": 49,
+    "executionTimeMs": 133,
+    "memoryUsedKb": 6048,
+    "safeMessage": "Пройдено тестов: 49 из 49.",
+    "task": "interval-choice",
+    "variant": "solution",
+    "wallSeconds": 1.42,
+    "sourceSha256": "abde9e2031bde937f54dbae0e2d01383e084a99a7fcba4621e2d70efc997267f",
+    "testsSha256": "94e034df4d891c1702078625edc3fb91ebc5e22d16f957494bdf611ab63d0e46"
+  },
+  {
+    "verdict": "WA",
+    "passedTests": 2,
+    "totalTests": 49,
+    "executionTimeMs": 10,
+    "memoryUsedKb": 3164,
+    "safeMessage": "Неверный ответ на тесте 3.",
+    "task": "interval-choice",
+    "variant": "wrong",
+    "wallSeconds": 1.26,
+    "sourceSha256": "fa15111c91706c08131a7f3ad45c4295cc4a7db05faf32e429524c267773f306",
+    "testsSha256": "94e034df4d891c1702078625edc3fb91ebc5e22d16f957494bdf611ab63d0e46"
+  },
+  {
+    "verdict": "AC",
+    "passedTests": 3,
+    "totalTests": 3,
+    "executionTimeMs": 6,
+    "memoryUsedKb": 3164,
+    "safeMessage": "Пройдено тестов: 3 из 3.",
+    "task": "interval-choice",
+    "variant": "slow-small",
+    "wallSeconds": 1.27,
+    "sourceSha256": "d277766e8c0c31b8e60c95fdb16ff214e78487a4f2193651fc736577b84f04b4",
+    "testsSha256": "94e034df4d891c1702078625edc3fb91ebc5e22d16f957494bdf611ab63d0e46"
+  },
+  {
+    "verdict": "TLE",
+    "passedTests": 0,
+    "totalTests": 1,
+    "executionTimeMs": 1502,
+    "memoryUsedKb": 5920,
+    "safeMessage": "Тест 1: Превышено ограничение времени.",
+    "task": "interval-choice",
+    "variant": "slow",
+    "wallSeconds": 2.7,
+    "sourceSha256": "d277766e8c0c31b8e60c95fdb16ff214e78487a4f2193651fc736577b84f04b4",
+    "testsSha256": "94e034df4d891c1702078625edc3fb91ebc5e22d16f957494bdf611ab63d0e46"
+  }
+]

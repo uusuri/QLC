@@ -1,0 +1,28 @@
+[
+  {
+    "verdict": "AC",
+    "passedTests": 50,
+    "totalTests": 50,
+    "executionTimeMs": 153,
+    "memoryUsedKb": 3252,
+    "safeMessage": "Пройдено тестов: 50 из 50.",
+    "task": "sum",
+    "variant": "solution",
+    "wallSeconds": 2.72,
+    "sourceSha256": "b3dbcb12dab88796ac49ff473e335fa18d8001f4d4e35e52a8450f1f0b209487",
+    "testsSha256": "1c16759e113e61988474ed59e819eb4f1021bc6264264559bb3a08f350eb6654"
+  },
+  {
+    "verdict": "WA",
+    "passedTests": 48,
+    "totalTests": 50,
+    "executionTimeMs": 154,
+    "memoryUsedKb": 3252,
+    "safeMessage": "Неверный ответ на тесте 49.",
+    "task": "sum",
+    "variant": "wrong",
+    "wallSeconds": 1.52,
+    "sourceSha256": "798817d3d10ee422de18ce90d3213f871ce09af12a5fbe3dbda024810f396fa2",
+    "testsSha256": "1c16759e113e61988474ed59e819eb4f1021bc6264264559bb3a08f350eb6654"
+  }
+]

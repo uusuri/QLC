@@ -39,6 +39,6 @@ public class PurchaseController {
         c.getName(),
         c.getDescription(),
         c.getPrice(),
-        c.getPriceInStars());
+        c.getPriceInStars(), c.isMultilingual(), null);
   }
 }

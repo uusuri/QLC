@@ -1,5 +1,7 @@
 "use client";
 
+import { COURSE_LANGUAGES } from "@/components/courseLanguages";
+
 import type { FormEvent, ReactNode } from "react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -46,6 +48,8 @@ type PanelState = {
 };
 
 type CourseFormState = {
+  multilingual: boolean;
+  availableLanguages: SubmissionLanguage[];
   name: string;
   description: string;
   price: string;
@@ -59,6 +63,7 @@ type ModuleFormState = {
 };
 
 type LessonFormState = {
+  contentByLanguage: Partial<Record<SubmissionLanguage, string>>;
   name: string;
   description: string;
   position: string;
@@ -67,6 +72,7 @@ type LessonFormState = {
 };
 
 type TaskFormState = {
+  hintsText: string;
   taskType: AdminTaskType;
   language: SubmissionLanguage;
   statementMd: string;
@@ -103,6 +109,8 @@ const idlePanelState: PanelState = {
 };
 
 const initialCourseForm: CourseFormState = {
+  multilingual: false,
+  availableLanguages: ["CPP23"],
   name: "",
   description: "",
   price: "",
@@ -116,6 +124,7 @@ const initialModuleForm: ModuleFormState = {
 };
 
 const initialLessonForm: LessonFormState = {
+  contentByLanguage: {},
   name: "",
   description: "",
   position: "0",
@@ -124,6 +133,7 @@ const initialLessonForm: LessonFormState = {
 };
 
 const initialTaskForm: TaskFormState = {
+  hintsText: "",
   taskType: "CODE",
   language: "CPP23",
   statementMd: "",
@@ -275,6 +285,7 @@ function restoreTaskForm(value: unknown): TaskFormState {
     taskType,
     language,
     statementMd: storedString(value.statementMd, initialTaskForm.statementMd),
+    hintsText: storedString(value.hintsText, ""),
     starterCode: storedString(value.starterCode, initialTaskForm.starterCode),
     templateCode: storedString(value.templateCode, initialTaskForm.templateCode),
     testCases: storedString(value.testCases, initialTaskForm.testCases),
@@ -337,6 +348,8 @@ function buildCoursePayload(form: CourseFormState): AdminCourseCreatePayload {
   }
 
   return {
+    multilingual: form.multilingual,
+    availableLanguages: form.availableLanguages,
     name: form.name.trim(),
     description: form.description.trim(),
     price: parseOptionalNumber(form.price),
@@ -368,6 +381,7 @@ function buildLessonPayload(form: LessonFormState): AdminLessonCreatePayload {
     description: form.description.trim(),
     position: parseNonNegativeInteger(form.position, "position"),
     contentMd: optionalText(form.contentMd),
+    contentByLanguage: Object.fromEntries(Object.entries(form.contentByLanguage).filter(([, text]) => text.trim())),
     published: form.published
   };
 }
@@ -378,7 +392,12 @@ function buildTaskPayload(form: TaskFormState): AdminTaskCreatePayload {
     throw new Error("Task statementMd is required.");
   }
 
+  const hints = form.hintsText.trim() ? form.hintsText.split(/^\s*---\s*$/m).map(hint => hint.trim()) : [];
+  if (hints.length > 5 || hints.some(hint => !hint || hint.length > 8000)) {
+    throw new Error("Добавьте до 5 непустых подсказок, не более 8000 символов каждая.");
+  }
   const payload: AdminTaskCreatePayload = {
+    hints,
     taskType: form.taskType,
     language: form.taskType === "CODE" ? form.language : null,
     statementMd: form.statementMd.trim(),
@@ -444,6 +463,8 @@ function buildTaskPayload(form: TaskFormState): AdminTaskCreatePayload {
 // Заполняет формы данными выбранной сущности для последующего PUT.
 function courseDtoToForm(course: AdminCourseDto): CourseFormState {
   return {
+    multilingual: course.multilingual ?? false,
+    availableLanguages: course.availableLanguages ?? ["CPP23"],
     name: course.name,
     description: course.description,
     price: course.price === null ? "" : String(course.price),
@@ -465,12 +486,14 @@ function lessonDtoToForm(lesson: AdminLessonDto): LessonFormState {
     description: lesson.description,
     position: String(lesson.position),
     contentMd: lesson.contentMd ?? "",
+    contentByLanguage: lesson.contentByLanguage ?? {},
     published: lesson.published
   };
 }
 
 function taskDtoToForm(task: AdminTaskDto): TaskFormState {
   return {
+    hintsText: (task.hints ?? []).join("\n\n---\n\n"),
     taskType: task.taskType,
     language: task.language ?? "CPP23",
     statementMd: task.statementMd,
@@ -518,6 +541,7 @@ export default function AdminContentPage() {
   // Формы создания сущностей.
   const [courseForm, setCourseForm] = useState<CourseFormState>(initialCourseForm);
   const [moduleForm, setModuleForm] = useState<ModuleFormState>(initialModuleForm);
+  const [theoryLanguage, setTheoryLanguage] = useState<SubmissionLanguage | "base">("base");
   const [lessonForm, setLessonForm] = useState<LessonFormState>(initialLessonForm);
   const [taskForm, setTaskForm] = useState<TaskFormState>(initialTaskForm);
 
@@ -1261,6 +1285,16 @@ export default function AdminContentPage() {
 
                 <form className="grid content-start gap-4 border border-white/20 bg-panel p-4 sm:p-5" onSubmit={handleCreateCourse}>
                   <FormTitle title="Данные курса" idLabel={selectedCourseId} />
+                  <label className="flex items-center gap-3 text-sm"><input type="checkbox" checked={courseForm.multilingual} onChange={event => {
+                    const multilingual = event.target.checked;
+                    setCourseForm(current => ({ ...current, multilingual, availableLanguages: multilingual ? COURSE_LANGUAGES.map(item => item.id) : [current.availableLanguages[0] ?? "CPP23"] }));
+                  }} />Мультиязычный курс</label>
+                  <fieldset className="grid grid-cols-2 gap-2"><legend className="mb-3 text-sm text-muted">Доступные языки</legend>
+                    {COURSE_LANGUAGES.map(item => <label key={item.id} className="flex items-center gap-2 text-sm"><input type={courseForm.multilingual ? "checkbox" : "radio"} name="available-course-languages" checked={courseForm.availableLanguages.includes(item.id)} onChange={event => {
+                      const checked = event.target.checked;
+                      setCourseForm(current => ({ ...current, availableLanguages: !current.multilingual ? [item.id] : checked ? [...current.availableLanguages, item.id] : current.availableLanguages.filter(language => language !== item.id) }));
+                    }} />{item.label}</label>)}
+                  </fieldset>
                   <TextInput
                     label="name"
                     value={courseForm.name}
@@ -1446,13 +1480,19 @@ export default function AdminContentPage() {
                         setLessonForm((current) => ({ ...current, position: value }))
                       }
                     />
+                    {selectedCourse?.multilingual && <label className="grid gap-2 text-sm">Версия теории
+                      <select className="min-h-11 border border-line bg-panel px-3" value={theoryLanguage} onChange={event => setTheoryLanguage(event.target.value as SubmissionLanguage | "base")}>
+                        <option value="base">Базовый материал</option>
+                        {COURSE_LANGUAGES.filter(item => selectedCourse.availableLanguages?.includes(item.id)).map(item => <option key={item.id} value={item.id}>{item.label}{lessonForm.contentByLanguage[item.id] ? " — добавлена" : " — нет версии"}</option>)}
+                      </select>
+                    </label>}
                     <TextArea
-                      help="Материал урока в Markdown. Backend может скрывать его, пока published выключен."
-                      label="contentMd"
+                      help="Материал урока в Markdown: заголовки, списки, таблицы и блоки кода. Неопубликованный материал скрыт от учеников."
+                      label="Теория урока"
                       rows={8}
-                      value={lessonForm.contentMd}
+                      value={selectedCourse?.multilingual && theoryLanguage !== "base" ? lessonForm.contentByLanguage[theoryLanguage] ?? "" : lessonForm.contentMd}
                       onChange={(value) =>
-                        setLessonForm((current) => ({ ...current, contentMd: value }))
+                        setLessonForm((current) => selectedCourse?.multilingual && theoryLanguage !== "base" ? ({ ...current, contentByLanguage: { ...current.contentByLanguage, [theoryLanguage]: value } }) : ({ ...current, contentMd: value }))
                       }
                     />
                     <ToggleInput
@@ -1547,7 +1587,7 @@ export default function AdminContentPage() {
                         statementMd / Markdown
                       </p>
                       <p className="mt-2 text-xs font-medium leading-snug text-white/62">
-                        Условие хранится как Markdown. Заголовки, списки и fenced code blocks
+                        Условие хранится как Markdown. Заголовки, списки, таблицы и блоки кода
                         отобразятся студенту через безопасный renderer.
                       </p>
                     </div>
@@ -1561,6 +1601,10 @@ export default function AdminContentPage() {
                       }
                     />
 
+                    <TextArea label="Подсказки по уровням" rows={8}
+                      help="До 5 подсказок. Разделяйте уровни строкой ---. Расположите от общей идеи к плану решения; поддерживается Markdown."
+                      value={taskForm.hintsText}
+                      onChange={(value) => setTaskForm((current) => ({ ...current, hintsText: value }))} />
                     {taskForm.taskType === "CODE" && (
                       <div className="grid gap-3 border-t border-line pt-3">
                         <label className="grid gap-2">

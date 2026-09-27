@@ -15,6 +15,8 @@ import {
 } from "@/services/api";
 
 import { useAuth } from "@/components/AuthProvider";
+import { courseLanguage } from "@/components/courseLanguages";
+import { TaskHints } from "@/components/TaskHints";
 
 // UI-kit компоненты фиксируют общий визуальный язык Sprint 2.
 import {
@@ -27,7 +29,7 @@ import {
 } from "@/components/ui";
 
 // Типы backend DTO и submission response.
-import type { LearnerTaskDto, SubmissionResponseDto } from "@/types";
+import type { SubmissionLanguage, LearnerTaskDto, SubmissionResponseDto } from "@/types";
 
 // Monaco загружается client-only, чтобы production build не падал на SSR.
 // Локальная сборка редактора не зависит от доступности внешнего CDN.
@@ -47,7 +49,14 @@ const MonacoEditor = dynamic(async () => {
   };
   await Promise.all([
     import("monaco-editor/esm/vs/basic-languages/java/java.contribution.js"),
-    import("monaco-editor/esm/vs/basic-languages/cpp/cpp.contribution.js")
+    import("monaco-editor/esm/vs/basic-languages/cpp/cpp.contribution.js"),
+    import("monaco-editor/esm/vs/basic-languages/python/python.contribution.js"),
+    import("monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js"),
+    import("monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js"),
+    import("monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution.js"),
+    import("monaco-editor/esm/vs/basic-languages/go/go.contribution.js"),
+    import("monaco-editor/esm/vs/basic-languages/php/php.contribution.js"),
+    import("monaco-editor/esm/vs/basic-languages/rust/rust.contribution.js")
   ]);
   loader.config({ monaco });
   return Editor;
@@ -97,6 +106,7 @@ const POLLING_INTERVAL_MS = 800;
 // Фазы UI submission lifecycle.
 type SubmissionPhase =
   | "idle"
+  | "demo"
   | "submitting"
   | "queued"
   | "compiling"
@@ -127,7 +137,10 @@ type SubmissionUiState = {
 type CodeLessonWorkspaceProps = {
   // task — основная CODE-задача урока.
   task: LearnerTaskDto;
+  selectedLanguage?: SubmissionLanguage | null;
+  demo?: boolean;
   onSubmissionStart?: () => void;
+  onAccepted?: (taskId: number) => void;
 };
 
 // Проверяет AbortError без any.
@@ -145,30 +158,11 @@ function getSourceSize(source: string) {
 }
 
 // Возвращает starterCode из актуального TaskDTO, затем legacy templateCode или шаблон языка задачи.
-function getInitialCode(task: LearnerTaskDto) {
-  const language = task.language ?? "CPP23";
-
-  return (
-    task.starterCode ||
-    task.templateCode ||
-    (language === "JAVA21"
-      ? `public class Main {
-    public static void main(String[] args) {
-        
-    }
-}
-`
-      : `#include <bits/stdc++.h>
-using namespace std;
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    return 0;
-}
-`)
-  );
+function getInitialCode(task: LearnerTaskDto, language: SubmissionLanguage) {
+  if (language === (task.language ?? "CPP23")) {
+    return task.starterCode || task.templateCode || courseLanguage(language).starter;
+  }
+  return courseLanguage(language).starter;
 }
 
 // Сопоставляет актуальный короткий verdict и legacy alias с UI-фазой.
@@ -206,6 +200,7 @@ function getVerdictPhase(verdict: SubmissionResponseDto["verdict"]): SubmissionP
 
 // Сопоставляет новый worker lifecycle и временные legacy statuses с UI-фазой.
 function getPhaseFromResponse(response: SubmissionResponseDto): SubmissionPhase {
+  if (response.status === "DEMO") return "demo";
   if (response.status === "QUEUED") {
     return "queued";
   }
@@ -235,6 +230,7 @@ function getPhaseFromResponse(response: SubmissionResponseDto): SubmissionPhase 
 
 // Created response не содержит verdict; non-terminal worker status можно показать сразу.
 function getCreatedPhase(status: SubmissionResponseDto["status"]): SubmissionPhase {
+  if (status === "DEMO") return "demo";
   if (status === "COMPILING") {
     return "compiling";
   }
@@ -258,6 +254,7 @@ function getCreatedPhase(status: SubmissionResponseDto["status"]): SubmissionPha
 // Определяет, нужно ли продолжать polling.
 function isTerminalPhase(phase: SubmissionPhase) {
   return [
+    "demo",
     "ac",
     "wa",
     "ce",
@@ -274,6 +271,12 @@ function isTerminalPhase(phase: SubmissionPhase) {
 
 // Возвращает тексты и тон статуса.
 function getPhaseCopy(phase: SubmissionPhase) {
+  if (phase === "demo") return {
+    badge: "Демо",
+    title: "Демонстрационная отправка сохранена",
+    description: "Код пока не проверяется. Эта отправка не засчитывает задачу и не меняет прогресс.",
+    tone: "info" as const
+  };
   if (phase === "submitting") {
     return {
       badge: "Отправка",
@@ -409,12 +412,7 @@ function getPhaseCopy(phase: SubmissionPhase) {
     };
   }
 
-  return {
-    badge: "Готово",
-    description: "Напишите решение и отправьте на проверку.",
-    title: "Можно отправлять",
-    tone: "neutral" as const
-  };
+  return null;
 }
 
 function isValidMetric(value: number | null | undefined): value is number {
@@ -455,12 +453,14 @@ function formatResultSummary(response: SubmissionResponseDto, verdict: string) {
 }
 
 // CodeLessonWorkspace объединяет editor и submission lifecycle.
-export function CodeLessonWorkspace({ task, onSubmissionStart }: CodeLessonWorkspaceProps) {
+export function CodeLessonWorkspace({ task, selectedLanguage, demo = false, onSubmissionStart, onAccepted }: CodeLessonWorkspaceProps) {
   const { user: authUser } = useAuth();
   const taskVersion = task.testSetVersion ?? 1;
-  const draftKey = `qlc:draft:task:${task.id}:v${taskVersion}`;
-  const lastSubmissionKey = `qlc:last-submission:task:${task.id}:v${taskVersion}`;
-  const initialCode = useMemo(() => getInitialCode(task), [task]);
+  const language = selectedLanguage ?? task.language ?? "CPP23";
+  const draftKey = `qlc:draft:user:${authUser?.id ?? "anonymous"}:task:${task.id}:v${taskVersion}:${language}`;
+  const lastSubmissionKey = `qlc:last-submission:user:${authUser?.id ?? "anonymous"}:task:${task.id}:v${taskVersion}:${language}`;
+  const legacyDraftKey = language === (task.language ?? "CPP23") ? `qlc:draft:task:${task.id}:v${taskVersion}` : null;
+  const initialCode = useMemo(() => getInitialCode(task, language), [task, language]);
   const [currentPath, setCurrentPath] = useState("/");
   const [source, setSource] = useState("");
   const [draftLoaded, setDraftLoaded] = useState(false);
@@ -471,28 +471,28 @@ export function CodeLessonWorkspace({ task, onSubmissionStart }: CodeLessonWorks
   const timeoutRef = useRef<number | null>(null);
 
   const sourceSize = getSourceSize(source);
-  const language = task.language ?? "CPP23";
   const trimmedSource = source.trim();
   const phaseCopy = getPhaseCopy(submission.phase);
   const isBusy = ["submitting", "queued", "compiling", "running"].includes(submission.phase);
   const sourceTooLarge = sourceSize > MAX_SOURCE_SIZE;
   const canSubmit = Boolean(authUser) && trimmedSource.length > 0 && !sourceTooLarge && !isBusy;
-  const resultSummary = submission.response?.verdict
+  const resultSummary = submission.response?.verdict && phaseCopy
     ? formatResultSummary(submission.response, phaseCopy.badge)
     : null;
   const loginHref = `/login?redirectTo=${encodeURIComponent(currentPath)}`;
-  const fileName = language === "JAVA21" ? "Main.java" : "main.cpp";
+  const languageInfo = courseLanguage(language);
 
   // При смене task один раз загружаем draft или backend starterCode/templateCode.
   useEffect(() => {
-    const savedDraft = window.localStorage.getItem(draftKey);
+    const savedDraft = window.localStorage.getItem(draftKey)
+      ?? (legacyDraftKey ? window.localStorage.getItem(legacyDraftKey) : null);
     const savedSubmissionId = window.localStorage.getItem(lastSubmissionKey);
 
     setSource(savedDraft ?? initialCode);
     setLastSubmissionId(savedSubmissionId);
     setSubmission({ phase: "idle", submissionId: savedSubmissionId ?? undefined });
     setDraftLoaded(true);
-  }, [draftKey, initialCode, lastSubmissionKey]);
+  }, [draftKey, initialCode, lastSubmissionKey, legacyDraftKey]);
 
   // Текущий URL нужен только для безопасного возврата после входа.
   useEffect(() => {
@@ -543,7 +543,8 @@ export function CodeLessonWorkspace({ task, onSubmissionStart }: CodeLessonWorks
             submissionId
           });
 
-          if (response.verdict === "AC") {
+          if (response.verdict === "AC" && response.taskId === task.id) {
+            onAccepted?.(task.id);
             window.dispatchEvent(new Event("qlc:learning-updated"));
           }
 
@@ -564,7 +565,7 @@ export function CodeLessonWorkspace({ task, onSubmissionStart }: CodeLessonWorks
 
       void tick();
     },
-    []
+    [onAccepted, task.id]
   );
 
   // Отправляет текущее решение.
@@ -636,23 +637,24 @@ export function CodeLessonWorkspace({ task, onSubmissionStart }: CodeLessonWorks
 
   return <div className="kit-workspace grid min-w-0 gap-6">
     <Panel className="kit-editor-panel">
-      <PanelHeader><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-xl">Ваше решение</h2><span className="font-mono text-xs text-muted">{language === "JAVA21" ? "Java 21" : "C++23"} · {fileName}</span></div><div className="mt-2 flex flex-wrap items-center justify-between gap-2"><p className="text-xs text-muted">Черновик сохраняется на этом устройстве</p><button className="min-h-11 text-xs text-muted hover:text-paper" disabled={isBusy} onClick={() => resetDialogRef.current?.showModal()} type="button">Сбросить код</button></div></PanelHeader>
+      <PanelHeader><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-xl">Ваше решение</h2><span className="font-mono text-xs text-muted">{languageInfo.label} · {languageInfo.file}</span></div><div className="mt-2 flex flex-wrap items-center justify-between gap-2"><p className="text-xs text-muted">Черновик сохраняется на этом устройстве</p><button className="min-h-11 text-xs text-muted hover:text-paper" disabled={isBusy} onClick={() => resetDialogRef.current?.showModal()} type="button">Сбросить код</button></div></PanelHeader>
       <PanelBody className="!pt-0">
+        {demo && <p className="mb-4 text-sm text-muted">Демонстрационный режим: код пока не проверяется, отправки не влияют на прогресс.</p>}
         <div className="h-[50dvh] min-h-[340px] max-h-[640px] min-w-0 overflow-hidden rounded-sm border border-line sm:h-[480px]">
-          <MonacoEditor beforeMount={defineQlcMonacoTheme} height="100%" language={language === "JAVA21" ? "java" : "cpp"} loading={<span className="text-sm text-muted">Подготавливаем редактор…</span>} onChange={value => setSource(value ?? "")} options={{ ariaLabel:"Редактор решения задачи", automaticLayout:true, fontFamily:"IBM Plex Mono, Menlo, monospace", fontSize:14, lineHeight:23, minimap:{enabled:false}, padding:{bottom:18,top:18}, scrollBeyondLastLine:false, tabSize:2, wordWrap:"on" }} theme="qlc-night" value={source} />
+          <MonacoEditor beforeMount={defineQlcMonacoTheme} height="100%" language={languageInfo.monaco} loading={<span className="text-sm text-muted">Подготавливаем редактор…</span>} onChange={value => setSource(value ?? "")} options={{ ariaLabel:"Редактор решения задачи", automaticLayout:true, fontFamily:"IBM Plex Mono, Menlo, monospace", fontSize:14, lineHeight:23, minimap:{enabled:false}, padding:{bottom:18,top:18}, scrollBeyondLastLine:false, tabSize:2, wordWrap:"on" }} theme="qlc-night" value={source} />
         </div>
         <p className="mt-4 text-xs text-muted">{sourceSize.toLocaleString("ru-RU")} / {MAX_SOURCE_SIZE.toLocaleString("ru-RU")} байт</p>
         {sourceTooLarge && <p className="mt-2 text-sm text-[#FF8074]" role="alert">Код превышает допустимый размер.</p>}
         {!trimmedSource && <p className="mt-2 text-xs text-muted">Введите решение перед отправкой.</p>}
-        <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-5">{authUser ? <Button disabled={!canSubmit} loading={submission.phase === "submitting"} onClick={handleSubmit}>{isBusy ? "Проверяем решение" : "Проверить решение"} →</Button> : <ButtonLink href={loginHref}>Войти и отправить решение →</ButtonLink>}<Button disabled={!authUser || !lastSubmissionId || isBusy} onClick={handleResume} variant="secondary">Обновить статус</Button></div>
+        <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-5">{authUser ? <Button disabled={!canSubmit} loading={submission.phase === "submitting"} onClick={handleSubmit}>{isBusy ? "Отправляем решение" : demo ? "Отправить демо" : "Проверить решение"} →</Button> : <ButtonLink href={loginHref}>Войти и отправить решение →</ButtonLink>}{lastSubmissionId && <Button disabled={!authUser || isBusy} onClick={handleResume} variant="secondary">Обновить статус</Button>}</div>
         <p className="mt-5 text-xs text-muted">Проверка решения не удаляет черновик.</p>
       </PanelBody>
     </Panel>
-    <section className="kit-result-panel grid min-w-0 gap-4" aria-label="Результат проверки">
-      {!authUser && <Alert title="Войдите для проверки" tone="warning">Редактор доступен сейчас. Войдите в аккаунт, чтобы отправить решение и сохранить результат.</Alert>}
+    {phaseCopy && <section className="kit-result-panel grid min-w-0 gap-4" aria-label="Результат проверки">
       <Alert title={phaseCopy.title} tone={phaseCopy.tone}>{resultSummary ? <p className="font-mono text-xs text-muted sm:text-sm">{resultSummary}</p> : <p>{phaseCopy.description}</p>}
-      {submission.phase === "network" && <Button className="mt-4" variant="secondary" disabled={!authUser || !lastSubmissionId || isBusy} onClick={handleResume}>Обновить статус</Button>}</Alert>
-    </section>
+      {submission.phase === "network" && lastSubmissionId && <Button className="mt-4" variant="secondary" disabled={!authUser || isBusy} onClick={handleResume}>Обновить статус</Button>}</Alert>
+    </section>}
+    <TaskHints taskId={task.id} hints={task.hints ?? []} layout="panel" />
     <dialog className="kit-dialog" ref={resetDialogRef}><h2>Сбросить код?</h2><p>Текущий черновик будет заменён стартовым кодом задачи. Это действие нельзя отменить.</p><div className="flex flex-wrap gap-3"><Button autoFocus onClick={() => resetDialogRef.current?.close()} variant="secondary">Сохранить черновик</Button><Button onClick={handleResetDraft} variant="danger">Сбросить код</Button></div></dialog>
   </div>;
 }

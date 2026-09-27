@@ -1,0 +1,434 @@
+[
+  {
+    "key": "sum",
+    "module": 1,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n) времени, O(1) дополнительной памяти. Чтение входа уже требует Ω(n)."
+  },
+  {
+    "key": "increasing-run",
+    "module": 1,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n) времени, O(1) дополнительной памяти."
+  },
+  {
+    "key": "range-sum",
+    "module": 2,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n+q) времени, O(n) памяти. Запрос после подготовки — O(1)."
+  },
+  {
+    "key": "range-add",
+    "module": 2,
+    "track": "Основной маршрут",
+    "tests": 49,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n+q) времени, O(n) памяти."
+  },
+  {
+    "key": "inversions",
+    "module": 3,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n log n) времени, O(n) дополнительной памяти. Это стандартная эффективная оценка для произвольных сравнимых значений."
+  },
+  {
+    "key": "union-length",
+    "module": 3,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n log n) времени на сортировку, O(n) памяти для входа."
+  },
+  {
+    "key": "capacity",
+    "module": 4,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n log(sum a)) времени, O(n) памяти."
+  },
+  {
+    "key": "spacing",
+    "module": 4,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n log n + n log D) времени, O(n) памяти, D=max(x)−min(x)."
+  },
+  {
+    "key": "short-window",
+    "module": 5,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n) времени, O(n) памяти для массива."
+  },
+  {
+    "key": "close-pairs",
+    "module": 5,
+    "track": "Основной маршрут",
+    "tests": 49,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n log n) времени с сортировкой, O(n) памяти."
+  },
+  {
+    "key": "next-smaller",
+    "module": 6,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n) времени, O(n) памяти."
+  },
+  {
+    "key": "window-min",
+    "module": 6,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n) времени, O(k) дополнительной памяти помимо входа; эталон читает поток."
+  },
+  {
+    "key": "merge-cost",
+    "module": 7,
+    "track": "Основной маршрут",
+    "tests": 47,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n log n) времени, O(n) памяти."
+  },
+  {
+    "key": "ordered-set",
+    "module": 7,
+    "track": "Основной маршрут",
+    "tests": 49,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(q log q) времени, O(q) памяти; сбалансированное дерево поиска."
+  },
+  {
+    "key": "interval-choice",
+    "module": 8,
+    "track": "Основной маршрут",
+    "tests": 49,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n log n) времени, O(n) памяти."
+  },
+  {
+    "key": "subarray-target",
+    "module": 8,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n log n) гарантированного времени, O(n) памяти с map. Хеш-таблица даёт ожидаемое O(n), но без гарантии на худший случай."
+  },
+  {
+    "key": "coins",
+    "module": 9,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(nS) времени, O(S) памяти — псевдополиномиальное ДП по сумме."
+  },
+  {
+    "key": "lis",
+    "module": 9,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n log n) времени, O(L) памяти, L — длина ответа."
+  },
+  {
+    "key": "knapsack",
+    "module": 10,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(nW) времени, O(W) памяти."
+  },
+  {
+    "key": "edit-distance",
+    "module": 10,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(|a|·|b|) времени, O(min(|a|,|b|)) памяти для двух строк ДП."
+  },
+  {
+    "key": "bfs",
+    "module": 11,
+    "track": "Основной маршрут",
+    "tests": 49,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n+m) времени, O(n+m) памяти."
+  },
+  {
+    "key": "bipartite",
+    "module": 11,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n+m) времени, O(n+m) памяти."
+  },
+  {
+    "key": "dag-longest",
+    "module": 12,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n+m) времени, O(n+m) памяти."
+  },
+  {
+    "key": "scc",
+    "module": 12,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n+m) времени, O(n+m) памяти. Оба обхода итеративные."
+  },
+  {
+    "key": "dijkstra",
+    "module": 13,
+    "track": "Основной маршрут",
+    "tests": 49,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O((n+m) log(n+m)) времени, O(n+m) памяти с ленивой очередью."
+  },
+  {
+    "key": "floyd",
+    "module": 13,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 2000,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n³+m+q) времени, O(n²) памяти."
+  },
+  {
+    "key": "connectivity",
+    "module": 14,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n+q·α(n)) времени амортизированно, O(n) памяти."
+  },
+  {
+    "key": "mst",
+    "module": 14,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(m log m + n) времени, O(n+m) памяти."
+  },
+  {
+    "key": "kmp",
+    "module": 15,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(|p|+|t|) времени, O(|p|) дополнительной памяти."
+  },
+  {
+    "key": "period",
+    "module": 15,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n) времени, O(n) памяти."
+  },
+  {
+    "key": "weighted-intervals",
+    "module": 16,
+    "track": "Основной маршрут",
+    "tests": 49,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n log n) времени, O(n) памяти."
+  },
+  {
+    "key": "jump-score",
+    "module": 16,
+    "track": "Основной маршрут",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n) времени, O(k) памяти при потоковом чтении."
+  },
+  {
+    "key": "fenwick",
+    "module": 17,
+    "track": "Олимпиадное дополнение",
+    "tests": 49,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O((n+q) log n) времени, O(n) памяти; возможна линейная первоначальная сборка."
+  },
+  {
+    "key": "distinct-range",
+    "module": 17,
+    "track": "Олимпиадное дополнение",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O((n+q) log n) времени, O(n+q) памяти."
+  },
+  {
+    "key": "max-subarray",
+    "module": 18,
+    "track": "Олимпиадное дополнение",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n+q log n) времени, O(n) памяти."
+  },
+  {
+    "key": "lazy-max",
+    "module": 18,
+    "track": "Олимпиадное дополнение",
+    "tests": 49,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n+q log n) времени, O(n) памяти."
+  },
+  {
+    "key": "treap-order",
+    "module": 19,
+    "track": "Олимпиадное дополнение",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Ожидаемое O(q log q) времени, O(q) памяти для декартова дерева; не гарантия худшего случая."
+  },
+  {
+    "key": "treap-sequence",
+    "module": 19,
+    "track": "Олимпиадное дополнение",
+    "tests": 49,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Ожидаемое O((n+q) log n) времени, O(n) памяти. Линейное построение также возможно."
+  },
+  {
+    "key": "tree-distance",
+    "module": 20,
+    "track": "Олимпиадное дополнение",
+    "tests": 46,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O((n+q) log n) времени, O(n log n) памяти; бинарные подъёмы."
+  },
+  {
+    "key": "tree-max",
+    "module": 20,
+    "track": "Олимпиадное дополнение",
+    "tests": 46,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O((n+q) log n) времени, O(n log n) памяти."
+  },
+  {
+    "key": "bridges",
+    "module": 21,
+    "track": "Олимпиадное дополнение",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n+m) времени, O(n+m) памяти. Итеративный DFS избегает переполнения стека."
+  },
+  {
+    "key": "articulation",
+    "module": 21,
+    "track": "Олимпиадное дополнение",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "Θ(n+m) времени, O(n+m) памяти."
+  },
+  {
+    "key": "aho",
+    "module": 22,
+    "track": "Олимпиадное дополнение",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(26·P+T+k) времени и O(26·P+T+k) памяти с плотными переходами, P — суммарная длина образцов, T — длина текста."
+  },
+  {
+    "key": "sam",
+    "module": 22,
+    "track": "Олимпиадное дополнение",
+    "tests": 50,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(26n) времени и O(26n) памяти — линейно при фиксированном алфавите."
+  },
+  {
+    "key": "matching",
+    "module": 23,
+    "track": "Олимпиадное дополнение",
+    "tests": 50,
+    "timeLimitMs": 2000,
+    "memoryLimitKb": 262144,
+    "complexity": "O((e+n+m)√(n+m)) времени, O(e+n+m) памяти для Хопкрофта—Карпа."
+  },
+  {
+    "key": "flow",
+    "module": 23,
+    "track": "Олимпиадное дополнение",
+    "tests": 49,
+    "timeLimitMs": 2000,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n²m) времени в общем случае для Диница, O(n+m) памяти. Это не утверждение об абсолютной оптимальности среди всех потоковых алгоритмов."
+  },
+  {
+    "key": "tsp",
+    "module": 24,
+    "track": "Олимпиадное дополнение",
+    "tests": 44,
+    "timeLimitMs": 2500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(n²·2^n) времени, O(n·2^n) памяти — точное ДП по подмножествам."
+  },
+  {
+    "key": "domino",
+    "module": 24,
+    "track": "Олимпиадное дополнение",
+    "tests": 20,
+    "timeLimitMs": 1500,
+    "memoryLimitKb": 262144,
+    "complexity": "O(m·3^n) времени как верхняя оценка, O(3^n+2^n) памяти для переходов и двух слоёв."
+  }
+]

@@ -33,11 +33,14 @@ public class Submission {
   @JoinColumn(name = "user_id")
   private User user;
 
-  @Column(nullable = false, length = 50)
+  @Column(length = 50)
   private String language;
 
-  @Column(name = "source_code", nullable = false, columnDefinition = "TEXT")
+  @Column(name = "source_code", columnDefinition = "TEXT")
   private String sourceCode;
+
+  @Column(name = "submitted_answer", columnDefinition = "TEXT")
+  private String submittedAnswer;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 50)

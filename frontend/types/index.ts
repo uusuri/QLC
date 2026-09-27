@@ -86,6 +86,7 @@ export interface MoneyDto {
 
 // Курс в каталоге и на checkout-странице.
 export interface CourseDto {
+  multilingual?: boolean;
   // Стабильный URL-ключ курса.
   slug: string;
   // Название курса.
@@ -128,6 +129,8 @@ export interface CourseAccessResponseDto {
 }
 
 export interface LessonLearnResponseDto {
+  acceptedTaskIds: number[];
+  hasAccess: boolean;
   course: AdminCourseDto;
   module: AdminModuleDto;
   lesson: AdminLessonDto;
@@ -160,6 +163,8 @@ export type AdminTaskType = "TEST" | "CODE" | "NUMERIC";
 
 // DTO курса из backend CourseDTO.
 export interface AdminCourseDto {
+  multilingual?: boolean;
+  availableLanguages?: SubmissionLanguage[];
   // ID курса из базы.
   id: number;
   // Название курса.
@@ -178,6 +183,8 @@ export interface CourseCatalogBackendDto extends AdminCourseDto {
 
 // Payload для POST /api/courses.
 export interface AdminCourseCreatePayload {
+  multilingual?: boolean;
+  availableLanguages?: SubmissionLanguage[];
   // Название курса.
   name: string;
   // Описание курса.
@@ -214,6 +221,7 @@ export interface AdminModuleCreatePayload {
 
 // DTO урока из backend LessonDTO.
 export interface AdminLessonDto {
+  contentByLanguage?: Partial<Record<SubmissionLanguage, string>>;
   // ID урока из базы.
   id: number;
   // ID родительского модуля.
@@ -232,6 +240,7 @@ export interface AdminLessonDto {
 
 // Payload для POST /api/modules/{moduleId}/lessons.
 export interface AdminLessonCreatePayload {
+  contentByLanguage?: Partial<Record<SubmissionLanguage, string>>;
   // Название урока.
   name: string;
   // Описание урока.
@@ -246,6 +255,7 @@ export interface AdminLessonCreatePayload {
 
 // DTO задачи из backend TaskDTO.
 export interface AdminTaskDto {
+  hints: string[];
   // ID задачи из базы.
   id: number;
   // ID родительского урока.
@@ -280,6 +290,7 @@ export interface AdminTaskDto {
 
 // Payload для POST /api/lessons/{lessonId}/tasks.
 export interface AdminTaskCreatePayload {
+  hints?: string[];
   // Тип создаваемой задачи.
   taskType: AdminTaskType;
   language: SubmissionLanguage | null;
@@ -311,7 +322,7 @@ export interface AdminTaskCreatePayload {
 export type LearnerTaskDto = Omit<
   AdminTaskDto,
   "testCases" | "correctOptionIndexes" | "correctNumericAnswer"
->;
+> & { multipleAnswersAllowed?: boolean | null };
 
 export interface LessonTaskOutlineDto {
   id: number;
@@ -365,6 +376,8 @@ export interface ModuleProgressDto {
 
 // Полная карта обучения для одного купленного курса.
 export interface MyCourseProgressDto {
+  multilingual?: boolean;
+  selectedLanguage?: SubmissionLanguage | null;
   lastLessonId?: number | null;
   lastTaskId?: number | null;
   id: number;
@@ -378,6 +391,8 @@ export interface MyCourseProgressDto {
 
 // Полная структура страницы урока.
 export interface LessonLearningViewDto {
+  acceptedTaskIds: number[];
+  hasAccess: boolean;
   // Родительский курс урока.
   course: AdminCourseDto;
   // Родительский модуль урока.
@@ -390,8 +405,8 @@ export interface LessonLearningViewDto {
   primaryTask: LearnerTaskDto | null;
 }
 
-// Язык submission, который поддерживает Sprint 2 UI.
-export type SubmissionLanguage = "CPP23" | "JAVA21";
+// Языки редактора; доступные варианты определяются настройками курса.
+export type SubmissionLanguage = "CPP23" | "JAVA21" | "PYTHON311" | "JAVASCRIPT_ES2022" | "TYPESCRIPT5" | "CSHARP_12" | "C17" | "GO120" | "PHP81" | "RUST2021";
 
 // Актуальный worker status плюс legacy aliases на время совместимого rollout.
 export type BackendSubmissionStatus =
@@ -399,6 +414,7 @@ export type BackendSubmissionStatus =
   | "COMPILING"
   | "RUNNING"
   | "FINISHED"
+  | "DEMO"
   | "INFRA_ERROR"
   | "CANCELLED"
   | "COMPLETED"
@@ -446,7 +462,7 @@ export interface SubmissionResponseDto {
   // ID задачи, к которой относится submission.
   taskId: number;
   // Язык решения.
-  language: SubmissionLanguage | string;
+  language?: SubmissionLanguage | string | null;
   // Текущий backend-статус.
   status: BackendSubmissionStatus;
   // Verdict после завершения, пока может быть null.
@@ -459,4 +475,14 @@ export interface SubmissionResponseDto {
   safeMessage: string | null;
   // Дата создания submission как строка LocalDateTime.
   createdAt: string;
+}
+
+export type AnswerPayload =
+  | { numericAnswer: string; selectedOptionIndexes?: never }
+  | { selectedOptionIndexes: number[]; numericAnswer?: never };
+
+export interface CourseLanguageSettingsDto {
+  multilingual: boolean;
+  availableLanguages: SubmissionLanguage[];
+  selectedLanguage: SubmissionLanguage | null;
 }

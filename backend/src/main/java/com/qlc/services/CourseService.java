@@ -38,10 +38,15 @@ public class CourseService {
   private final LessonRepository lessonRepository;
   private final TaskRepository taskRepository;
   private final PurchaseService purchaseService;
+  private final com.qlc.repositories.UserCourseRepository userCourses;
+  private final com.qlc.repositories.SubmissionRepository submissions;
 
   public CourseService(CourseRepository courseRepository, ModuleRepository moduleRepository,
       LessonRepository lessonRepository, TaskRepository taskRepository,
-      PurchaseService purchaseService) {
+      PurchaseService purchaseService, com.qlc.repositories.SubmissionRepository submissions,
+      com.qlc.repositories.UserCourseRepository userCourses) {
+    this.submissions = submissions;
+    this.userCourses = userCourses;
     this.courseRepository = courseRepository;
     this.moduleRepository = moduleRepository;
     this.lessonRepository = lessonRepository;
@@ -94,6 +99,7 @@ public class CourseService {
     course.setDescription(dto.description());
     course.setPrice(dto.price() != null ? dto.price() : BigDecimal.ZERO);
     course.setPriceInStars(dto.priceInStars() != null ? dto.priceInStars() : BigDecimal.ZERO);
+    updateCourseLanguages(course, dto);
     return mapToCourseDTO(courseRepository.save(course));
   }
 
@@ -107,7 +113,23 @@ public class CourseService {
       course.setPrice(dto.price());
     if (dto.priceInStars() != null)
       course.setPriceInStars(dto.priceInStars());
+    updateCourseLanguages(course, dto);
     return mapToCourseDTO(courseRepository.save(course));
+  }
+
+  private void updateCourseLanguages(Course course, CourseDTO dto) {
+    if (dto.multilingual() != null) course.setMultilingual(dto.multilingual());
+    if (dto.availableLanguages() != null) {
+      if (dto.availableLanguages().isEmpty() || dto.availableLanguages().stream()
+          .anyMatch(language -> !CourseLanguageService.CONFIGURABLE_LANGUAGES.contains(language))) {
+        throw new IllegalArgumentException("Choose supported course languages");
+      }
+      course.getAvailableLanguages().clear();
+      course.getAvailableLanguages().addAll(dto.availableLanguages());
+    }
+    if (!course.isMultilingual() && course.getAvailableLanguages().size() != 1) {
+      throw new IllegalArgumentException("A single-language course must have exactly one language");
+    }
   }
 
   @Transactional
@@ -121,7 +143,9 @@ public class CourseService {
         c.getName(),
         c.getDescription(),
         c.getPrice(),
-        c.getPriceInStars());
+        c.getPriceInStars(),
+        c.isMultilingual(),
+        c.getAvailableLanguages().stream().sorted().toList());
   }
 
   // --- Module CRUD ---
@@ -208,7 +232,7 @@ public class CourseService {
         lesson.getName(),
         lesson.getDescription(),
         lesson.getPosition(),
-        visible ? lesson.getContentMd() : null,
+        visible ? resolveTheory(lesson, userId).contentMd() : null,
         lesson.isPublished());
   }
 
@@ -234,7 +258,7 @@ public class CourseService {
         lesson.getName(),
         lesson.getDescription(),
         lesson.getPosition(),
-        visible ? lesson.getContentMd() : null,
+        visible ? resolveTheory(lesson, userId).contentMd() : null,
         lesson.isPublished());
 
     List<LearnerTaskDTO> tasks = visible
@@ -247,7 +271,33 @@ public class CourseService {
         mapToCourseDTO(course),
         mapToModuleDTO(lesson.getModule()),
         lessonDto,
-        tasks);
+        tasks,
+        visible && userId != null ? submissions.findAcceptedTaskIdsByUserId(userId).stream()
+            .filter(id -> tasks.stream().anyMatch(task -> task.id().equals(id))).toList() : List.of(),
+        visible);
+  }
+
+  public com.qlc.models.dtos.LessonTheoryDTO getLessonTheory(Long lessonId, Long userId) {
+    Lesson lesson = lessonRepository.findByIdWithModuleAndCourse(lessonId)
+        .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
+    if (!canReadLesson(lesson, userId)) {
+      throw new org.springframework.security.access.AccessDeniedException("Lesson is not available");
+    }
+    return resolveTheory(lesson, userId);
+  }
+
+  private com.qlc.models.dtos.LessonTheoryDTO resolveTheory(Lesson lesson, Long userId) {
+    Course course = lesson.getModule().getCourse();
+    if (!course.isMultilingual() || userId == null) {
+      return new com.qlc.models.dtos.LessonTheoryDTO(lesson.getContentMd(), null, false);
+    }
+    String language = userCourses.findById(new UserCourseId(userId, course.getId()))
+        .map(UserCourse::getSelectedLanguage).orElse(null);
+    String variant = language != null && course.getAvailableLanguages().contains(language)
+        ? lesson.getContentByLanguage().get(language) : null;
+    return variant == null
+        ? new com.qlc.models.dtos.LessonTheoryDTO(lesson.getContentMd(), null, language != null)
+        : new com.qlc.models.dtos.LessonTheoryDTO(variant, language, false);
   }
 
   private boolean canReadLesson(Lesson lesson, Long userId) {
@@ -265,6 +315,7 @@ public class CourseService {
     lesson.setDescription(dto.description());
     lesson.setPosition(dto.position() != null ? dto.position() : 0);
     lesson.setContentMd(dto.contentMd());
+    updateTheoryVariants(lesson, dto);
     lesson.setPublished(dto.published() != null ? dto.published() : true);
     lesson.setModule(module);
     return mapToAdminLessonDTO(lessonRepository.save(lesson));
@@ -278,10 +329,23 @@ public class CourseService {
     lesson.setDescription(dto.description());
     lesson.setPosition(dto.position() != null ? dto.position() : lesson.getPosition());
     lesson.setContentMd(dto.contentMd());
+    updateTheoryVariants(lesson, dto);
     if (dto.published() != null) {
       lesson.setPublished(dto.published());
     }
     return mapToAdminLessonDTO(lessonRepository.save(lesson));
+  }
+
+  private void updateTheoryVariants(Lesson lesson, LessonDTO dto) {
+    if (dto.contentByLanguage() == null) return; // Older clients preserve authored variants.
+    dto.contentByLanguage().forEach((language, content) -> {
+      if (!CourseLanguageService.CONFIGURABLE_LANGUAGES.contains(language)
+          || content == null || content.isBlank() || content.length() > 500_000) {
+        throw new IllegalArgumentException("Provide non-empty theory for a supported language");
+      }
+    });
+    lesson.getContentByLanguage().clear();
+    lesson.getContentByLanguage().putAll(dto.contentByLanguage());
   }
 
   @Transactional
@@ -297,7 +361,8 @@ public class CourseService {
         l.getDescription(),
         l.getPosition(),
         l.getContentMd(),
-        l.isPublished());
+        l.isPublished(),
+        new java.util.LinkedHashMap<>(l.getContentByLanguage()));
   }
 
   private LessonDTO mapToLessonSummaryDTO(Lesson lesson) {
@@ -374,6 +439,16 @@ public class CourseService {
   private void updateTaskFields(Task task, TaskDTO dto) {
     task.setStatementMd(dto.statementMd() != null ? dto.statementMd().trim() : "");
 
+    // Missing field preserves hints when older clients update a task; [] explicitly clears them.
+    if (dto.hints() != null) {
+      if (dto.hints().size() > 5 || dto.hints().stream()
+          .anyMatch(hint -> hint == null || hint.isBlank() || hint.length() > 8000)) {
+        throw new IllegalArgumentException("Provide up to 5 non-empty hints, at most 8000 characters each");
+      }
+      task.getHints().clear();
+      dto.hints().stream().map(String::trim).forEach(task.getHints()::add);
+    }
+
     if (task instanceof CodeTask ct) {
       ct.setLanguage(dto.language() == null || dto.language().isBlank() ? "CPP23" : dto.language().trim());
       ct.setStarterCode(dto.starterCode());
@@ -429,8 +504,9 @@ public class CourseService {
       outputLimitKb = ct.getOutputLimitKb();
       testSetVersion = ct.getTestSetVersion();
     } else if (t instanceof TestTask tt) {
-      options = tt.getOptions();
-      correctOptionIndexes = tt.getCorrectOptionIndexes();
+      // Materialize collections while the service transaction is still open.
+      options = new ArrayList<>(tt.getOptions());
+      correctOptionIndexes = new ArrayList<>(tt.getCorrectOptionIndexes());
     } else if (t instanceof NumericTask nt) {
       correctNumericAnswer = nt.getCorrectNumericAnswer();
     }
@@ -450,7 +526,8 @@ public class CourseService {
         testCases,
         options,
         correctOptionIndexes,
-        correctNumericAnswer);
+        correctNumericAnswer,
+        new ArrayList<>(t.getHints()));
   }
 
   private LearnerTaskDTO mapToLearnerTaskDTO(Task task) {
@@ -472,7 +549,7 @@ public class CourseService {
       outputLimitKb = codeTask.getOutputLimitKb();
       testSetVersion = codeTask.getTestSetVersion();
     } else if (task instanceof TestTask testTask) {
-      options = testTask.getOptions();
+      options = new ArrayList<>(testTask.getOptions());
     }
 
     return new LearnerTaskDTO(
@@ -487,7 +564,10 @@ public class CourseService {
         outputLimitKb,
         testSetVersion,
         templateCode,
-        options);
+        options,
+        task instanceof TestTask test && test.getCorrectOptionIndexes() != null
+            ? test.getCorrectOptionIndexes().stream().distinct().count() > 1 : null,
+        new ArrayList<>(task.getHints()));
   }
 
   private boolean isCourseFree(Course course) {

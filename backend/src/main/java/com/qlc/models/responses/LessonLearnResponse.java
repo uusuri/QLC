@@ -11,5 +11,7 @@ public record LessonLearnResponse(
     CourseDTO course,
     ModuleDTO module,
     LessonDTO lesson,
-    List<LearnerTaskDTO> tasks) {
+    List<LearnerTaskDTO> tasks,
+    List<Long> acceptedTaskIds,
+    boolean hasAccess) {
 }

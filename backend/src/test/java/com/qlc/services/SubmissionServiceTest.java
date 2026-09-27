@@ -46,6 +46,9 @@ class SubmissionServiceTest {
   @Mock
   private UserRepository userRepository;
 
+  @Mock
+  private TaskAccessService taskAccess;
+
   @InjectMocks
   private SubmissionService submissionService;
 
@@ -121,6 +124,7 @@ class SubmissionServiceTest {
       mockExistingSubmission.setId(existingId);
       mockExistingSubmission.setStatus(SubmissionStatus.RUNNING); // Задача уже обрабатывается
 
+      when(taskRepository.findById(taskId)).thenReturn(Optional.of(sampleTask));
       when(submissionRepository.findByIdempotencyKey(duplicateKey)).thenReturn(Optional.of(mockExistingSubmission));
 
       // Act
@@ -132,7 +136,7 @@ class SubmissionServiceTest {
       assertEquals("RUNNING", response.status());
 
       // Гарантируем, что инфраструктура не выполняла лишней работы
-      verify(taskRepository, never()).findById(any());
+      verify(taskRepository).findById(42L);
       verify(submissionRepository, never()).save(any());
       verify(redisQueueService, never()).pushToStream(any());
     }
@@ -147,6 +151,7 @@ class SubmissionServiceTest {
       existing.setId(existingId);
       existing.setStatus(SubmissionStatus.QUEUED);
 
+      when(taskRepository.findById(42L)).thenReturn(Optional.of(sampleTask));
       when(submissionRepository.findByIdempotencyKeyAndUserId(duplicateKey, userId))
           .thenReturn(Optional.of(existing));
 
@@ -155,7 +160,7 @@ class SubmissionServiceTest {
 
       assertEquals(existingId, response.id());
       verify(submissionRepository, never()).findByIdempotencyKey(duplicateKey);
-      verify(taskRepository, never()).findById(any());
+      verify(taskRepository).findById(42L);
       verify(submissionRepository, never()).save(any());
     }
 

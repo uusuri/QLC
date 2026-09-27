@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { courseLanguage } from "@/components/courseLanguages";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -96,7 +97,7 @@ export default function ProfilePage() {
     {!courseList.length ? <Alert title="Здесь начнётся ваше обучение" tone="neutral"><p>Выберите первый курс. Здесь появятся уроки и прогресс по задачам.</p><ButtonLink className="mt-5" href="/courses">Выбрать курс →</ButtonLink></Alert> : <div className="kit-profile-courses">{courseList.map(course => {
       const courseNext = getNextLearningLesson([course]);
       return <article className="kit-learning-card" key={course.id}>
-        <header><CourseArtwork title={course.name} /><div className="min-w-0"><h3><Link href={`/courses/course-${course.id}`}>{course.name}</Link></h3><p>{course.modules.length} {formatRussianCountWord(course.modules.length, ["модуль", "модуля", "модулей"])} · {course.modules.reduce((sum, m) => sum + m.lessons.length, 0)} {formatRussianCountWord(course.modules.reduce((sum, m) => sum + m.lessons.length, 0), ["урок", "урока", "уроков"])}</p></div></header>
+        <header><CourseArtwork title={course.name} /><div className="min-w-0"><h3><Link href={`/courses/course-${course.id}`}>{course.name}</Link></h3>{course.multilingual && <p>Язык решений: {course.selectedLanguage ? courseLanguage(course.selectedLanguage).label : "не выбран"}</p>}<p>{course.modules.length} {formatRussianCountWord(course.modules.length, ["модуль", "модуля", "модулей"])} · {course.modules.reduce((sum, m) => sum + m.lessons.length, 0)} {formatRussianCountWord(course.modules.reduce((sum, m) => sum + m.lessons.length, 0), ["урок", "урока", "уроков"])}</p></div></header>
         <Progress label={`${course.solvedTasks} / ${course.totalTasks} задач`} value={course.totalTasks > 0 ? course.progressPercent : null} />
         {courseNext && <p className="!mt-6">{courseNext.module.name} / {courseNext.lesson.name}</p>}
         <ButtonLink className="mt-6 w-full" href={courseNext ? getLearningHref(courseNext) : `/courses/course-${course.id}`}>{courseNext ? "Продолжить обучение" : "Открыть курс"} →</ButtonLink>

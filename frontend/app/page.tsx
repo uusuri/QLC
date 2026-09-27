@@ -43,7 +43,7 @@ export default async function HomePage() {
               <p className="qlc-eyebrow text-acid kit-home-section-index">01 / Курсы</p>
               <div className="kit-section-heading"><h2 id="courses-title">Выберите курс</h2><Link className="qlc-text-link" href="/courses">Все курсы ↗</Link></div>
               {loadError ? <Alert title="Не удалось загрузить курсы" tone="warning">{loadError}</Alert> :
-                courses.length ? <CourseList courses={courses.slice(0, 2)} home /> :
+                courses.length ? <CourseList courses={courses} home /> :
                 <Alert title="Готовим новые курсы" tone="neutral">Курсы появятся здесь после публикации.</Alert>}
             </section>
             <section className="kit-method kit-home-section" id="how" aria-labelledby="how-title">

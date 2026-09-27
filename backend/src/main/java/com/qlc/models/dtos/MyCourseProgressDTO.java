@@ -12,5 +12,7 @@ public record MyCourseProgressDTO(
     int progressPercent,
     Long lastLessonId,
     Long lastTaskId,
-    List<ModuleProgressDTO> modules) {
+    List<ModuleProgressDTO> modules,
+    boolean multilingual,
+    String selectedLanguage) {
 }

@@ -194,7 +194,7 @@ public class SubmissionExecutionTransactions {
   }
 
   private boolean isTerminal(SubmissionStatus status) {
-    return status == SubmissionStatus.FINISHED
+    return status == SubmissionStatus.DEMO || status == SubmissionStatus.FINISHED
         || status == SubmissionStatus.INFRA_ERROR
         || status == SubmissionStatus.CANCELLED;
   }

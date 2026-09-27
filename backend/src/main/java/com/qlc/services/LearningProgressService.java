@@ -29,23 +29,27 @@ public class LearningProgressService {
   private final UserRepository userRepository;
   private final TaskRepository taskRepository;
   private final CourseService courseService;
+  private final com.qlc.repositories.UserCourseRepository memberships;
 
   public LearningProgressService(CourseRepository courseRepository,
       SubmissionRepository submissionRepository, UserRepository userRepository,
-      TaskRepository taskRepository, CourseService courseService) {
+      TaskRepository taskRepository, CourseService courseService, com.qlc.repositories.UserCourseRepository memberships) {
     this.courseRepository = courseRepository;
     this.submissionRepository = submissionRepository;
     this.userRepository = userRepository;
     this.taskRepository = taskRepository;
     this.courseService = courseService;
+    this.memberships = memberships;
   }
 
   public List<MyCourseProgressDTO> getPurchasedCoursesProgress(Long userId) {
     Set<Long> acceptedTaskIds = submissionRepository.findAcceptedTaskIdsByUserId(userId);
     Task lastTask = userRepository.findLastLearningTask(userId).orElse(null);
 
+    var selectedLanguages = new java.util.HashMap<Long, String>();
+    memberships.findByUserId(userId).forEach(m -> selectedLanguages.put(m.getCourseId(), m.getSelectedLanguage()));
     return courseRepository.findPurchasedByUserId(userId).stream()
-        .map(course -> mapCourse(course, acceptedTaskIds, lastTask))
+        .map(course -> mapCourse(course, acceptedTaskIds, lastTask, selectedLanguages.get(course.getId())))
         .toList();
   }
 
@@ -61,7 +65,7 @@ public class LearningProgressService {
     userRepository.updateLastLearningTask(userId, task);
   }
 
-  private MyCourseProgressDTO mapCourse(Course course, Set<Long> acceptedTaskIds, Task lastTask) {
+  private MyCourseProgressDTO mapCourse(Course course, Set<Long> acceptedTaskIds, Task lastTask, String selectedLanguage) {
     List<ModuleProgressDTO> modules = course.getModules().stream()
         .map(module -> new ModuleProgressDTO(
             module.getId(), module.getName(), module.getDescription(), module.getPosition(),
@@ -82,7 +86,8 @@ public class LearningProgressService {
     return new MyCourseProgressDTO(course.getId(), course.getName(), course.getDescription(),
         solvedTasks, totalTasks, toPercent(solvedTasks, totalTasks),
         canResume ? lastTask.getLesson().getId() : null,
-        canResume ? lastTask.getId() : null, modules);
+        canResume ? lastTask.getId() : null, modules, course.isMultilingual(),
+        course.isMultilingual() && course.getAvailableLanguages().contains(selectedLanguage) ? selectedLanguage : null);
   }
 
   private LessonProgressDTO mapLesson(Lesson lesson, Set<Long> acceptedTaskIds) {

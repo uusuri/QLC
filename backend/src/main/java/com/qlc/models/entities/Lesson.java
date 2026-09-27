@@ -32,6 +32,12 @@ public class Lesson {
   @Column(name = "content_md", columnDefinition = "TEXT")
   private String contentMd;
 
+  @ElementCollection
+  @CollectionTable(name = "lesson_theory_variants", joinColumns = @JoinColumn(name = "lesson_id"))
+  @MapKeyColumn(name = "language", length = 32)
+  @Column(name = "content_md", columnDefinition = "TEXT", nullable = false)
+  private java.util.Map<String, String> contentByLanguage = new java.util.HashMap<>();
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "module_id", nullable = false)
   private Module module;

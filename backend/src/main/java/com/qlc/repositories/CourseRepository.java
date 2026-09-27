@@ -22,12 +22,12 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   boolean existsByIdAndStudents_Id(Long courseId, Long userId);
 
   @Query("select new com.qlc.models.dtos.CourseCatalogDTO("
-      + "course.id, course.name, course.description, course.price, course.priceInStars, count(lesson.id)) "
+      + "course.id, course.name, course.description, course.price, course.priceInStars, count(lesson.id), course.multilingual) "
       + "from Course course "
       + "left join course.modules module "
       + "left join module.lessons lesson on lesson.published = true "
       + "where course.published = true "
-      + "group by course.id, course.name, course.description, course.price, course.priceInStars "
+      + "group by course.id, course.name, course.description, course.price, course.priceInStars, course.multilingual "
       + "order by course.id")
   List<CourseCatalogDTO> findPublishedCatalog();
 

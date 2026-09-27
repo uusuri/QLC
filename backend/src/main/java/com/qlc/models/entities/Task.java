@@ -28,6 +28,12 @@ public abstract class Task {
   @Column(name = "statement_md", nullable = false)
   private String statementMd;
 
+  @ElementCollection
+  @CollectionTable(name = "task_hints", joinColumns = @JoinColumn(name = "task_id"))
+  @OrderColumn(name = "hint_position")
+  @Column(name = "content_md", nullable = false, columnDefinition = "TEXT")
+  private java.util.List<String> hints = new java.util.ArrayList<>();
+
   @Transient
   public String getTaskType() {
     DiscriminatorValue val = this.getClass().getAnnotation(DiscriminatorValue.class);

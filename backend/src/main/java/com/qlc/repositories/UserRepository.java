@@ -20,6 +20,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Query("update User u set u.lastLearningTask = :task where u.id = :userId")
   int updateLastLearningTask(@Param("userId") Long userId, @Param("task") Task task);
 
+  @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+  @Query("select u from User u where u.id = :id")
+  Optional<User> findByIdForLanguageUpdate(@Param("id") Long id);
+
   Optional<User> findByUsername(String username);
 
   Optional<User> findByTgId(Long tgId);

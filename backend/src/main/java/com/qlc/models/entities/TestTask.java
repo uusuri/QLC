@@ -12,6 +12,7 @@ import java.util.List;
 public class TestTask extends Task {
   @ElementCollection
   @CollectionTable(name = "task_test_options", joinColumns = @JoinColumn(name = "task_id"))
+  @OrderColumn(name = "option_position")
   @Column(name = "option_text")
   private List<String> options;
 

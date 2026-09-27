@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { CourseLanguageControl } from "@/components/CourseLanguageControl";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { PageState } from "@/components/PageState";
 import { SafeMarkdown } from "@/components/SafeMarkdown";
@@ -143,6 +144,7 @@ export default function CoursePage() {
           <div>{canStudy ? <ButtonLink className="w-full" disabled={!view.firstLesson} href={`/lessons/${view.firstLesson?.id ?? ""}`}>Открыть первый урок →</ButtonLink> : courseId !== null ? <AddToCartButton courseId={courseId} courseSlug={slug} /> : null}
           {!view.firstLesson && canStudy && <p className="mt-3 text-xs text-muted">Первый урок скоро появится.</p>}</div>
         </section>
+        {view.course.multilingual && canStudy && <CourseLanguageControl key={view.course.id} courseId={view.course.id} />}
         <section id="curriculum">
           <div className="kit-program-heading"><h2>Программа курса</h2>{view.modules.length > 0 && <button className="qlc-text-link text-muted" type="button" onClick={() => setExpandedModuleIds(expandedModuleIds.length === view.modules.length ? [] : view.modules.map(item => item.module.id))}>{expandedModuleIds.length === view.modules.length ? "Свернуть всё −" : "Раскрыть все модули +"}</button>}</div>
           {!view.modules.length ? <Alert title="Программа готовится" tone="neutral">В курсе пока нет модулей.</Alert> : view.modules.map((item, moduleIndex) => {
@@ -160,7 +162,7 @@ export default function CoursePage() {
                     <div className="kit-lesson-line"><KitIcon name={canStudy ? "play" : "diamond"} className="text-muted" />{canStudy ? <Link href={`/lessons/${lesson.id}`}>{lesson.name}</Link> : <span>{lesson.name}</span>}<button className="min-h-11 min-w-11 text-muted" aria-label={`${lessonExpanded ? "Скрыть" : "Показать"} содержание урока «${lesson.name}»`} aria-expanded={lessonExpanded} aria-controls={`lesson-outline-${lesson.id}`} onClick={() => void toggleLesson(lesson.id)} type="button">{lessonExpanded ? "−" : "+"}</button></div>
                     {lessonExpanded && <div className="kit-outline" id={`lesson-outline-${lesson.id}`}>
                       {lesson.description && <p className="mb-4">{lesson.description}</p>}
-                      {taskOutlineLoadingId === lesson.id ? <p role="status">Загружаем задачи…</p> : taskOutlineError[lesson.id] ? <p role="alert" className="text-[#FF8074]">{taskOutlineError[lesson.id]}</p> : outlines.length ? outlines.map((task, taskIndex) => <div key={task.id} className="flex flex-wrap justify-between gap-2 border-b border-line py-3"><span>Задача {taskIndex + 1}</span><span className="text-xs">{task.taskType === "CODE" ? "Код" : task.taskType === "TEST" ? "Тест" : "Задание"}</span></div>) : <p>Задачи к уроку скоро появятся.</p>}
+                      {taskOutlineLoadingId === lesson.id ? <p role="status">Загружаем задачи…</p> : taskOutlineError[lesson.id] ? <p role="alert" className="text-[#FF8074]">{taskOutlineError[lesson.id]}</p> : outlines.length ? outlines.map((task, taskIndex) => <div key={task.id} className="flex flex-wrap justify-between gap-2 border-b border-line py-3"><span>Задача {taskIndex + 1}</span>{task.taskType !== "NUMERIC" && <span className="text-xs">{task.taskType === "CODE" ? "Код" : "Тест"}</span>}</div>) : <p>Задачи к уроку скоро появятся.</p>}
                       {!canStudy && <a className="qlc-text-link text-acid" href="#purchase">Открыть доступ к урокам ↑</a>}
                     </div>}
                   </article>;

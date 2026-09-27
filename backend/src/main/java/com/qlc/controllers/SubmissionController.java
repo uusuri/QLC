@@ -18,8 +18,10 @@ import java.util.UUID;
 public class SubmissionController {
 
   private final SubmissionService submissionService;
+  private final com.qlc.services.InstantAnswerService instantAnswers;
 
-  public SubmissionController(SubmissionService submissionService) {
+  public SubmissionController(SubmissionService submissionService, com.qlc.services.InstantAnswerService instantAnswers) {
+    this.instantAnswers = instantAnswers;
     this.submissionService = submissionService;
   }
 
@@ -34,6 +36,14 @@ public class SubmissionController {
         taskId, request, idempotencyKey, principal.getId());
 
     return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+  }
+
+  @PostMapping("/tasks/{taskId}/answers")
+  public ResponseEntity<SubmissionResponse> submitAnswer(
+      @PathVariable Long taskId,
+      @Valid @RequestBody com.qlc.models.requests.AnswerRequest request,
+      @AuthenticationPrincipal UserDetailsImpl principal) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(instantAnswers.submit(taskId, request, principal.getId()));
   }
 
   @GetMapping("/submissions/{id}")

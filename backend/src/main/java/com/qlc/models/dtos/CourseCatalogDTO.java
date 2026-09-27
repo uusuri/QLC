@@ -9,5 +9,9 @@ public record CourseCatalogDTO(
     String description,
     BigDecimal price,
     BigDecimal priceInStars,
-    Long lessonsCount) {
+    Long lessonsCount,
+    boolean multilingual) {
+  public CourseCatalogDTO(Long id, String name, String description, BigDecimal price, BigDecimal priceInStars, Long lessonsCount) {
+    this(id, name, description, price, priceInStars, lessonsCount, false);
+  }
 }

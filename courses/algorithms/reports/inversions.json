@@ -1,0 +1,54 @@
+[
+  {
+    "verdict": "AC",
+    "passedTests": 50,
+    "totalTests": 50,
+    "executionTimeMs": 143,
+    "memoryUsedKb": 6048,
+    "safeMessage": "Пройдено тестов: 50 из 50.",
+    "task": "inversions",
+    "variant": "solution",
+    "wallSeconds": 1.53,
+    "sourceSha256": "b1d9080b8b9d957be676d2cb6772dc3128b405e556d2a0f508c63db942fe4579",
+    "testsSha256": "84d0ffdb402442c2efd70afa4e1c36d782ee2456a96ea32dfdedeb3bfed125e0"
+  },
+  {
+    "verdict": "WA",
+    "passedTests": 0,
+    "totalTests": 50,
+    "executionTimeMs": 2,
+    "memoryUsedKb": 3128,
+    "safeMessage": "Неверный ответ на тесте 1.",
+    "task": "inversions",
+    "variant": "wrong",
+    "wallSeconds": 1.24,
+    "sourceSha256": "3035747e0ac4797a5137d85cb9468ae5b05d56df12a420b4208b6ae380aa41c0",
+    "testsSha256": "84d0ffdb402442c2efd70afa4e1c36d782ee2456a96ea32dfdedeb3bfed125e0"
+  },
+  {
+    "verdict": "AC",
+    "passedTests": 3,
+    "totalTests": 3,
+    "executionTimeMs": 7,
+    "memoryUsedKb": 3164,
+    "safeMessage": "Пройдено тестов: 3 из 3.",
+    "task": "inversions",
+    "variant": "slow-small",
+    "wallSeconds": 1.25,
+    "sourceSha256": "ea5080eb42f52377ae71090910ae6fac618c6f7a63e125c08d7b697aa2eeb747",
+    "testsSha256": "84d0ffdb402442c2efd70afa4e1c36d782ee2456a96ea32dfdedeb3bfed125e0"
+  },
+  {
+    "verdict": "TLE",
+    "passedTests": 0,
+    "totalTests": 1,
+    "executionTimeMs": 1502,
+    "memoryUsedKb": 4368,
+    "safeMessage": "Тест 1: Превышено ограничение времени.",
+    "task": "inversions",
+    "variant": "slow",
+    "wallSeconds": 2.92,
+    "sourceSha256": "ea5080eb42f52377ae71090910ae6fac618c6f7a63e125c08d7b697aa2eeb747",
+    "testsSha256": "84d0ffdb402442c2efd70afa4e1c36d782ee2456a96ea32dfdedeb3bfed125e0"
+  }
+]

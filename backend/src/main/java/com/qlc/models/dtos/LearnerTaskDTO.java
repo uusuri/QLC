@@ -15,5 +15,7 @@ public record LearnerTaskDTO(
     Integer outputLimitKb,
     Integer testSetVersion,
     String templateCode,
-    List<String> options) {
+    List<String> options,
+    Boolean multipleAnswersAllowed,
+    List<String> hints) {
 }

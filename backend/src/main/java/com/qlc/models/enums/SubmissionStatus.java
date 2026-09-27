@@ -5,6 +5,7 @@ public enum SubmissionStatus {
   COMPILING,
   RUNNING,
   FINISHED,
+  DEMO,
   INFRA_ERROR,
   CANCELLED
 }

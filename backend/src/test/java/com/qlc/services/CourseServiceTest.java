@@ -363,7 +363,7 @@ class CourseServiceTest {
 
       TaskDTO updateDto = new TaskDTO(null, null, "CODE", "CPP23", "New Text",
           null, null, null, null, null, "new template", "new test cases",
-          null, null, null);
+          null, null, null, null);
 
       when(taskRepository.findById(200L)).thenReturn(Optional.of(existingTask));
       when(taskRepository.save(any(Task.class))).thenAnswer(i -> i.getArgument(0));
@@ -391,7 +391,7 @@ class CourseServiceTest {
           null, null, null, null, null, null, null,
           List.of("Option A", "Option B"),
           List.of(1),
-          null);
+          null, null);
 
       when(taskRepository.findById(201L)).thenReturn(Optional.of(existingTask));
       when(taskRepository.save(any(Task.class))).thenAnswer(i -> i.getArgument(0));

@@ -1,0 +1,54 @@
+[
+  {
+    "verdict": "AC",
+    "passedTests": 50,
+    "totalTests": 50,
+    "executionTimeMs": 158,
+    "memoryUsedKb": 15300,
+    "safeMessage": "Пройдено тестов: 50 из 50.",
+    "task": "dag-longest",
+    "variant": "solution",
+    "wallSeconds": 1.66,
+    "sourceSha256": "6b74e731257ad729e07d3a13a2a6587db05eb5393d3faff7bd2a9c417b2ae47a",
+    "testsSha256": "312235a040ed4a7a0fe2f80dddd41f1fcbc0cfeb66a98dfc9d9ed8e65be63f2e"
+  },
+  {
+    "verdict": "WA",
+    "passedTests": 0,
+    "totalTests": 50,
+    "executionTimeMs": 2,
+    "memoryUsedKb": 3164,
+    "safeMessage": "Неверный ответ на тесте 1.",
+    "task": "dag-longest",
+    "variant": "wrong",
+    "wallSeconds": 1.47,
+    "sourceSha256": "09ab499601e81833c8b6f6fb654ecdcf336c09b5e621f3d5245a36ebedcbe4ac",
+    "testsSha256": "312235a040ed4a7a0fe2f80dddd41f1fcbc0cfeb66a98dfc9d9ed8e65be63f2e"
+  },
+  {
+    "verdict": "AC",
+    "passedTests": 3,
+    "totalTests": 3,
+    "executionTimeMs": 8,
+    "memoryUsedKb": 3164,
+    "safeMessage": "Пройдено тестов: 3 из 3.",
+    "task": "dag-longest",
+    "variant": "slow-small",
+    "wallSeconds": 1.47,
+    "sourceSha256": "855ea7288cd09a0fae43607598a911abde404a548a5a2b743455fc6cf17d5235",
+    "testsSha256": "312235a040ed4a7a0fe2f80dddd41f1fcbc0cfeb66a98dfc9d9ed8e65be63f2e"
+  },
+  {
+    "verdict": "TLE",
+    "passedTests": 0,
+    "totalTests": 1,
+    "executionTimeMs": 1503,
+    "memoryUsedKb": 15344,
+    "safeMessage": "Тест 1: Превышено ограничение времени.",
+    "task": "dag-longest",
+    "variant": "slow",
+    "wallSeconds": 2.93,
+    "sourceSha256": "855ea7288cd09a0fae43607598a911abde404a548a5a2b743455fc6cf17d5235",
+    "testsSha256": "312235a040ed4a7a0fe2f80dddd41f1fcbc0cfeb66a98dfc9d9ed8e65be63f2e"
+  }
+]

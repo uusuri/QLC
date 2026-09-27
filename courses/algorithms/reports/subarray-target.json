@@ -1,0 +1,54 @@
+[
+  {
+    "verdict": "AC",
+    "passedTests": 50,
+    "totalTests": 50,
+    "executionTimeMs": 171,
+    "memoryUsedKb": 3252,
+    "safeMessage": "Пройдено тестов: 50 из 50.",
+    "task": "subarray-target",
+    "variant": "solution",
+    "wallSeconds": 1.43,
+    "sourceSha256": "ab5d9ae0ff0702515d32566ce69ce79c4c7d0fa68750277c951e0d1d34f971ba",
+    "testsSha256": "a10376d70e57dea6f27c4fd431d5002775af5ba5a78de2abc4c301100b346530"
+  },
+  {
+    "verdict": "WA",
+    "passedTests": 1,
+    "totalTests": 50,
+    "executionTimeMs": 4,
+    "memoryUsedKb": 3164,
+    "safeMessage": "Неверный ответ на тесте 2.",
+    "task": "subarray-target",
+    "variant": "wrong",
+    "wallSeconds": 1.23,
+    "sourceSha256": "e29d4fb68a7182fe1aa7b481548859270bc643e64ae040b41f363289f52a8269",
+    "testsSha256": "a10376d70e57dea6f27c4fd431d5002775af5ba5a78de2abc4c301100b346530"
+  },
+  {
+    "verdict": "AC",
+    "passedTests": 3,
+    "totalTests": 3,
+    "executionTimeMs": 7,
+    "memoryUsedKb": 3164,
+    "safeMessage": "Пройдено тестов: 3 из 3.",
+    "task": "subarray-target",
+    "variant": "slow-small",
+    "wallSeconds": 1.17,
+    "sourceSha256": "f0cf443c0c66d181a90d1ceaeab1f11ce846ad434465d0195f40a254856a40f7",
+    "testsSha256": "a10376d70e57dea6f27c4fd431d5002775af5ba5a78de2abc4c301100b346530"
+  },
+  {
+    "verdict": "TLE",
+    "passedTests": 0,
+    "totalTests": 1,
+    "executionTimeMs": 1503,
+    "memoryUsedKb": 4376,
+    "safeMessage": "Тест 1: Превышено ограничение времени.",
+    "task": "subarray-target",
+    "variant": "slow",
+    "wallSeconds": 2.86,
+    "sourceSha256": "f0cf443c0c66d181a90d1ceaeab1f11ce846ad434465d0195f40a254856a40f7",
+    "testsSha256": "a10376d70e57dea6f27c4fd431d5002775af5ba5a78de2abc4c301100b346530"
+  }
+]

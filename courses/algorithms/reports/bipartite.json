@@ -1,0 +1,54 @@
+[
+  {
+    "verdict": "AC",
+    "passedTests": 50,
+    "totalTests": 50,
+    "executionTimeMs": 133,
+    "memoryUsedKb": 14596,
+    "safeMessage": "Пройдено тестов: 50 из 50.",
+    "task": "bipartite",
+    "variant": "solution",
+    "wallSeconds": 1.55,
+    "sourceSha256": "807fcb8b33979903f7909b9e4640309bd8b43ae87c20638a038288425bc64a1c",
+    "testsSha256": "3f7339824a3f96820e0d64347fa85acdf6ed4da58bc85a9e46298dde3ab7e0bf"
+  },
+  {
+    "verdict": "WA",
+    "passedTests": 13,
+    "totalTests": 50,
+    "executionTimeMs": 30,
+    "memoryUsedKb": 3164,
+    "safeMessage": "Неверный ответ на тесте 14.",
+    "task": "bipartite",
+    "variant": "wrong",
+    "wallSeconds": 1.52,
+    "sourceSha256": "fd0e44993ec6993868fc6366201ea98c60806e093ec16cc0d1a2b557e3da5f68",
+    "testsSha256": "3f7339824a3f96820e0d64347fa85acdf6ed4da58bc85a9e46298dde3ab7e0bf"
+  },
+  {
+    "verdict": "AC",
+    "passedTests": 3,
+    "totalTests": 3,
+    "executionTimeMs": 7,
+    "memoryUsedKb": 3128,
+    "safeMessage": "Пройдено тестов: 3 из 3.",
+    "task": "bipartite",
+    "variant": "slow-small",
+    "wallSeconds": 1.19,
+    "sourceSha256": "c2100805c8cca1b1e972cf80536fe4b07c04dc0cfce054b7c48c4a2f53e138c8",
+    "testsSha256": "3f7339824a3f96820e0d64347fa85acdf6ed4da58bc85a9e46298dde3ab7e0bf"
+  },
+  {
+    "verdict": "RE",
+    "passedTests": 0,
+    "totalTests": 1,
+    "executionTimeMs": 52,
+    "memoryUsedKb": 13344,
+    "safeMessage": "Тест 1: Ошибка выполнения.",
+    "task": "bipartite",
+    "variant": "slow",
+    "wallSeconds": 1.52,
+    "sourceSha256": "c2100805c8cca1b1e972cf80536fe4b07c04dc0cfce054b7c48c4a2f53e138c8",
+    "testsSha256": "3f7339824a3f96820e0d64347fa85acdf6ed4da58bc85a9e46298dde3ab7e0bf"
+  }
+]

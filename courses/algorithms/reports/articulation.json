@@ -1,0 +1,54 @@
+[
+  {
+    "verdict": "AC",
+    "passedTests": 50,
+    "totalTests": 50,
+    "executionTimeMs": 137,
+    "memoryUsedKb": 19628,
+    "safeMessage": "Пройдено тестов: 50 из 50.",
+    "task": "articulation",
+    "variant": "solution",
+    "wallSeconds": 1.85,
+    "sourceSha256": "ed2d61db65439e412aaecf12710de09437ffc8faae1d829c56651bb0b2b4aa39",
+    "testsSha256": "514c6abb90593e7b171a1a3caff791985192a6d61661063fae6ff27e59c25d25"
+  },
+  {
+    "verdict": "WA",
+    "passedTests": 0,
+    "totalTests": 50,
+    "executionTimeMs": 2,
+    "memoryUsedKb": 3252,
+    "safeMessage": "Неверный ответ на тесте 1.",
+    "task": "articulation",
+    "variant": "wrong",
+    "wallSeconds": 1.44,
+    "sourceSha256": "954b2ede8061eae8703af3607bfbcda024a31c7c2c478d20678d1af4c59746a7",
+    "testsSha256": "514c6abb90593e7b171a1a3caff791985192a6d61661063fae6ff27e59c25d25"
+  },
+  {
+    "verdict": "AC",
+    "passedTests": 3,
+    "totalTests": 3,
+    "executionTimeMs": 10,
+    "memoryUsedKb": 3252,
+    "safeMessage": "Пройдено тестов: 3 из 3.",
+    "task": "articulation",
+    "variant": "slow-small",
+    "wallSeconds": 1.48,
+    "sourceSha256": "82ad1cb941f0ab40a82999354acde42364c0999e286e968fa3530c81e9bafe17",
+    "testsSha256": "514c6abb90593e7b171a1a3caff791985192a6d61661063fae6ff27e59c25d25"
+  },
+  {
+    "verdict": "TLE",
+    "passedTests": 0,
+    "totalTests": 1,
+    "executionTimeMs": 1503,
+    "memoryUsedKb": 15664,
+    "safeMessage": "Тест 1: Превышено ограничение времени.",
+    "task": "articulation",
+    "variant": "slow",
+    "wallSeconds": 2.99,
+    "sourceSha256": "82ad1cb941f0ab40a82999354acde42364c0999e286e968fa3530c81e9bafe17",
+    "testsSha256": "514c6abb90593e7b171a1a3caff791985192a6d61661063fae6ff27e59c25d25"
+  }
+]

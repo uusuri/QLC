@@ -10,5 +10,6 @@ import java.util.List;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
+  @org.springframework.data.jpa.repository.Query("select t from Task t where t.lesson.id = :lessonId order by t.id")
   List<Task> findByLessonId(Long lessonId);
 }

@@ -61,6 +61,8 @@ public class PurchaseService {
 
   @Transactional(readOnly = true)
   public List<CourseDTO> getPurchasedCourses(Long userId) {
-    return courseRepository.findPurchasedDtosByUserId(userId);
+    return courseRepository.findPurchasedByUserId(userId).stream()
+        .map(c -> new CourseDTO(c.getId(), c.getName(), c.getDescription(), c.getPrice(), c.getPriceInStars(),
+            c.isMultilingual(), c.getAvailableLanguages().stream().sorted().toList())).toList();
   }
 }

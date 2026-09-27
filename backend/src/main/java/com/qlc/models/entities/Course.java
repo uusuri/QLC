@@ -41,6 +41,14 @@ public class Course {
   @Column(nullable = false)
   private boolean published = true;
 
+  @Column(nullable = false)
+  private boolean multilingual = false;
+
+  @ElementCollection
+  @CollectionTable(name = "course_languages", joinColumns = @JoinColumn(name = "course_id"))
+  @Column(name = "language", nullable = false, length = 32)
+  private Set<String> availableLanguages = new java.util.LinkedHashSet<>(Set.of("CPP23"));
+
   @ManyToMany
   @JoinTable(name = "user_courses", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
   private Set<User> students = new HashSet<>();

@@ -2,18 +2,22 @@
 
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
+import { CourseLanguageControl } from "@/components/CourseLanguageControl";
 import { AddToCartButton } from "@/components/AddToCartButton";
+import { InstantAnswerWorkspace } from "@/components/InstantAnswerWorkspace";
 import { CodeLessonWorkspace } from "@/components/CodeLessonWorkspace";
 import { PageState } from "@/components/PageState";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { AdaptiveTheory } from "@/components/AdaptiveTheory";
 import { SafeMarkdown } from "@/components/SafeMarkdown";
-import { Alert, ButtonLink } from "@/components/ui";
+import { TaskHints } from "@/components/TaskHints";
+import { Alert, Button, ButtonLink } from "@/components/ui";
 import { getAdminLessons, getLessonLearningView, parseCourseIdFromSlug, getAuthToken, rememberLearningTask } from "@/services/api";
 import { Tabs } from "@/components/ui";
-import type { AdminLessonDto, LearnerTaskDto, LessonLearningViewDto } from "@/types";
+import type { SubmissionLanguage, AdminLessonDto, LearnerTaskDto, LessonLearningViewDto } from "@/types";
 
 function getTaskTitle(task: LearnerTaskDto, index: number) {
   const heading = task.statementMd
@@ -32,6 +36,11 @@ export default function LessonPage() {
   const requestedTaskId = Number(searchParams.get("task"));
   const lessonId = Number(params.id);
 
+  const [selectedLanguage, setSelectedLanguage] = useState<SubmissionLanguage | null>(null);
+  const [acceptedTaskIds, setAcceptedTaskIds] = useState<number[]>([]);
+  const markAccepted = useCallback((taskId: number) => {
+    setAcceptedTaskIds(previous => previous.includes(taskId) ? previous : [...previous, taskId]);
+  }, []);
   const [siblingLessons, setSiblingLessons] = useState<AdminLessonDto[]>([]);
   const [view, setView] = useState<LessonLearningViewDto | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,6 +55,8 @@ export default function LessonPage() {
     setLoadError("");
     setSiblingLessons([]);
     setView(null);
+    setSelectedLanguage(null);
+    setAcceptedTaskIds([]);
     setSelectedTaskId(null);
     if (!Number.isSafeInteger(lessonId) || lessonId <= 0) {
       setLoadError("ID урока должен быть положительным числом.");
@@ -65,6 +76,7 @@ export default function LessonPage() {
         const data = await getLessonLearningView(lessonId);
         if (!ignore) {
           setView(data);
+          setAcceptedTaskIds(data?.acceptedTaskIds ?? []);
           const requestedTask = data?.tasks.find((task) => task.id === requestedTaskId);
           setSelectedTaskId(requestedTask?.id ?? data?.primaryTask?.id ?? data?.tasks[0]?.id ?? null);
           setActiveSection(requestedTask ? "practice" : "theory");
@@ -122,7 +134,7 @@ export default function LessonPage() {
   }
 
   const isPaid = (view.course.price ?? 0) > 0 || (view.course.priceInStars ?? 0) > 0;
-  const hasAccess = Boolean(view.lesson.contentMd);
+  const hasAccess = view.hasAccess;
   const isLocked = isPaid && !hasAccess;
 
   if (isLocked) {
@@ -149,29 +161,38 @@ export default function LessonPage() {
 
   const primaryTask =
     view.tasks.find((task) => task.id === selectedTaskId) ?? view.primaryTask ?? view.tasks[0] ?? null;
+  const taskIndex = view.tasks.findIndex(task => task.id === primaryTask?.id);
+  const nextTask = view.tasks[taskIndex + 1];
+  const taskAccepted = primaryTask != null && acceptedTaskIds.includes(primaryTask.id);
   const courseSlug = `course-${view.course.id}`;
   const lessonCode = String(lessonId).padStart(3, "0");
 
   return <div className="kit-shell"><SiteHeader compact /><main className="kit-page" id="main-content" tabIndex={-1}>
     <nav aria-label="Навигация по уроку" className="flex flex-wrap justify-between gap-4 text-sm text-muted"><Link className="qlc-text-link" href={`/courses/${courseSlug}`}>← {view.course.name}</Link><Link className="qlc-text-link" href="/profile">Моё обучение ↗</Link></nav>
     <header className="kit-lesson-header"><p className="qlc-eyebrow text-muted">{view.module.name} / Урок {lessonCode}</p><h1 className="break-words">{view.lesson.name}</h1><p>{view.lesson.description || "Изучите материал, затем закрепите его на практике."}</p></header>
+    {view.course.multilingual && <CourseLanguageControl key={view.course.id} courseId={view.course.id} onChange={setSelectedLanguage} />}
     {positionError && <Alert title="Место не сохранено" tone="warning">{positionError}</Alert>}
     <Tabs activeValue={activeSection} items={[{value:"theory",label:"Материал"},{value:"practice",label:`Практика · ${view.tasks.length}`}]} onChange={setActiveSection} />
     <section className={activeSection === "theory" ? "kit-reading" : "hidden"} aria-label="Материал урока">
       <aside><p className="qlc-eyebrow">Модуль</p><h2 className="mb-4 text-xl">{view.module.name}</h2><details className="kit-lesson-outline" open><summary>Уроки модуля</summary><nav aria-label="Уроки модуля">{siblingLessons.map(item => <Link aria-current={item.id === lessonId ? "page" : undefined} className={`flex min-h-11 items-center border-l-2 px-3 py-3 text-sm ${item.id === lessonId ? "border-acid text-acid" : "border-line text-muted hover:text-paper"}`} href={`/lessons/${item.id}`} key={item.id}>{item.name}</Link>)}</nav></details><Link className="qlc-text-link text-muted" href={`/courses/${courseSlug}#curriculum`}>Программа курса →</Link><button className="qlc-text-link text-acid" onClick={() => setActiveSection("practice")} type="button">Перейти к практике →</button></aside>
-      <article><SafeMarkdown markdown={view.lesson.contentMd || view.lesson.description || "Материал урока пока пуст."} /><div className="mt-10 border-t border-line pt-6">{view.tasks.length ? <button className="kit-outline-link w-full" onClick={() => setActiveSection("practice")} type="button">Перейти к практике <span aria-hidden="true">→</span></button> : <ButtonLink href={`/courses/${courseSlug}`}>К программе курса →</ButtonLink>}</div></article>
+      <article>{view.course.multilingual ? <AdaptiveTheory lessonId={lessonId} language={selectedLanguage} /> : <SafeMarkdown markdown={view.lesson.contentMd || view.lesson.description || "Материал урока пока пуст."} />}<div className="mt-10 border-t border-line pt-6">{view.tasks.length ? <button className="kit-outline-link w-full" onClick={() => setActiveSection("practice")} type="button">Перейти к практике <span aria-hidden="true">→</span></button> : <ButtonLink href={`/courses/${courseSlug}`}>К программе курса →</ButtonLink>}</div></article>
     </section>
     <section className={activeSection === "practice" ? "py-6" : "hidden"} aria-label="Практика урока">
       {!primaryTask ? <Alert title="Задачи скоро появятся" tone="neutral">К этому уроку пока не добавлены задачи. Материал доступен для изучения.</Alert> : <>
-        {view.tasks.length > 1 && <nav aria-label="Выбор задачи" className="mb-6 flex flex-wrap gap-2">{view.tasks.map((task, i) => <button key={task.id} className={`min-h-11 max-w-full rounded-sm border px-4 py-2 text-sm ${primaryTask.id === task.id ? "border-acid text-acid" : "border-[#66705D] text-muted"}`} aria-pressed={primaryTask.id === task.id} onClick={() => { setSelectedTaskId(task.id); setTaskView("task"); }} type="button">{getTaskTitle(task, i)}</button>)}</nav>}
+        {view.tasks.length > 1 && <nav aria-label="Выбор задачи" className="mb-6 flex flex-wrap gap-2">{view.tasks.map((task, i) => <button key={task.id} className={`min-h-11 max-w-full rounded-sm border px-4 py-2 text-sm ${primaryTask.id === task.id ? "border-acid text-acid" : "border-[#66705D] text-muted"}`} aria-pressed={primaryTask.id === task.id} onClick={() => { setSelectedTaskId(task.id); setTaskView("task"); }} type="button">{getTaskTitle(task, i)}{acceptedTaskIds.includes(task.id) && <span className="ml-2 text-acid" aria-label="Решено">✓</span>}</button>)}</nav>}
         {primaryTask.taskType === "CODE" && <Tabs className="kit-mobile-task-tabs" activeValue={taskView} onChange={setTaskView} items={[{value:"task",label:"Задача"},{value:"code",label:"Код"},{value:"result",label:"Результат"}]} />}
         <div className={primaryTask.taskType === "CODE" ? "kit-task-grid" : "grid gap-6"} data-view={taskView}>
-          <section className="kit-task-statement"><header className="flex flex-wrap items-center justify-between gap-4 border-b border-line p-5"><h2 className="text-xl">Условие задачи</h2><span className="qlc-eyebrow text-muted">{primaryTask.taskType === "CODE" ? "Код" : primaryTask.taskType === "TEST" ? "Тест" : "Задание"}</span></header><div className="grid gap-6 p-5"><SafeMarkdown markdown={primaryTask.statementMd || "Условие задачи пока пусто."} />
+          <section className="kit-task-statement"><header className="border-b border-line p-5"><h2 className="text-xl">Условие задачи</h2></header><div className="grid gap-6 p-5"><SafeMarkdown markdown={primaryTask.statementMd || "Условие задачи пока пусто."} />
           {primaryTask.taskType === "CODE" && <dl className="grid gap-3 border-t border-line pt-5 text-xs text-muted">{primaryTask.timeLimitMs !== null && <div className="flex justify-between gap-3"><dt>Время</dt><dd>{primaryTask.timeLimitMs} мс</dd></div>}{primaryTask.memoryLimitKb !== null && <div className="flex justify-between gap-3"><dt>Память</dt><dd>{primaryTask.memoryLimitKb} КБ</dd></div>}{primaryTask.outputLimitKb !== null && <div className="flex justify-between gap-3"><dt>Размер вывода</dt><dd>{primaryTask.outputLimitKb} КБ</dd></div>}</dl>}
-          {primaryTask.taskType === "TEST" && <ol className="grid gap-3">{(primaryTask.options ?? []).map((option, i) => <li className="flex gap-4 border-t border-line py-4 text-sm" key={i}><span className="font-mono text-muted">{i + 1}.</span>{option}</li>)}</ol>}
+          {primaryTask.taskType !== "CODE" && <TaskHints key={primaryTask.id} taskId={primaryTask.id} hints={primaryTask.hints ?? []} />}
           </div></section>
-          {primaryTask.taskType === "CODE" ? <CodeLessonWorkspace key={`${primaryTask.id}:${primaryTask.testSetVersion ?? 1}`} task={primaryTask} onSubmissionStart={() => setTaskView("result")} /> : <Alert title="Отправка ответа" tone="info">Отправка ответа для этой задачи скоро появится.</Alert>}
+          {primaryTask.taskType === "CODE" ? (view.course.multilingual && !selectedLanguage ? <p className="p-6 text-muted">Выберите язык решений, чтобы открыть редактор.</p> : <CodeLessonWorkspace key={`${primaryTask.id}:${primaryTask.testSetVersion ?? 1}:${selectedLanguage ?? primaryTask.language}`} task={primaryTask} selectedLanguage={view.course.multilingual ? selectedLanguage : null} demo={Boolean(view.course.multilingual)} onAccepted={markAccepted} onSubmissionStart={() => setTaskView("result")} />) : <InstantAnswerWorkspace key={primaryTask.id} task={primaryTask} onAccepted={markAccepted} />}
         </div>
+        {taskAccepted && <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6">
+          <p className="text-sm text-acid">✓ Задача решена</p>
+          {nextTask ? <Button onClick={() => { setSelectedTaskId(nextTask.id); setTaskView("task"); }}>Следующая задача →</Button>
+            : <ButtonLink href={`/courses/${courseSlug}`}>К программе курса →</ButtonLink>}
+        </div>}
       </>}
     </section>
   </main><SiteFooter /></div>;

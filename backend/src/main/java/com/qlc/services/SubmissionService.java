@@ -40,6 +40,8 @@ public class SubmissionService {
   private final SubmissionRepository submissionRepository;
   private final TaskRepository taskRepository;
   private final UserRepository userRepository;
+  private final TaskAccessService taskAccess;
+  private final CourseLanguageService courseLanguages;
 
   @Value("${app.submissions.max-size:65535}")
   private int maxSourceSize;
@@ -51,7 +53,9 @@ public class SubmissionService {
   private long executionTimeoutMs = 900000;
 
   public SubmissionService(SubmissionRepository submissionRepository, TaskRepository taskRepository,
-      RedisQueueService redisQueueService, UserRepository userRepository) {
+      RedisQueueService redisQueueService, UserRepository userRepository, TaskAccessService taskAccess, CourseLanguageService courseLanguages) {
+    this.taskAccess = taskAccess;
+    this.courseLanguages = courseLanguages;
     this.submissionRepository = submissionRepository;
     this.taskRepository = taskRepository;
     this.redisQueueService = redisQueueService;
@@ -64,19 +68,7 @@ public class SubmissionService {
 
   public SubmissionCreatedResponse createSubmission(Long taskId, SubmissionRequest request,
       String idempotencyKey, Long userId) {
-    // 1. Проверяем ключ идемпотентности. Если запрос дублируется,
-    // завершаем метод мгновенно, экономя CPU и коннекты к БД.
-    if (idempotencyKey != null && !idempotencyKey.isBlank()) {
-      Optional<Submission> existing = userId == null
-          ? submissionRepository.findByIdempotencyKey(idempotencyKey)
-          : submissionRepository.findByIdempotencyKeyAndUserId(idempotencyKey, userId);
-      if (existing.isPresent()) {
-        Submission s = existing.get();
-        return new SubmissionCreatedResponse(s.getId(), s.getStatus().name());
-      }
-    }
-
-    // 2. Базовая валидация входящего payload
+    // Базовая валидация входящего payload
     if (request.sourceCode() == null || request.sourceCode().isBlank()) {
       throw new IllegalArgumentException("Source code must not be blank");
     }
@@ -89,7 +81,7 @@ public class SubmissionService {
       throw new IllegalArgumentException("Unsupported language: " + request.language());
     }
 
-    // 3. Проверяем, существует ли целевая таска
+    // Проверяем тип задачи и её язык
     Task task = taskRepository.findById(taskId)
         .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + taskId));
 
@@ -101,11 +93,30 @@ public class SubmissionService {
     String taskLanguage = codeTask.getLanguage() == null || codeTask.getLanguage().isBlank()
         ? "CPP23"
         : codeTask.getLanguage();
-    if (!taskLanguage.equalsIgnoreCase(request.language())) {
+    taskAccess.requireAccess(task, userId);
+    boolean demo = codeTask.getLesson() != null && codeTask.getLesson().getModule() != null
+        && codeTask.getLesson().getModule().getCourse().isMultilingual();
+    if (demo) {
+      var settings = courseLanguages.get(codeTask.getLesson().getModule().getCourse().getId(), userId);
+      if (settings.selectedLanguage() == null || !settings.selectedLanguage().equals(request.language())) {
+        throw new IllegalArgumentException("Select this language in the course before submitting");
+      }
+    } else if (!taskLanguage.equalsIgnoreCase(request.language())) {
       throw new IllegalArgumentException("This task accepts " + taskLanguage + ", not " + request.language());
     }
 
-    // 4. Инициализируем новую сущность в очереди
+    // Проверяем повтор запроса только после проверки доступа.
+    if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+      Optional<Submission> existing = userId == null
+          ? submissionRepository.findByIdempotencyKey(idempotencyKey)
+          : submissionRepository.findByIdempotencyKeyAndUserId(idempotencyKey, userId);
+      if (existing.isPresent()) {
+        Submission s = existing.get();
+        return new SubmissionCreatedResponse(s.getId(), s.getStatus().name());
+      }
+    }
+
+    // Инициализируем новую сущность в очереди
     Submission submission = new Submission();
     submission.setTask(task);
     submission.setLanguage(request.language());
@@ -118,6 +129,13 @@ public class SubmissionService {
       submission.setUser(user);
     }
 
+    if (demo) {
+      submission.setStatus(SubmissionStatus.DEMO);
+      submission.setCountsForProgress(false);
+      submission.setSafeMessage("Демонстрационная отправка: код не проверялся, задача не засчитана.");
+      Submission savedDemo = submissionRepository.save(submission);
+      return new SubmissionCreatedResponse(savedDemo.getId(), savedDemo.getStatus().name());
+    }
     Submission saved = submissionRepository.save(submission);
 
     // Best-effort publication after commit; the database recovery scan retries Redis failures.
@@ -221,6 +239,6 @@ public class SubmissionService {
   }
 
   private boolean isSupportedLanguage(String language) {
-    return "CPP23".equalsIgnoreCase(language) || "JAVA21".equalsIgnoreCase(language);
+    return CourseLanguageService.CONFIGURABLE_LANGUAGES.contains(language);
   }
 }

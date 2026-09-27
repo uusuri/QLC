@@ -23,15 +23,19 @@ public class CodeTask extends Task {
   @Column(name = "test_cases", columnDefinition = "TEXT")
   private String testCases;
 
+  @org.hibernate.annotations.ColumnDefault("2000")
   @Column(name = "time_limit_ms", nullable = false)
   private int timeLimitMs = 2000;
 
+  @org.hibernate.annotations.ColumnDefault("65536")
   @Column(name = "memory_limit_kb", nullable = false)
   private int memoryLimitKb = 65536;
 
+  @org.hibernate.annotations.ColumnDefault("4096")
   @Column(name = "output_limit_kb", nullable = false)
   private int outputLimitKb = 4096;
 
+  @org.hibernate.annotations.ColumnDefault("1")
   @Column(name = "test_set_version", nullable = false)
   private int testSetVersion = 1;
 }

@@ -1,0 +1,37 @@
+{
+  "courseId": 3,
+  "moduleId": 18,
+  "lessons": [
+    {
+      "id": 20,
+      "name": "От работающего к эффективному",
+      "md5": "41d6155cd593b3def71e0fc2bcf32dbc"
+    },
+    {
+      "id": 68,
+      "name": "Считаем сложность кода",
+      "md5": "5e91f9f8351d40e24cde0c1cb8713950"
+    },
+    {
+      "id": 21,
+      "name": "Доказательства",
+      "md5": "bb3870785d49667a973ba61de898c939"
+    }
+  ],
+  "otherModulesUnchanged": true,
+  "taskIdsAnswersCodeTestsLimitsUnchanged": true,
+  "immutableTaskDigest": "7a9a83130732c56ca9ab4185fc83074c",
+  "frontendTestsPassed": 11,
+  "lessonApisMatchSource": [
+    20,
+    68,
+    21
+  ],
+  "browserVerifiedLessons": [
+    20,
+    68,
+    21
+  ],
+  "teachingCodeVerifiedOnArrays": 9840,
+  "temporaryQaUserRemoved": true
+}

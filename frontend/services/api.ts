@@ -250,6 +250,7 @@ function mapAdminCourseToCatalogCourse(course: AdminCourseDto, lessonsCount = 0)
     description: course.description || "Описание курса скоро появится.",
     imageUrl: DEFAULT_COURSE_IMAGE_URL,
     badge: "course",
+    multilingual: course.multilingual ?? false,
     lessonsCount,
     lessonsLabel: formatLessonsLabel(lessonsCount),
     price,
@@ -489,13 +490,15 @@ export async function getCourseAccess(courseId: number): Promise<boolean> {
 
 // Собирает страницу урока: урок, родительский модуль/курс и задачи урока.
 export async function getLessonLearningView(id: number): Promise<LessonLearningViewDto | null> {
-  const { course, module, lesson, tasks } = await getLessonForUser(id);
+  const { course, module, lesson, tasks, acceptedTaskIds, hasAccess } = await getLessonForUser(id);
 
   return {
     course,
     lesson,
     module,
     primaryTask: tasks[0] ?? null,
+    acceptedTaskIds: acceptedTaskIds ?? [],
+    hasAccess,
     tasks
   };
 }
@@ -722,4 +725,28 @@ export function rememberLearningTask(taskId: number): Promise<void> {
   });
   learningPositionWrite = write;
   return write;
+}
+
+export async function submitAnswer(
+  taskId: number,
+  payload: import("@/types").AnswerPayload,
+  signal?: AbortSignal
+): Promise<SubmissionResponseDto> {
+  return apiRequest<SubmissionResponseDto>(`/api/tasks/${taskId}/answers`, {
+    method: "POST", auth: true, body: JSON.stringify(payload), signal
+  });
+}
+
+export async function getCourseLanguage(courseId: number): Promise<import("@/types").CourseLanguageSettingsDto> {
+  return apiRequest(`/api/courses/${courseId}/language`, { auth: true, cache: "no-store" });
+}
+
+export async function selectCourseLanguage(courseId: number, selectedLanguage: import("@/types").SubmissionLanguage): Promise<import("@/types").CourseLanguageSettingsDto> {
+  return apiRequest(`/api/courses/${courseId}/language`, {
+    method: "PUT", auth: true, body: JSON.stringify({ selectedLanguage })
+  });
+}
+
+export async function getLessonTheory(id: number): Promise<{ contentMd: string | null; language: import("@/types").SubmissionLanguage | null; fallback: boolean }> {
+  return apiRequest(`/api/lessons/${id}/theory`, { auth: true, cache: "no-store" });
 }

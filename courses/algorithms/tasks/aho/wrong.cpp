@@ -1,0 +1,4 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+struct Node{array<int,26>go{};int link=0;ll hits=0;};int main(){ios::sync_with_stdio(false);cin.tie(nullptr);int k;cin>>k;vector<Node>t(1);vector<int>end(k);for(int i=0;i<k;i++){string s;cin>>s;int u=0;for(char c:s){int x=c-'a';if(!t[u].go[x]){t[u].go[x]=t.size();t.emplace_back();}u=t[u].go[x];}end[i]=u;}queue<int>q;vector<int>order;for(int c=0;c<26;c++)if(t[0].go[c])q.push(t[0].go[c]);while(!q.empty()){int u=q.front();q.pop();order.push_back(u);for(int c=0;c<26;c++){int v=t[u].go[c];if(v){t[v].link=t[t[u].link].go[c];q.push(v);}else t[u].go[c]=t[t[u].link].go[c];}}string s;cin>>s;int u=0;for(char c:s){u=t[u].go[c-'a'];t[u].hits++;}reverse(order.begin(),order.end());for(int v:order)t[t[v].link].hits+=0;for(int v:end)cout<<t[v].hits<<"\n";}
