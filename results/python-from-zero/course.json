@@ -1,0 +1,277 @@
+{
+  "schema_version": 1,
+  "title": "Python с нуля",
+  "language": "PYTHON311",
+  "audience": "Полный новичок; Python — первый язык.",
+  "base_course": "https://stepik.org/course/58852/promo",
+  "lessons": [
+    {
+      "number": 1,
+      "title": "Что такое программа и как её запустить",
+      "slug": "first-program",
+      "path": "lessons/01-first-program",
+      "status": "verified"
+    },
+    {
+      "number": 2,
+      "title": "Вывод: несколько значений, sep и end",
+      "slug": "output",
+      "path": "lessons/02-output",
+      "status": "verified"
+    },
+    {
+      "number": 3,
+      "title": "Ввод, переменные и присваивание",
+      "slug": "input-variables",
+      "path": "lessons/03-input-variables",
+      "status": "verified"
+    },
+    {
+      "number": 4,
+      "title": "Текст и числа: типы и преобразование",
+      "slug": "integers-types",
+      "path": "lessons/04-integers-types",
+      "status": "verified"
+    },
+    {
+      "number": 5,
+      "title": "Арифметика, выражения и порядок вычислений",
+      "slug": "arithmetic",
+      "path": "lessons/05-arithmetic",
+      "status": "verified"
+    },
+    {
+      "number": 6,
+      "title": "Целое деление, остаток и цифры",
+      "slug": "division-digits",
+      "path": "lessons/06-division-digits",
+      "status": "verified"
+    },
+    {
+      "number": 7,
+      "title": "Как читать ошибки и проверять вычисления",
+      "slug": "debugging",
+      "path": "lessons/07-debugging",
+      "status": "verified"
+    },
+    {
+      "number": 8,
+      "title": "Сравнения и выбор: if и else",
+      "slug": "if-else",
+      "path": "lessons/08-if-else",
+      "status": "verified"
+    },
+    {
+      "number": 9,
+      "title": "Несколько вариантов: elif и вложенные условия",
+      "slug": "elif",
+      "path": "lessons/09-elif",
+      "status": "verified"
+    },
+    {
+      "number": 10,
+      "title": "Составные условия: and, or и not",
+      "slug": "logic",
+      "path": "lessons/10-logic",
+      "status": "verified"
+    },
+    {
+      "number": 11,
+      "title": "Составляем решение: календарь и проверка правил",
+      "slug": "condition-practice",
+      "path": "lessons/11-condition-practice",
+      "status": "verified"
+    },
+    {
+      "number": 12,
+      "title": "Дробные числа и формат результата",
+      "slug": "float-format",
+      "path": "lessons/12-float-format",
+      "status": "verified"
+    },
+    {
+      "number": 13,
+      "title": "Готовые функции: abs, min, max и math",
+      "slug": "builtins-math",
+      "path": "lessons/13-builtins-math",
+      "status": "verified"
+    },
+    {
+      "number": 14,
+      "title": "Повторение известное число раз: for и range",
+      "slug": "for-range",
+      "path": "lessons/14-for-range",
+      "status": "verified"
+    },
+    {
+      "number": 15,
+      "title": "Сумма и счётчик: сохраняем результат между шагами",
+      "slug": "accumulators",
+      "path": "lessons/15-accumulators",
+      "status": "verified"
+    },
+    {
+      "number": 16,
+      "title": "Наибольшее значение: правильно выбираем начало",
+      "slug": "extrema",
+      "path": "lessons/16-extrema",
+      "status": "verified"
+    },
+    {
+      "number": 17,
+      "title": "Повторение до выполнения условия: while",
+      "slug": "while",
+      "path": "lessons/17-while",
+      "status": "verified"
+    },
+    {
+      "number": 18,
+      "title": "Ввод до сигнала остановки: break и continue",
+      "slug": "sentinel-break",
+      "path": "lessons/18-sentinel-break",
+      "status": "verified"
+    },
+    {
+      "number": 19,
+      "title": "Цикл по цифрам числа",
+      "slug": "digit-loop",
+      "path": "lessons/19-digit-loop",
+      "status": "verified"
+    },
+    {
+      "number": 20,
+      "title": "Вложенные циклы и таблицы",
+      "slug": "nested-loops",
+      "path": "lessons/20-nested-loops",
+      "status": "verified"
+    },
+    {
+      "number": 21,
+      "title": "Перебор кандидатов: делители и простые числа",
+      "slug": "divisors-primes",
+      "path": "lessons/21-divisors-primes",
+      "status": "verified"
+    },
+    {
+      "number": 22,
+      "title": "Строка как последовательность: длина и индексы",
+      "slug": "string-index",
+      "path": "lessons/22-string-index",
+      "status": "verified"
+    },
+    {
+      "number": 23,
+      "title": "Срезы и проверка палиндрома",
+      "slug": "slices",
+      "path": "lessons/23-slices",
+      "status": "verified"
+    },
+    {
+      "number": 24,
+      "title": "Методы строк: очистка, регистр и замена",
+      "slug": "string-methods",
+      "path": "lessons/24-string-methods",
+      "status": "verified"
+    },
+    {
+      "number": 25,
+      "title": "Поиск, подсчёт и построение строки",
+      "slug": "string-search",
+      "path": "lessons/25-string-search",
+      "status": "verified"
+    },
+    {
+      "number": 26,
+      "title": "Разбиваем текст на слова: split и join",
+      "slug": "split-join",
+      "path": "lessons/26-split-join",
+      "status": "verified"
+    },
+    {
+      "number": 27,
+      "title": "Списки: создаём и храним несколько значений",
+      "slug": "lists",
+      "path": "lessons/27-lists",
+      "status": "verified"
+    },
+    {
+      "number": 28,
+      "title": "Изменение списков, общие ссылки и копии",
+      "slug": "list-mutation",
+      "path": "lessons/28-list-mutation",
+      "status": "verified"
+    },
+    {
+      "number": 29,
+      "title": "Отбор, поиск и сортировка списка",
+      "slug": "list-processing",
+      "path": "lessons/29-list-processing",
+      "status": "verified"
+    },
+    {
+      "number": 30,
+      "title": "Списковые включения: короткая запись знакомого цикла",
+      "slug": "comprehensions",
+      "path": "lessons/30-comprehensions",
+      "status": "verified"
+    },
+    {
+      "number": 31,
+      "title": "Свои функции: отделяем действие и вызываем его",
+      "slug": "functions",
+      "path": "lessons/31-functions",
+      "status": "verified"
+    },
+    {
+      "number": 32,
+      "title": "Возвращаем результат: return, локальные имена и параметры",
+      "slug": "return-scope",
+      "path": "lessons/32-return-scope",
+      "status": "verified"
+    },
+    {
+      "number": 33,
+      "title": "Неверный ввод и проверка функций",
+      "slug": "validation-tests",
+      "path": "lessons/33-validation-tests",
+      "status": "verified"
+    },
+    {
+      "number": 34,
+      "title": "Мини-проект: угадай число",
+      "slug": "guessing-game",
+      "path": "lessons/34-guessing-game",
+      "status": "verified"
+    },
+    {
+      "number": 35,
+      "title": "Мини-проект: учебный генератор паролей",
+      "slug": "random-strings",
+      "path": "lessons/35-random-strings",
+      "status": "verified"
+    },
+    {
+      "number": 36,
+      "title": "Мини-проект: шифр Цезаря и круговой сдвиг",
+      "slug": "caesar",
+      "path": "lessons/36-caesar",
+      "status": "verified"
+    },
+    {
+      "number": 37,
+      "title": "Мини-проект: системы счисления",
+      "slug": "number-bases",
+      "path": "lessons/37-number-bases",
+      "status": "verified"
+    },
+    {
+      "number": 38,
+      "title": "Итоговый проект: учёт расходов",
+      "slug": "expense-project",
+      "path": "lessons/38-expense-project",
+      "status": "verified"
+    }
+  ],
+  "remaining": [],
+  "verification_report": "reports/QA.md"
+}

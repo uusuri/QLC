@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "language": "PYTHON311",
+      "code_sha256": "9c872113eaaaa16951b79b126aa73d1c110e2684fad5d8a0a49765643df794d5",
+      "runner": "Python 3.13.0; /Library/Frameworks/Python.framework/Versions/3.13/bin/python3 code/PYTHON311/main.py",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "ad089fd88888a5e0683fcc33fb8a82d9ec133418b2f0a1ac164d304910bce945",
+          "actual_output": "Привет, Аня\nГород: Казань\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "spaces",
+          "input_sha256": "517ba21130a7eb0cdb3ec58660fe4695cfa194f5c9d1b0a8192770081f3a7596",
+          "actual_output": "Привет, Лев\nГород: Нижний Новгород\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

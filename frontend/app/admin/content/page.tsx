@@ -514,6 +514,7 @@ export default function AdminContentPage() {
   const [courseForm, setCourseForm] = useState<CourseFormState>(initialCourseForm);
   const [moduleForm, setModuleForm] = useState<ModuleFormState>(initialModuleForm);
   const [theoryLanguage, setTheoryLanguage] = useState<SubmissionLanguage | "base">("base");
+  const [editingAnimation, setEditingAnimation] = useState(false);
   const [lessonForm, setLessonForm] = useState<LessonFormState>(initialLessonForm);
   const [lessonBaseline, setLessonBaseline] = useState<LessonFormState>(initialLessonForm);
   const [lessonEditorId, setLessonEditorId] = useState<number | null>(null);
@@ -1137,7 +1138,7 @@ export default function AdminContentPage() {
     }
   }
 
-  const navigationBusy = courseState.loading || moduleState.loading || lessonState.loading || taskState.loading;
+  const navigationBusy = editingAnimation || courseState.loading || moduleState.loading || lessonState.loading || taskState.loading;
   const selection: EditorSelection = { step: activeStep, courseId: selectedCourseId, moduleId: selectedModuleId, lessonId: selectedLessonId, taskId: selectedTaskId };
 
   function navigateEditor(next: EditorSelection) {
@@ -1311,6 +1312,7 @@ export default function AdminContentPage() {
                     <div role="alert" className="border border-line p-6"><p>Не удалось загрузить материал урока. Изменения недоступны, чтобы не перезаписать текст пустыми полями.</p><Button className="mt-4" variant="secondary" onClick={() => setLessonLoadAttempt(attempt => attempt + 1)}>Повторить загрузку</Button></div>
                   ) : (
                     <form ref={lessonFormRef} className="grid min-w-0 content-start gap-4" onSubmit={event => {
+                      if (editingAnimation) { event.preventDefault(); return; }
                       if (selectedLessonId === null) void handleCreateLesson(event);
                       else { event.preventDefault(); void handleUpdateLesson(); }
                     }}>
@@ -1327,14 +1329,15 @@ export default function AdminContentPage() {
                           </div>
                         </details>
                       </fieldset>
-                      <LessonTheoryEditor value={lessonForm} saved={lessonBaseline}
+                      <LessonTheoryEditor key={selectedLessonId ?? "new"} value={lessonForm} saved={lessonBaseline}
                         multilingual={Boolean(selectedCourse?.multilingual)} languages={selectedCourse?.availableLanguages ?? []}
                         version={theoryLanguage} onVersionChange={setTheoryLanguage}
+                        onAnimationEditingChange={setEditingAnimation}
                         onChange={value => { setLessonForm(current => ({ ...current, ...value })); setLessonState(current => ({ ...current, success: "" })); }}
                         onSave={() => lessonFormRef.current?.requestSubmit()} busy={lessonState.loading} />
                       <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 border border-line bg-panel p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.25)]">
-                        <p className={`text-sm ${lessonDirty ? "text-amber-300" : "text-muted"}`} role="status">{lessonState.loading ? "Сохраняем…" : lessonDirty ? "Есть несохранённые изменения" : selectedLessonId === null ? "Заполните новый урок" : "Все изменения сохранены"}</p>
-                        <Button type="submit" loading={lessonState.loading} disabled={!lessonForm.name.trim()}>{selectedLessonId === null ? "Создать урок" : "Сохранить урок и все версии"}</Button>
+                        <p className={`text-sm ${lessonDirty || editingAnimation ? "text-amber-300" : "text-muted"}`} role="status">{editingAnimation ? "Вставьте анимацию в теорию или отмените её редактирование" : lessonState.loading ? "Сохраняем…" : lessonDirty ? "Есть несохранённые изменения" : selectedLessonId === null ? "Заполните новый урок" : "Все изменения сохранены"}</p>
+                        <Button type="submit" loading={lessonState.loading} disabled={editingAnimation || !lessonForm.name.trim()}>{selectedLessonId === null ? "Создать урок" : "Сохранить урок и все версии"}</Button>
                       </div>
                     </form>
                   )}

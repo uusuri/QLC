@@ -1,0 +1,1345 @@
+{
+  "schema_version": 1,
+  "interpreter": "Python 3.13.0",
+  "compatibility_target": "Python 3.11+",
+  "executed_python_311": false,
+  "seed": 20261001,
+  "lesson_programs": 38,
+  "exercise_programs": 76,
+  "main_example_runs": 141,
+  "exercise_example_runs": 143,
+  "syntax_checks": 115,
+  "independent_checks": [
+    {
+      "name": "primality",
+      "cases": 201,
+      "method": "Полный подсчёт делителей от 1 до n; он не использует границу sqrt(n).",
+      "status": "passed",
+      "seed": 20261001,
+      "code_sha256": "c449529afe3b4252578f49bd89afeac067ffe819527ca03934446578d394b5c9",
+      "runs": [
+        {
+          "input": "0\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "1\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "2\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "3\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "4\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "5\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "6\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "7\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "8\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "9\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "10\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "11\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "12\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "13\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "14\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "15\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "16\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "17\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "18\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "19\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "20\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "21\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "22\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "23\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "24\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "25\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "26\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "27\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "28\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "29\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "30\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "31\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "32\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "33\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "34\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "35\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "36\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "37\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "38\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "39\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "40\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "41\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "42\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "43\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "44\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "45\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "46\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "47\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "48\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "49\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "50\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "51\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "52\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "53\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "54\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "55\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "56\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "57\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "58\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "59\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "60\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "61\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "62\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "63\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "64\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "65\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "66\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "67\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "68\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "69\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "70\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "71\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "72\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "73\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "74\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "75\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "76\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "77\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "78\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "79\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "80\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "81\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "82\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "83\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "84\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "85\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "86\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "87\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "88\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "89\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "90\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "91\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "92\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "93\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "94\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "95\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "96\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "97\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "98\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "99\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "100\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "249027\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "336181\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "377338\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "882143\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "554767\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "606576\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "749650\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "662727\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "410961\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "934023\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "835481\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "863965\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "130123\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "628277\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "157213\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "197360\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "796780\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "768781\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "81714\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "708608\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "142911\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "39076\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "935534\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "195765\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "485260\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "397558\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "224247\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "357074\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "200804\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "592147\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "927075\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "280662\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "266687\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "855189\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "409709\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "843965\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "956683\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "794689\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "213062\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "327776\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "27003\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "902332\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "242222\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "845910\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "575973\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "260495\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "784820\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "275810\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "503187\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "474608\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "194100\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "377629\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "407080\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "528273\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "729395\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "859447\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "765215\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "59511\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "471364\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "408357\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "620546\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "672644\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "511444\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "128145\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "112926\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "869245\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "709874\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "959087\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "517899\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "400085\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "184480\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "443902\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "730959\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "186183\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "663088\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "764342\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "551844\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "298712\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "56879\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "508956\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "465460\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "17059\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "939353\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "751728\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "592512\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "252564\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "459608\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "987838\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "703524\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "608935\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "913789\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "551718\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "473816\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "139602\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "496838\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "769322\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "282331\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "610240\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        },
+        {
+          "input": "233591\n",
+          "expected": "ДА\n",
+          "actual_output": "ДА\n",
+          "exit_code": 0
+        },
+        {
+          "input": "259227\n",
+          "expected": "НЕТ\n",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0
+        }
+      ]
+    },
+    {
+      "name": "number-bases",
+      "cases": 1590,
+      "method": "Стандартный int(text, base), алфавит, регистр и отсутствие ведущих нулей.",
+      "status": "passed",
+      "seed": 20261001,
+      "code_sha256": "c6e28ee0967f9c73cbd1b8bd1ff0d87d3cb4d36bbe406ae3e24f417a938cc2f9"
+    },
+    {
+      "name": "caesar",
+      "cases": 500,
+      "method": "Независимый поиск буквы в строке алфавита вместо ord/chr плюс обратный сдвиг.",
+      "status": "passed",
+      "seed": 20261001,
+      "code_sha256": "3e6ff5b5978d62ae3ab684e9a5d41c31eceb1ac848074da2f10da14b3737ba27"
+    },
+    {
+      "name": "money-format",
+      "cases": 510,
+      "method": "Точная Decimal-арифметика как независимая проверка знака и двух цифр копеек.",
+      "status": "passed",
+      "seed": 20261001,
+      "code_sha256": "ee8b6f307a3d663733537a8ea83f6a58041e41469f7d730f6cffe07011161341"
+    },
+    {
+      "name": "first-largest-purchase",
+      "cases": 500,
+      "method": "max всех цен и index первого значения, включая пустой набор и повторяющиеся цены.",
+      "status": "passed",
+      "seed": 20261001,
+      "code_sha256": "ee8b6f307a3d663733537a8ea83f6a58041e41469f7d730f6cffe07011161341"
+    },
+    {
+      "name": "random-string-properties",
+      "cases": 101,
+      "method": "Все допустимые длины 0–100 и принадлежность каждого символа алфавиту.",
+      "status": "passed",
+      "seed": 20261001,
+      "code_sha256": "4bc88501aece2e92af9bca63f455a05df82a8a0e85cdd763cca71765cab50206"
+    },
+    {
+      "name": "interactive-random-game",
+      "cases": 1,
+      "method": "Фактический вывод сопоставлен с допустимыми сценариями всех 100 возможных секретов.",
+      "status": "passed",
+      "code_sha256": "a257eca04993348330f87d124e476532dc3e14a5bf9f7d66d80f9316a86bc75e",
+      "actual_output": "Угадайте число от 1 до 100. У вас 7 попыток.\nБОЛЬШЕ\nУГАДАНО 2\n",
+      "exit_code": 0
+    }
+  ],
+  "mutation_checks": [
+    {
+      "lesson": 8,
+      "reason": "Потеря включённой границы",
+      "input": "1000\n",
+      "correct_output": "БЕСПЛАТНО\n",
+      "mutant_output": "ПЛАТНО\n",
+      "exit_code": 0,
+      "detected": true
+    },
+    {
+      "lesson": 15,
+      "reason": "Ноль ошибочно положителен",
+      "input": "1\n0\n",
+      "correct_output": "0 0\n",
+      "mutant_output": "0 1\n",
+      "exit_code": 0,
+      "detected": true
+    },
+    {
+      "lesson": 16,
+      "reason": "Максимум начинается с нуля",
+      "input": "3\n-8\n-3\n-5\n",
+      "correct_output": "-3\n",
+      "mutant_output": "0\n",
+      "exit_code": 0,
+      "detected": true
+    },
+    {
+      "lesson": 17,
+      "reason": "Лишний день при точной кратности",
+      "input": "6\n3\n",
+      "correct_output": "2\n",
+      "mutant_output": "3\n",
+      "exit_code": 0,
+      "detected": true
+    },
+    {
+      "lesson": 21,
+      "reason": "Пропуск квадратного корня",
+      "input": "49\n",
+      "correct_output": "НЕТ\n",
+      "mutant_output": "ДА\n",
+      "exit_code": 0,
+      "detected": true
+    },
+    {
+      "lesson": 28,
+      "reason": "Присваивание вместо копии",
+      "input": "2 4 6\n9\n",
+      "correct_output": "2 4 6\n9 4 6\n",
+      "mutant_output": "9 4 6\n9 4 6\n",
+      "exit_code": 0,
+      "detected": true
+    },
+    {
+      "lesson": 38,
+      "reason": "Последний максимум вместо первого",
+      "input": "1000\n2\nпервая\n200\nвторая\n200\n",
+      "correct_output": "ИТОГО 4.00\nОСТАТОК 6.00\nПОКУПКА первая\n",
+      "mutant_output": "ИТОГО 4.00\nОСТАТОК 6.00\nПОКУПКА вторая\n",
+      "exit_code": 0,
+      "detected": true
+    }
+  ],
+  "failures": []
+}

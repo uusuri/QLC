@@ -1,0 +1,3 @@
+#include <bits/stdc++.h>
+using namespace std;using ll=long long;
+int main(){ios::sync_with_stdio(false);cin.tie(nullptr);int n,q;cin>>n>>q;vector<vector<int>>g(n);for(int i=1;i<n;i++){int u,v;cin>>u>>v;g[--u].push_back(--v);g[v].push_back(u);}int K=bit_width((unsigned)n);vector<vector<int>>up(K,vector<int>(n));vector<int>d(n),p(n,-1),order{0};p[0]=0;for(size_t i=0;i<order.size();i++){int v=order[i];for(int u:g[v])if(u!=p[v]){p[u]=v;d[u]=d[v]+1;order.push_back(u);}}up[0]=p;for(int k=1;k<K;k++)for(int v=0;v<n;v++)up[k][v]=up[k-1][up[k-1][v]];while(q--){int u,v;cin>>u>>v;--u;--v;if(d[u]<d[v])swap(u,v);int delta=d[u]-d[v];for(int k=0;k<K;k++)if(delta>>k&1)u=up[k][u];if(u!=v){for(int k=K-1;k>=0;k--)if(up[k][u]!=up[k][v]){u=up[k][u];v=up[k][v];}u=p[u];}cout<<p[u]+1<<'\n';}}

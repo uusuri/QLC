@@ -363,3 +363,25 @@ def cases_for(key):
         if c['input'] not in seen:result.append(c);seen.add(c['input'])
     assert len(result)<=100
     return result
+
+# Keep the original course families intact; the expanded PDF topics have separate oracles.
+from expanded_cases import KEYS as EXPANDED_KEYS, small as expanded_small, stress as expanded_stress
+
+_original_small = small
+_original_stress = stress
+
+
+def small(key, seed):
+    return expanded_small(key, seed) if key in EXPANDED_KEYS else _original_small(key, seed)
+
+
+def stress(key):
+    return expanded_stress(key) if key in EXPANDED_KEYS else _original_stress(key)
+
+from foundation_cases import ORACLES as FOUNDATION_KEYS, cases_for as foundation_cases_for, small as foundation_small
+_previous_cases_for = cases_for
+_previous_small = small
+def cases_for(key):
+    return foundation_cases_for(key) if key in FOUNDATION_KEYS else _previous_cases_for(key)
+def small(key,seed):
+    return foundation_small(key,seed) if key in FOUNDATION_KEYS else _previous_small(key,seed)

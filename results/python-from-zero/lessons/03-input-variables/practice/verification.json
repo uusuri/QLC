@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "runner": "Python 3.13.0",
+  "programs": [
+    {
+      "id": "exercise-03",
+      "code_sha256": "df8ac9571213a76a0623d0cdcb34226e515047d7edaaa5f8733376ce1434f427",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "cc533dc4eb8649f92565d197f03e54437e240e290bc9f384ca8cf992853c27f3",
+          "actual_output": "Книга: Три товарища\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "exercise-04",
+      "code_sha256": "2e8974cad7b28f4034ff8ebad2bad9fb8fc2c385a2bc545cde080a8c7e38acef",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "3186b045cfb4e797433ca636ed46931b2f4f0344926d45c0d2a275d8b6c4d4a2",
+          "actual_output": "Б\nА\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "language": "PYTHON311",
+      "code_sha256": "3e6ff5b5978d62ae3ab684e9a5d41c31eceb1ac848074da2f10da14b3737ba27",
+      "runner": "Python 3.13.0; /Library/Frameworks/Python.framework/Versions/3.13/bin/python3 code/PYTHON311/main.py",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "34752fffca2f945a35f3b489c54aee8f69732375505ac556f223952f546cecad",
+          "actual_output": "Cb-b!\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "back",
+          "input_sha256": "6ab9762a287ce4488ca7cb823ea568c8757ecccb002e46fe9dff4812a07cd503",
+          "actual_output": "Zz\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "circle",
+          "input_sha256": "4237a31bea3dbc390ca8d9b7257c1ebc343e87e8af278a29c699d1e94a1ca4e0",
+          "actual_output": "Hello\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "foreign",
+          "input_sha256": "9a2479fdd5de280124ea13b8ffb536e98f1f1aca3b36a81f21523bbe069f86ce",
+          "actual_output": "Привет 123!\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "empty",
+          "input_sha256": "088162f602ebc87b99c569eb59cc2956c16736601f80bf284d4bafe36e4faa5e",
+          "actual_output": "\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

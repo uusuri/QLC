@@ -1,9 +1,14 @@
 "use client";
 
-import { useDeferredValue, useEffect, useId, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useId, useMemo, useRef, useState } from "react";
 import { SafeMarkdown } from "@/components/SafeMarkdown";
 import { COURSE_LANGUAGES } from "@/components/courseLanguages";
 import type { SubmissionLanguage } from "@/types";
+import dynamic from "next/dynamic";
+import { findGraphBlocks, insertGraphBlock, parseGraphAnimation, type GraphAnimation, type GraphBlockRange } from "../../services/graphAnimation";
+import { graphPreset } from "../../services/graphPresets";
+
+const GraphAnimationEditor = dynamic(() => import("../graph/GraphAnimationEditor").then(module => module.GraphAnimationEditor), { loading: () => <p className="p-4">Открываем редактор анимации…</p> });
 
 export type TheoryVersion = SubmissionLanguage | "base";
 export type TheoryContent = { contentMd: string; contentByLanguage: Partial<Record<SubmissionLanguage, string>> };
@@ -18,6 +23,7 @@ type Props = {
   onVersionChange: (version: TheoryVersion) => void;
   onChange: (value: TheoryContent) => void;
   onSave: () => void;
+  onAnimationEditingChange: (editing: boolean) => void;
   busy: boolean;
 };
 
@@ -25,17 +31,22 @@ function content(value: TheoryContent, version: TheoryVersion) {
   return version === "base" ? value.contentMd : value.contentByLanguage[version] ?? "";
 }
 
-export function LessonTheoryEditor({ value, saved, languages, multilingual, version, onVersionChange, onChange, onSave, busy }: Props) {
+export function LessonTheoryEditor({ value, saved, languages, multilingual, version, onVersionChange, onChange, onSave, onAnimationEditingChange, busy }: Props) {
   const id = useId();
   const textarea = useRef<HTMLTextAreaElement>(null);
   const [view, setView] = useState<View>("split");
   const [copyFrom, setCopyFrom] = useState<TheoryVersion>("base");
+  const [graph, setGraph] = useState<{ start: number; end: number; original: string; version: TheoryVersion; animation: GraphAnimation } | null>(null);
+  const [graphError, setGraphError] = useState("");
   const versions = multilingual
     ? [...COURSE_LANGUAGES.filter(language => languages.includes(language.id)).map(language => ({ id: language.id as TheoryVersion, label: language.label })), { id: "base" as const, label: "Общий текст" }]
     : [{ id: "base" as const, label: "Теория" }];
   const active = versions.find(item => item.id === version) ?? versions[0];
   const text = content(value, active.id);
   const preview = useDeferredValue(text);
+  const graphBlocks = useMemo(() => findGraphBlocks(text), [text]);
+  const locked = busy || graph !== null;
+  const editingAnimation = graph !== null;
   const completed = languages.filter(language => value.contentByLanguage[language]?.trim()).length;
   const sources = versions.filter(item => item.id !== active.id && content(value, item.id).trim());
   const source = sources.find(item => item.id === copyFrom) ?? sources[0];
@@ -45,6 +56,13 @@ export function LessonTheoryEditor({ value, saved, languages, multilingual, vers
     // A new lesson/version should open at its beginning, without carrying over another language's cursor.
     if (textarea.current) { textarea.current.scrollTop = 0; textarea.current.setSelectionRange(0, 0); }
   }, [active.id]);
+
+  useEffect(() => {
+    onAnimationEditingChange(editingAnimation);
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
+    if (editingAnimation) window.addEventListener("beforeunload", warn);
+    return () => { onAnimationEditingChange(false); window.removeEventListener("beforeunload", warn); };
+  }, [editingAnimation, onAnimationEditingChange]);
 
   function update(next: string) {
     onChange(active.id === "base" ? { ...value, contentMd: next }
@@ -64,6 +82,20 @@ export function LessonTheoryEditor({ value, saved, languages, multilingual, vers
     });
   }
 
+  function openGraph(block?: GraphBlockRange) {
+    try {
+      const cursor = textarea.current?.selectionStart ?? text.length;
+      const existing = block ?? graphBlocks.find(item => cursor >= item.start && cursor <= item.end);
+      const start = existing?.start ?? cursor;
+      if (!existing && text.slice(0, start).split("\n").filter(line => line.trim().startsWith("```")).length % 2) {
+        throw new Error("Поставьте курсор вне блока кода, чтобы вставить анимацию.");
+      }
+      setGraph({ start, end: existing?.end ?? start, original: text, version: active.id,
+        animation: existing ? parseGraphAnimation(existing.source) : graphPreset("blank") });
+      setGraphError("");
+    } catch (error) { setGraphError(error instanceof Error ? error.message : "Не удалось открыть блок."); }
+  }
+
   return <section className="min-w-0 overflow-hidden rounded-sm border border-line bg-ink" aria-label="Редактор теории">
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
       <div><h3 className="font-semibold">Теория урока</h3><p className="mt-1 text-xs text-muted">{multilingual ? `${completed} из ${languages.length} языковых версий заполнено. Изменения сохраняются вместе.` : "Markdown и предпросмотр, как в уроке."}</p></div>
@@ -77,7 +109,7 @@ export function LessonTheoryEditor({ value, saved, languages, multilingual, vers
       {versions.map(item => {
         const filled = Boolean(content(value, item.id).trim());
         const changed = content(value, item.id) !== content(saved, item.id);
-        return <button key={item.id} type="button" aria-pressed={active.id === item.id} onClick={() => onVersionChange(item.id)}
+        return <button key={item.id} type="button" disabled={locked} aria-pressed={active.id === item.id} onClick={() => onVersionChange(item.id)}
           title={`${item.label}: ${changed ? "есть несохранённые изменения" : filled ? "текст добавлен" : "пока пусто"}`}
           className={`inline-flex min-h-10 items-center gap-2 rounded-sm border px-3 text-sm focus-visible:outline-acid ${active.id === item.id ? "border-acid bg-acid/10 text-acid" : "border-line text-muted hover:border-white/40 hover:text-paper"}`}>
           {item.label}<span aria-label={changed ? "Не сохранено" : filled ? "Заполнено" : "Пусто"} className={changed ? "text-amber-300" : filled ? "text-acid" : "text-muted"}>{changed ? "●" : filled ? "✓" : "○"}</span>
@@ -90,7 +122,7 @@ export function LessonTheoryEditor({ value, saved, languages, multilingual, vers
         <select aria-label="Откуда скопировать теорию" value={source.id} onChange={event => setCopyFrom(event.target.value as TheoryVersion)} className="min-h-10 min-w-0 border border-line bg-panel px-2 text-paper">
           {sources.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
         </select>
-        <button type="button" disabled={busy} onClick={() => update(content(value, source.id))} className="min-h-10 px-2 text-acid disabled:opacity-40">Взять за основу</button>
+        <button type="button" disabled={locked} onClick={() => update(content(value, source.id))} className="min-h-10 px-2 text-acid disabled:opacity-40">Взять за основу</button>
       </div>}
     </div>
     {view !== "preview" && <div className="flex flex-wrap gap-1 border-b border-line px-3 py-2" aria-label="Форматирование Markdown">
@@ -101,13 +133,23 @@ export function LessonTheoryEditor({ value, saved, languages, multilingual, vers
         { label: "Код", action: () => insert(`\n\`\`\`${fence}\n`, "\n```\n", "Пример кода") },
         { label: "Таблица", action: () => insert("\n", "\n", "| Случай | Оценка |\n| --- | --- |\n| Один проход | O(n) |") },
         { label: "Ссылка", action: () => insert("[", "](https://example.com)", "Название источника") }
-      ].map(item => <button key={item.label} type="button" disabled={busy} onClick={item.action}
+      ].map(item => <button key={item.label} type="button" disabled={locked} onClick={item.action}
         className="min-h-9 rounded-sm px-3 text-xs text-muted hover:bg-white/5 hover:text-paper focus-visible:outline-acid disabled:opacity-40">{item.label}</button>)}
     </div>}
+    <div className="flex flex-wrap gap-2 border-b border-line p-3">
+      <button type="button" disabled={locked} onClick={() => openGraph()} className="min-h-10 rounded-sm border border-line px-3 text-sm text-acid disabled:opacity-40">Анимация</button>
+      {graphBlocks.map((block, index) => <button key={block.start} type="button" disabled={locked} onClick={() => openGraph(block)} className="min-h-10 px-3 text-sm disabled:opacity-40">Изменить анимацию {index + 1}</button>)}
+    </div>
+    {graphError && <p role="alert" className="p-3 text-sm text-red-300">{graphError}</p>}
+    {graph && <GraphAnimationEditor initial={graph.animation} onCancel={() => setGraph(null)} onApply={animation => {
+      if (busy || text !== graph.original || active.id !== graph.version) throw new Error("Теория изменилась. Закройте редактор анимации и откройте его заново, чтобы не потерять изменения.");
+      update(insertGraphBlock(text, graph.start, graph.end, animation));
+      setGraph(null);
+    }} />}
     <div className={`grid min-w-0 ${view === "split" ? "xl:grid-cols-2" : ""}`}>
       {view !== "preview" && <div className="min-w-0">
         <label htmlFor={`${id}-text`} className="block border-b border-line bg-white/[.02] px-4 py-2 text-xs text-muted">Markdown · {active.label}</label>
-        <textarea ref={textarea} id={`${id}-text`} value={text} disabled={busy} spellCheck={false}
+        <textarea ref={textarea} id={`${id}-text`} value={text} disabled={locked} spellCheck={false}
           onChange={event => update(event.target.value)}
           onKeyDown={event => {
             if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") { event.preventDefault(); if (!busy) onSave(); }

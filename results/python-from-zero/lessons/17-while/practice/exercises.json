@@ -1,0 +1,62 @@
+[
+  {
+    "id": "exercise-01",
+    "question": "1. Сколько итераций будет при stock = 0?\n",
+    "answer": "Ноль: условие сразу ложное.\n",
+    "code_file": null,
+    "examples": []
+  },
+  {
+    "id": "exercise-02",
+    "question": "2. Какая строка приближает цикл к завершению?\n",
+    "answer": "remaining -= use. При положительном use она уменьшает остаток.\n",
+    "code_file": null,
+    "examples": []
+  },
+  {
+    "id": "exercise-03",
+    "question": "3. Прочитайте n от 0 до 1000. С помощью while выведите числа от n до 1 отдельными строками.\n",
+    "answer": "Пока текущее число положительно, печатаем и уменьшаем.\n",
+    "code_file": "solutions/exercise-03.py",
+    "examples": [
+      {
+        "id": "main",
+        "input": "3\n",
+        "output": "3\n2\n1\n",
+        "purpose": "Уменьшение"
+      },
+      {
+        "id": "zero",
+        "input": "0\n",
+        "output": "",
+        "purpose": "Сразу конец"
+      }
+    ]
+  },
+  {
+    "id": "exercise-04",
+    "question": "4. Решите исходную задачу без цикла. Проверьте stock = 0 и точную кратность расходу.\n",
+    "answer": "Округление количества дней вверх даёт (stock + use - 1) // use, при нуле тоже получается ноль.\n",
+    "code_file": "solutions/exercise-04.py",
+    "examples": [
+      {
+        "id": "main",
+        "input": "7\n3\n",
+        "output": "3\n",
+        "purpose": "Формула"
+      },
+      {
+        "id": "zero",
+        "input": "0\n3\n",
+        "output": "0\n",
+        "purpose": "Ноль"
+      },
+      {
+        "id": "exact",
+        "input": "6\n3\n",
+        "output": "2\n",
+        "purpose": "Кратность"
+      }
+    ]
+  }
+]

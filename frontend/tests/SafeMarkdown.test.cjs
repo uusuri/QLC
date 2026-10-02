@@ -1,20 +1,23 @@
 const assert = require("node:assert/strict");
-const { readFileSync } = require("node:fs");
 const path = require("node:path");
-const Module = require("node:module");
 const { test } = require("node:test");
-const ts = require("typescript");
 const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
 
 const filename = path.join(__dirname, "../components/SafeMarkdown.tsx");
-const compiled = new Module(filename, module);
-compiled.paths = Module._nodeModulePaths(path.dirname(filename));
-compiled._compile(ts.transpileModule(readFileSync(filename, "utf8"), {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2020 }
-}).outputText, filename);
-const { SafeMarkdown } = compiled.exports;
+const { SafeMarkdown } = require("./load-ts.cjs")(filename);
 const render = (markdown, tone) => renderToStaticMarkup(React.createElement(SafeMarkdown, { markdown, tone }));
+
+test("code text excludes fence language labels when copied or exported", () => {
+  const source = "price = int(input())\n    print(price)";
+  const html = render("```text\n30\n4\n25\n```\n\n```python\n" + source + "\n```");
+  const blocks = [...html.matchAll(/<pre\b[^>]*>([\s\S]*?)<\/pre>/g)];
+  assert.equal(blocks.length, 2);
+  assert.equal(blocks[0][1].replace(/<[^>]*>/g, ""), "30\n4\n25");
+  assert.equal(blocks[1][1].replace(/<[^>]*>/g, ""), source);
+  assert.match(html, /aria-label="Код: python"/);
+  assert.match(html, /data-language="python"/);
+});
 
 test("renders semantic tables with column alignment and inline formatting in both themes", () => {
   for (const tone of ["dark", "paper"]) {
@@ -64,11 +67,61 @@ test("HTML and unsafe link schemes are never executable in a cell", () => {
   assert.match(html, /rel="noopener noreferrer"/);
 });
 
-test("published introduction renders its three tables, two code examples and following sections", () => {
-  const markdown = readFileSync(path.join(__dirname, "../../courses/algorithms/lessons/01.md"), "utf8");
+test("mixed theory keeps tables, code blocks and following sections", () => {
+  const markdown = [
+    "# Сложность алгоритма", "", "| Алгоритм | Оценка |", "| --- | --- |", "| Один проход | O(n) |", "",
+    "```cpp", "for (int i = 0; i < n; ++i) work();", "```", "",
+    "| Чисел | Сравнений |", "| ---: | ---: |", "| 10 | 9 |", "",
+    "```python", "for value in values:", "    work(value)", "```", "",
+    "## Куда уходит память", "", "| Структура | Память |", "| --- | --- |", "| Массив | O(n) |", "",
+    "После таблицы остаётся обычный текст.", "", "[Источник](https://example.com/theory)"
+  ].join("\n");
   const html = render(markdown);
   assert.equal((html.match(/<table\b/g) || []).length, 3);
   assert.equal((html.match(/<pre\b/g) || []).length, 2);
   assert.match(html, /Куда уходит память/);
-  assert.match(html, /https:\/\/education.yandex.ru\/handbook\/algorithms\//);
+  assert.match(html, /После таблицы остаётся обычный текст/);
+  assert.match(html, /href="https:\/\/example.com\/theory"/);
+});
+
+test("course links open a specific practice task in the same window", () => {
+  for (const tone of ["dark", "paper"]) {
+    const html = render("[k-й предок](/lessons/144?task=343)", tone);
+    assert.match(html, /href="\/lessons\/144\?task=343"/);
+    assert.doesNotMatch(html, /target="_blank"/);
+  }
+});
+
+test("relative links cannot turn into protocol-relative or backslash URLs", () => {
+  for (const target of ["//example.com", "/\\example.com", "/lessons\\evil", "javascript:alert", "data:text/html,hello"]) {
+    assert.doesNotMatch(render(`[link](${target})`), /<a\b/);
+  }
+});
+
+test("numbered learning steps render as a semantic list in both themes", () => {
+  for (const tone of ["dark", "paper"]) {
+    const html = render("3. Прочитать **пары**\n4. Вызвать `sort`\n5. [Решить](/lessons/34?task=75)", tone);
+    assert.match(html, /<ol start="3"/);
+    assert.equal((html.match(/<li\b/g) || []).length, 3);
+    assert.match(html, /<strong[^>]*>пары<\/strong>/);
+    assert.match(html, /href="\/lessons\/34\?task=75"/);
+    assert.doesNotMatch(html, /<p\b|3\. Прочитать/);
+  }
+});
+
+test("paragraphs, numbered steps and bullet lists retain their original order", () => {
+  const html = render("До\n1. Первый\n2. Второй\n- Проверка\nПосле");
+  assert.ok(html.indexOf("До") < html.indexOf("<ol"));
+  assert.ok(html.indexOf("</ol>") < html.indexOf("<ul"));
+  assert.ok(html.indexOf("</ul>") < html.indexOf("После"));
+  assert.equal((html.match(/<li\b/g) || []).length, 3);
+});
+
+test("numbered lists end tables and remain literal inside code", () => {
+  const html = render("| Шаг |\n| --- |\n| Данные |\n1) Проверить `a | b`\n\n```text\n1. Это вывод программы\n```");
+  assert.equal((html.match(/<td\b/g) || []).length, 1);
+  assert.match(html, /<ol start="1"/);
+  assert.match(html, /<code[^>]*>a \| b<\/code>/);
+  assert.equal((html.match(/<ol\b/g) || []).length, 1);
+  assert.match(html, /Это вывод программы/);
 });

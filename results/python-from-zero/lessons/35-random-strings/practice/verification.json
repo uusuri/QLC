@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "runner": "Python 3.13.0",
+  "programs": [
+    {
+      "id": "exercise-03",
+      "code_sha256": "319fd8233c27c5bc5bcca754143100accc80dfa021f3b0f1587bac460d7396e9",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "adddb5146a8578f617ab1f5e103c545490e99463d45932ea9375acc4cf905ec1",
+          "actual_output": "52601815\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "zero",
+          "input_sha256": "52f96c26a39ed25108a6db43d6e11c6051eba8a498a5baab1891adfa7ac7c262",
+          "actual_output": "\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "exercise-04",
+      "code_sha256": "c67a3ee2fcf22131fdb481827c1f448690266f06891958815486628060458a55",
+      "cases": [
+        {
+          "id": "yes",
+          "input_sha256": "b118c3e38cdc26566a3fe5fccd537736f9d20583023cd4a08dc39b3505547284",
+          "actual_output": "ДА\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "short",
+          "input_sha256": "edeaaff3f1774ad2888673770c6d64097e391bc362d7d6fb34982ddf0efd18cb",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "foreign",
+          "input_sha256": "faa6e155c9f5ac416ebe9e0a048805ce6b1db31f71f8830a93f15052801342e8",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

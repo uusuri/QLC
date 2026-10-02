@@ -1,0 +1,1086 @@
+{
+  "saved_at_utc": "2026-10-01T07:44:04.241715+00:00",
+  "course_id": 4,
+  "lesson_count": 38,
+  "tasks_count": 152,
+  "types": {
+    "CODE": 76,
+    "TEST": 70,
+    "NUMERIC": 6
+  },
+  "tasks_per_lesson": 4,
+  "theory_has_no_exercises_or_answers": true,
+  "python_runtime_connected": false,
+  "source_code_changed": false,
+  "course_settings_unchanged": true,
+  "other_courses_unchanged": true,
+  "database_readback_verified": true,
+  "all_38_api_task_outlines_verified": true,
+  "browser_verification": "left to user as requested",
+  "lessons": [
+    {
+      "id": 162,
+      "number": 1,
+      "name": "Что такое программа и как её запустить",
+      "content_sha256": "362e5b14963e6c2d62ffa3b2d8984929909211c25257138f963b347af2bba32b",
+      "tasks": [
+        {
+          "id": 357,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/162?task=357"
+        },
+        {
+          "id": 358,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/162?task=358"
+        },
+        {
+          "id": 359,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/162?task=359"
+        },
+        {
+          "id": 360,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/162?task=360"
+        }
+      ]
+    },
+    {
+      "id": 163,
+      "number": 2,
+      "name": "Вывод: несколько значений, sep и end",
+      "content_sha256": "62c2c6b06e638f18bf216158b32504f5b9b679f16fe17d731d1781248f1599e1",
+      "tasks": [
+        {
+          "id": 361,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/163?task=361"
+        },
+        {
+          "id": 362,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/163?task=362"
+        },
+        {
+          "id": 363,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/163?task=363"
+        },
+        {
+          "id": 364,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/163?task=364"
+        }
+      ]
+    },
+    {
+      "id": 164,
+      "number": 3,
+      "name": "Ввод, переменные и присваивание",
+      "content_sha256": "efc6253b790e6514627e14f0309c5a46928fe55a37cf3f11d4aa70232b1d871c",
+      "tasks": [
+        {
+          "id": 365,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/164?task=365"
+        },
+        {
+          "id": 366,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/164?task=366"
+        },
+        {
+          "id": 367,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/164?task=367"
+        },
+        {
+          "id": 368,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/164?task=368"
+        }
+      ]
+    },
+    {
+      "id": 165,
+      "number": 4,
+      "name": "Текст и числа: типы и преобразование",
+      "content_sha256": "5d73cd3c21ba103d8af8abe90c89e2ae053ec89e32956e8c990dd25593b0f796",
+      "tasks": [
+        {
+          "id": 369,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/165?task=369"
+        },
+        {
+          "id": 370,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/165?task=370"
+        },
+        {
+          "id": 371,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/165?task=371"
+        },
+        {
+          "id": 372,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/165?task=372"
+        }
+      ]
+    },
+    {
+      "id": 166,
+      "number": 5,
+      "name": "Арифметика, выражения и порядок вычислений",
+      "content_sha256": "9837d5fe9f204f886b64f34bed75f4fcd24b65a6c004fa8272b7418a798e4a6e",
+      "tasks": [
+        {
+          "id": 373,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/166?task=373"
+        },
+        {
+          "id": 374,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/166?task=374"
+        },
+        {
+          "id": 375,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/166?task=375"
+        },
+        {
+          "id": 376,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/166?task=376"
+        }
+      ]
+    },
+    {
+      "id": 167,
+      "number": 6,
+      "name": "Целое деление, остаток и цифры",
+      "content_sha256": "3330f8f547239cc1bdf051996ce7f98e5bb649dc13bc2046a5eab0c529ce19e6",
+      "tasks": [
+        {
+          "id": 377,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/167?task=377"
+        },
+        {
+          "id": 378,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/167?task=378"
+        },
+        {
+          "id": 379,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/167?task=379"
+        },
+        {
+          "id": 380,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/167?task=380"
+        }
+      ]
+    },
+    {
+      "id": 168,
+      "number": 7,
+      "name": "Как читать ошибки и проверять вычисления",
+      "content_sha256": "46213c1e09a653da597ae2b6dc4b61398fa35200c0735692e5ee0bd86639cbb1",
+      "tasks": [
+        {
+          "id": 381,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/168?task=381"
+        },
+        {
+          "id": 382,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/168?task=382"
+        },
+        {
+          "id": 383,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/168?task=383"
+        },
+        {
+          "id": 384,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/168?task=384"
+        }
+      ]
+    },
+    {
+      "id": 169,
+      "number": 8,
+      "name": "Сравнения и выбор: if и else",
+      "content_sha256": "5f4a17f83947008d52ad45efeef50df8763305dc5611f628ed4367f6489cc541",
+      "tasks": [
+        {
+          "id": 385,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/169?task=385"
+        },
+        {
+          "id": 386,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/169?task=386"
+        },
+        {
+          "id": 387,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/169?task=387"
+        },
+        {
+          "id": 388,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/169?task=388"
+        }
+      ]
+    },
+    {
+      "id": 170,
+      "number": 9,
+      "name": "Несколько вариантов: elif и вложенные условия",
+      "content_sha256": "b365bb3fba9a185dc2d27edfdbecc7601d5abefe585fbc3ec2f3fd678f5638a6",
+      "tasks": [
+        {
+          "id": 389,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/170?task=389"
+        },
+        {
+          "id": 390,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/170?task=390"
+        },
+        {
+          "id": 391,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/170?task=391"
+        },
+        {
+          "id": 392,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/170?task=392"
+        }
+      ]
+    },
+    {
+      "id": 171,
+      "number": 10,
+      "name": "Составные условия: and, or и not",
+      "content_sha256": "2c6ac9b1d28edadc403709b7791ed423d34ae5a09e219ee555abc88f2ddf0bc2",
+      "tasks": [
+        {
+          "id": 393,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/171?task=393"
+        },
+        {
+          "id": 394,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/171?task=394"
+        },
+        {
+          "id": 395,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/171?task=395"
+        },
+        {
+          "id": 396,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/171?task=396"
+        }
+      ]
+    },
+    {
+      "id": 172,
+      "number": 11,
+      "name": "Составляем решение: календарь и проверка правил",
+      "content_sha256": "f92c906b5ea8832a3b28b3fd95f9cca7d1e72858d8574a479cdeda869b98c7ab",
+      "tasks": [
+        {
+          "id": 397,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/172?task=397"
+        },
+        {
+          "id": 398,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/172?task=398"
+        },
+        {
+          "id": 399,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/172?task=399"
+        },
+        {
+          "id": 400,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/172?task=400"
+        }
+      ]
+    },
+    {
+      "id": 173,
+      "number": 12,
+      "name": "Дробные числа и формат результата",
+      "content_sha256": "c3a0169da87b729b12c4793ca02f903df93819d813c71500e9b0ba9fb26882be",
+      "tasks": [
+        {
+          "id": 401,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/173?task=401"
+        },
+        {
+          "id": 402,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/173?task=402"
+        },
+        {
+          "id": 403,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/173?task=403"
+        },
+        {
+          "id": 404,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/173?task=404"
+        }
+      ]
+    },
+    {
+      "id": 174,
+      "number": 13,
+      "name": "Готовые функции: abs, min, max и math",
+      "content_sha256": "e794cc1883022966663672ac5367a9808e97096a9557e2ab7f06813b1636a51d",
+      "tasks": [
+        {
+          "id": 405,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/174?task=405"
+        },
+        {
+          "id": 406,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/174?task=406"
+        },
+        {
+          "id": 407,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/174?task=407"
+        },
+        {
+          "id": 408,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/174?task=408"
+        }
+      ]
+    },
+    {
+      "id": 175,
+      "number": 14,
+      "name": "Повторение известное число раз: for и range",
+      "content_sha256": "323ef694ea2fb3f6ee4fc0292bf3b7871fbdb3ad6f521c6bba4a243e3d8402af",
+      "tasks": [
+        {
+          "id": 409,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/175?task=409"
+        },
+        {
+          "id": 410,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/175?task=410"
+        },
+        {
+          "id": 411,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/175?task=411"
+        },
+        {
+          "id": 412,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/175?task=412"
+        }
+      ]
+    },
+    {
+      "id": 176,
+      "number": 15,
+      "name": "Сумма и счётчик: сохраняем результат между шагами",
+      "content_sha256": "034122af1bedcc0f10f11e3c2b8fa81704babecd8e850eedf1c63f19b7b5255a",
+      "tasks": [
+        {
+          "id": 413,
+          "type": "NUMERIC",
+          "url": "http://localhost:3000/lessons/176?task=413"
+        },
+        {
+          "id": 414,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/176?task=414"
+        },
+        {
+          "id": 415,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/176?task=415"
+        },
+        {
+          "id": 416,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/176?task=416"
+        }
+      ]
+    },
+    {
+      "id": 177,
+      "number": 16,
+      "name": "Наибольшее значение: правильно выбираем начало",
+      "content_sha256": "3408a2dbf9e871d6871977c76a776960be3114ba220becaaf9ed3d20decf624b",
+      "tasks": [
+        {
+          "id": 417,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/177?task=417"
+        },
+        {
+          "id": 418,
+          "type": "NUMERIC",
+          "url": "http://localhost:3000/lessons/177?task=418"
+        },
+        {
+          "id": 419,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/177?task=419"
+        },
+        {
+          "id": 420,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/177?task=420"
+        }
+      ]
+    },
+    {
+      "id": 178,
+      "number": 17,
+      "name": "Повторение до выполнения условия: while",
+      "content_sha256": "2e95b61b64530e3cc7d68d1874608171d0e0ebb78c2092f6a450c4c78cdd75e5",
+      "tasks": [
+        {
+          "id": 421,
+          "type": "NUMERIC",
+          "url": "http://localhost:3000/lessons/178?task=421"
+        },
+        {
+          "id": 422,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/178?task=422"
+        },
+        {
+          "id": 423,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/178?task=423"
+        },
+        {
+          "id": 424,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/178?task=424"
+        }
+      ]
+    },
+    {
+      "id": 179,
+      "number": 18,
+      "name": "Ввод до сигнала остановки: break и continue",
+      "content_sha256": "524c4c828ba2e61855d6ac39023804de011cc8a9f49d6ebdf0ef57345588a5d2",
+      "tasks": [
+        {
+          "id": 425,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/179?task=425"
+        },
+        {
+          "id": 426,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/179?task=426"
+        },
+        {
+          "id": 427,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/179?task=427"
+        },
+        {
+          "id": 428,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/179?task=428"
+        }
+      ]
+    },
+    {
+      "id": 180,
+      "number": 19,
+      "name": "Цикл по цифрам числа",
+      "content_sha256": "a311b7fc09afe8961187cd006f4b3b3c0bf965ed02122635264c075865e40b21",
+      "tasks": [
+        {
+          "id": 429,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/180?task=429"
+        },
+        {
+          "id": 430,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/180?task=430"
+        },
+        {
+          "id": 431,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/180?task=431"
+        },
+        {
+          "id": 432,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/180?task=432"
+        }
+      ]
+    },
+    {
+      "id": 181,
+      "number": 20,
+      "name": "Вложенные циклы и таблицы",
+      "content_sha256": "0ad1810d45626e59453389cdc08c492c976473297248ae74b36285b43406681e",
+      "tasks": [
+        {
+          "id": 433,
+          "type": "NUMERIC",
+          "url": "http://localhost:3000/lessons/181?task=433"
+        },
+        {
+          "id": 434,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/181?task=434"
+        },
+        {
+          "id": 435,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/181?task=435"
+        },
+        {
+          "id": 436,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/181?task=436"
+        }
+      ]
+    },
+    {
+      "id": 182,
+      "number": 21,
+      "name": "Перебор кандидатов: делители и простые числа",
+      "content_sha256": "2084f1d538698678e3a9bc3bf26a1bab136b206f27b15f40ca2a42dcf5501450",
+      "tasks": [
+        {
+          "id": 437,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/182?task=437"
+        },
+        {
+          "id": 438,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/182?task=438"
+        },
+        {
+          "id": 439,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/182?task=439"
+        },
+        {
+          "id": 440,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/182?task=440"
+        }
+      ]
+    },
+    {
+      "id": 183,
+      "number": 22,
+      "name": "Строка как последовательность: длина и индексы",
+      "content_sha256": "4079fa92285112f9b6e53528a3d004b1fa3e3cf074b3672784e5d6ba54f8d7a1",
+      "tasks": [
+        {
+          "id": 441,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/183?task=441"
+        },
+        {
+          "id": 442,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/183?task=442"
+        },
+        {
+          "id": 443,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/183?task=443"
+        },
+        {
+          "id": 444,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/183?task=444"
+        }
+      ]
+    },
+    {
+      "id": 184,
+      "number": 23,
+      "name": "Срезы и проверка палиндрома",
+      "content_sha256": "bbf8db4ac6d75c1e0cc9c9c660e389d88a99d9e94b0f757369678aff87b067fc",
+      "tasks": [
+        {
+          "id": 445,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/184?task=445"
+        },
+        {
+          "id": 446,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/184?task=446"
+        },
+        {
+          "id": 447,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/184?task=447"
+        },
+        {
+          "id": 448,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/184?task=448"
+        }
+      ]
+    },
+    {
+      "id": 185,
+      "number": 24,
+      "name": "Методы строк: очистка, регистр и замена",
+      "content_sha256": "4bd9d117bf68701395d2f7c3212495676620f4856df381fa9b9687155afc16b2",
+      "tasks": [
+        {
+          "id": 449,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/185?task=449"
+        },
+        {
+          "id": 450,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/185?task=450"
+        },
+        {
+          "id": 451,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/185?task=451"
+        },
+        {
+          "id": 452,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/185?task=452"
+        }
+      ]
+    },
+    {
+      "id": 186,
+      "number": 25,
+      "name": "Поиск, подсчёт и построение строки",
+      "content_sha256": "e1abd55c3a9e78a41b640be8b744bd65009757bc4ed39a22e1dd769c50ccf208",
+      "tasks": [
+        {
+          "id": 453,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/186?task=453"
+        },
+        {
+          "id": 454,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/186?task=454"
+        },
+        {
+          "id": 455,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/186?task=455"
+        },
+        {
+          "id": 456,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/186?task=456"
+        }
+      ]
+    },
+    {
+      "id": 187,
+      "number": 26,
+      "name": "Разбиваем текст на слова: split и join",
+      "content_sha256": "d3863dab77b0ef3e6140618674941ad74eb8b6ff22e405de8490139e5d22f4ec",
+      "tasks": [
+        {
+          "id": 457,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/187?task=457"
+        },
+        {
+          "id": 458,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/187?task=458"
+        },
+        {
+          "id": 459,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/187?task=459"
+        },
+        {
+          "id": 460,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/187?task=460"
+        }
+      ]
+    },
+    {
+      "id": 188,
+      "number": 27,
+      "name": "Списки: создаём и храним несколько значений",
+      "content_sha256": "cfce1ec4d39021e7cc1b69d65ad6ab283fb0cdd7bcd6382d112c7583fb1e611e",
+      "tasks": [
+        {
+          "id": 461,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/188?task=461"
+        },
+        {
+          "id": 462,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/188?task=462"
+        },
+        {
+          "id": 463,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/188?task=463"
+        },
+        {
+          "id": 464,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/188?task=464"
+        }
+      ]
+    },
+    {
+      "id": 189,
+      "number": 28,
+      "name": "Изменение списков, общие ссылки и копии",
+      "content_sha256": "7c06a0cb14076ccac5ba07bcc4735096833eada41aa0fd6ce15807f9a93569ab",
+      "tasks": [
+        {
+          "id": 465,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/189?task=465"
+        },
+        {
+          "id": 466,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/189?task=466"
+        },
+        {
+          "id": 467,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/189?task=467"
+        },
+        {
+          "id": 468,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/189?task=468"
+        }
+      ]
+    },
+    {
+      "id": 190,
+      "number": 29,
+      "name": "Отбор, поиск и сортировка списка",
+      "content_sha256": "8f65f410472bcc3bd9c008535d5cb3188f22a1bf66ff575226b7565bfee04dd6",
+      "tasks": [
+        {
+          "id": 469,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/190?task=469"
+        },
+        {
+          "id": 470,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/190?task=470"
+        },
+        {
+          "id": 471,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/190?task=471"
+        },
+        {
+          "id": 472,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/190?task=472"
+        }
+      ]
+    },
+    {
+      "id": 191,
+      "number": 30,
+      "name": "Списковые включения: короткая запись знакомого цикла",
+      "content_sha256": "4e6870502a3ae11148d343aef5a5ffad3b6551635a392198938a7a79c54b2a46",
+      "tasks": [
+        {
+          "id": 473,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/191?task=473"
+        },
+        {
+          "id": 474,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/191?task=474"
+        },
+        {
+          "id": 475,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/191?task=475"
+        },
+        {
+          "id": 476,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/191?task=476"
+        }
+      ]
+    },
+    {
+      "id": 192,
+      "number": 31,
+      "name": "Свои функции: отделяем действие и вызываем его",
+      "content_sha256": "d2eccf39f6b70bb6f73af494c89033922576b847c10d5fd4e2dacee4f805a21f",
+      "tasks": [
+        {
+          "id": 477,
+          "type": "NUMERIC",
+          "url": "http://localhost:3000/lessons/192?task=477"
+        },
+        {
+          "id": 478,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/192?task=478"
+        },
+        {
+          "id": 479,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/192?task=479"
+        },
+        {
+          "id": 480,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/192?task=480"
+        }
+      ]
+    },
+    {
+      "id": 193,
+      "number": 32,
+      "name": "Возвращаем результат: return, локальные имена и параметры",
+      "content_sha256": "10c30b1993e045ef712946739ffe3e192a3ac6f3ba91880ed53e124e0139d2c6",
+      "tasks": [
+        {
+          "id": 481,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/193?task=481"
+        },
+        {
+          "id": 482,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/193?task=482"
+        },
+        {
+          "id": 483,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/193?task=483"
+        },
+        {
+          "id": 484,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/193?task=484"
+        }
+      ]
+    },
+    {
+      "id": 194,
+      "number": 33,
+      "name": "Неверный ввод и проверка функций",
+      "content_sha256": "1e2f786f0f99ba8ecc68f1e7f105ed0a43481e74fd67fbc95fa9a6484d9a4773",
+      "tasks": [
+        {
+          "id": 485,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/194?task=485"
+        },
+        {
+          "id": 486,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/194?task=486"
+        },
+        {
+          "id": 487,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/194?task=487"
+        },
+        {
+          "id": 488,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/194?task=488"
+        }
+      ]
+    },
+    {
+      "id": 195,
+      "number": 34,
+      "name": "Мини-проект: угадай число",
+      "content_sha256": "acc694fa772a405ae00f18584b1d77fd2037eddaab2c0da9770fade35b5e9662",
+      "tasks": [
+        {
+          "id": 489,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/195?task=489"
+        },
+        {
+          "id": 490,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/195?task=490"
+        },
+        {
+          "id": 491,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/195?task=491"
+        },
+        {
+          "id": 492,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/195?task=492"
+        }
+      ]
+    },
+    {
+      "id": 196,
+      "number": 35,
+      "name": "Мини-проект: учебный генератор паролей",
+      "content_sha256": "38653e2dcd84ca34a7a15049e75b10f96e172ee6880715eb42b038c1b7d98d89",
+      "tasks": [
+        {
+          "id": 493,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/196?task=493"
+        },
+        {
+          "id": 494,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/196?task=494"
+        },
+        {
+          "id": 495,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/196?task=495"
+        },
+        {
+          "id": 496,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/196?task=496"
+        }
+      ]
+    },
+    {
+      "id": 197,
+      "number": 36,
+      "name": "Мини-проект: шифр Цезаря и круговой сдвиг",
+      "content_sha256": "943d8c002f577aa3c876f565d4a18620bbf9f4a1b2e0c1712d413de092b7fa98",
+      "tasks": [
+        {
+          "id": 497,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/197?task=497"
+        },
+        {
+          "id": 498,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/197?task=498"
+        },
+        {
+          "id": 499,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/197?task=499"
+        },
+        {
+          "id": 500,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/197?task=500"
+        }
+      ]
+    },
+    {
+      "id": 198,
+      "number": 37,
+      "name": "Мини-проект: системы счисления",
+      "content_sha256": "ca33b9d69e1703c36f5bd3e256472191426eb36331afe26495ef700af0783f62",
+      "tasks": [
+        {
+          "id": 501,
+          "type": "NUMERIC",
+          "url": "http://localhost:3000/lessons/198?task=501"
+        },
+        {
+          "id": 502,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/198?task=502"
+        },
+        {
+          "id": 503,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/198?task=503"
+        },
+        {
+          "id": 504,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/198?task=504"
+        }
+      ]
+    },
+    {
+      "id": 199,
+      "number": 38,
+      "name": "Итоговый проект: учёт расходов",
+      "content_sha256": "444b4a4860a40749ceb39d3b0c9612a8c22d28033c0e98b9aee4744be37c3ccc",
+      "tasks": [
+        {
+          "id": 505,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/199?task=505"
+        },
+        {
+          "id": 506,
+          "type": "TEST",
+          "url": "http://localhost:3000/lessons/199?task=506"
+        },
+        {
+          "id": 507,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/199?task=507"
+        },
+        {
+          "id": 508,
+          "type": "CODE",
+          "url": "http://localhost:3000/lessons/199?task=508"
+        }
+      ]
+    }
+  ]
+}

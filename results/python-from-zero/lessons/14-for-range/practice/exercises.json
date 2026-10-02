@@ -1,0 +1,50 @@
+[
+  {
+    "id": "exercise-01",
+    "question": "1. Перечислите значения range(1, 7, 2).\n",
+    "answer": "1, 3, 5. Число 7 исключено.\n",
+    "code_file": null,
+    "examples": []
+  },
+  {
+    "id": "exercise-02",
+    "question": "2. Почему range(5, 1) пуст, а range(5, 1, -1) нет?\n",
+    "answer": "Первый диапазон пытается идти вверх от 5 до меньшей границы. Второй идёт вниз и выдаёт 5, 4, 3, 2.\n",
+    "code_file": null,
+    "examples": []
+  },
+  {
+    "id": "exercise-03",
+    "question": "3. Прочитайте n от 0 до 1000 и выведите квадраты чисел от 1 до n отдельными строками.\n",
+    "answer": "Для каждого текущего числа вычисляем его квадрат.\n",
+    "code_file": "solutions/exercise-03.py",
+    "examples": [
+      {
+        "id": "main",
+        "input": "3\n",
+        "output": "1\n4\n9\n",
+        "purpose": "Квадраты"
+      },
+      {
+        "id": "empty",
+        "input": "0\n",
+        "output": "",
+        "purpose": "Пусто"
+      }
+    ]
+  },
+  {
+    "id": "exercise-04",
+    "question": "4. Прочитайте n от 1 до 1000 и выведите обратный отсчёт от n до 1 отдельными строками.\n",
+    "answer": "Конец 0 исключён, шаг отрицательный.\n",
+    "code_file": "solutions/exercise-04.py",
+    "examples": [
+      {
+        "id": "main",
+        "input": "3\n",
+        "output": "3\n2\n1\n",
+        "purpose": "Обратный отсчёт"
+      }
+    ]
+  }
+]

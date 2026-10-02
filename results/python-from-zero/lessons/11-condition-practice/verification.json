@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "language": "PYTHON311",
+      "code_sha256": "fa85f1de89dc5898e14237afa42144e00e0b766742fec2bac31106a796b2f5f6",
+      "runner": "Python 3.13.0; /Library/Frameworks/Python.framework/Versions/3.13/bin/python3 code/PYTHON311/main.py",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "d95de32e35db0930d05bbacd357308bc936397e2dc515baed89b59f51a5211e4",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "four",
+          "input_sha256": "6ab644c6afd18e302c5aeddddf112fb7aad1b34de26bb35fd4aead5f21296540",
+          "actual_output": "ДА\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "four-hundred",
+          "input_sha256": "1d8fa3c8ab49d50b30fccbbd901735d5896a5d7959a5ad7ccecb79c1c849cc66",
+          "actual_output": "ДА\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "ordinary",
+          "input_sha256": "4c4a7bdb988f50b1955b22645128a7a689060d6e4cd69612b5c408728c65e6cf",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "first",
+          "input_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+          "actual_output": "НЕТ\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "runner": "Python 3.13.0",
+  "programs": [
+    {
+      "id": "exercise-03",
+      "code_sha256": "fc1e842bb5778d69095c5774eb78b0e326b857ce2c167b89148ffda56703b16e",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "0e60e83c810f5a61560d0f86c2e250db87bb98d0adb500dac7fb1f58cfd842d5",
+          "actual_output": "6\n2 4\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "one",
+          "input_sha256": "aa67a169b0bba217aa0aa88a65346920c84c42447c36ba5f7ea65f422c1fe5d8",
+          "actual_output": "8\n\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "exercise-04",
+      "code_sha256": "a0d534bd5b6f36e27c17d203ef8103f39eabb71fba52d62db818633ea0f6d422",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "858d60e9521eb723dad1774092fbc922c2799d7dd825862fd5da2a39dba47bd3",
+          "actual_output": "-1 2\n0 3\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

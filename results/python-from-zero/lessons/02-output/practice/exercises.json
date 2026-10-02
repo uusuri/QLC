@@ -1,0 +1,44 @@
+[
+  {
+    "id": "exercise-01",
+    "question": "1. Что напечатает print('1', '2', '3', sep='-')?\n",
+    "answer": "1-2-3. Два разделителя соединяют три части.\n",
+    "code_file": null,
+    "examples": []
+  },
+  {
+    "id": "exercise-02",
+    "question": "2. Чем отличаются sep=' ' и end=' '?\n",
+    "answer": "sep действует между аргументами одного print. end действует после последнего аргумента и влияет на начало вывода следующего print.\n",
+    "code_file": null,
+    "examples": []
+  },
+  {
+    "id": "exercise-03",
+    "question": "3. Напечатайте дату 01/10/2026 из трёх отдельных строковых аргументов.\n",
+    "answer": "Разделитель — косая черта.\n",
+    "code_file": "solutions/exercise-03.py",
+    "examples": [
+      {
+        "id": "main",
+        "input": "",
+        "output": "01/10/2026\n",
+        "purpose": "Настройка sep"
+      }
+    ]
+  },
+  {
+    "id": "exercise-04",
+    "question": "4. Двумя вызовами print напечатайте AB на одной строке, без пробела.\n",
+    "answer": "Первый print не завершает строку.\n",
+    "code_file": "solutions/exercise-04.py",
+    "examples": [
+      {
+        "id": "main",
+        "input": "",
+        "output": "AB\n",
+        "purpose": "Пустой end"
+      }
+    ]
+  }
+]

@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "language": "PYTHON311",
+      "code_sha256": "356b256ccf992b01f19f81a4ebcaaab228814e06f4b05e2750628acd355ff704",
+      "runner": "Python 3.13.0; /Library/Frameworks/Python.framework/Versions/3.13/bin/python3 code/PYTHON311/main.py",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "917df3320d778ddbaa5c5c7742bc4046bf803c36ed2b050f30844ed206783469",
+          "actual_output": "ПРОХЛАДНО\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "negative",
+          "input_sha256": "ee3aa64bb94a50845d5024cd4bd20202a4567aed5cd5328c0d97e9920775fc28",
+          "actual_output": "МОРОЗ\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "zero",
+          "input_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+          "actual_output": "ПРОХЛАДНО\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "nineteen",
+          "input_sha256": "a9742eb8ee320e006666aef25ae9aeed948247f3125c9cafa7cf97b7e7467dd5",
+          "actual_output": "ПРОХЛАДНО\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "twenty",
+          "input_sha256": "5378796307535df3ec8d8b15a2e2dc5641419c3d3060cfe32238c0fa973f7aa3",
+          "actual_output": "ТЕПЛО\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

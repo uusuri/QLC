@@ -1,0 +1,233 @@
+{
+  "lessons": [
+    {
+      "lesson": 1,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "f4daaff71d773f730a383d91208e3dd1c79b8645f4d402e2337df53489e87b49"
+    },
+    {
+      "lesson": 2,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "4489d14ad9b9be8dfa93143f91591dd896d318f22c26a9308be18974327c4dcb"
+    },
+    {
+      "lesson": 3,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "dfa176cf34690b253a5d5e3e1f2bb6bb6104b0420fdc652ac24a72bdb301541a"
+    },
+    {
+      "lesson": 4,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "981b377dbec3eeb9bf326aa319eccf29f1397dc1ffccd19023808c0e8db87f50"
+    },
+    {
+      "lesson": 5,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "4d44d67edaa778204f774d4c37aab3e0fb5d29724b8a4b6e8830af3989dcddb2"
+    },
+    {
+      "lesson": 6,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "8a5924e79fd10ea1f01537e482d93dcb3bc178e706ae118f17e6bc5d5bcde9d1"
+    },
+    {
+      "lesson": 7,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "94698dd584e81ff071116c542d3ed3da64c0a9cb99ad8ca3e14e7feb5c7dbf31"
+    },
+    {
+      "lesson": 8,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "96d26346422ea0646c38f757ac3a5ef1a4620c8aa15d4c7328b4a33d3b72f8df"
+    },
+    {
+      "lesson": 9,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "dbbeaf1089d4c13776455fb7917217b17d0ddf30eb2c9bf6a02e0c2c452b47ec"
+    },
+    {
+      "lesson": 10,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "a479f85385ce5b5412f44aecee6fc96e135493089288021f7af0333ddc0dbdce"
+    },
+    {
+      "lesson": 11,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "de108c7ad965b67ad04933c23aae7744e852629941b2f147c920479c784ec1fe"
+    },
+    {
+      "lesson": 12,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "412c19e08dcef0d750acb0353b90bc09bb0503a2cc2a65922e00cc78631997a1"
+    },
+    {
+      "lesson": 13,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "9e195f81bc29ff2b59d11944289bc88be009eb1b8cd2cb904cc8a56ee2d53d71"
+    },
+    {
+      "lesson": 14,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "037e681514ac500ca128913c24ae04cf70f8b22275467df543cc15f6619d90f0"
+    },
+    {
+      "lesson": 15,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "3f6a2a6fb6537014970764d808e42069a68579dce2a56503a190f73f6a2ef453"
+    },
+    {
+      "lesson": 16,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "5991131c69f536bf28f8b33aef7cc00d01e309d88f1c0cf9c5c99ee44a72cce0"
+    },
+    {
+      "lesson": 17,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "dbb64ea8ba1b80588471e0313fd64851ea88ef68a162a569ba2223ad742b6034"
+    },
+    {
+      "lesson": 18,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "20dc5dc0d03130484051362be01b8b40eca9a2647fc46b25b4fd1d5c26913fea"
+    },
+    {
+      "lesson": 19,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "aa9264ba41bd4fd063eff827f59d6760881f2755832bcdc506d32524cc2497ea"
+    },
+    {
+      "lesson": 20,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "812d814ecd9b70ba641ba403a5eb286b0e9cf3d295111235f4d57142a1f0dad1"
+    },
+    {
+      "lesson": 21,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "7e72464ebda0147a2168d6923852a382350e5dcff2552e3934236d75fa236d43"
+    },
+    {
+      "lesson": 22,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "af06f4ab3e96ee7deb078ab5a1f4707742ad1a8c3f8a3917d312c5734e5033a2"
+    },
+    {
+      "lesson": 23,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "9cb8037570e0e77f4e39866068f93d6c5315f1531ec5dab57fd62dff87f08465"
+    },
+    {
+      "lesson": 24,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "3515feba33feb10591f1434b0f40f9f10804b6fbdafe637da15ff2c94bd55dfa"
+    },
+    {
+      "lesson": 25,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "bd232ea316b1bf23b85c4ec3efb007d3df83168f35ef8da16e296a0af82be673"
+    },
+    {
+      "lesson": 26,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "3b55c389fde6c3408eca1fbef452046fd1a50ea55c4c64e8ec2ac212c7dde05e"
+    },
+    {
+      "lesson": 27,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "58691865e274ef78a01d283d169bdd279e0942ae54ab206fa0aeb9dd0209b24c"
+    },
+    {
+      "lesson": 28,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "be0aa83ead1f50afc4e3211fe71ad455f1162bdf5f9c33ef3029370b0df5c2ee"
+    },
+    {
+      "lesson": 29,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "81820b3af6f7d4453aa95b304fe55aca62fc7d15942d1166b455f9ca439bf182"
+    },
+    {
+      "lesson": 30,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "667104d95148bcbd6682440d5b2271f45b775b0ba34d9d62361a95ef08f914bc"
+    },
+    {
+      "lesson": 31,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "9bc52794df23a54705c3caa1362ad709a8b69138a2d28c1baac2fa256d44715a"
+    },
+    {
+      "lesson": 32,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "3b69ece82357e741be2d35a3391b6711e3cc15b1081558bd295e65e7fc9ec6ce"
+    },
+    {
+      "lesson": 33,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "3f93ba15c5a8d63a9911281b7907285708d97cdd37cedcd0b6ea9ae8bc8e4ed1"
+    },
+    {
+      "lesson": 34,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "6b08b6f686b6c13ed4dc8ea30d30cb5403ee19ec0ab10fe5e15bf9a77c9202b0"
+    },
+    {
+      "lesson": 35,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "98f14b7134d382d7c13bb4add6fcd6cd43924c2738744e05e1be20f59cf61655"
+    },
+    {
+      "lesson": 36,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "3e7121690c243b4758309b33508f817bd9d116c915eed67b1bce29653f9cf34f"
+    },
+    {
+      "lesson": 37,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "c40df4f0aeaa86eff8d5bba1cba0274604114bdb6486cb176d599fac7c70d5e2"
+    },
+    {
+      "lesson": 38,
+      "collected_text_matches": true,
+      "current_code_hashes_match_runs": true,
+      "theory_sha256": "a96edafde9edcd7d1d9a952757e7105ccf56bd8a05e48c41dc445abe90ad3180"
+    }
+  ],
+  "remaining": []
+}

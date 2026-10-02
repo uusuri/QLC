@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "language": "PYTHON311",
+      "code_sha256": "ff3f1b9d1281741f339958ff700787f48068622e0d1a6eb4fe91e469babc2ced",
+      "runner": "Python 3.13.0; /Library/Frameworks/Python.framework/Versions/3.13/bin/python3 code/PYTHON311/main.py",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "9b0723e846ca1f7470dc1b7455d2a32f62e66b1a6e64c39b493fcca47e1fd9b1",
+          "actual_output": "БОЛЬШЕ\nМЕНЬШЕ\nУГАДАНО 3\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "first",
+          "input_sha256": "c336a3c6bb13cdc3315f0be4a2ed1df748fce9a877931bbab0ef4315ee613371",
+          "actual_output": "УГАДАНО 1\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "loss",
+          "input_sha256": "2acfb0e49a11df5040471de5577c04701064070145bf43907fcf2d29b2b94874",
+          "actual_output": "БОЛЬШЕ\nМЕНЬШЕ\nПОПЫТКИ ЗАКОНЧИЛИСЬ\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "upper",
+          "input_sha256": "ee776e94b242365381f8ff550dc7865c851f9c3d186cc1f61891adff61951431",
+          "actual_output": "УГАДАНО 1\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

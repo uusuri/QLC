@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "runner": "Python 3.13.0",
+  "programs": [
+    {
+      "id": "exercise-03",
+      "code_sha256": "fc116d3cef4f5550573f906544727d7880cb3abb94057ce310b5097bbca3d224",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "ebf7326e0ecec6c521639eb41e734b3bf87ebf17f6c5da4383663fa13e544a97",
+          "actual_output": "к\nо\nт\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "empty",
+          "input_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "actual_output": "",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "exercise-04",
+      "code_sha256": "696d4ef9fe145059d2b0e8ccd8b93ee7066f3d0cb4cc79914af74d57fa4370af",
+      "cases": [
+        {
+          "id": "odd",
+          "input_sha256": "ebf7326e0ecec6c521639eb41e734b3bf87ebf17f6c5da4383663fa13e544a97",
+          "actual_output": "о\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "even",
+          "input_sha256": "c039725512ade8aa642c9040fedc57758d1a12c7f4a1d954c915bd0b68921beb",
+          "actual_output": "ДВА СРЕДНИХ\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

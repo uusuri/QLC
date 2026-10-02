@@ -1,0 +1,332 @@
+{
+  "saved_at_utc": "2026-09-30T22:34:39.165406+00:00",
+  "course_id": 4,
+  "course_url": "http://localhost:3000/courses/course-4",
+  "first_lesson_url": "http://localhost:3000/lessons/162",
+  "published": true,
+  "language": "PYTHON311",
+  "price": "0.00",
+  "module_count": 8,
+  "lesson_count": 38,
+  "exercises_in_lesson_materials": 152,
+  "automatic_tasks": 0,
+  "existing_course_ids": [
+    1,
+    2,
+    3
+  ],
+  "existing_content_unchanged": true,
+  "catalog_verified": true,
+  "homepage_http_verified": true,
+  "browser_verification": "left to user as requested",
+  "modules": [
+    {
+      "id": 47,
+      "name": "Первые программы и ввод-вывод",
+      "position": 1
+    },
+    {
+      "id": 48,
+      "name": "Условия и логические правила",
+      "position": 2
+    },
+    {
+      "id": 49,
+      "name": "Типы данных и готовые числовые операции",
+      "position": 3
+    },
+    {
+      "id": 50,
+      "name": "Циклы и простые алгоритмы",
+      "position": 4
+    },
+    {
+      "id": 51,
+      "name": "Строки и обработка текста",
+      "position": 5
+    },
+    {
+      "id": 52,
+      "name": "Списки и работа с коллекциями",
+      "position": 6
+    },
+    {
+      "id": 53,
+      "name": "Функции, ошибки и проверка",
+      "position": 7
+    },
+    {
+      "id": 54,
+      "name": "Мини-проекты и итоговая работа",
+      "position": 8
+    }
+  ],
+  "lessons": [
+    {
+      "id": 162,
+      "module_id": 47,
+      "name": "Что такое программа и как её запустить",
+      "position": 1,
+      "sha256": "9101e0a61ad6883f600c40703748f96bc4162045cb6a6372a15df55edec15219"
+    },
+    {
+      "id": 163,
+      "module_id": 47,
+      "name": "Вывод: несколько значений, sep и end",
+      "position": 2,
+      "sha256": "95feee6f02fd4991cb0bd29aa4d169e0141b046971cbba1fcd90869bfd1bcf5f"
+    },
+    {
+      "id": 164,
+      "module_id": 47,
+      "name": "Ввод, переменные и присваивание",
+      "position": 3,
+      "sha256": "16cb94bfe9c4c5b4b85191a0869ede285e16354d9210a2665d4cafd7303f6872"
+    },
+    {
+      "id": 165,
+      "module_id": 47,
+      "name": "Текст и числа: типы и преобразование",
+      "position": 4,
+      "sha256": "486b698e1e623a10b93da9f57fcaaa152d4fc0e811a31e88cc7cb19b90e090d7"
+    },
+    {
+      "id": 166,
+      "module_id": 47,
+      "name": "Арифметика, выражения и порядок вычислений",
+      "position": 5,
+      "sha256": "f86d526090be9a74b4665c9e188047a647e0402df31b66aec29b4dd26a95cfcc"
+    },
+    {
+      "id": 167,
+      "module_id": 47,
+      "name": "Целое деление, остаток и цифры",
+      "position": 6,
+      "sha256": "416e29c3ab201591240c8826f83be331d3357f4832edc9f909e01179c31c3b4c"
+    },
+    {
+      "id": 168,
+      "module_id": 47,
+      "name": "Как читать ошибки и проверять вычисления",
+      "position": 7,
+      "sha256": "d06bba78ec9e7c4f3e6f06370c27700b0dd4954f84e211d6a2a75a2832b280ff"
+    },
+    {
+      "id": 169,
+      "module_id": 48,
+      "name": "Сравнения и выбор: if и else",
+      "position": 1,
+      "sha256": "3bf88f32857d0ce71121d25de6384b480b6ec217678bf7871aae8fbaf264a0d5"
+    },
+    {
+      "id": 170,
+      "module_id": 48,
+      "name": "Несколько вариантов: elif и вложенные условия",
+      "position": 2,
+      "sha256": "9b11c69cf54404fc1bf481774e1a81537aad79eef6568fb0aef82af2f29c02ec"
+    },
+    {
+      "id": 171,
+      "module_id": 48,
+      "name": "Составные условия: and, or и not",
+      "position": 3,
+      "sha256": "0d65d788d7bcfb4f0f93a1b4a864051ff139ca43ac28da611ee3dbf7d1e52762"
+    },
+    {
+      "id": 172,
+      "module_id": 48,
+      "name": "Составляем решение: календарь и проверка правил",
+      "position": 4,
+      "sha256": "843f0644c4280451e8e8ee8d6f384031e2ec8f708913c26a7db2582b48bccbc5"
+    },
+    {
+      "id": 173,
+      "module_id": 49,
+      "name": "Дробные числа и формат результата",
+      "position": 1,
+      "sha256": "1f6601ded146420e0b74b9cf7c984a66b8a910559db28d63be8838ee9eac8b53"
+    },
+    {
+      "id": 174,
+      "module_id": 49,
+      "name": "Готовые функции: abs, min, max и math",
+      "position": 2,
+      "sha256": "36da76bdc9332a71bd60524f2c96b16cf065a7625c4180b120dfa7541d12519f"
+    },
+    {
+      "id": 175,
+      "module_id": 50,
+      "name": "Повторение известное число раз: for и range",
+      "position": 1,
+      "sha256": "139cb1a4f4bd221c2921c41832833bd96dd549372144142235a924300c9ffe3b"
+    },
+    {
+      "id": 176,
+      "module_id": 50,
+      "name": "Сумма и счётчик: сохраняем результат между шагами",
+      "position": 2,
+      "sha256": "40d9ce7dffcd46ee115a6776d7aee1d315cf800677d5894e4fabfcc6b74ec459"
+    },
+    {
+      "id": 177,
+      "module_id": 50,
+      "name": "Наибольшее значение: правильно выбираем начало",
+      "position": 3,
+      "sha256": "c2e89fb8a834a030dd29eb08845ebf3c37667d8f3dba66c7751b73b6da0c9288"
+    },
+    {
+      "id": 178,
+      "module_id": 50,
+      "name": "Повторение до выполнения условия: while",
+      "position": 4,
+      "sha256": "4776c1066c14580a48fa0d70ea101b733f82fe3fe42de607f4a4d2484c5f6cf2"
+    },
+    {
+      "id": 179,
+      "module_id": 50,
+      "name": "Ввод до сигнала остановки: break и continue",
+      "position": 5,
+      "sha256": "d1807e1532a3aa61247aabc1f96b2f849b1900aa2832ef0d6b6eb4189ec6d3ab"
+    },
+    {
+      "id": 180,
+      "module_id": 50,
+      "name": "Цикл по цифрам числа",
+      "position": 6,
+      "sha256": "b0f0751715e88137c89a28fc8c309df161cca722f24ce9ab0351e8aac843c6d1"
+    },
+    {
+      "id": 181,
+      "module_id": 50,
+      "name": "Вложенные циклы и таблицы",
+      "position": 7,
+      "sha256": "4e7b7707c0e6ce8e88f4e7697ec9f8db5d2b68a499744889b8ed4a90f7f90574"
+    },
+    {
+      "id": 182,
+      "module_id": 50,
+      "name": "Перебор кандидатов: делители и простые числа",
+      "position": 8,
+      "sha256": "8f3d26f86b315d5286518503af76dcd5a752a1c5e95574d9a4627f71c406dd8b"
+    },
+    {
+      "id": 183,
+      "module_id": 51,
+      "name": "Строка как последовательность: длина и индексы",
+      "position": 1,
+      "sha256": "602b2d90871d286dece77a5a87f71db3f8208eb8acffa6e11972e52f14c11f20"
+    },
+    {
+      "id": 184,
+      "module_id": 51,
+      "name": "Срезы и проверка палиндрома",
+      "position": 2,
+      "sha256": "6527658fb134c3948479c99b7c610aa6cae1f7431d87bf353ebe0d18e04147a9"
+    },
+    {
+      "id": 185,
+      "module_id": 51,
+      "name": "Методы строк: очистка, регистр и замена",
+      "position": 3,
+      "sha256": "e2d6da768d794852ce22dd79b866812ebae0cba8809de09dae00eff670fc839b"
+    },
+    {
+      "id": 186,
+      "module_id": 51,
+      "name": "Поиск, подсчёт и построение строки",
+      "position": 4,
+      "sha256": "27b20a7fcf42724b884be661776755d594913ef5009c3d6c72494a88e95289d7"
+    },
+    {
+      "id": 187,
+      "module_id": 51,
+      "name": "Разбиваем текст на слова: split и join",
+      "position": 5,
+      "sha256": "9dfeb673209ecb39dd69dccfa7e7199d25ac5e3a9b11cc8bcebd128e736ef4d3"
+    },
+    {
+      "id": 188,
+      "module_id": 52,
+      "name": "Списки: создаём и храним несколько значений",
+      "position": 1,
+      "sha256": "d8a3883b4ae91ff1fef50ad19ce9867dc4577cb2cb3f8e36b704afbe6862f912"
+    },
+    {
+      "id": 189,
+      "module_id": 52,
+      "name": "Изменение списков, общие ссылки и копии",
+      "position": 2,
+      "sha256": "3b7e70039aeb7b225589fe9150a59cdcd718b2b1c1e809e39334b243586e5c21"
+    },
+    {
+      "id": 190,
+      "module_id": 52,
+      "name": "Отбор, поиск и сортировка списка",
+      "position": 3,
+      "sha256": "ab8591fb123dc137dbd4cf59f424ee4794630debee483f8bb5d0e5444b602b1c"
+    },
+    {
+      "id": 191,
+      "module_id": 52,
+      "name": "Списковые включения: короткая запись знакомого цикла",
+      "position": 4,
+      "sha256": "a1b9acf7ea3f122c9aee93baefb6f5a3f07b7c3c2f952fa012f8c4d85482dd50"
+    },
+    {
+      "id": 192,
+      "module_id": 53,
+      "name": "Свои функции: отделяем действие и вызываем его",
+      "position": 1,
+      "sha256": "e1466ab57402495f1eee898909806f3314de29d3c7529faecaf6992fca0e7aeb"
+    },
+    {
+      "id": 193,
+      "module_id": 53,
+      "name": "Возвращаем результат: return, локальные имена и параметры",
+      "position": 2,
+      "sha256": "e822c89a0be9cb3fbe848527f3ef59be59d6144833a0e4f01946bde88df434ef"
+    },
+    {
+      "id": 194,
+      "module_id": 53,
+      "name": "Неверный ввод и проверка функций",
+      "position": 3,
+      "sha256": "e091ec359ba4f82a9b64586b0e6b4d2aa2e19a226aa8260c6acbc61c78ba668b"
+    },
+    {
+      "id": 195,
+      "module_id": 54,
+      "name": "Мини-проект: угадай число",
+      "position": 1,
+      "sha256": "064fbc67df5f7d84dd8f90f9051f39d1262af68a273f915721fab16adc9bb36b"
+    },
+    {
+      "id": 196,
+      "module_id": 54,
+      "name": "Мини-проект: учебный генератор паролей",
+      "position": 2,
+      "sha256": "e4aa10d2d334a6aa9ec2db3d2b0391c288541ebb0494a08efc2e6cf634333d24"
+    },
+    {
+      "id": 197,
+      "module_id": 54,
+      "name": "Мини-проект: шифр Цезаря и круговой сдвиг",
+      "position": 3,
+      "sha256": "05a6a88187f4e3a981a5a7ab5be665c20d9dad389e1198fd0a50da9a0440b463"
+    },
+    {
+      "id": 198,
+      "module_id": 54,
+      "name": "Мини-проект: системы счисления",
+      "position": 4,
+      "sha256": "fdec62fbd7b284030fd4f3f1fa113efee3cc9882e0942b0ba3f4315a71b23ec5"
+    },
+    {
+      "id": 199,
+      "module_id": 54,
+      "name": "Итоговый проект: учёт расходов",
+      "position": 5,
+      "sha256": "88196e9fa14feb51fdc545183652814c0692d380af50de15a82d80e18a049942"
+    }
+  ]
+}

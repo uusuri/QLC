@@ -1,0 +1,68 @@
+[
+  {
+    "id": "exercise-01",
+    "question": "1. Какая ветвь выбирается для 19 и для 20?\n",
+    "answer": "Для 19 — elif и ПРОХЛАДНО. Для 20 — else и ТЕПЛО.\n",
+    "code_file": null,
+    "examples": []
+  },
+  {
+    "id": "exercise-02",
+    "question": "2. Что сломается, если первой поставить проверку temperature < 20?\n",
+    "answer": "Отрицательные температуры попадут в широкую первую категорию, и морозная ветвь до них не дойдёт.\n",
+    "code_file": null,
+    "examples": []
+  },
+  {
+    "id": "exercise-03",
+    "question": "3. Прочитайте число от −1000 до 1000 и выведите ОТРИЦАТЕЛЬНОЕ, НОЛЬ или ПОЛОЖИТЕЛЬНОЕ.\n",
+    "answer": "Три взаимоисключающих случая.\n",
+    "code_file": "solutions/exercise-03.py",
+    "examples": [
+      {
+        "id": "negative",
+        "input": "-2\n",
+        "output": "ОТРИЦАТЕЛЬНОЕ\n",
+        "purpose": "Отрицательное"
+      },
+      {
+        "id": "zero",
+        "input": "0\n",
+        "output": "НОЛЬ\n",
+        "purpose": "Ноль"
+      },
+      {
+        "id": "positive",
+        "input": "2\n",
+        "output": "ПОЛОЖИТЕЛЬНОЕ\n",
+        "purpose": "Положительное"
+      }
+    ]
+  },
+  {
+    "id": "exercise-04",
+    "question": "4. Балл от 0 до 100: от 90 — A, от 70 до 89 — B, ниже 70 — C. Напишите классификатор.\n",
+    "answer": "Проверяем верхнюю категорию раньше средней, иначе 95 попадёт в B.\n",
+    "code_file": "solutions/exercise-04.py",
+    "examples": [
+      {
+        "id": "top",
+        "input": "90\n",
+        "output": "A\n",
+        "purpose": "Верхняя граница"
+      },
+      {
+        "id": "mid",
+        "input": "70\n",
+        "output": "B\n",
+        "purpose": "Средняя граница"
+      },
+      {
+        "id": "low",
+        "input": "69\n",
+        "output": "C\n",
+        "purpose": "Нижняя категория"
+      }
+    ]
+  }
+]

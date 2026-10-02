@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "runner": "Python 3.13.0",
+  "programs": [
+    {
+      "id": "exercise-03",
+      "code_sha256": "149c0255ef061ad06335e3a9efc4c63924b402fbaee9113bceaffdd47813d0dc",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "b780cd804eddd86b74e6c8e145c7ca4dde6f75dfd67b93d34cf513070abdddb6",
+          "actual_output": "12\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "equal",
+          "input_sha256": "3a3070eb11fca782686b1feacfc53fb15fc504e83e7e441703331580d036ae98",
+          "actual_output": "0\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "exercise-04",
+      "code_sha256": "4d1ea28f54f14662dba13b54b0dbb809e790bb844a4d231246e03a26ea0a1525",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "2e6d31a5983a91251bfae5aefa1c0a19d8ba3cf601d0e8a706b4cfa9661a6b8a",
+          "actual_output": "3.000\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "zero",
+          "input_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+          "actual_output": "0.000\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "runner": "Python 3.13.0",
+  "programs": [
+    {
+      "id": "exercise-03",
+      "code_sha256": "6136495067d08ada82de5a7331aba2ebf48c79cd494aa6a518cfab83c7dab132",
+      "cases": [
+        {
+          "id": "main",
+          "input_sha256": "47034fea31be99baf6ce135c41287995122b25b07ccb4ab5968f942ea3a5a017",
+          "actual_output": "-1 -3 -1\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "empty",
+          "input_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "actual_output": "\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "id": "exercise-04",
+      "code_sha256": "4a7686b016ef0ab1eafdc4bb8a1a9f3588ce4455ea3453837e9ad3ca3f84efbc",
+      "cases": [
+        {
+          "id": "first",
+          "input_sha256": "1be72b0ad9fd719b8361eee7291456e01d21f44903d1abca7ded71afaab5bfd0",
+          "actual_output": "0\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "absent",
+          "input_sha256": "486969bc6b8ac21f61bbf2f829fb1125a3f3e138b9a526491637bd95233a23d6",
+          "actual_output": "-1\n",
+          "exit_code": 0,
+          "stderr": ""
+        },
+        {
+          "id": "empty",
+          "input_sha256": "877df9222a7a7608dbf974fab014778756852d877bf6f2207170c2df7c0b5bbc",
+          "actual_output": "-1\n",
+          "exit_code": 0,
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

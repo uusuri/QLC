@@ -1,0 +1,68 @@
+[
+  {
+    "id": "exercise-01",
+    "question": "1. Вычислите True and False, True or False, not False.\n",
+    "answer": "False, True, True.\n",
+    "code_file": null,
+    "examples": []
+  },
+  {
+    "id": "exercise-02",
+    "question": "2. Какое условие описывает число вне отрезка от 5 до 9 включительно?\n",
+    "answer": "number < 5 or number > 9. Числа 5 и 9 остаются внутри.\n",
+    "code_file": null,
+    "examples": []
+  },
+  {
+    "id": "exercise-03",
+    "question": "3. Прочитайте число от −100 до 100. Выведите ДА, если оно делится на 3 или на 5, иначе НЕТ.\n",
+    "answer": "Хотя бы один нулевой остаток достаточен. Ноль делится и на 3, и на 5.\n",
+    "code_file": "solutions/exercise-03.py",
+    "examples": [
+      {
+        "id": "both",
+        "input": "15\n",
+        "output": "ДА\n",
+        "purpose": "Оба делителя"
+      },
+      {
+        "id": "no",
+        "input": "7\n",
+        "output": "НЕТ\n",
+        "purpose": "Ни один"
+      },
+      {
+        "id": "zero",
+        "input": "0\n",
+        "output": "ДА\n",
+        "purpose": "Ноль"
+      }
+    ]
+  },
+  {
+    "id": "exercise-04",
+    "question": "4. Измените задачу о делимости: ДА требуется, если число делится ровно на один из 3 и 5.\n",
+    "answer": "Разделяем два случая: на 3, но не на 5; на 5, но не на 3.\n",
+    "code_file": "solutions/exercise-04.py",
+    "examples": [
+      {
+        "id": "one",
+        "input": "9\n",
+        "output": "ДА\n",
+        "purpose": "Один делитель"
+      },
+      {
+        "id": "both",
+        "input": "15\n",
+        "output": "НЕТ\n",
+        "purpose": "Оба"
+      },
+      {
+        "id": "neither",
+        "input": "7\n",
+        "output": "НЕТ\n",
+        "purpose": "Ни одного"
+      }
+    ]
+  }
+]

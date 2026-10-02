@@ -1,4 +1,6 @@
 import { memo, type ReactNode } from "react";
+import { GraphAnimationBlock } from "./graph/GraphAnimationPlayer";
+import { GRAPH_FENCE } from "../services/graphAnimation";
 
 type TableAlignment = "left" | "center" | "right";
 
@@ -16,6 +18,8 @@ type MarkdownBlock =
   | {
       items: string[];
       kind: "list";
+      ordered: boolean;
+      start: number;
     }
   | {
       kind: "table";
@@ -88,9 +92,10 @@ function renderInlineMarkdown(text: string, tone: MarkdownTone = "dark"): ReactN
 
   while (cursor < text.length) {
     const rest = text.slice(cursor);
-    const link = rest.match(/^\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/);
+    const link = rest.match(/^\[([^\]\n]+)\]\((https?:\/\/[^\s)]+|\/(?![\/\\])[^\s)\\]*)\)/);
     if (link) {
-      nodes.push(<a key={key++} href={link[2]} target="_blank" rel="noopener noreferrer"
+      const external = /^https?:\/\//.test(link[2]);
+      nodes.push(<a key={key++} href={link[2]} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined}
         className={`underline underline-offset-4 break-words ${tone === "paper" ? "text-[#3c32f5]" : "text-acid"}`}>
         {link[1]}
       </a>);
@@ -201,6 +206,8 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
   const blocks: MarkdownBlock[] = [];
   let paragraph: string[] = [];
   let list: string[] = [];
+  let listOrdered = false;
+  let listStart = 1;
   let code: string[] | null = null;
   let codeLanguage = "";
 
@@ -216,9 +223,13 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
     if (list.length > 0) {
       blocks.push({
         items: list,
-        kind: "list"
+        kind: "list",
+        ordered: listOrdered,
+        start: listStart
       });
       list = [];
+      listOrdered = false;
+      listStart = 1;
     }
   };
 
@@ -270,7 +281,7 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
         lineIndex += 1;
         while (lineIndex + 1 < lines.length) {
           const next = lines[lineIndex + 1].trim();
-          if (!next || /^(#{1,3}\s|[-*]\s|```)/.test(next)) break;
+          if (!next || /^(#{1,3}\s|[-*]\s|\d{1,9}[.)]\s|```)/.test(next)) break;
           const row = splitTableRow(next);
           if (!row.hasSeparator) break;
           rows.push(header.cells.map((_, column) => row.cells[column] ?? ""));
@@ -299,9 +310,18 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
       continue;
     }
 
-    if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
-      paragraph = paragraph.length > 0 ? paragraph : [];
-      list.push(trimmed.slice(2));
+    const orderedItem = trimmed.match(/^(\d{1,9})[.)]\s+(.+)$/);
+    const unorderedItem = trimmed.match(/^[-*]\s+(.+)$/);
+    if (orderedItem || unorderedItem) {
+      const ordered = Boolean(orderedItem);
+      if (paragraph.length > 0 || (list.length > 0 && listOrdered !== ordered)) {
+        flushTextBlocks();
+      }
+      if (list.length === 0) {
+        listOrdered = ordered;
+        listStart = orderedItem ? Number(orderedItem[1]) : 1;
+      }
+      list.push(orderedItem ? orderedItem[2] : unorderedItem![1]);
       continue;
     }
 
@@ -362,17 +382,15 @@ function renderBlock(block: MarkdownBlock, index: number, tone: MarkdownTone): R
   }
 
   if (block.kind === "code") {
+    if (block.language === GRAPH_FENCE) return <GraphAnimationBlock key={index} source={block.code} />;
     return (
       <pre
+        aria-label={block.language ? `Код: ${block.language}` : "Код"}
+        data-language={block.language || undefined}
         className="min-w-0 overflow-x-auto rounded-sm border border-line bg-ink p-4 text-sm leading-7 text-white sm:p-5"
         tabIndex={0}
         key={index}
       >
-        {block.language && (
-          <code className="mb-3 block font-mono text-[10px] font-black uppercase text-acid">
-            {block.language}
-          </code>
-        )}
         <code className="font-mono text-[#e8ece8]">{renderCode(block.code)}</code>
       </pre>
     );
@@ -405,6 +423,17 @@ function renderBlock(block: MarkdownBlock, index: number, tone: MarkdownTone): R
   }
 
   if (block.kind === "list") {
+    if (block.ordered) {
+      return (
+        <ol start={block.start} className={`list-decimal space-y-3 pl-6 text-base leading-7 ${tone === "paper" ? "text-ink/75 marker:text-ink/60" : "text-white/76 marker:text-acid"}`} key={index}>
+          {block.items.map((item, itemIndex) => (
+            <li className="pl-1 [overflow-wrap:anywhere]" key={itemIndex}>
+              {renderInlineMarkdown(item, tone)}
+            </li>
+          ))}
+        </ol>
+      );
+    }
     return (
       <ul className={`grid gap-3 text-base leading-7 ${tone === "paper" ? "text-ink/75" : "text-white/76"}`} key={index}>
         {block.items.map((item, itemIndex) => (
