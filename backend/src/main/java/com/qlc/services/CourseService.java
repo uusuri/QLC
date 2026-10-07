@@ -390,7 +390,7 @@ public class CourseService {
       return List.of();
     }
     return taskRepository.findByLessonId(lessonId).stream()
-        .map(task -> new TaskOutlineDTO(task.getId(), task.getTaskType()))
+        .map(task -> new TaskOutlineDTO(task.getId(), task.getTaskType(), (int) task.getDifficulty()))
         .toList();
   }
 
@@ -438,6 +438,14 @@ public class CourseService {
 
   private void updateTaskFields(Task task, TaskDTO dto) {
     task.setStatementMd(dto.statementMd() != null ? dto.statementMd().trim() : "");
+
+    // Missing difficulty keeps the current value for compatibility with older clients.
+    if (dto.difficulty() != null) {
+      if (dto.difficulty() < 1 || dto.difficulty() > 3) {
+        throw new IllegalArgumentException("Task difficulty must be between 1 and 3");
+      }
+      task.setDifficulty(dto.difficulty().shortValue());
+    }
 
     // Missing field preserves hints when older clients update a task; [] explicitly clears them.
     if (dto.hints() != null) {
@@ -515,6 +523,7 @@ public class CourseService {
         t.getId(),
         t.getLesson().getId(),
         t.getTaskType(),
+        (int) t.getDifficulty(),
         language,
         t.getStatementMd(),
         starterCode,
@@ -556,6 +565,7 @@ public class CourseService {
         task.getId(),
         task.getLesson().getId(),
         task.getTaskType(),
+        (int) task.getDifficulty(),
         language,
         task.getStatementMd(),
         starterCode,

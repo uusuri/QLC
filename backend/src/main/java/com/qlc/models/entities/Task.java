@@ -28,6 +28,9 @@ public abstract class Task {
   @Column(name = "statement_md", nullable = false)
   private String statementMd;
 
+  @Column(name = "difficulty", nullable = false)
+  private short difficulty = 1;
+
   @ElementCollection
   @CollectionTable(name = "task_hints", joinColumns = @JoinColumn(name = "task_id"))
   @OrderColumn(name = "hint_position")

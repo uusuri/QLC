@@ -361,7 +361,7 @@ class CourseServiceTest {
       existingTask.setLesson(sampleLesson);
       existingTask.setStatementMd("Old Text");
 
-      TaskDTO updateDto = new TaskDTO(null, null, "CODE", "CPP23", "New Text",
+      TaskDTO updateDto = new TaskDTO(null, null, "CODE", 2, "CPP23", "New Text",
           null, null, null, null, null, "new template", "new test cases",
           null, null, null, null);
 
@@ -372,6 +372,7 @@ class CourseServiceTest {
       assertEquals("New Text", result.statementMd());
       assertEquals("new template", result.templateCode());
       assertEquals("new test cases", result.testCases());
+      assertEquals(2, result.difficulty());
     }
 
     @Test
@@ -387,7 +388,7 @@ class CourseServiceTest {
       // Сборка DTO: передаем список правильных индексов List.of(1) на место нужного
       // аргумента
       TaskDTO updateDto = new TaskDTO(
-          null, null, "TEST", null, "Test Statement",
+          null, null, "TEST", 1, null, "Test Statement",
           null, null, null, null, null, null, null,
           List.of("Option A", "Option B"),
           List.of(1),
@@ -405,6 +406,27 @@ class CourseServiceTest {
       // Проверяем варианты ответов
       assertEquals(2, result.options().size());
       assertEquals("Option A", result.options().get(0));
+    }
+
+    @Test
+    void updateTask_ShouldRejectDifficultyOutsideSupportedRange() {
+      CodeTask existingTask = new CodeTask();
+      existingTask.setId(202L);
+      existingTask.setLesson(sampleLesson);
+
+      TaskDTO updateDto = new TaskDTO(
+          null, null, "CODE", 4, "CPP23", "Too difficult",
+          null, null, null, null, null, null, null,
+          null, null, null, null);
+
+      when(taskRepository.findById(202L)).thenReturn(Optional.of(existingTask));
+
+      IllegalArgumentException error = assertThrows(
+          IllegalArgumentException.class,
+          () -> courseService.updateTask(202L, updateDto));
+
+      assertEquals("Task difficulty must be between 1 and 3", error.getMessage());
+      verify(taskRepository, never()).save(any(Task.class));
     }
 
     @Test

@@ -6,7 +6,7 @@ const base = process.env.QLC_QA_URL || 'http://127.0.0.1:3100';
 const course = {id:2,name:'Java-разработчик',description:'Практический курс Java: от основ программирования до Spring.',price:0,priceInStars:0};
 const moduleItem = {id:201,courseId:2,name:'Коллекции',description:'Научитесь выбирать структуру данных для задачи.',position:1};
 const lesson = {id:301,moduleId:201,name:'HashMap: поиск по ключу',description:'Сохраняйте пары ключ — значение и быстро находите нужные данные.',position:1,published:true,contentMd:'# HashMap: поиск по ключу\n\nКоллекция связывает ключ со значением. Найти данные можно по ключу, без последовательного просмотра всех элементов.\n\n## Частоты значений\n\nИспользуйте merge, чтобы увеличивать счётчик при каждом повторении.\n\n```java\nMap<String, Integer> counts = new HashMap<>();\nfor (String item : items) {\n  counts.merge(item, 1, Integer::sum);\n}\nreturn counts;\n```\n\n- Ключи уникальны.\n- Значения могут повторяться.\n\n## Когда применять\n\nHashMap подходит для подсчёта частот и поиска по идентификатору.'};
-const task = {id:401,lessonId:301,taskType:'CODE',statementMd:'# Частоты значений\n\nДан массив строк. Для каждой строки подсчитайте число появлений.\n\n## Пример\n\n```text\njava cpp java\njava: 2\ncpp: 1\n```',language:'JAVA21',starterCode:'public class Main {\n  public static void main(String[] args) {\n    // Ваше решение\n  }\n}',templateCode:null,timeLimitMs:1000,memoryLimitKb:262144,outputLimitKb:64,testSetVersion:1,options:null};
+const task = {id:401,lessonId:301,taskType:'CODE',difficulty:1,statementMd:'# Частоты значений\n\nДан массив строк. Для каждой строки подсчитайте число появлений.\n\n## Пример\n\n```text\njava cpp java\njava: 2\ncpp: 1\n```',language:'JAVA21',starterCode:'public class Main {\n  public static void main(String[] args) {\n    // Ваше решение\n  }\n}',templateCode:null,timeLimitMs:1000,memoryLimitKb:262144,outputLimitKb:64,testSetVersion:1,options:null};
 const progress = [{...course,solvedTasks:3,totalTasks:7,progressPercent:43,modules:[{...moduleItem,lessons:[{...lesson,solvedTasks:1,totalTasks:3,progressPercent:33},{...lesson,id:302,name:'Обход коллекций',position:2,solvedTasks:2,totalTasks:4,progressPercent:50}]}]}];
 const errors = [];
 const report = [];
@@ -27,7 +27,7 @@ async function fixture(context, role='ROLE_USER') {
     else if(path==='/api/modules/201') body=moduleItem;
     else if(path==='/api/modules/201/lessons') body=[lesson];
     else if(path==='/api/lessons/301/learn') body={course,module:moduleItem,lesson,tasks:[task]};
-    else if(path==='/api/lessons/301/task-outline') body=[{id:task.id,taskType:task.taskType}];
+    else if(path==='/api/lessons/301/task-outline') body=[{id:task.id,taskType:task.taskType,difficulty:task.difficulty}];
     else if(path==='/api/lessons/301/tasks') body=[task];
     else if(path==='/api/tasks/401/submissions') body={id:'fixture-submission',status:'QUEUED'};
     else if(path==='/api/submissions/fixture-submission') body={id:'fixture-submission',status:'FINISHED',verdict:'AC',executionTime:14,memoryUsed:1024,safeMessage:'Тестовые данные проверки интерфейса.'};

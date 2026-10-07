@@ -262,6 +262,8 @@ export interface AdminTaskDto {
   lessonId: number;
   // Тип задачи: CODE, TEST или NUMERIC.
   taskType: AdminTaskType;
+  // Сложность задачи: от одной до трех звезд.
+  difficulty: 1 | 2 | 3;
   // Язык для CODE-задачи. Для старых задач null означает C++23.
   language: SubmissionLanguage | null;
   // Условие задачи в Markdown.
@@ -293,6 +295,8 @@ export interface AdminTaskCreatePayload {
   hints?: string[];
   // Тип создаваемой задачи.
   taskType: AdminTaskType;
+  // Сложность задачи: от одной до трех звезд.
+  difficulty: 1 | 2 | 3;
   language: SubmissionLanguage | null;
   // Условие задачи в Markdown.
   statementMd: string;
@@ -327,6 +331,7 @@ export type LearnerTaskDto = Omit<
 export interface LessonTaskOutlineDto {
   id: number;
   taskType: AdminTaskType;
+  difficulty: 1 | 2 | 3;
 }
 
 // Модуль курса вместе с уроками, которые нужны странице курса.

@@ -76,6 +76,7 @@ type LessonFormState = {
 type TaskFormState = {
   hintsText: string;
   taskType: AdminTaskType;
+  difficulty: 1 | 2 | 3;
   language: SubmissionLanguage;
   statementMd: string;
   starterCode: string;
@@ -137,6 +138,7 @@ const initialLessonForm: LessonFormState = {
 const initialTaskForm: TaskFormState = {
   hintsText: "",
   taskType: "CODE",
+  difficulty: 1,
   language: "CPP23",
   statementMd: "",
   starterCode: "",
@@ -244,6 +246,8 @@ function restoreTaskForm(value: unknown): TaskFormState {
     value.taskType === "TEST" || value.taskType === "NUMERIC" || value.taskType === "CODE"
       ? value.taskType
       : initialTaskForm.taskType;
+  const difficulty: 1 | 2 | 3 =
+    value.difficulty === 2 || value.difficulty === 3 ? value.difficulty : 1;
   const language: SubmissionLanguage = value.language === "JAVA21" ? "JAVA21" : "CPP23";
   const correctOptionIndexes = Array.isArray(value.correctOptionIndexes)
     ? value.correctOptionIndexes.filter(
@@ -253,6 +257,7 @@ function restoreTaskForm(value: unknown): TaskFormState {
 
   return {
     taskType,
+    difficulty,
     language,
     statementMd: storedString(value.statementMd, initialTaskForm.statementMd),
     hintsText: storedString(value.hintsText, ""),
@@ -369,6 +374,7 @@ function buildTaskPayload(form: TaskFormState): AdminTaskCreatePayload {
   const payload: AdminTaskCreatePayload = {
     hints,
     taskType: form.taskType,
+    difficulty: form.difficulty,
     language: form.taskType === "CODE" ? form.language : null,
     statementMd: form.statementMd.trim(),
     starterCode: null,
@@ -465,6 +471,7 @@ function taskDtoToForm(task: AdminTaskDto): TaskFormState {
   return {
     hintsText: (task.hints ?? []).join("\n\n---\n\n"),
     taskType: task.taskType,
+    difficulty: task.difficulty ?? 1,
     language: task.language ?? "CPP23",
     statementMd: task.statementMd,
     starterCode: task.starterCode ?? "",
@@ -1362,6 +1369,12 @@ export default function AdminContentPage() {
                         setTaskForm((current) => ({ ...current, taskType }))
                       }
                     />
+                    <TaskDifficultySelector
+                      value={taskForm.difficulty}
+                      onChange={(difficulty) =>
+                        setTaskForm((current) => ({ ...current, difficulty }))
+                      }
+                    />
                     <div className="border border-acid/50 bg-acid/10 p-3">
                       <p className="font-mono text-[10px] font-medium text-acid">
                         statementMd / Markdown
@@ -1721,6 +1734,43 @@ function TaskTypeSelector({
           </button>
         ))}
       </div>
+    </fieldset>
+  );
+}
+
+function TaskDifficultySelector({
+  onChange,
+  value
+}: {
+  onChange: (value: 1 | 2 | 3) => void;
+  value: 1 | 2 | 3;
+}) {
+  const levels = [1, 2, 3] as const;
+
+  return (
+    <fieldset className="grid gap-2">
+      <legend className="font-mono text-[11px] text-white/65">Сложность</legend>
+      <div className="grid gap-2 sm:grid-cols-3">
+        {levels.map((level) => (
+          <button
+            aria-label={`${level} ${level === 1 ? "звезда" : level === 2 ? "звезды" : "звезды"}`}
+            aria-pressed={value === level}
+            className={`min-h-16 border px-3 font-mono text-[2.2rem] leading-none tracking-[0.12em] transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid ${
+              value === level
+                ? "border-acid bg-acid/10 text-acid"
+                : "border-line bg-ink text-white/48 hover:border-white/35 hover:text-white/75"
+            }`}
+            key={level}
+            onClick={() => onChange(level)}
+            type="button"
+          >
+            <span aria-hidden="true">{"★".repeat(level)}{"☆".repeat(3 - level)}</span>
+          </button>
+        ))}
+      </div>
+      <p className="text-xs leading-relaxed text-white/48">
+        Пока это только метка. Позже она сможет влиять на опыт и достижения.
+      </p>
     </fieldset>
   );
 }

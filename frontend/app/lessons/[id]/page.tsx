@@ -29,6 +29,11 @@ function getTaskTitle(task: LearnerTaskDto, index: number) {
   return heading || `Задача ${index + 1}`;
 }
 
+function TaskDifficulty({ value }: { value: number }) {
+  const difficulty = value >= 1 && value <= 3 ? value : 1;
+  return <span aria-label={`Сложность: ${difficulty} из 3`} className="inline-block font-mono text-[1.875rem] leading-none tracking-[0.08em] text-acid">{"★".repeat(difficulty)}{"☆".repeat(3 - difficulty)}</span>;
+}
+
 export default function LessonPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -179,10 +184,10 @@ export default function LessonPage() {
     </section>
     <section className={activeSection === "practice" ? "py-6" : "hidden"} aria-label="Практика урока">
       {!primaryTask ? <Alert title="Задачи скоро появятся" tone="neutral">К этому уроку пока не добавлены задачи. Материал доступен для изучения.</Alert> : <>
-        {view.tasks.length > 1 && <nav aria-label="Выбор задачи" className="mb-6 flex flex-wrap gap-2">{view.tasks.map((task, i) => <button key={task.id} className={`min-h-11 max-w-full rounded-sm border px-4 py-2 text-sm ${primaryTask.id === task.id ? "border-acid text-acid" : "border-[#66705D] text-muted"}`} aria-pressed={primaryTask.id === task.id} onClick={() => { setSelectedTaskId(task.id); setTaskView("task"); }} type="button">{getTaskTitle(task, i)}{acceptedTaskIds.includes(task.id) && <span className="ml-2 text-acid" aria-label="Решено">✓</span>}</button>)}</nav>}
+        {view.tasks.length > 1 && <nav aria-label="Выбор задачи" className="mb-6 flex flex-wrap gap-2">{view.tasks.map((task, i) => <button key={task.id} className={`min-h-11 max-w-full rounded-sm border px-4 py-2 text-sm ${primaryTask.id === task.id ? "border-acid text-acid" : "border-[#66705D] text-muted"}`} aria-pressed={primaryTask.id === task.id} onClick={() => { setSelectedTaskId(task.id); setTaskView("task"); }} type="button"><span>{getTaskTitle(task, i)}</span><span className="ml-3"><TaskDifficulty value={task.difficulty ?? 1} /></span>{acceptedTaskIds.includes(task.id) && <span className="ml-2 text-acid" aria-label="Решено">✓</span>}</button>)}</nav>}
         {primaryTask.taskType === "CODE" && <Tabs className="kit-mobile-task-tabs" activeValue={taskView} onChange={setTaskView} items={[{value:"task",label:"Задача"},{value:"code",label:"Код"},{value:"result",label:"Результат"}]} />}
         <div className={primaryTask.taskType === "CODE" ? "kit-task-grid" : "grid gap-6"} data-view={taskView}>
-          <section className="kit-task-statement"><header className="border-b border-line p-5"><h2 className="text-xl">Условие задачи</h2></header><div className="grid gap-6 p-5"><SafeMarkdown markdown={primaryTask.statementMd || "Условие задачи пока пусто."} />
+          <section className="kit-task-statement"><header className="flex items-center justify-between gap-4 border-b border-line p-5"><h2 className="text-xl">Условие задачи</h2><TaskDifficulty value={primaryTask.difficulty ?? 1} /></header><div className="grid gap-6 p-5"><SafeMarkdown markdown={primaryTask.statementMd || "Условие задачи пока пусто."} />
           {primaryTask.taskType === "CODE" && <dl className="grid gap-3 border-t border-line pt-5 text-xs text-muted">{primaryTask.timeLimitMs !== null && <div className="flex justify-between gap-3"><dt>Время</dt><dd>{primaryTask.timeLimitMs} мс</dd></div>}{primaryTask.memoryLimitKb !== null && <div className="flex justify-between gap-3"><dt>Память</dt><dd>{primaryTask.memoryLimitKb} КБ</dd></div>}{primaryTask.outputLimitKb !== null && <div className="flex justify-between gap-3"><dt>Размер вывода</dt><dd>{primaryTask.outputLimitKb} КБ</dd></div>}</dl>}
           {primaryTask.taskType !== "CODE" && <TaskHints key={primaryTask.id} taskId={primaryTask.id} hints={primaryTask.hints ?? []} />}
           </div></section>

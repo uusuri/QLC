@@ -114,7 +114,7 @@ export function CourseTree({ courses, selection, data, busy, loading, onNavigate
                             {openLessons.has(lesson.id) && <div className="ml-4 border-l border-line pl-2">
                               <BranchContent branch={data.tasks.branches[lesson.id]} empty="В уроке пока нет задач." retry={() => void loadTasks(lesson.id, true).catch(() => {})}>
                                 <ul className="space-y-1">{(data.tasks.branches[lesson.id]?.items ?? []).map(task => <li key={task.id}>
-                                  <Node label={taskTitle(task)} kind={task.taskType === "CODE" ? "Код" : task.taskType === "TEST" ? "Тест" : "Числовой ответ"} active={selection.step === "task" && selection.taskId === task.id} disabled={busy}
+                                  <Node label={taskTitle(task)} kind={<>{task.taskType === "CODE" ? "Код" : task.taskType === "TEST" ? "Тест" : "Числовой ответ"}<span aria-label={`Сложность: ${task.difficulty ?? 1} из 3`} className="ml-2 inline-block align-middle font-mono text-[1.55rem] leading-none tracking-[0.05em] text-acid">{"★".repeat(task.difficulty ?? 1)}</span></>} active={selection.step === "task" && selection.taskId === task.id} disabled={busy}
                                     onSelect={() => navigate({ ...lessonPath, taskId: task.id, step: "task" })} />
                                 </li>)}</ul>
                               </BranchContent>
@@ -139,7 +139,7 @@ export function CourseTree({ courses, selection, data, busy, loading, onNavigate
 function byPosition(a: AdminModuleDto | AdminLessonDto, b: AdminModuleDto | AdminLessonDto) { return a.position - b.position || a.id - b.id; }
 
 function Node({ label, kind, active, inPath, expanded, disabled, onSelect, onToggle, onAdd, addLabel }: {
-  label: string; kind: string; active: boolean; inPath?: boolean; expanded?: boolean; disabled: boolean;
+  label: string; kind: ReactNode; active: boolean; inPath?: boolean; expanded?: boolean; disabled: boolean;
   onSelect: () => void; onToggle?: () => void; onAdd?: () => void; addLabel?: string;
 }) {
   return <div className={`group flex min-w-0 items-center rounded-sm border ${active ? "border-acid/60 bg-acid/10" : "border-transparent hover:bg-white/5"}`}>

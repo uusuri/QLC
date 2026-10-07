@@ -7,6 +7,7 @@ public record TaskDTO(
     Long id,
     Long lessonId,
     String taskType,
+    Integer difficulty,
     String language,
     String statementMd,
 
