@@ -107,15 +107,15 @@ async function readErrorMessage(response: Response): Promise<string> {
   return text;
 }
 
-async function apiRequest<TResponse>(
+async function apiFetch(
   path: string,
   options: ApiRequestOptions = {}
-): Promise<TResponse> {
+): Promise<Response> {
   const { auth = false, ...requestOptions } = options;
   const method = (requestOptions.method ?? "GET").toUpperCase();
   const headers = new Headers(requestOptions.headers);
 
-  if (requestOptions.body !== undefined && !headers.has("Content-Type")) {
+  if (requestOptions.body !== undefined && !(requestOptions.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -144,6 +144,14 @@ async function apiRequest<TResponse>(
     throw new ApiClientError(response.status, await readErrorMessage(response));
   }
 
+  return response;
+}
+
+async function apiRequest<TResponse>(
+  path: string,
+  options: ApiRequestOptions = {}
+): Promise<TResponse> {
+  const response = await apiFetch(path, options);
   return (await response.json()) as TResponse;
 }
 
@@ -426,6 +434,28 @@ export async function getCurrentUser(): Promise<AuthUserDto | null> {
     // Временная ошибка сети не должна разлогинивать пользователя.
     return getStoredUser();
   }
+}
+
+export async function getMyAvatar(): Promise<Blob | null> {
+  try {
+    const response = await apiFetch("/api/users/me/avatar", { auth: true });
+    return await response.blob();
+  } catch (error) {
+    if (error instanceof ApiClientError && error.status === 404) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+export async function uploadMyAvatar(file: File): Promise<void> {
+  const form = new FormData();
+  form.append("file", file);
+  await apiFetch("/api/users/me/avatar", { auth: true, method: "PUT", body: form });
+}
+
+export async function deleteMyAvatar(): Promise<void> {
+  await apiFetch("/api/users/me/avatar", { auth: true, method: "DELETE" });
 }
 
 // Выполняет logout на фронте.
