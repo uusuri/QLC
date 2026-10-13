@@ -8,8 +8,6 @@ import sys
 import time
 
 
-SOURCE_FILE = Path("/request/Main.cpp")
-EXECUTABLE_FILE = Path("/work/main")
 WORK_DIRECTORY = Path("/work")
 SANDBOX_EXECUTABLE = "/usr/local/bin/qlc-sandbox"
 MAX_TEST_CASES = 100
@@ -19,6 +17,7 @@ MEMORY_FAILURE_MARKERS = (
     "cannot allocate memory",
     "memory allocation failed",
     "out of memory",
+    "outofmemoryerror",
 )
 
 
@@ -139,21 +138,29 @@ def emit_result(
     sys.stdout.flush()
 
 
-def compile_source() -> tuple[bool, str]:
+def command_from_env(name: str, default: list[str], allow_empty: bool = False) -> list[str]:
+    if name not in os.environ:
+        return default
+    try:
+        command = json.loads(os.environ[name])
+    except json.JSONDecodeError as exception:
+        raise JudgeConfigurationError(f"Invalid {name}") from exception
+    if not isinstance(command, list) or (not command and not allow_empty) or not all(
+        isinstance(part, str) and part for part in command
+    ):
+        raise JudgeConfigurationError(f"Invalid {name}")
+    return command
+
+
+def compile_source(command: list[str]) -> tuple[bool, str]:
+    if not command:
+        return True, ""
     compiler_stdout = WORK_DIRECTORY / "compiler.stdout"
     compiler_stderr = WORK_DIRECTORY / "compiler.stderr"
     with compiler_stdout.open("wb") as stdout_file, compiler_stderr.open("wb") as stderr_file:
         try:
             completed = subprocess.run(
-                [
-                    "g++",
-                    "-std=c++23",
-                    "-O2",
-                    "-pipe",
-                    str(SOURCE_FILE),
-                    "-o",
-                    str(EXECUTABLE_FILE),
-                ],
+                command,
                 stdout=stdout_file,
                 stderr=stderr_file,
                 check=False,
@@ -175,16 +182,18 @@ def sandbox_command(
     time_limit_ms: int,
     memory_limit_kb: int,
     output_limit_kb: int,
+    run_command: list[str] | None = None,
+    address_space_limit: bool = True,
 ) -> list[str]:
     return [
         SANDBOX_EXECUTABLE,
         "--memory-kb",
-        str(memory_limit_kb),
+        str(memory_limit_kb if address_space_limit else 0),
         "--time-ms",
         str(time_limit_ms),
         "--output-kb",
         str(output_limit_kb),
-        str(EXECUTABLE_FILE),
+        *(run_command if run_command is not None else ["/work/main"]),
     ]
 
 
@@ -194,6 +203,8 @@ def run_test_case(
     time_limit_ms: int,
     memory_limit_kb: int,
     output_limit_kb: int,
+    run_command: list[str],
+    address_space_limit: bool,
 ) -> tuple[str, str, int, int | None]:
     stdout_path = WORK_DIRECTORY / f"test-{index:03d}.stdout"
     stderr_path = WORK_DIRECTORY / f"test-{index:03d}.stderr"
@@ -207,7 +218,8 @@ def run_test_case(
                 "--quiet",
                 "--format=%M",
                 f"--output={memory_path}",
-                *sandbox_command(time_limit_ms, memory_limit_kb, output_limit_kb),
+                *sandbox_command(time_limit_ms, memory_limit_kb, output_limit_kb,
+                                 run_command, address_space_limit),
             ],
             input=test_input.encode("utf-8"),
             stdout=stdout_file,
@@ -236,20 +248,31 @@ def run_test_case(
         if diagnostic:
             message += "\n" + diagnostic
         return "RE", message, elapsed_ms, peak_memory_kb
+    if peak_memory_kb is not None and peak_memory_kb > memory_limit_kb:
+        return "MLE", "Превышено ограничение памяти.", elapsed_ms, peak_memory_kb
     return "OK", actual_output, elapsed_ms, peak_memory_kb
 
 
 def main() -> int:
     try:
-        if not SOURCE_FILE.is_file():
-            raise JudgeConfigurationError(f"Source file is missing: {SOURCE_FILE}")
+        source_name = os.environ.get("QLC_SOURCE_FILE", "Main.cpp")
+        if Path(source_name).name != source_name:
+            raise JudgeConfigurationError("Invalid source file name")
+        source_file = Path("/request") / source_name
+        if not source_file.is_file():
+            raise JudgeConfigurationError(f"Source file is missing: {source_file}")
 
         time_limit_ms = positive_limit("QLC_TIME_LIMIT_MS")
         memory_limit_kb = positive_limit("QLC_MEMORY_LIMIT_KB")
         output_limit_kb = positive_limit("QLC_OUTPUT_LIMIT_KB")
+        compile_command = command_from_env("QLC_COMPILE_COMMAND", [
+            "g++", "-std=c++23", "-O2", "-pipe", "/request/Main.cpp", "-o", "/work/main"
+        ], allow_empty=True)
+        run_command = command_from_env("QLC_RUN_COMMAND", ["/work/main"])
+        address_space_limit = os.environ.get("QLC_ADDRESS_SPACE_LIMIT", "true") == "true"
         test_cases = parse_test_cases(sys.stdin.read())
 
-        compiled, compiler_message = compile_source()
+        compiled, compiler_message = compile_source(compile_command)
         if not compiled:
             emit_result("CE", 0, len(test_cases), 0, None, compiler_message)
             return 0
@@ -263,6 +286,8 @@ def main() -> int:
                 time_limit_ms,
                 memory_limit_kb,
                 output_limit_kb,
+                run_command,
+                address_space_limit,
             )
             total_execution_time_ms += elapsed_ms
             if test_memory_kb is not None:

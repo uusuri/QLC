@@ -7,9 +7,8 @@ public enum Toolchain {
   RUST2021,
   GO120,
   JAVASCRIPT_ES2022,
+  TYPESCRIPT5,
   CSHARP_12,
-  PHP81,
-  RUBY31,
-  SWIFT54,
-  KOTLIN_1_9
+  C17,
+  PHP81
 }

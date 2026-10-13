@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 import { CourseLanguageControl } from "@/components/CourseLanguageControl";
+import { codeExecutionLimits } from "@/components/courseLanguages";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { InstantAnswerWorkspace } from "@/components/InstantAnswerWorkspace";
 import { CodeLessonWorkspace } from "@/components/CodeLessonWorkspace";
@@ -171,6 +172,10 @@ export default function LessonPage() {
   const taskAccepted = primaryTask != null && acceptedTaskIds.includes(primaryTask.id);
   const courseSlug = `course-${view.course.id}`;
   const lessonCode = String(lessonId).padStart(3, "0");
+  const codeLimits = primaryTask?.taskType === "CODE"
+    ? codeExecutionLimits(view.course.multilingual ? selectedLanguage : (primaryTask.language ?? "CPP23"),
+        primaryTask.timeLimitMs, primaryTask.memoryLimitKb)
+    : null;
 
   return <div className="kit-shell"><SiteHeader compact /><main className="kit-page" id="main-content" tabIndex={-1}>
     <nav aria-label="Навигация по уроку" className="flex flex-wrap justify-between gap-4 text-sm text-muted"><Link className="qlc-text-link" href={`/courses/${courseSlug}`}>← {view.course.name}</Link><Link className="qlc-text-link" href="/profile">Моё обучение ↗</Link></nav>
@@ -188,10 +193,10 @@ export default function LessonPage() {
         {primaryTask.taskType === "CODE" && <Tabs className="kit-mobile-task-tabs" activeValue={taskView} onChange={setTaskView} items={[{value:"task",label:"Задача"},{value:"code",label:"Код"},{value:"result",label:"Результат"}]} />}
         <div className={primaryTask.taskType === "CODE" ? "kit-task-grid" : "grid gap-6"} data-view={taskView}>
           <section className="kit-task-statement"><header className="flex items-center justify-between gap-4 border-b border-line p-5"><h2 className="text-xl">Условие задачи</h2><TaskDifficulty value={primaryTask.difficulty ?? 1} /></header><div className="grid gap-6 p-5"><SafeMarkdown markdown={primaryTask.statementMd || "Условие задачи пока пусто."} />
-          {primaryTask.taskType === "CODE" && <dl className="grid gap-3 border-t border-line pt-5 text-xs text-muted">{primaryTask.timeLimitMs !== null && <div className="flex justify-between gap-3"><dt>Время</dt><dd>{primaryTask.timeLimitMs} мс</dd></div>}{primaryTask.memoryLimitKb !== null && <div className="flex justify-between gap-3"><dt>Память</dt><dd>{primaryTask.memoryLimitKb} КБ</dd></div>}{primaryTask.outputLimitKb !== null && <div className="flex justify-between gap-3"><dt>Размер вывода</dt><dd>{primaryTask.outputLimitKb} КБ</dd></div>}</dl>}
+          {primaryTask.taskType === "CODE" && codeLimits && <dl className="grid gap-3 border-t border-line pt-5 text-xs text-muted">{codeLimits.timeMs !== null && <div className="flex justify-between gap-3"><dt>Время</dt><dd>{codeLimits.timeMs} мс</dd></div>}{codeLimits.memoryKb !== null && <div className="flex justify-between gap-3"><dt>Память</dt><dd>{codeLimits.memoryKb} КБ</dd></div>}{primaryTask.outputLimitKb !== null && <div className="flex justify-between gap-3"><dt>Размер вывода</dt><dd>{primaryTask.outputLimitKb} КБ</dd></div>}</dl>}
           {primaryTask.taskType !== "CODE" && <TaskHints key={primaryTask.id} taskId={primaryTask.id} hints={primaryTask.hints ?? []} />}
           </div></section>
-          {primaryTask.taskType === "CODE" ? (view.course.multilingual && !selectedLanguage ? <p className="p-6 text-muted">Выберите язык решений, чтобы открыть редактор.</p> : <CodeLessonWorkspace key={`${primaryTask.id}:${primaryTask.testSetVersion ?? 1}:${selectedLanguage ?? primaryTask.language}`} task={primaryTask} selectedLanguage={view.course.multilingual ? selectedLanguage : null} demo={Boolean(view.course.multilingual)} onAccepted={markAccepted} onSubmissionStart={() => setTaskView("result")} />) : <InstantAnswerWorkspace key={primaryTask.id} task={primaryTask} onAccepted={markAccepted} />}
+          {primaryTask.taskType === "CODE" ? (view.course.multilingual && !selectedLanguage ? <p className="p-6 text-muted">Выберите язык решений, чтобы открыть редактор.</p> : <CodeLessonWorkspace key={`${primaryTask.id}:${primaryTask.testSetVersion ?? 1}:${selectedLanguage ?? primaryTask.language}`} task={primaryTask} selectedLanguage={view.course.multilingual ? selectedLanguage : null} demo={Boolean(view.course.multilingual && selectedLanguage && !["CPP23", "JAVA21", "PYTHON311"].includes(selectedLanguage))} onAccepted={markAccepted} onSubmissionStart={() => setTaskView("result")} />) : <InstantAnswerWorkspace key={primaryTask.id} task={primaryTask} onAccepted={markAccepted} />}
         </div>
         {taskAccepted && <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6">
           <p className="text-sm text-acid">✓ Задача решена</p>

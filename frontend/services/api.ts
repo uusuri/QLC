@@ -35,9 +35,10 @@ import type {
 const API_BASE_URL = (
   typeof window === "undefined"
     ? process.env.BACKEND_INTERNAL_URL ??
-      process.env.NEXT_PUBLIC_API_BASE_URL ??
-      "http://127.0.0.1:8080"
-    : process.env.NEXT_PUBLIC_API_BASE_URL ?? ""
+      (process.env.NODE_ENV === "production"
+        ? "https://api.qlcode.me"
+        : "http://127.0.0.1:8080")
+    : ""
 ).replace(/\/$/, "");
 
 const AUTH_TOKEN_STORAGE_KEY = "qlc:auth-token";

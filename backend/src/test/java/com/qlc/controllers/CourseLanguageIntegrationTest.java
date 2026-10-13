@@ -4,6 +4,7 @@ import com.qlc.models.entities.*;
 import com.qlc.models.enums.Role;
 import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.repositories.SubmissionRepository;
+import com.qlc.runners.LanguageProfile;
 import com.qlc.security.UserDetailsImpl;
 import com.qlc.services.RedisQueueService;
 import jakarta.persistence.EntityManager;
@@ -101,21 +102,23 @@ class CourseLanguageIntegrationTest {
 
   @ParameterizedTest
   @ValueSource(strings = {"CPP23", "JAVA21", "PYTHON311", "JAVASCRIPT_ES2022", "TYPESCRIPT5", "CSHARP_12", "C17", "GO120", "PHP81", "RUST2021"})
-  void allTenLanguagesSaveDemonstrationsWithoutRunningOrAwardingProgress(String language) throws Exception {
+  void runnableLanguagesAreQueuedAndTheOthersRemainDemonstrations(String language) throws Exception {
+    boolean runnable = LanguageProfile.isRunnable(language);
+    String expectedStatus = runnable ? "QUEUED" : "DEMO";
     choose(language, learner);
     mvc.perform(auth(post("/api/tasks/{id}/submissions", task.getId()), learner)
         .contentType(MediaType.APPLICATION_JSON)
         .content("{\"language\":\"" + language + "\",\"sourceCode\":\"demo code\"}"))
-        .andExpect(status().isAccepted()).andExpect(jsonPath("status").value("DEMO"));
+        .andExpect(status().isAccepted()).andExpect(jsonPath("status").value(expectedStatus));
     em.flush();
     Submission saved = submissions.findAll().stream().filter(s -> s.getTask().getId().equals(task.getId())).findFirst().orElseThrow();
-    assertThat(saved.getStatus()).isEqualTo(SubmissionStatus.DEMO);
-    assertThat(saved.isCountsForProgress()).isFalse();
+    assertThat(saved.getStatus()).isEqualTo(runnable ? SubmissionStatus.QUEUED : SubmissionStatus.DEMO);
+    assertThat(saved.isCountsForProgress()).isEqualTo(runnable);
     assertThat(saved.getVerdict()).isNull();
     assertThat(saved.getLanguage()).isEqualTo(language);
     assertThat(submissions.findAcceptedTaskIdsByUserId(learner.getId())).isEmpty();
     mvc.perform(auth(get("/api/submissions/{id}", saved.getId()), learner)).andExpect(status().isOk())
-        .andExpect(jsonPath("status").value("DEMO"));
+        .andExpect(jsonPath("status").value(expectedStatus));
     verifyNoInteractions(queue);
   }
 

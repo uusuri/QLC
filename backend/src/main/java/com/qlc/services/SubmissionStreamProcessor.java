@@ -1,7 +1,7 @@
 package com.qlc.services;
 
 import com.qlc.models.messages.SubmissionStreamMessage;
-import com.qlc.runners.DockerCppRunner;
+import com.qlc.runners.DockerCodeRunner;
 import com.qlc.runners.DockerRunnerResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,13 +19,13 @@ public class SubmissionStreamProcessor {
   static final String MALFORMED_MESSAGE = "Submission message is malformed.";
 
   private final SubmissionExecutionTransactions transactions;
-  private final DockerCppRunner dockerCppRunner;
+  private final DockerCodeRunner dockerCodeRunner;
 
   public SubmissionStreamProcessor(
       SubmissionExecutionTransactions transactions,
-      DockerCppRunner dockerCppRunner) {
+      DockerCodeRunner dockerCodeRunner) {
     this.transactions = transactions;
-    this.dockerCppRunner = dockerCppRunner;
+    this.dockerCodeRunner = dockerCodeRunner;
   }
 
   @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -37,7 +37,7 @@ public class SubmissionStreamProcessor {
 
     DockerRunnerResult runnerResult;
     try {
-      runnerResult = dockerCppRunner.run(preparation.runRequest());
+      runnerResult = dockerCodeRunner.run(preparation.runRequest());
     } catch (InterruptedException exception) {
       transactions.retryExecution(preparation.submissionId(), preparation.executionToken());
       Thread.currentThread().interrupt();

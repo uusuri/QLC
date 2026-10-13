@@ -16,3 +16,15 @@ export const COURSE_LANGUAGES: { id: SubmissionLanguage; label: string; monaco: 
 export function courseLanguage(language: string | null | undefined) {
   return COURSE_LANGUAGES.find(item => item.id === language) ?? COURSE_LANGUAGES[0];
 }
+
+// UI mirror of the authoritative backend LanguageProfile policy.
+export function codeExecutionLimits(language: string | null | undefined, timeMs: number | null, memoryKb: number | null) {
+  if (language === "PYTHON311") {
+    return { timeMs: timeMs === null ? null : timeMs * 3, memoryKb: memoryKb === null ? null : Math.max(memoryKb * 2, 128 * 1024) };
+  }
+  if (language === "JAVA21") {
+    return { timeMs: timeMs === null ? null : timeMs * 2 + 500, memoryKb: memoryKb === null ? null : Math.max(memoryKb * 3, 256 * 1024) };
+  }
+  if (language === "CPP23") return { timeMs, memoryKb };
+  return null;
+}

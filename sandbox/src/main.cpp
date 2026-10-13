@@ -54,11 +54,14 @@ namespace {
             }
 
             const auto value = parse_positive_integer(argv[index + 1]);
-            if (!value.has_value()) {
+            const bool no_address_space_limit = option == "--memory-kb"
+                && std::string_view{argv[index + 1]} == "0";
+            if (!value.has_value() && !no_address_space_limit) {
                 return std::nullopt;
             }
             if (option == "--memory-kb" && !memory_limit_kb.has_value()) {
-                memory_limit_kb = value;
+                memory_limit_kb = no_address_space_limit
+                    ? std::optional<std::uint64_t>{0} : value;
             } else if (option == "--time-ms" && !time_limit_ms.has_value()) {
                 time_limit_ms = value;
             } else if (option == "--output-kb" && !output_limit_kb.has_value()) {
@@ -129,7 +132,8 @@ int main(int argc, char* argv[]) {
         .limits = sandbox::ResourceLimits{
             .cpu_time = std::chrono::seconds{static_cast<std::chrono::seconds::rep>(cpu_seconds)},
             .wall_time = std::chrono::milliseconds{static_cast<MillisecondsRep>(options->time_limit_ms)},
-            .address_space_bytes = *memory_limit_bytes,
+            .address_space_bytes = options->memory_limit_kb == 0
+                ? std::nullopt : std::optional<std::uint64_t>{*memory_limit_bytes},
             .file_size_bytes = *output_limit_bytes,
         },
     };

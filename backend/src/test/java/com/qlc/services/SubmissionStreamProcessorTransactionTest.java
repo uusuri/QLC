@@ -6,7 +6,7 @@ import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.models.enums.Verdict;
 import com.qlc.models.messages.SubmissionStreamMessage;
 import com.qlc.repositories.SubmissionRepository;
-import com.qlc.runners.DockerCppRunner;
+import com.qlc.runners.DockerCodeRunner;
 import com.qlc.runners.DockerRunnerResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -35,7 +35,7 @@ class SubmissionStreamProcessorTransactionTest {
   void dockerRunsBetweenTransactions() throws Exception {
     try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfiguration.class)) {
       SubmissionRepository repository = context.getBean(SubmissionRepository.class);
-      DockerCppRunner runner = context.getBean(DockerCppRunner.class);
+      DockerCodeRunner runner = context.getBean(DockerCodeRunner.class);
       SubmissionStreamProcessor processor = context.getBean(SubmissionStreamProcessor.class);
       Submission submission = submission();
 
@@ -92,8 +92,8 @@ class SubmissionStreamProcessorTransactionTest {
     }
 
     @Bean
-    DockerCppRunner dockerCppRunner() {
-      return mock(DockerCppRunner.class);
+    DockerCodeRunner dockerCppRunner() {
+      return mock(DockerCodeRunner.class);
     }
 
     @Bean
@@ -104,7 +104,7 @@ class SubmissionStreamProcessorTransactionTest {
     @Bean
     SubmissionStreamProcessor submissionStreamProcessor(
         SubmissionExecutionTransactions transactions,
-        DockerCppRunner runner) {
+        DockerCodeRunner runner) {
       return new SubmissionStreamProcessor(transactions, runner);
     }
   }

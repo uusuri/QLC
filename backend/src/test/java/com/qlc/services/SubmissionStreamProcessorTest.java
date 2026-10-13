@@ -6,7 +6,7 @@ import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.models.enums.Verdict;
 import com.qlc.models.messages.SubmissionStreamMessage;
 import com.qlc.repositories.SubmissionRepository;
-import com.qlc.runners.DockerCppRunner;
+import com.qlc.runners.DockerCodeRunner;
 import com.qlc.runners.DockerRunnerResult;
 import com.qlc.runners.RunRequest;
 import com.qlc.runners.Toolchain;
@@ -38,7 +38,7 @@ class SubmissionStreamProcessorTest {
   private SubmissionRepository submissionRepository;
 
   @Mock
-  private DockerCppRunner dockerCppRunner;
+  private DockerCodeRunner dockerCppRunner;
 
   private SubmissionStreamProcessor processor;
 

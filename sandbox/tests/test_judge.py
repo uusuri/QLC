@@ -1,4 +1,5 @@
 import importlib.util
+from unittest.mock import patch
 from pathlib import Path
 import tempfile
 import unittest
@@ -51,10 +52,31 @@ class JudgeTest(unittest.TestCase):
                 "2000",
                 "--output-kb",
                 "4096",
-                str(judge.EXECUTABLE_FILE),
+                "/work/main",
             ],
             command,
         )
+
+    def test_java_command_uses_container_memory_instead_of_address_space_limit(self):
+        command = judge.sandbox_command(
+            2500, 262144, 4096, ["/opt/java/openjdk/bin/java", "-cp", "/work", "Main"], False
+        )
+        self.assertEqual("0", command[2])
+        self.assertEqual(["/opt/java/openjdk/bin/java", "-cp", "/work", "Main"], command[-4:])
+
+    def test_profile_command_is_parsed_as_argv_not_a_shell_string(self):
+        with patch.dict("os.environ", {"QLC_RUN_COMMAND": '["/opt/java/openjdk/bin/java", "-cp", "/work", "Main"]'}):
+            self.assertEqual(
+                ["/opt/java/openjdk/bin/java", "-cp", "/work", "Main"],
+                judge.command_from_env("QLC_RUN_COMMAND", ["/work/main"]),
+            )
+
+    def test_legacy_cpp_command_stays_available(self):
+        with patch.dict("os.environ", {}, clear=True):
+            self.assertEqual(
+                ["/work/main"],
+                judge.command_from_env("QLC_RUN_COMMAND", ["/work/main"]),
+            )
 
     def test_classifies_unhandled_bad_alloc_as_memory_limit_exceeded(self):
         self.assertTrue(
@@ -63,6 +85,14 @@ class JudgeTest(unittest.TestCase):
                 "terminate called after throwing an instance of 'std::bad_alloc'",
                 2048,
                 32768,
+            )
+        )
+
+    def test_classifies_java_heap_exhaustion_as_memory_limit_exceeded(self):
+        self.assertTrue(
+            judge.is_memory_limit_exceeded(
+                1, 'Exception in thread "main" java.lang.OutOfMemoryError: Java heap space',
+                30000, 262144,
             )
         )
 

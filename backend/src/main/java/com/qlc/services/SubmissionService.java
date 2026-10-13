@@ -14,6 +14,7 @@ import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.repositories.SubmissionRepository;
 import com.qlc.repositories.TaskRepository;
 import com.qlc.repositories.UserRepository;
+import com.qlc.runners.LanguageProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -94,15 +95,19 @@ public class SubmissionService {
         ? "CPP23"
         : codeTask.getLanguage();
     taskAccess.requireAccess(task, userId);
-    boolean demo = codeTask.getLesson() != null && codeTask.getLesson().getModule() != null
+    boolean multilingual = codeTask.getLesson() != null && codeTask.getLesson().getModule() != null
         && codeTask.getLesson().getModule().getCourse().isMultilingual();
-    if (demo) {
+    boolean demo = !LanguageProfile.isRunnable(request.language());
+    if (multilingual) {
       var settings = courseLanguages.get(codeTask.getLesson().getModule().getCourse().getId(), userId);
       if (settings.selectedLanguage() == null || !settings.selectedLanguage().equals(request.language())) {
         throw new IllegalArgumentException("Select this language in the course before submitting");
       }
     } else if (!taskLanguage.equalsIgnoreCase(request.language())) {
       throw new IllegalArgumentException("This task accepts " + taskLanguage + ", not " + request.language());
+    }
+    if (demo && !multilingual) {
+      throw new IllegalArgumentException("This language is not available for code execution yet");
     }
 
     // Проверяем повтор запроса только после проверки доступа.
