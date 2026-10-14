@@ -1,3 +1,0 @@
-#include <bits/stdc++.h>
-using namespace std;using ll=long long;
-struct D{vector<int>p;D(int n):p(n){iota(p.begin(),p.end(),0);}int f(int x){return x==p[x]?x:p[x]=f(p[x]);}bool un(int a,int b){a=f(a);b=f(b);if(a==b)return false;p[a]=b;return true;}};int main(){int n,m,q;cin>>n>>m>>q;vector<tuple<int,int,ll>>orig(m);vector<int>ids(m);iota(ids.begin(),ids.end(),0);for(auto&[u,v,w]:orig){cin>>u>>v>>w;--u;--v;}sort(ids.begin(),ids.end(),[&](int i,int j){return get<2>(orig[i])<get<2>(orig[j]);});while(q--){int id;cin>>id;--id;D ds(n);auto[u,v,w]=orig[id];ds.un(u,v);ll ans=w;for(int i:ids){auto[a,b,c]=orig[i];if(ds.un(a,b))ans+=c;}cout<<ans<<'\n';}}

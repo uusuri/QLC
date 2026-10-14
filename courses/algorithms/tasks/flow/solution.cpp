@@ -1,4 +1,0 @@
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-struct E{int v,rev;ll cap;};int main(){ios::sync_with_stdio(false);cin.tie(nullptr);int n,m;cin>>n>>m;vector<vector<E>>g(n);while(m--){int u,v;ll c;cin>>u>>v>>c;--u;--v;int a=g[u].size(),b=g[v].size();g[u].push_back({v,b,c});g[v].push_back({u,a,0});}ll ans=0;vector<int>d(n),it(n);while(true){fill(d.begin(),d.end(),-1);queue<int>q;q.push(0);d[0]=0;while(!q.empty()){int u=q.front();q.pop();for(auto e:g[u])if(e.cap>0&&d[e.v]<0){d[e.v]=d[u]+1;q.push(e.v);}}if(d[n-1]<0)break;fill(it.begin(),it.end(),0);function<ll(int,ll)>dfs=[&](int u,ll f)->ll{if(u==n-1)return f;for(int&i=it[u];i<(int)g[u].size();i++){E&e=g[u][i];if(e.cap>0&&d[e.v]==d[u]+1){ll z=dfs(e.v,min(f,e.cap));if(z){e.cap-=z;g[e.v][e.rev].cap+=z;return z;}}}return 0;};while(ll z=dfs(0,LLONG_MAX))ans+=z;}cout<<ans<<"\n";}

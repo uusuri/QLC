@@ -58,3 +58,7 @@ Thumbs.db
 *.out
 *.exe
 build-*/
+
+# Course content is stored in the database, not in Git
+/courses/algorithms/
+/results/python-from-zero/

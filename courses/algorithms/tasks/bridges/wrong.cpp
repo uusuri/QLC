@@ -1,4 +1,0 @@
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-int main(){ios::sync_with_stdio(false);cin.tie(nullptr);int n,m;cin>>n>>m;vector<vector<pair<int,int>>>g(n);for(int i=0;i<m;i++){int u,v;cin>>u>>v;--u;--v;g[u].push_back({v,i});g[v].push_back({u,i});}vector<int>tin(n,-1),low(n),parent(n,-1),pe(n,-1),idx(n),children(n);vector<bool>cut(n);int timer=0,bridges=0;for(int root=0;root<n;root++)if(tin[root]<0){vector<int>st{root};tin[root]=low[root]=timer++;while(!st.empty()){int u=st.back();if(idx[u]<(int)g[u].size()){auto[v,id]=g[u][idx[u]++];if(v==parent[u])continue;if(tin[v]<0){parent[v]=u;pe[v]=id;children[u]++;tin[v]=low[v]=timer++;st.push_back(v);}else low[u]=min(low[u],tin[v]);}else{st.pop_back();int p=parent[u];if(p<0){cut[u]=children[u]>1;}else{low[p]=min(low[p],low[u]);if(low[u]>tin[p])bridges++;if(parent[p]>=0&&low[u]>=tin[p])cut[p]=true;}}}}cout<<bridges<<"\n";}

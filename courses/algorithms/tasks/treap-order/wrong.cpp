@@ -1,6 +1,0 @@
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-mt19937 rng(712367821);struct N{ll x,s;unsigned pr;int sz=1,cnt=1;bool rev=false;N *l=nullptr,*r=nullptr;N(ll x):x(x),s(x),pr(rng()){}};int size(N*t){return t?t->sz:0;}ll sum(N*t){return t?t->s:0;}void pull(N*t){if(t){t->sz=size(t->l)+size(t->r)+t->cnt;t->s=sum(t->l)+sum(t->r)+t->x*t->cnt;}}void push(N*t){if(t&&t->rev){swap(t->l,t->r);if(t->l)t->l->rev^=1;if(t->r)t->r->rev^=1;t->rev=false;}}N*merge(N*a,N*b){if(!a)return b;if(!b)return a;push(a);push(b);if(a->pr>b->pr){a->r=merge(a->r,b);pull(a);return a;}b->l=merge(a,b->l);pull(b);return b;}
-void split(N*t,ll x,N*&a,N*&b){if(!t){a=b=nullptr;return;}if(t->x<x){a=t;split(t->r,x,a->r,b);pull(a);}else{b=t;split(t->l,x,a,b->l);pull(b);}}ll kth(N*t,int k){while(t){int z=size(t->l);if(k<=z)t=t->l;else if(k<=z+t->cnt)return t->x;else{k-=z+t->cnt;t=t->r;}}return 0;}
-int main(){ios::sync_with_stdio(false);cin.tie(nullptr);int q;cin>>q;N*root=nullptr;while(q--){char op;ll x;cin>>op>>x;if(op=='?'){if(x<1||x>size(root))cout<<"NONE\n";else cout<<kth(root,x)<<"\n";}else{N*a,*b,*c;split(root,x,a,b);split(b,x+1,b,c);if(op=='+'){if(b)b->cnt=1;else b=new N(x);}else if(b){if(--b->cnt==0){delete b;b=nullptr;}}pull(b);root=merge(merge(a,b),c);}}}
