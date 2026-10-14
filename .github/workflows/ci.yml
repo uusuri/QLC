@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+      - name: Build and test backend
+        run: ./gradlew build --no-daemon
+      - name: Upload failed test report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-report
+          path: backend/build/reports/tests/test/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  frontend:
+    name: Frontend tests and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run frontend tests
+        run: npm test
+      - name: Build frontend
+        run: npm run build
+
+  runner:
+    name: Docker judge tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+          cache-read-only: true
+      - name: Test judge logic
+        working-directory: .
+        run: python3 -B -m unittest discover -s sandbox/tests -p 'test_*.py'
+      - name: Build execution images
+        working-directory: .
+        run: |
+          docker build -f sandbox/Dockerfile -t qlc-cpp-runner:dev .
+          docker build -f sandbox/Dockerfile.java21 -t qlc-java21-runner:dev .
+          docker build -f sandbox/Dockerfile.python --build-arg PYTHON_IMAGE=python:3.12-slim-trixie -t qlc-python312-runner:dev .
+          docker build -f sandbox/Dockerfile.python --build-arg PYTHON_IMAGE=pypy:3.12-slim-trixie -t qlc-pypy312-runner:dev .
+      - name: Run code in real containers
+        env:
+          QLC_DOCKER_TESTS: 'true'
+        run: ./gradlew test --no-daemon --tests 'com.qlc.runners.DockerCodeRunnerIntegrationTest'
+      - name: Upload failed judge test report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: judge-test-report
+          path: backend/build/reports/tests/test/
+          if-no-files-found: ignore
+          retention-days: 7

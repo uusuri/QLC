@@ -116,11 +116,14 @@ Auth (`registerUser`, `loginUser`, `getCurrentUser`) больше не испо�
 
 ## Тестовая среда и CI
 
-В текущем фронтенде нет Jest/Vitest/Playwright/Cypress конфигов, XML-репортеров и тестовых файлов. Frontend CI в `.github/workflows/frontend.yml` выполняет:
+В `frontend/tests/*.test.cjs` есть модульные проверки Markdown, анимации графов и
+возврата к обучению. Единый workflow `.github/workflows/ci.yml` запускает их и
+собирает production-версию фронтенда:
 
 ```bash
 cd frontend
 npm ci
+npm test
 npm run build
 ```
 
@@ -128,10 +131,11 @@ npm run build
 
 ```bash
 npm ci
+npm test
 npm run build
 ```
 
-Главные требования пайплайна сейчас: строгий TypeScript из `tsconfig.json` и успешная сборка Next.js.
+Сборка Next.js также проверяет TypeScript. Браузерного end-to-end теста пока нет.
 
 ## Локальный запуск
 
