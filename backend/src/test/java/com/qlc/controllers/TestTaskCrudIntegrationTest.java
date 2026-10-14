@@ -115,9 +115,9 @@ class TestTaskCrudIntegrationTest {
   void theoryVariantsSurviveSerializationAndLegacyUpdates() throws Exception {
     mvc.perform(put("/api/lessons/{id}", lessonId).with(user(admin)).contentType(MediaType.APPLICATION_JSON)
         .content("""
-            {"name":"Test","description":"Test","contentMd":"Base","contentByLanguage":{"PYTHON311":"Python text","JAVA21":"Java text"}}
+            {"name":"Test","description":"Test","contentMd":"Base","contentByLanguage":{"PYTHON312":"Python text","JAVA21":"Java text"}}
             """))
-        .andExpect(status().isOk()).andExpect(jsonPath("contentByLanguage.PYTHON311").value("Python text"));
+        .andExpect(status().isOk()).andExpect(jsonPath("contentByLanguage.PYTHON312").value("Python text"));
     mvc.perform(put("/api/lessons/{id}", lessonId).with(user(admin)).contentType(MediaType.APPLICATION_JSON)
         .content("{\"name\":\"Test\",\"description\":\"Test\",\"contentMd\":\"Updated base\"}"))
         .andExpect(status().isOk());

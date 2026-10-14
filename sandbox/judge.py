@@ -218,8 +218,16 @@ def run_test_case(
                 "--quiet",
                 "--format=%M",
                 f"--output={memory_path}",
-                *sandbox_command(time_limit_ms, memory_limit_kb, output_limit_kb,
-                                 run_command, address_space_limit),
+                # Leave one KiB of headroom in RLIMIT_FSIZE: some runtimes (notably
+                # Java) can swallow the write error and exit 0 at the exact limit.
+                # The actual task limit is still checked against stdout size below.
+                *sandbox_command(
+                    time_limit_ms,
+                    memory_limit_kb,
+                    output_limit_kb + 1,
+                    run_command,
+                    address_space_limit,
+                ),
             ],
             input=test_input.encode("utf-8"),
             stdout=stdout_file,

@@ -295,6 +295,10 @@ public class CourseService {
         .map(UserCourse::getSelectedLanguage).orElse(null);
     String variant = language != null && course.getAvailableLanguages().contains(language)
         ? lesson.getContentByLanguage().get(language) : null;
+    if (variant == null && "PYPY312".equals(language)) {
+      // Interpreter variants share the same Python theory unless explicitly authored.
+      variant = lesson.getContentByLanguage().get("PYTHON312");
+    }
     return variant == null
         ? new com.qlc.models.dtos.LessonTheoryDTO(lesson.getContentMd(), null, language != null)
         : new com.qlc.models.dtos.LessonTheoryDTO(variant, language, false);

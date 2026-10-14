@@ -84,9 +84,9 @@ class CourseLanguageIntegrationTest {
   void firstVisitHasNoChoice_selectionPersistsAndRemainsPersonal() throws Exception {
     mvc.perform(auth(get(path()), learner)).andExpect(status().isOk())
         .andExpect(jsonPath("multilingual").value(true))
-        .andExpect(jsonPath("availableLanguages.length()").value(10))
+        .andExpect(jsonPath("availableLanguages.length()").value(11))
         .andExpect(jsonPath("selectedLanguage").doesNotExist());
-    choose("PYTHON311", learner);
+    choose("PYTHON312", learner);
     choose("JAVA21", other);
     choose("RUST2021", learner);
     em.flush(); em.clear();
@@ -101,7 +101,7 @@ class CourseLanguageIntegrationTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"CPP23", "JAVA21", "PYTHON311", "JAVASCRIPT_ES2022", "TYPESCRIPT5", "CSHARP_12", "C17", "GO120", "PHP81", "RUST2021"})
+  @ValueSource(strings = {"CPP23", "JAVA21", "PYTHON312", "PYPY312", "JAVASCRIPT_ES2022", "TYPESCRIPT5", "CSHARP_12", "C17", "GO120", "PHP81", "RUST2021"})
   void runnableLanguagesAreQueuedAndTheOthersRemainDemonstrations(String language) throws Exception {
     boolean runnable = LanguageProfile.isRunnable(language);
     String expectedStatus = runnable ? "QUEUED" : "DEMO";
@@ -147,7 +147,7 @@ class CourseLanguageIntegrationTest {
     mvc.perform(auth(post("/api/tasks/{id}/submissions", task.getId()), learner)
         .contentType(MediaType.APPLICATION_JSON).content("{\"language\":\"CPP23\",\"sourceCode\":\"demo\"}"))
         .andExpect(status().isBadRequest());
-    choose("PYTHON311", learner);
+    choose("PYTHON312", learner);
     mvc.perform(auth(post("/api/tasks/{id}/submissions", task.getId()), learner)
         .contentType(MediaType.APPLICATION_JSON).content("{\"language\":\"CPP23\",\"sourceCode\":\"demo\"}"))
         .andExpect(status().isBadRequest());
@@ -170,17 +170,27 @@ class CourseLanguageIntegrationTest {
   void theoryFollowsSavedLanguageAndDoesNotLeakOtherVariants() throws Exception {
     Lesson lesson = task.getLesson();
     lesson.setContentMd("Base text");
-    lesson.setContentByLanguage(new java.util.HashMap<>(Map.of("PYTHON311", "Python text", "JAVA21", "Java text")));
+    lesson.setContentByLanguage(new java.util.HashMap<>(Map.of("PYTHON312", "Python text", "JAVA21", "Java text")));
     em.flush();
-    choose("PYTHON311", learner);
+    choose("PYTHON312", learner);
     choose("JAVA21", other);
     em.flush(); em.clear();
     mvc.perform(auth(get("/api/lessons/{id}/theory", lesson.getId()), learner))
         .andExpect(status().isOk()).andExpect(header().string("Cache-Control", "private, no-store"))
         .andExpect(jsonPath("contentMd").value("Python text"))
-        .andExpect(jsonPath("language").value("PYTHON311"))
+        .andExpect(jsonPath("language").value("PYTHON312"))
         .andExpect(jsonPath("fallback").value(false))
         .andExpect(jsonPath("contentByLanguage").doesNotExist());
+    choose("PYTHON312", learner);
+    mvc.perform(auth(get("/api/lessons/{id}/theory", lesson.getId()), learner))
+        .andExpect(status().isOk()).andExpect(jsonPath("contentMd").value("Python text"))
+        .andExpect(jsonPath("language").value("PYTHON312"))
+        .andExpect(jsonPath("fallback").value(false));
+    choose("PYPY312", learner);
+    mvc.perform(auth(get("/api/lessons/{id}/theory", lesson.getId()), learner))
+        .andExpect(status().isOk()).andExpect(jsonPath("contentMd").value("Python text"))
+        .andExpect(jsonPath("language").value("PYPY312"))
+        .andExpect(jsonPath("fallback").value(false));
     mvc.perform(auth(get("/api/lessons/{id}/learn", lesson.getId()), other))
         .andExpect(status().isOk()).andExpect(jsonPath("lesson.contentMd").value("Java text"))
         .andExpect(jsonPath("lesson.contentByLanguage").doesNotExist());

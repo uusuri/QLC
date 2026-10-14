@@ -411,7 +411,7 @@ export interface LessonLearningViewDto {
 }
 
 // Языки редактора; доступные варианты определяются настройками курса.
-export type SubmissionLanguage = "CPP23" | "JAVA21" | "PYTHON311" | "JAVASCRIPT_ES2022" | "TYPESCRIPT5" | "CSHARP_12" | "C17" | "GO120" | "PHP81" | "RUST2021";
+export type SubmissionLanguage = "CPP23" | "JAVA21" | "PYTHON312" | "PYPY312" | "JAVASCRIPT_ES2022" | "TYPESCRIPT5" | "CSHARP_12" | "C17" | "GO120" | "PHP81" | "RUST2021";
 
 // Актуальный worker status плюс legacy aliases на время совместимого rollout.
 export type BackendSubmissionStatus =

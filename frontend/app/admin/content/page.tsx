@@ -248,7 +248,8 @@ function restoreTaskForm(value: unknown): TaskFormState {
       : initialTaskForm.taskType;
   const difficulty: 1 | 2 | 3 =
     value.difficulty === 2 || value.difficulty === 3 ? value.difficulty : 1;
-  const language: SubmissionLanguage = value.language === "JAVA21" ? "JAVA21" : "CPP23";
+  const language: SubmissionLanguage = COURSE_LANGUAGES.some(item => item.id === value.language)
+    ? value.language as SubmissionLanguage : "CPP23";
   const correctOptionIndexes = Array.isArray(value.correctOptionIndexes)
     ? value.correctOptionIndexes.filter(
         (index): index is number => Number.isSafeInteger(index) && Number(index) >= 0
@@ -1411,6 +1412,8 @@ export default function AdminContentPage() {
                           >
                             <option value="CPP23">C++23</option>
                             <option value="JAVA21">Java 21</option>
+                            <option value="PYTHON312">Python 3.12 (CPython)</option>
+                            <option value="PYPY312">PyPy 3.12</option>
                           </select>
                         </label>
                         <TextArea

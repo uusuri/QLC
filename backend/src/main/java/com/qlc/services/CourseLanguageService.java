@@ -14,7 +14,7 @@ import java.util.Set;
 @Service
 @Transactional(readOnly = true)
 public class CourseLanguageService {
-  public static final Set<String> CONFIGURABLE_LANGUAGES = Set.of("CPP23", "JAVA21", "PYTHON311", "JAVASCRIPT_ES2022", "TYPESCRIPT5", "CSHARP_12", "C17", "GO120", "PHP81", "RUST2021");
+  public static final Set<String> CONFIGURABLE_LANGUAGES = Set.of("CPP23", "JAVA21", "PYTHON312", "PYPY312", "JAVASCRIPT_ES2022", "TYPESCRIPT5", "CSHARP_12", "C17", "GO120", "PHP81", "RUST2021");
   private final CourseRepository courses;
   private final UserCourseRepository memberships;
   private final UserRepository users;
