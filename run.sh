@@ -47,7 +47,7 @@ if [[ "$MODE" == dev ]]; then
   [[ "${POSTGRES_HOST:-}" == localhost || "${POSTGRES_HOST:-}" == 127.0.0.1 ]] || die 'Dev должен использовать локальный PostgreSQL'
   [[ -z "${SPRING_DATASOURCE_URL:-}" ]] || die 'В dev не должен быть задан SPRING_DATASOURCE_URL'
   FRONTEND_PORT=3001
-  COMPOSE_FILE="$ROOT/docker-compose.yml"
+  COMPOSE_FILE="$ROOT/docker-compose.dev.yml"
   COMPOSE_ARGS=(--env-file "$ENV_FILE" -f "$COMPOSE_FILE")
 else
   [[ -n "${SPRING_DATASOURCE_URL:-}" ]] || die 'Не задан SPRING_DATASOURCE_URL для Neon'
