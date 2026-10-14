@@ -1,0 +1,2122 @@
+[
+  {
+    "component": "Progress/Linear",
+    "state": "0",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-linear--0.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Linear",
+    "state": "37.6",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-linear--37.6.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Linear",
+    "state": "100",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-linear--100.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Linear",
+    "state": "indeterminate",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-linear--indeterminate.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Linear",
+    "state": "unavailable",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-linear--unavailable.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/XP",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-xp--default.svg",
+    "width": 360,
+    "height": 132,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/XP",
+    "state": "reward",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-xp--reward.svg",
+    "width": 360,
+    "height": 132,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/XP",
+    "state": "level-up",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-xp--level-up.svg",
+    "width": 360,
+    "height": 132,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/XP",
+    "state": "unavailable",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-xp--unavailable.svg",
+    "width": 360,
+    "height": 132,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Course",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-course--default.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Course",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-course--completed.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Course",
+    "state": "unavailable",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-course--unavailable.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Module",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-module--default.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Module",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-module--completed.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Module",
+    "state": "unavailable",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-module--unavailable.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Lesson",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-lesson--default.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Lesson",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-lesson--completed.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Lesson",
+    "state": "unavailable",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-lesson--unavailable.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Skill",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-skill--default.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Skill",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-skill--completed.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Skill",
+    "state": "unavailable",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-skill--unavailable.svg",
+    "width": 360,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Circular",
+    "state": "0",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-circular--0.svg",
+    "width": 140,
+    "height": 140,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Circular",
+    "state": "83.7",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-circular--83.7.svg",
+    "width": 140,
+    "height": 140,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Circular",
+    "state": "100",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-circular--100.svg",
+    "width": 140,
+    "height": 140,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Progress/Circular",
+    "state": "unavailable",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/progress-circular--unavailable.svg",
+    "width": 140,
+    "height": 140,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Level/Badge",
+    "state": "1",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/level-badge--1.svg",
+    "width": 200,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Level/Badge",
+    "state": "10",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/level-badge--10.svg",
+    "width": 200,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Level/Badge",
+    "state": "100",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/level-badge--100.svg",
+    "width": 200,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Level/Badge",
+    "state": "999+",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/level-badge--999+.svg",
+    "width": 200,
+    "height": 72,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "XP/Reward",
+    "state": "25",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/xp-reward--25.svg",
+    "width": 220,
+    "height": 88,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "XP/Reward",
+    "state": "120",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/xp-reward--120.svg",
+    "width": 220,
+    "height": 88,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "XP/Reward",
+    "state": "pending",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/xp-reward--pending.svg",
+    "width": 220,
+    "height": 88,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "XP/Summary",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/xp-summary--default.svg",
+    "width": 360,
+    "height": 210,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "XP/Summary",
+    "state": "large-values",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/xp-summary--large-values.svg",
+    "width": 360,
+    "height": 210,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "LevelUp/Modal",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/levelup-modal--default.svg",
+    "width": 480,
+    "height": 330,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "LevelUp/Modal",
+    "state": "multiple-levels",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/levelup-modal--multiple-levels.svg",
+    "width": 480,
+    "height": 330,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "SkillProgress/Spiral",
+    "state": "locked",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/skillprogress-spiral--locked.svg",
+    "width": 440,
+    "height": 220,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "SkillProgress/Spiral",
+    "state": "available",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/skillprogress-spiral--available.svg",
+    "width": 440,
+    "height": 220,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "SkillProgress/Spiral",
+    "state": "current",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/skillprogress-spiral--current.svg",
+    "width": 440,
+    "height": 220,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "SkillProgress/Spiral",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/skillprogress-spiral--completed.svg",
+    "width": 440,
+    "height": 220,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "SkillStage",
+    "state": "locked",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/skillstage--locked.svg",
+    "width": 240,
+    "height": 100,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "SkillStage",
+    "state": "available",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/skillstage--available.svg",
+    "width": 240,
+    "height": 100,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "SkillStage",
+    "state": "current",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/skillstage--current.svg",
+    "width": 240,
+    "height": 100,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "SkillStage",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/skillstage--completed.svg",
+    "width": 240,
+    "height": 100,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "SkillMasteryBadge",
+    "state": "learning",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/skillmasterybadge--learning.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "SkillMasteryBadge",
+    "state": "practiced",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/skillmasterybadge--practiced.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "SkillMasteryBadge",
+    "state": "mastered",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/skillmasterybadge--mastered.svg",
+    "width": 260,
+    "height": 56,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Review/Due",
+    "state": "due-soon",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/review-due--due-soon.svg",
+    "width": 360,
+    "height": 210,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Review/Due",
+    "state": "due",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/review-due--due.svg",
+    "width": 360,
+    "height": 210,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Review/Due",
+    "state": "overdue",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/review-due--overdue.svg",
+    "width": 360,
+    "height": 210,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Review/Due",
+    "state": "refreshed",
+    "sizeVariant": null,
+    "file": "assets/ui/04-progression/review-due--refreshed.svg",
+    "width": 360,
+    "height": 210,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Course/Card",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/course-card--default.svg",
+    "width": 360,
+    "height": 466,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Course/Card",
+    "state": "hover",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/course-card--hover.svg",
+    "width": 360,
+    "height": 466,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Course/Card",
+    "state": "purchased",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/course-card--purchased.svg",
+    "width": 360,
+    "height": 466,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Course/Card",
+    "state": "in-progress",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/course-card--in-progress.svg",
+    "width": 360,
+    "height": 466,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Course/Card",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/course-card--completed.svg",
+    "width": 360,
+    "height": 466,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Course/Card",
+    "state": "discounted",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/course-card--discounted.svg",
+    "width": 360,
+    "height": 466,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Course/Card",
+    "state": "coming-soon",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/course-card--coming-soon.svg",
+    "width": 360,
+    "height": 466,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Course/Progress",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/course-progress--default.svg",
+    "width": 420,
+    "height": 292,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Course/Progress",
+    "state": "expanded",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/course-progress--expanded.svg",
+    "width": 420,
+    "height": 432,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Course/Progress",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/course-progress--completed.svg",
+    "width": 420,
+    "height": 292,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Module/Card",
+    "state": "not-started",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/module-card--not-started.svg",
+    "width": 440,
+    "height": 212,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Module/Card",
+    "state": "active",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/module-card--active.svg",
+    "width": 440,
+    "height": 212,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Module/Card",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/module-card--completed.svg",
+    "width": 440,
+    "height": 212,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Module/Card",
+    "state": "locked",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/module-card--locked.svg",
+    "width": 440,
+    "height": 212,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Module/Card",
+    "state": "review-due",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/module-card--review-due.svg",
+    "width": 440,
+    "height": 212,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Module/Card",
+    "state": "expanded",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/module-card--expanded.svg",
+    "width": 440,
+    "height": 368,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Lesson/Row",
+    "state": "not-started",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/lesson-row--not-started.svg",
+    "width": 440,
+    "height": 110,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Lesson/Row",
+    "state": "current",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/lesson-row--current.svg",
+    "width": 440,
+    "height": 110,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Lesson/Row",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/lesson-row--completed.svg",
+    "width": 440,
+    "height": 110,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Lesson/Row",
+    "state": "locked",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/lesson-row--locked.svg",
+    "width": 440,
+    "height": 110,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Lesson/Row",
+    "state": "review-due",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/lesson-row--review-due.svg",
+    "width": 440,
+    "height": 110,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Activity/Card",
+    "state": "lesson",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/activity-card--lesson.svg",
+    "width": 360,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Activity/Card",
+    "state": "task",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/activity-card--task.svg",
+    "width": 360,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Activity/Card",
+    "state": "transfer",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/activity-card--transfer.svg",
+    "width": 360,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Activity/Card",
+    "state": "code-review",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/activity-card--code-review.svg",
+    "width": 360,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Activity/Card",
+    "state": "incident",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/activity-card--incident.svg",
+    "width": 360,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Activity/Card",
+    "state": "project",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/activity-card--project.svg",
+    "width": 360,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Activity/Card",
+    "state": "quiz",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/activity-card--quiz.svg",
+    "width": 360,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Card",
+    "state": "unlocked",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-card--unlocked.svg",
+    "width": 320,
+    "height": 352,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Card",
+    "state": "locked",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-card--locked.svg",
+    "width": 320,
+    "height": 352,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Card",
+    "state": "secret",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-card--secret.svg",
+    "width": 320,
+    "height": 352,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Card",
+    "state": "progress",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-card--progress.svg",
+    "width": 320,
+    "height": 352,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Card",
+    "state": "newly-unlocked",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-card--newly-unlocked.svg",
+    "width": 320,
+    "height": 352,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Card",
+    "state": "rare",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-card--rare.svg",
+    "width": 320,
+    "height": 352,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Card",
+    "state": "legendary",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-card--legendary.svg",
+    "width": 320,
+    "height": 352,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Card",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-card--completed.svg",
+    "width": 320,
+    "height": 352,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Progress",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-progress--default.svg",
+    "width": 300,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Progress",
+    "state": "completed",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-progress--completed.svg",
+    "width": 300,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Progress",
+    "state": "secret",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-progress--secret.svg",
+    "width": 300,
+    "height": 96,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Grid",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-grid--default.svg",
+    "width": 680,
+    "height": 360,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Grid",
+    "state": "filtered",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-grid--filtered.svg",
+    "width": 680,
+    "height": 360,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Achievement/Grid",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/achievement-grid--empty.svg",
+    "width": 680,
+    "height": 360,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Avatar",
+    "state": "image",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/avatar--image.svg",
+    "width": 128,
+    "height": 128,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Avatar",
+    "state": "initials",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/avatar--initials.svg",
+    "width": 128,
+    "height": 128,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Avatar",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/avatar--empty.svg",
+    "width": 128,
+    "height": 128,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Avatar",
+    "state": "loading",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/avatar--loading.svg",
+    "width": 128,
+    "height": 128,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "User/MiniProfile",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/user-miniprofile--default.svg",
+    "width": 320,
+    "height": 88,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "User/MiniProfile",
+    "state": "compact",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/user-miniprofile--compact.svg",
+    "width": 320,
+    "height": 88,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Profile/Header",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/profile-header--default.svg",
+    "width": 640,
+    "height": 230,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Profile/Header",
+    "state": "long-name",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/profile-header--long-name.svg",
+    "width": 640,
+    "height": 230,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Profile/Stats",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/profile-stats--default.svg",
+    "width": 600,
+    "height": 160,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Profile/Stats",
+    "state": "large-values",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/profile-stats--large-values.svg",
+    "width": 600,
+    "height": 160,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Profile/Stats",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/profile-stats--empty.svg",
+    "width": 600,
+    "height": 160,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Profile/Activity",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/profile-activity--default.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Profile/Activity",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/05-domain/profile-activity--empty.svg",
+    "width": 420,
+    "height": 250,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "title",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--title.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "subtitle",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--subtitle.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "paragraph",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--paragraph.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "image",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--image.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "diagram",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--diagram.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "code",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--code.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "table",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--table.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "list",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--list.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "quote",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--quote.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "warning",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--warning.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "tip",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--tip.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "note",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--note.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "details",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--details.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "checkpoint",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--checkpoint.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "exercise",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--exercise.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Content/Block",
+    "state": "embed",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/content-block--embed.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Code/Block",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/code-block--default.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Code/Block",
+    "state": "copied",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/code-block--copied.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Code/Block",
+    "state": "overflow",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/code-block--overflow.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Table",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/table--default.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Table",
+    "state": "loading",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/table--loading.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Table",
+    "state": "empty",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/table--empty.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Table",
+    "state": "sorted",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/table--sorted.svg",
+    "width": 560,
+    "height": 320,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Divider",
+    "state": "plain",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/divider--plain.svg",
+    "width": 560,
+    "height": 48,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Divider",
+    "state": "technical",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/divider--technical.svg",
+    "width": 560,
+    "height": 48,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/EditorShell",
+    "state": "idle",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-editorshell--idle.svg",
+    "width": 680,
+    "height": 440,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/EditorShell",
+    "state": "busy",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-editorshell--busy.svg",
+    "width": 680,
+    "height": 440,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/EditorShell",
+    "state": "auth-required",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-editorshell--auth-required.svg",
+    "width": 680,
+    "height": 440,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "idle",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--idle.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "submitting",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--submitting.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "queued",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--queued.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "compiling",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--compiling.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "running",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--running.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "accepted",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--accepted.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "wrong-answer",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--wrong-answer.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "runtime-error",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--runtime-error.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "compilation-error",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--compilation-error.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "time-limit",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--time-limit.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "memory-limit",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--memory-limit.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "output-limit",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--output-limit.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "network-error",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--network-error.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "infrastructure-error",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--infrastructure-error.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "cancelled",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--cancelled.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Status",
+    "state": "unknown",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-status--unknown.svg",
+    "width": 440,
+    "height": 192,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Result",
+    "state": "accepted",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-result--accepted.svg",
+    "width": 480,
+    "height": 280,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Result",
+    "state": "wrong-answer",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-result--wrong-answer.svg",
+    "width": 480,
+    "height": 280,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Result",
+    "state": "runtime-error",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-result--runtime-error.svg",
+    "width": 480,
+    "height": 280,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Result",
+    "state": "compilation-error",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-result--compilation-error.svg",
+    "width": 480,
+    "height": 280,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Result",
+    "state": "time-limit",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-result--time-limit.svg",
+    "width": 480,
+    "height": 280,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Result",
+    "state": "infrastructure-error",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-result--infrastructure-error.svg",
+    "width": 480,
+    "height": 280,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Transfer",
+    "state": "available",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-transfer--available.svg",
+    "width": 480,
+    "height": 300,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Transfer",
+    "state": "in-progress",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-transfer--in-progress.svg",
+    "width": 480,
+    "height": 300,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Transfer",
+    "state": "submitted",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-transfer--submitted.svg",
+    "width": 480,
+    "height": 300,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Transfer",
+    "state": "accepted",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-transfer--accepted.svg",
+    "width": 480,
+    "height": 300,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Transfer",
+    "state": "failed",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-transfer--failed.svg",
+    "width": 480,
+    "height": 300,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Task/Transfer",
+    "state": "review",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/task-transfer--review.svg",
+    "width": 480,
+    "height": 300,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "CodeReview/Finding",
+    "state": "draft",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/codereview-finding--draft.svg",
+    "width": 440,
+    "height": 300,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "CodeReview/Finding",
+    "state": "submitted",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/codereview-finding--submitted.svg",
+    "width": 440,
+    "height": 300,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "CodeReview/Finding",
+    "state": "correct",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/codereview-finding--correct.svg",
+    "width": 440,
+    "height": 300,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "CodeReview/Finding",
+    "state": "incorrect",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/codereview-finding--incorrect.svg",
+    "width": 440,
+    "height": 300,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "CodeReview/Finding",
+    "state": "partial",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/codereview-finding--partial.svg",
+    "width": 440,
+    "height": 300,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "CodeReview/Result",
+    "state": "complete",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/codereview-result--complete.svg",
+    "width": 440,
+    "height": 270,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "CodeReview/Result",
+    "state": "partial",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/codereview-result--partial.svg",
+    "width": 440,
+    "height": 270,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "CodeReview/Line",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/codereview-line--default.svg",
+    "width": 560,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "CodeReview/Line",
+    "state": "selected",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/codereview-line--selected.svg",
+    "width": 560,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "CodeReview/Line",
+    "state": "range",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/codereview-line--range.svg",
+    "width": 560,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "CodeReview/Line",
+    "state": "with-finding",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/codereview-line--with-finding.svg",
+    "width": 560,
+    "height": 116,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Card",
+    "state": "active",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-card--active.svg",
+    "width": 400,
+    "height": 310,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Card",
+    "state": "investigating",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-card--investigating.svg",
+    "width": 400,
+    "height": 310,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Card",
+    "state": "mitigated",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-card--mitigated.svg",
+    "width": 400,
+    "height": 310,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Card",
+    "state": "resolved",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-card--resolved.svg",
+    "width": 400,
+    "height": 310,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Card",
+    "state": "failed",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-card--failed.svg",
+    "width": 400,
+    "height": 310,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Evidence",
+    "state": "logs",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-evidence--logs.svg",
+    "width": 560,
+    "height": 330,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Evidence",
+    "state": "metrics",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-evidence--metrics.svg",
+    "width": 560,
+    "height": 330,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Evidence",
+    "state": "kubernetes",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-evidence--kubernetes.svg",
+    "width": 560,
+    "height": 330,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Evidence",
+    "state": "database",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-evidence--database.svg",
+    "width": 560,
+    "height": 330,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Evidence",
+    "state": "network",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-evidence--network.svg",
+    "width": 560,
+    "height": 330,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Evidence",
+    "state": "code",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-evidence--code.svg",
+    "width": 560,
+    "height": 330,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Evidence",
+    "state": "events",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-evidence--events.svg",
+    "width": 560,
+    "height": 330,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Diagnosis",
+    "state": "draft",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-diagnosis--draft.svg",
+    "width": 480,
+    "height": 438,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Diagnosis",
+    "state": "submitted",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-diagnosis--submitted.svg",
+    "width": 480,
+    "height": 438,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Diagnosis",
+    "state": "rejected",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-diagnosis--rejected.svg",
+    "width": 480,
+    "height": 438,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Result",
+    "state": "resolved",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-result--resolved.svg",
+    "width": 480,
+    "height": 310,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Incident/Result",
+    "state": "failed",
+    "sizeVariant": null,
+    "file": "assets/ui/06-learning/incident-result--failed.svg",
+    "width": 480,
+    "height": 310,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Summary",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-summary--default.svg",
+    "width": 360,
+    "height": 426,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Summary",
+    "state": "discount",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-summary--discount.svg",
+    "width": 360,
+    "height": 426,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Summary",
+    "state": "promo-valid",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-summary--promo-valid.svg",
+    "width": 360,
+    "height": 426,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Summary",
+    "state": "promo-invalid",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-summary--promo-invalid.svg",
+    "width": 360,
+    "height": 426,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Method",
+    "state": "unselected",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-method--unselected.svg",
+    "width": 360,
+    "height": 106,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Method",
+    "state": "selected",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-method--selected.svg",
+    "width": 360,
+    "height": 106,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Method",
+    "state": "disabled",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-method--disabled.svg",
+    "width": 360,
+    "height": 106,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Form",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-form--default.svg",
+    "width": 420,
+    "height": 428,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Form",
+    "state": "validation-error",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-form--validation-error.svg",
+    "width": 420,
+    "height": 428,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Form",
+    "state": "processing",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-form--processing.svg",
+    "width": 420,
+    "height": 428,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Form",
+    "state": "payment-error",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-form--payment-error.svg",
+    "width": 420,
+    "height": 428,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Form",
+    "state": "timeout",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-form--timeout.svg",
+    "width": 420,
+    "height": 428,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Success",
+    "state": "default",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-success--default.svg",
+    "width": 480,
+    "height": 382,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Failed",
+    "state": "retry",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-failed--retry.svg",
+    "width": 480,
+    "height": 354,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Failed",
+    "state": "change-method",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-failed--change-method.svg",
+    "width": 480,
+    "height": 354,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Payment/Failed",
+    "state": "timeout",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/payment-failed--timeout.svg",
+    "width": 480,
+    "height": 354,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Auth/Form",
+    "state": "login",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/auth-form--login.svg",
+    "width": 420,
+    "height": 440,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Auth/Form",
+    "state": "register",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/auth-form--register.svg",
+    "width": 420,
+    "height": 526,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Auth/Form",
+    "state": "forgot-password",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/auth-form--forgot-password.svg",
+    "width": 420,
+    "height": 440,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Auth/Form",
+    "state": "reset-password",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/auth-form--reset-password.svg",
+    "width": 420,
+    "height": 440,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Auth/Form",
+    "state": "verify-email",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/auth-form--verify-email.svg",
+    "width": 420,
+    "height": 440,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  },
+  {
+    "component": "Auth/Form",
+    "state": "verification-success",
+    "sizeVariant": null,
+    "file": "assets/ui/07-commerce/auth-form--verification-success.svg",
+    "width": 420,
+    "height": 440,
+    "status": "editable-svg-specimen",
+    "notFigmaComponentYet": true
+  }
+]

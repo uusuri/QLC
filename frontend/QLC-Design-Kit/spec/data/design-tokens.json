@@ -1,0 +1,678 @@
+{
+  "version": 2,
+  "authority": "Approved QLC Synthetic homepage. Existing Figma values win over historical source styling.",
+  "mode": "Dark",
+  "tokens": [
+    {
+      "name": "color.bg.canvas",
+      "type": "COLOR",
+      "value": "#0A0A0A",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-bg-canvas)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.bg.surface",
+      "type": "COLOR",
+      "value": "#101210",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-bg-surface)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.bg.raised",
+      "type": "COLOR",
+      "value": "#171A16",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-bg-raised)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.text.primary",
+      "type": "COLOR",
+      "value": "#F5F5EF",
+      "scopes": [
+        "TEXT_FILL"
+      ],
+      "webSyntax": "var(--color-text-primary)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.text.secondary",
+      "type": "COLOR",
+      "value": "#A6A6A0",
+      "scopes": [
+        "TEXT_FILL"
+      ],
+      "webSyntax": "var(--color-text-secondary)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.text.disabled",
+      "type": "COLOR",
+      "value": "#777A72",
+      "scopes": [
+        "TEXT_FILL"
+      ],
+      "webSyntax": "var(--color-text-disabled)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.text.onAccent",
+      "type": "COLOR",
+      "value": "#0A0A0A",
+      "scopes": [
+        "TEXT_FILL"
+      ],
+      "webSyntax": "var(--color-text-onAccent)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.accent.primary",
+      "type": "COLOR",
+      "value": "#C4FF00",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-accent-primary)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.accent.secondary",
+      "type": "COLOR",
+      "value": "#4433EE",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-accent-secondary)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.accent.hover",
+      "type": "COLOR",
+      "value": "#D2FF40",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-accent-hover)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.accent.pressed",
+      "type": "COLOR",
+      "value": "#ADD900",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-accent-pressed)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.border.subtle",
+      "type": "COLOR",
+      "value": "#32372E",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-border-subtle)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.border.control",
+      "type": "COLOR",
+      "value": "#66705D",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-border-control)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.border.strong",
+      "type": "COLOR",
+      "value": "#A6A6A0",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-border-strong)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.focus.ring",
+      "type": "COLOR",
+      "value": "#F5F5EF",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-focus-ring)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.status.success",
+      "type": "COLOR",
+      "value": "#C4FF00",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-status-success)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.status.error",
+      "type": "COLOR",
+      "value": "#FF8074",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-status-error)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.status.warning",
+      "type": "COLOR",
+      "value": "#E9D774",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-status-warning)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.status.info",
+      "type": "COLOR",
+      "value": "#B3ACFF",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-status-info)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.progress.track",
+      "type": "COLOR",
+      "value": "#66705D",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-progress-track)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.selection.bg",
+      "type": "COLOR",
+      "value": "#4433EE",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-selection-bg)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.editor.bg",
+      "type": "COLOR",
+      "value": "#0A0A0A",
+      "scopes": [
+        "FRAME_FILL",
+        "SHAPE_FILL",
+        "STROKE_COLOR"
+      ],
+      "webSyntax": "var(--color-editor-bg)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.editor.comment",
+      "type": "COLOR",
+      "value": "#A6A6A0",
+      "scopes": [
+        "TEXT_FILL"
+      ],
+      "webSyntax": "var(--color-editor-comment)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.editor.keyword",
+      "type": "COLOR",
+      "value": "#C4FF00",
+      "scopes": [
+        "TEXT_FILL"
+      ],
+      "webSyntax": "var(--color-editor-keyword)",
+      "status": "existing-value"
+    },
+    {
+      "name": "color.editor.string",
+      "type": "COLOR",
+      "value": "#E9D774",
+      "scopes": [
+        "TEXT_FILL"
+      ],
+      "webSyntax": "var(--color-editor-string)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.editor.number",
+      "type": "COLOR",
+      "value": "#C4B5FD",
+      "scopes": [
+        "TEXT_FILL"
+      ],
+      "webSyntax": "var(--color-editor-number)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "color.editor.type",
+      "type": "COLOR",
+      "value": "#9DDCFF",
+      "scopes": [
+        "TEXT_FILL"
+      ],
+      "webSyntax": "var(--color-editor-type)",
+      "status": "proposed-semantic-role"
+    },
+    {
+      "name": "space.0",
+      "type": "FLOAT",
+      "value": 0,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-0)"
+    },
+    {
+      "name": "space.2",
+      "type": "FLOAT",
+      "value": 2,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-2)"
+    },
+    {
+      "name": "space.4",
+      "type": "FLOAT",
+      "value": 4,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-4)"
+    },
+    {
+      "name": "space.8",
+      "type": "FLOAT",
+      "value": 8,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-8)"
+    },
+    {
+      "name": "space.12",
+      "type": "FLOAT",
+      "value": 12,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-12)"
+    },
+    {
+      "name": "space.16",
+      "type": "FLOAT",
+      "value": 16,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-16)"
+    },
+    {
+      "name": "space.20",
+      "type": "FLOAT",
+      "value": 20,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-20)"
+    },
+    {
+      "name": "space.24",
+      "type": "FLOAT",
+      "value": 24,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-24)"
+    },
+    {
+      "name": "space.32",
+      "type": "FLOAT",
+      "value": 32,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-32)"
+    },
+    {
+      "name": "space.40",
+      "type": "FLOAT",
+      "value": 40,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-40)"
+    },
+    {
+      "name": "space.48",
+      "type": "FLOAT",
+      "value": 48,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-48)"
+    },
+    {
+      "name": "space.64",
+      "type": "FLOAT",
+      "value": 64,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-64)"
+    },
+    {
+      "name": "space.80",
+      "type": "FLOAT",
+      "value": 80,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-80)"
+    },
+    {
+      "name": "space.96",
+      "type": "FLOAT",
+      "value": 96,
+      "scopes": [
+        "GAP"
+      ],
+      "webSyntax": "var(--space-96)"
+    },
+    {
+      "name": "radius.none",
+      "type": "FLOAT",
+      "value": 0,
+      "scopes": [
+        "CORNER_RADIUS"
+      ],
+      "webSyntax": "var(--radius-none)"
+    },
+    {
+      "name": "radius.control",
+      "type": "FLOAT",
+      "value": 2,
+      "scopes": [
+        "CORNER_RADIUS"
+      ],
+      "webSyntax": "var(--radius-control)"
+    },
+    {
+      "name": "radius.panel",
+      "type": "FLOAT",
+      "value": 4,
+      "scopes": [
+        "CORNER_RADIUS"
+      ],
+      "webSyntax": "var(--radius-panel)"
+    },
+    {
+      "name": "radius.avatar",
+      "type": "FLOAT",
+      "value": 999,
+      "scopes": [
+        "CORNER_RADIUS"
+      ],
+      "webSyntax": "var(--radius-avatar)"
+    },
+    {
+      "name": "border.hairline",
+      "type": "FLOAT",
+      "value": 1,
+      "scopes": [
+        "STROKE_FLOAT"
+      ],
+      "webSyntax": "var(--border-hairline)"
+    },
+    {
+      "name": "border.focus",
+      "type": "FLOAT",
+      "value": 2,
+      "scopes": [
+        "STROKE_FLOAT"
+      ],
+      "webSyntax": "var(--border-focus)"
+    },
+    {
+      "name": "size.touch",
+      "type": "FLOAT",
+      "value": 44,
+      "scopes": [
+        "WIDTH_HEIGHT"
+      ],
+      "webSyntax": "var(--size-touch)"
+    },
+    {
+      "name": "size.control.S",
+      "type": "FLOAT",
+      "value": 44,
+      "scopes": [
+        "WIDTH_HEIGHT"
+      ],
+      "webSyntax": "var(--size-control-S)"
+    },
+    {
+      "name": "size.control.M",
+      "type": "FLOAT",
+      "value": 48,
+      "scopes": [
+        "WIDTH_HEIGHT"
+      ],
+      "webSyntax": "var(--size-control-M)"
+    },
+    {
+      "name": "size.control.L",
+      "type": "FLOAT",
+      "value": 56,
+      "scopes": [
+        "WIDTH_HEIGHT"
+      ],
+      "webSyntax": "var(--size-control-L)"
+    },
+    {
+      "name": "motion.quick",
+      "type": "FLOAT",
+      "value": 120,
+      "scopes": [],
+      "webSyntax": "var(--motion-quick)"
+    },
+    {
+      "name": "motion.default",
+      "type": "FLOAT",
+      "value": 180,
+      "scopes": [],
+      "webSyntax": "var(--motion-default)"
+    },
+    {
+      "name": "motion.progress",
+      "type": "FLOAT",
+      "value": 240,
+      "scopes": [],
+      "webSyntax": "var(--motion-progress)"
+    },
+    {
+      "name": "motion.reward",
+      "type": "FLOAT",
+      "value": 480,
+      "scopes": [],
+      "webSyntax": "var(--motion-reward)"
+    }
+  ],
+  "textStyles": [
+    {
+      "name": "QLC/Display",
+      "family": "Inter",
+      "fontSize": 64,
+      "lineHeight": 68,
+      "fontWeight": 500,
+      "letterSpacing": 0
+    },
+    {
+      "name": "QLC/Page/H1",
+      "family": "Inter",
+      "fontSize": 40,
+      "lineHeight": 48,
+      "fontWeight": 500,
+      "letterSpacing": 0
+    },
+    {
+      "name": "QLC/Page/H1-mobile",
+      "family": "Inter",
+      "fontSize": 30,
+      "lineHeight": 36,
+      "fontWeight": 500,
+      "letterSpacing": 0
+    },
+    {
+      "name": "QLC/Section/H2",
+      "family": "Inter",
+      "fontSize": 28,
+      "lineHeight": 36,
+      "fontWeight": 500,
+      "letterSpacing": 0
+    },
+    {
+      "name": "QLC/Card/H3",
+      "family": "Inter",
+      "fontSize": 22,
+      "lineHeight": 28,
+      "fontWeight": 500,
+      "letterSpacing": 0
+    },
+    {
+      "name": "QLC/Body/L",
+      "family": "Inter",
+      "fontSize": 18,
+      "lineHeight": 28,
+      "fontWeight": 400,
+      "letterSpacing": 0
+    },
+    {
+      "name": "QLC/Body/M",
+      "family": "Inter",
+      "fontSize": 16,
+      "lineHeight": 24,
+      "fontWeight": 400,
+      "letterSpacing": 0
+    },
+    {
+      "name": "QLC/Body/S",
+      "family": "Inter",
+      "fontSize": 14,
+      "lineHeight": 22,
+      "fontWeight": 400,
+      "letterSpacing": 0
+    },
+    {
+      "name": "QLC/Label",
+      "family": "Inter",
+      "fontSize": 14,
+      "lineHeight": 20,
+      "fontWeight": 600,
+      "letterSpacing": 0
+    },
+    {
+      "name": "QLC/Meta",
+      "family": "Inter",
+      "fontSize": 12,
+      "lineHeight": 18,
+      "fontWeight": 400,
+      "letterSpacing": 0
+    },
+    {
+      "name": "QLC/Technical",
+      "family": "IBM Plex Mono",
+      "fontSize": 11,
+      "lineHeight": 16,
+      "fontWeight": 400,
+      "letterSpacing": 0
+    },
+    {
+      "name": "QLC/Code",
+      "family": "IBM Plex Mono",
+      "fontSize": 14,
+      "lineHeight": 23,
+      "fontWeight": 400,
+      "letterSpacing": 0
+    }
+  ],
+  "effects": [
+    {
+      "name": "QLC/Overlay",
+      "type": "solid-scrim",
+      "color": "#0A0A0A",
+      "opacity": 0.8
+    },
+    {
+      "name": "QLC/Popover",
+      "type": "shadow",
+      "x": 0,
+      "y": 12,
+      "blur": 28,
+      "color": "#000000",
+      "opacity": 0.28
+    }
+  ],
+  "motion": {
+    "easing": "cubic-bezier(.2,.8,.2,1)",
+    "reducedMotion": "All transitions instant; preserve feedback text and focus.",
+    "glitch": "Decorative edge graphics only. Never text, input, progress fill, or editor. No flashing."
+  },
+  "bindingPlan": "Reuse five existing color variables by exact name/value; add semantic aliases. These JSON tokens are not claimed imported/bound."
+}

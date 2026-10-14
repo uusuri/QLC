@@ -1,0 +1,5516 @@
+{
+  "version": 2,
+  "count": 99,
+  "scope": "Full local specification + editable vector specimens; Figma Components/Variants are a later structured import step unless ledger says otherwise.",
+  "components": [
+    {
+      "id": "button-primary",
+      "name": "Button/Primary",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "icon": "INSTANCE_SWAP",
+        "showIcon": "BOOLEAN",
+        "size": "S|M|L"
+      },
+      "layout": "Horizontal; centered label+icon; gap8; padX16/20/24; min-height44/48/56; text Hug, parent may Fill. Loading reserves label width.",
+      "renderer": "button",
+      "size": [
+        224,
+        64
+      ],
+      "variantAxes": {
+        "Size": [
+          "S",
+          "M",
+          "L"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control",
+        "color.text.onAccent"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "button-secondary",
+      "name": "Button/Secondary",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "icon": "INSTANCE_SWAP",
+        "showIcon": "BOOLEAN",
+        "size": "S|M|L"
+      },
+      "layout": "Horizontal; centered label+icon; gap8; padX16/20/24; min-height44/48/56; text Hug, parent may Fill. Loading reserves label width.",
+      "renderer": "button",
+      "size": [
+        224,
+        64
+      ],
+      "variantAxes": {
+        "Size": [
+          "S",
+          "M",
+          "L"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "button-ghost",
+      "name": "Button/Ghost",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "icon": "INSTANCE_SWAP",
+        "showIcon": "BOOLEAN",
+        "size": "S|M|L"
+      },
+      "layout": "Horizontal; centered label+icon; gap8; padX16/20/24; min-height44/48/56; text Hug, parent may Fill. Loading reserves label width.",
+      "renderer": "button",
+      "size": [
+        224,
+        64
+      ],
+      "variantAxes": {
+        "Size": [
+          "S",
+          "M",
+          "L"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "button-text",
+      "name": "Button/Text",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "icon": "INSTANCE_SWAP",
+        "showIcon": "BOOLEAN",
+        "size": "S|M|L"
+      },
+      "layout": "Horizontal; centered label+icon; gap8; padX16/20/24; min-height44/48/56; text Hug, parent may Fill. Loading reserves label width.",
+      "renderer": "button",
+      "size": [
+        224,
+        64
+      ],
+      "variantAxes": {
+        "Size": [
+          "S",
+          "M",
+          "L"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "button-danger",
+      "name": "Button/Danger",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "icon": "INSTANCE_SWAP",
+        "showIcon": "BOOLEAN",
+        "size": "S|M|L"
+      },
+      "layout": "Horizontal; centered label+icon; gap8; padX16/20/24; min-height44/48/56; text Hug, parent may Fill. Loading reserves label width.",
+      "renderer": "button",
+      "size": [
+        224,
+        64
+      ],
+      "variantAxes": {
+        "Size": [
+          "S",
+          "M",
+          "L"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control",
+        "color.text.onAccent"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "button-icon",
+      "name": "Button/Icon",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "icon": "INSTANCE_SWAP",
+        "showIcon": "BOOLEAN",
+        "size": "S|M|L"
+      },
+      "layout": "Horizontal; centered label+icon; gap8; padX16/20/24; min-height44/48/56; text Hug, parent may Fill. Loading reserves label width.",
+      "renderer": "button",
+      "size": [
+        224,
+        64
+      ],
+      "variantAxes": {
+        "Size": [
+          "S",
+          "M",
+          "L"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "input-text",
+      "name": "Input/Text",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "value": "TEXT",
+        "placeholder": "TEXT",
+        "helper": "TEXT",
+        "error": "TEXT",
+        "required": "BOOLEAN",
+        "trailingIcon": "INSTANCE_SWAP",
+        "hasValue": "BOOLEAN"
+      },
+      "layout": "Vertical label8/control48/helper8. Width Fill min240 desktop, min0 mobile. Label persists; error adds height.",
+      "renderer": "input",
+      "size": [
+        360,
+        116
+      ],
+      "variantAxes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "empty",
+        "focus",
+        "filled",
+        "error",
+        "success",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "input-search",
+      "name": "Input/Search",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "value": "TEXT",
+        "placeholder": "TEXT",
+        "helper": "TEXT",
+        "error": "TEXT",
+        "required": "BOOLEAN",
+        "trailingIcon": "INSTANCE_SWAP",
+        "hasValue": "BOOLEAN"
+      },
+      "layout": "Vertical label8/control48/helper8. Width Fill min240 desktop, min0 mobile. Label persists; error adds height.",
+      "renderer": "input",
+      "size": [
+        360,
+        116
+      ],
+      "variantAxes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "empty",
+        "focus",
+        "filled",
+        "error",
+        "success",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "input-password",
+      "name": "Input/Password",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "value": "TEXT",
+        "placeholder": "TEXT",
+        "helper": "TEXT",
+        "error": "TEXT",
+        "required": "BOOLEAN",
+        "trailingIcon": "INSTANCE_SWAP",
+        "hasValue": "BOOLEAN",
+        "showPassword": "BOOLEAN"
+      },
+      "layout": "Vertical label8/control48/helper8. Width Fill min240 desktop, min0 mobile. Label persists; error adds height.",
+      "renderer": "input",
+      "size": [
+        360,
+        116
+      ],
+      "variantAxes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "empty",
+        "focus",
+        "filled",
+        "error",
+        "success",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "input-email",
+      "name": "Input/Email",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "value": "TEXT",
+        "placeholder": "TEXT",
+        "helper": "TEXT",
+        "error": "TEXT",
+        "required": "BOOLEAN",
+        "trailingIcon": "INSTANCE_SWAP",
+        "hasValue": "BOOLEAN"
+      },
+      "layout": "Vertical label8/control48/helper8. Width Fill min240 desktop, min0 mobile. Label persists; error adds height.",
+      "renderer": "input",
+      "size": [
+        360,
+        116
+      ],
+      "variantAxes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "empty",
+        "focus",
+        "filled",
+        "error",
+        "success",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "input-number",
+      "name": "Input/Number",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "value": "TEXT",
+        "placeholder": "TEXT",
+        "helper": "TEXT",
+        "error": "TEXT",
+        "required": "BOOLEAN",
+        "trailingIcon": "INSTANCE_SWAP",
+        "hasValue": "BOOLEAN"
+      },
+      "layout": "Vertical label8/control48/helper8. Width Fill min240 desktop, min0 mobile. Label persists; error adds height.",
+      "renderer": "input",
+      "size": [
+        360,
+        116
+      ],
+      "variantAxes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "empty",
+        "focus",
+        "filled",
+        "error",
+        "success",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "input-promo",
+      "name": "Input/Promo",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "value": "TEXT",
+        "placeholder": "TEXT",
+        "helper": "TEXT",
+        "error": "TEXT",
+        "required": "BOOLEAN",
+        "trailingIcon": "INSTANCE_SWAP",
+        "hasValue": "BOOLEAN"
+      },
+      "layout": "Vertical label8/control48/helper8. Width Fill min240 desktop, min0 mobile. Label persists; error adds height.",
+      "renderer": "input",
+      "size": [
+        360,
+        116
+      ],
+      "variantAxes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "empty",
+        "focus",
+        "filled",
+        "error",
+        "success",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "input-code",
+      "name": "Input/Code",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "value": "TEXT",
+        "placeholder": "TEXT",
+        "helper": "TEXT",
+        "error": "TEXT",
+        "required": "BOOLEAN",
+        "trailingIcon": "INSTANCE_SWAP",
+        "hasValue": "BOOLEAN"
+      },
+      "layout": "Vertical label8/control48/helper8. Width Fill min240 desktop, min0 mobile. Label persists; error adds height.",
+      "renderer": "input",
+      "size": [
+        360,
+        116
+      ],
+      "variantAxes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "empty",
+        "focus",
+        "filled",
+        "error",
+        "success",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "textarea",
+      "name": "Textarea",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "value": "TEXT",
+        "helper": "TEXT",
+        "count": "TEXT",
+        "hasValue": "BOOLEAN"
+      },
+      "layout": "Vertical; min-height128; manual vertical resize in app; no horizontal resize.",
+      "renderer": "textarea",
+      "size": [
+        360,
+        210
+      ],
+      "variantAxes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "empty",
+        "focus",
+        "filled",
+        "error",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "select",
+      "name": "Select",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "open",
+        "selected",
+        "error",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "value": "TEXT",
+        "items": "SLOT",
+        "multiple": "BOOLEAN",
+        "searchable": "BOOLEAN"
+      },
+      "layout": "Trigger48; popover anchor below flips above. list max320 high; keyboard listbox.",
+      "renderer": "select",
+      "size": [
+        360,
+        260
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "open",
+          "selected",
+          "error",
+          "disabled"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "open",
+        "selected",
+        "error",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "checkbox",
+      "name": "Checkbox",
+      "group": "01-controls",
+      "states": [
+        "unchecked",
+        "checked",
+        "mixed",
+        "focus",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "description": "TEXT",
+        "checked": "BOOLEAN"
+      },
+      "layout": "Horizontal hit area min44; icon20 + gap12; description wraps below.",
+      "renderer": "choice",
+      "size": [
+        360,
+        72
+      ],
+      "variantAxes": {
+        "State": [
+          "unchecked",
+          "checked",
+          "mixed",
+          "focus",
+          "disabled"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "unchecked",
+        "checked",
+        "mixed",
+        "focus",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "radio",
+      "name": "Radio",
+      "group": "01-controls",
+      "states": [
+        "unselected",
+        "selected",
+        "focus",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "description": "TEXT",
+        "checked": "BOOLEAN"
+      },
+      "layout": "Horizontal hit area min44; icon20 + gap12; description wraps below.",
+      "renderer": "choice",
+      "size": [
+        360,
+        72
+      ],
+      "variantAxes": {
+        "State": [
+          "unselected",
+          "selected",
+          "focus",
+          "disabled"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "unselected",
+        "selected",
+        "focus",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "switch",
+      "name": "Switch",
+      "group": "01-controls",
+      "states": [
+        "off",
+        "on",
+        "focus",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "description": "TEXT",
+        "checked": "BOOLEAN"
+      },
+      "layout": "Horizontal hit area min44; icon20 + gap12; description wraps below.",
+      "renderer": "choice",
+      "size": [
+        360,
+        72
+      ],
+      "variantAxes": {
+        "State": [
+          "off",
+          "on",
+          "focus",
+          "disabled"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "off",
+        "on",
+        "focus",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "filter-chip",
+      "name": "Filter/Chip",
+      "group": "01-controls",
+      "states": [
+        "default",
+        "selected",
+        "removable",
+        "disabled"
+      ],
+      "properties": {
+        "label": "TEXT",
+        "count": "TEXT",
+        "showCount": "BOOLEAN"
+      },
+      "layout": "Horizontal Hug;44pxhitarea; selected includes check; remove has separate accessible label.",
+      "renderer": "chip",
+      "size": [
+        220,
+        56
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "selected",
+          "removable",
+          "disabled"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "selected",
+        "removable",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "tabs",
+      "name": "Tabs",
+      "group": "02-navigation",
+      "states": [
+        "default",
+        "selected",
+        "disabled"
+      ],
+      "properties": {
+        "items": "SLOT",
+        "activeId": "TEXT"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "tabs",
+      "size": [
+        460,
+        72
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "selected",
+          "disabled"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "selected",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "accordion",
+      "name": "Accordion",
+      "group": "02-navigation",
+      "states": [
+        "collapsed",
+        "expanded",
+        "disabled"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "summary": "TEXT",
+        "body": "SLOT"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "accordion",
+      "size": [
+        440,
+        200
+      ],
+      "variantAxes": {
+        "State": [
+          "collapsed",
+          "expanded",
+          "disabled"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "collapsed",
+        "expanded",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "pagination",
+      "name": "Pagination",
+      "group": "02-navigation",
+      "states": [
+        "first",
+        "middle",
+        "last",
+        "loading"
+      ],
+      "properties": {
+        "page": "TEXT",
+        "totalPages": "TEXT"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "pagination",
+      "size": [
+        400,
+        64
+      ],
+      "variantAxes": {
+        "State": [
+          "first",
+          "middle",
+          "last",
+          "loading"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "first",
+        "middle",
+        "last",
+        "loading"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "loadmore",
+      "name": "LoadMore",
+      "group": "02-navigation",
+      "states": [
+        "default",
+        "loading",
+        "end"
+      ],
+      "properties": {
+        "loadedCount": "TEXT",
+        "totalCount": "TEXT"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "loadmore",
+      "size": [
+        340,
+        80
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "loading",
+          "end"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "loading",
+        "end"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "breadcrumbs",
+      "name": "Breadcrumbs",
+      "group": "02-navigation",
+      "states": [
+        "default",
+        "collapsed"
+      ],
+      "properties": {
+        "items": "SLOT"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "breadcrumbs",
+      "size": [
+        480,
+        56
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "collapsed"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "collapsed"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "menu",
+      "name": "Menu",
+      "group": "02-navigation",
+      "states": [
+        "default",
+        "selected",
+        "disabled"
+      ],
+      "properties": {
+        "items": "SLOT"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "menu",
+      "size": [
+        280,
+        242
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "selected",
+          "disabled"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "selected",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "dropdown",
+      "name": "Dropdown",
+      "group": "02-navigation",
+      "states": [
+        "closed",
+        "open",
+        "empty"
+      ],
+      "properties": {
+        "trigger": "SLOT",
+        "items": "SLOT"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "menu",
+      "size": [
+        280,
+        242
+      ],
+      "variantAxes": {
+        "State": [
+          "closed",
+          "open",
+          "empty"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "closed",
+        "open",
+        "empty"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "contextmenu",
+      "name": "ContextMenu",
+      "group": "02-navigation",
+      "states": [
+        "open",
+        "disabled"
+      ],
+      "properties": {
+        "items": "SLOT"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "menu",
+      "size": [
+        280,
+        242
+      ],
+      "variantAxes": {
+        "State": [
+          "open",
+          "disabled"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "open",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "tooltip",
+      "name": "Tooltip",
+      "group": "02-navigation",
+      "states": [
+        "default",
+        "multiline"
+      ],
+      "properties": {
+        "text": "TEXT"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "tooltip",
+      "size": [
+        280,
+        96
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "multiline"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "multiline"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "popover",
+      "name": "Popover",
+      "group": "02-navigation",
+      "states": [
+        "default",
+        "with-action"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "action": "SLOT"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "popover",
+      "size": [
+        320,
+        180
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "with-action"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "with-action"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "navigation-header",
+      "name": "Navigation/Header",
+      "group": "02-navigation",
+      "states": [
+        "guest",
+        "authenticated"
+      ],
+      "properties": {
+        "logo": "INSTANCE_SWAP",
+        "items": "SLOT",
+        "user": "INSTANCE_SWAP"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "header",
+      "size": [
+        1040,
+        88
+      ],
+      "variantAxes": {
+        "State": [
+          "guest",
+          "authenticated"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "guest",
+        "authenticated"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "navigation-drawer",
+      "name": "Navigation/Drawer",
+      "group": "02-navigation",
+      "states": [
+        "guest",
+        "authenticated"
+      ],
+      "properties": {
+        "items": "SLOT",
+        "user": "INSTANCE_SWAP"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "navdrawer",
+      "size": [
+        320,
+        500
+      ],
+      "variantAxes": {
+        "State": [
+          "guest",
+          "authenticated"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "guest",
+        "authenticated"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "navigation-sidebar",
+      "name": "Navigation/Sidebar",
+      "group": "02-navigation",
+      "states": [
+        "expanded",
+        "collapsed"
+      ],
+      "properties": {
+        "course": "INSTANCE_SWAP",
+        "items": "SLOT"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "sidebar",
+      "size": [
+        280,
+        450
+      ],
+      "variantAxes": {
+        "State": [
+          "expanded",
+          "collapsed"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "expanded",
+        "collapsed"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "section-header",
+      "name": "Section/Header",
+      "group": "02-navigation",
+      "states": [
+        "default",
+        "with-action"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "eyebrow": "TEXT",
+        "action": "SLOT"
+      },
+      "layout": "Auto Layout; items are extensible data, not fixed count. Preserve focus and selected ID on filtering; overflow handled by own scroll region.",
+      "renderer": "section",
+      "size": [
+        640,
+        100
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "with-action"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "with-action"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "modal-confirm",
+      "name": "Modal/Confirm",
+      "group": "03-feedback",
+      "states": [
+        "default",
+        "danger",
+        "processing"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "description": "TEXT",
+        "action": "SLOT",
+        "secondaryAction": "SLOT",
+        "dismissible": "BOOLEAN"
+      },
+      "layout": "Vertical Hug; icon optional, body wraps; buttons wrap/stack at360. Dialog focus trapped, Escape closes unless unresolved processing; restore focus to opener.",
+      "renderer": "modal",
+      "size": [
+        480,
+        310
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "danger",
+          "processing"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "danger",
+        "processing"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "modal-content",
+      "name": "Modal/Content",
+      "group": "03-feedback",
+      "states": [
+        "small",
+        "medium",
+        "large"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "description": "TEXT",
+        "action": "SLOT",
+        "secondaryAction": "SLOT",
+        "dismissible": "BOOLEAN"
+      },
+      "layout": "Vertical Hug; icon optional, body wraps; buttons wrap/stack at360. Dialog focus trapped, Escape closes unless unresolved processing; restore focus to opener.",
+      "renderer": "modal",
+      "size": [
+        640,
+        380
+      ],
+      "variantAxes": {
+        "State": [
+          "small",
+          "medium",
+          "large"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "small",
+        "medium",
+        "large"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "drawer",
+      "name": "Drawer",
+      "group": "03-feedback",
+      "states": [
+        "default",
+        "loading"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "description": "TEXT",
+        "action": "SLOT",
+        "secondaryAction": "SLOT",
+        "dismissible": "BOOLEAN"
+      },
+      "layout": "Vertical Hug; icon optional, body wraps; buttons wrap/stack at360. Dialog focus trapped, Escape closes unless unresolved processing; restore focus to opener.",
+      "renderer": "drawer",
+      "size": [
+        360,
+        460
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "loading"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "loading"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "toast",
+      "name": "Toast",
+      "group": "03-feedback",
+      "states": [
+        "success",
+        "info",
+        "warning",
+        "error"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "description": "TEXT",
+        "action": "SLOT",
+        "secondaryAction": "SLOT",
+        "dismissible": "BOOLEAN"
+      },
+      "layout": "Vertical Hug; icon optional, body wraps; buttons wrap/stack at360. Dialog focus trapped, Escape closes unless unresolved processing; restore focus to opener.",
+      "renderer": "toast",
+      "size": [
+        420,
+        124
+      ],
+      "variantAxes": {
+        "State": [
+          "success",
+          "info",
+          "warning",
+          "error"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "success",
+        "info",
+        "warning",
+        "error"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "alert",
+      "name": "Alert",
+      "group": "03-feedback",
+      "states": [
+        "success",
+        "info",
+        "warning",
+        "error"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "description": "TEXT",
+        "action": "SLOT",
+        "secondaryAction": "SLOT",
+        "dismissible": "BOOLEAN"
+      },
+      "layout": "Vertical Hug; icon optional, body wraps; buttons wrap/stack at360. Dialog focus trapped, Escape closes unless unresolved processing; restore focus to opener.",
+      "renderer": "alert",
+      "size": [
+        440,
+        144
+      ],
+      "variantAxes": {
+        "State": [
+          "success",
+          "info",
+          "warning",
+          "error"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "success",
+        "info",
+        "warning",
+        "error"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "badge-status",
+      "name": "Badge/Status",
+      "group": "03-feedback",
+      "states": [
+        "new",
+        "popular",
+        "sale",
+        "locked",
+        "completed",
+        "in-progress",
+        "review-due"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "description": "TEXT",
+        "action": "SLOT",
+        "secondaryAction": "SLOT",
+        "dismissible": "BOOLEAN"
+      },
+      "layout": "Vertical Hug; icon optional, body wraps; buttons wrap/stack at360. Dialog focus trapped, Escape closes unless unresolved processing; restore focus to opener.",
+      "renderer": "badge",
+      "size": [
+        260,
+        56
+      ],
+      "variantAxes": {
+        "State": [
+          "new",
+          "popular",
+          "sale",
+          "locked",
+          "completed",
+          "in-progress",
+          "review-due"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "new",
+        "popular",
+        "sale",
+        "locked",
+        "completed",
+        "in-progress",
+        "review-due"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "badge-difficulty",
+      "name": "Badge/Difficulty",
+      "group": "03-feedback",
+      "states": [
+        "easy",
+        "medium",
+        "hard"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "description": "TEXT",
+        "action": "SLOT",
+        "secondaryAction": "SLOT",
+        "dismissible": "BOOLEAN"
+      },
+      "layout": "Vertical Hug; icon optional, body wraps; buttons wrap/stack at360. Dialog focus trapped, Escape closes unless unresolved processing; restore focus to opener.",
+      "renderer": "badge",
+      "size": [
+        260,
+        56
+      ],
+      "variantAxes": {
+        "State": [
+          "easy",
+          "medium",
+          "hard"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "easy",
+        "medium",
+        "hard"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "incident-severity",
+      "name": "Incident/Severity",
+      "group": "03-feedback",
+      "states": [
+        "sev-1",
+        "sev-2",
+        "sev-3"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "description": "TEXT",
+        "action": "SLOT",
+        "secondaryAction": "SLOT",
+        "dismissible": "BOOLEAN"
+      },
+      "layout": "Vertical Hug; icon optional, body wraps; buttons wrap/stack at360. Dialog focus trapped, Escape closes unless unresolved processing; restore focus to opener.",
+      "renderer": "badge",
+      "size": [
+        260,
+        56
+      ],
+      "variantAxes": {
+        "State": [
+          "sev-1",
+          "sev-2",
+          "sev-3"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "sev-1",
+        "sev-2",
+        "sev-3"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "spinner",
+      "name": "Spinner",
+      "group": "03-feedback",
+      "states": [
+        "default",
+        "reduced-motion"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "description": "TEXT",
+        "action": "SLOT",
+        "secondaryAction": "SLOT",
+        "dismissible": "BOOLEAN"
+      },
+      "layout": "Vertical Hug; icon optional, body wraps; buttons wrap/stack at360. Dialog focus trapped, Escape closes unless unresolved processing; restore focus to opener.",
+      "renderer": "spinner",
+      "size": [
+        120,
+        96
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "reduced-motion"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "reduced-motion"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "skeleton",
+      "name": "Skeleton",
+      "group": "03-feedback",
+      "states": [
+        "page",
+        "course-card",
+        "lesson",
+        "profile",
+        "achievement",
+        "task"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "description": "TEXT",
+        "action": "SLOT",
+        "secondaryAction": "SLOT",
+        "dismissible": "BOOLEAN"
+      },
+      "layout": "Vertical Hug; icon optional, body wraps; buttons wrap/stack at360. Dialog focus trapped, Escape closes unless unresolved processing; restore focus to opener.",
+      "renderer": "skeleton",
+      "size": [
+        360,
+        220
+      ],
+      "variantAxes": {
+        "State": [
+          "page",
+          "course-card",
+          "lesson",
+          "profile",
+          "achievement",
+          "task"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "page",
+        "course-card",
+        "lesson",
+        "profile",
+        "achievement",
+        "task"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "emptystate",
+      "name": "EmptyState",
+      "group": "03-feedback",
+      "states": [
+        "no-courses",
+        "no-active-courses",
+        "no-achievements",
+        "no-results",
+        "no-activity",
+        "no-payments"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "description": "TEXT",
+        "action": "SLOT",
+        "secondaryAction": "SLOT",
+        "dismissible": "BOOLEAN"
+      },
+      "layout": "Vertical Hug; icon optional, body wraps; buttons wrap/stack at360. Dialog focus trapped, Escape closes unless unresolved processing; restore focus to opener.",
+      "renderer": "empty",
+      "size": [
+        420,
+        250
+      ],
+      "variantAxes": {
+        "State": [
+          "no-courses",
+          "no-active-courses",
+          "no-achievements",
+          "no-results",
+          "no-activity",
+          "no-payments"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "no-courses",
+        "no-active-courses",
+        "no-achievements",
+        "no-results",
+        "no-activity",
+        "no-payments"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "errorstate",
+      "name": "ErrorState",
+      "group": "03-feedback",
+      "states": [
+        "generic",
+        "network",
+        "403",
+        "404",
+        "500",
+        "maintenance",
+        "offline",
+        "reconnecting"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "description": "TEXT",
+        "action": "SLOT",
+        "secondaryAction": "SLOT",
+        "dismissible": "BOOLEAN"
+      },
+      "layout": "Vertical Hug; icon optional, body wraps; buttons wrap/stack at360. Dialog focus trapped, Escape closes unless unresolved processing; restore focus to opener.",
+      "renderer": "error",
+      "size": [
+        420,
+        250
+      ],
+      "variantAxes": {
+        "State": [
+          "generic",
+          "network",
+          "403",
+          "404",
+          "500",
+          "maintenance",
+          "offline",
+          "reconnecting"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "generic",
+        "network",
+        "403",
+        "404",
+        "500",
+        "maintenance",
+        "offline",
+        "reconnecting"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "progress-linear",
+      "name": "Progress/Linear",
+      "group": "04-progression",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "progress",
+      "size": [
+        360,
+        96
+      ],
+      "variantAxes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "0",
+        "37.6",
+        "100",
+        "indeterminate",
+        "unavailable"
+      ],
+      "sampleValues": [
+        0,
+        25,
+        37.6,
+        50,
+        72.4,
+        83.7,
+        100
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "progress-xp",
+      "name": "Progress/XP",
+      "group": "04-progression",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "xp",
+      "size": [
+        360,
+        132
+      ],
+      "variantAxes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "reward",
+        "level-up",
+        "unavailable"
+      ],
+      "sampleValues": [
+        0,
+        25,
+        37.6,
+        50,
+        72.4,
+        83.7,
+        100
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "progress-course",
+      "name": "Progress/Course",
+      "group": "04-progression",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "progress",
+      "size": [
+        360,
+        96
+      ],
+      "variantAxes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "completed",
+        "unavailable"
+      ],
+      "sampleValues": [
+        0,
+        25,
+        37.6,
+        50,
+        72.4,
+        83.7,
+        100
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "progress-module",
+      "name": "Progress/Module",
+      "group": "04-progression",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "progress",
+      "size": [
+        360,
+        96
+      ],
+      "variantAxes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "completed",
+        "unavailable"
+      ],
+      "sampleValues": [
+        0,
+        25,
+        37.6,
+        50,
+        72.4,
+        83.7,
+        100
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "progress-lesson",
+      "name": "Progress/Lesson",
+      "group": "04-progression",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "progress",
+      "size": [
+        360,
+        96
+      ],
+      "variantAxes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "completed",
+        "unavailable"
+      ],
+      "sampleValues": [
+        0,
+        25,
+        37.6,
+        50,
+        72.4,
+        83.7,
+        100
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "progress-skill",
+      "name": "Progress/Skill",
+      "group": "04-progression",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "progress",
+      "size": [
+        360,
+        96
+      ],
+      "variantAxes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "completed",
+        "unavailable"
+      ],
+      "sampleValues": [
+        0,
+        25,
+        37.6,
+        50,
+        72.4,
+        83.7,
+        100
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "progress-circular",
+      "name": "Progress/Circular",
+      "group": "04-progression",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "circle",
+      "size": [
+        140,
+        140
+      ],
+      "variantAxes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "0",
+        "83.7",
+        "100",
+        "unavailable"
+      ],
+      "sampleValues": [
+        0,
+        25,
+        37.6,
+        50,
+        72.4,
+        83.7,
+        100
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "level-badge",
+      "name": "Level/Badge",
+      "group": "04-progression",
+      "states": [
+        "default"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "level",
+      "size": [
+        200,
+        72
+      ],
+      "variantAxes": {
+        "State": [
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "1",
+        "10",
+        "100",
+        "999+"
+      ],
+      "sampleValues": [
+        "1",
+        "10",
+        "100",
+        "999+"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "xp-reward",
+      "name": "XP/Reward",
+      "group": "04-progression",
+      "states": [
+        "default",
+        "pending"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "reward",
+      "size": [
+        220,
+        88
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "pending"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "25",
+        "120",
+        "pending"
+      ],
+      "sampleValues": [
+        "25",
+        "120",
+        "pending"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "xp-summary",
+      "name": "XP/Summary",
+      "group": "04-progression",
+      "states": [
+        "default",
+        "large-values"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "xpsummary",
+      "size": [
+        360,
+        210
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "large-values"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "large-values"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "levelup-modal",
+      "name": "LevelUp/Modal",
+      "group": "04-progression",
+      "states": [
+        "default",
+        "multiple-levels"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "levelup",
+      "size": [
+        480,
+        330
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "multiple-levels"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "multiple-levels"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "skillprogress-spiral",
+      "name": "SkillProgress/Spiral",
+      "group": "04-progression",
+      "states": [
+        "locked",
+        "available",
+        "current",
+        "completed"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "spiral",
+      "size": [
+        440,
+        220
+      ],
+      "variantAxes": {
+        "State": [
+          "locked",
+          "available",
+          "current",
+          "completed"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "locked",
+        "available",
+        "current",
+        "completed"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "skillstage",
+      "name": "SkillStage",
+      "group": "04-progression",
+      "states": [
+        "locked",
+        "available",
+        "current",
+        "completed"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "skillstage",
+      "size": [
+        240,
+        100
+      ],
+      "variantAxes": {
+        "State": [
+          "locked",
+          "available",
+          "current",
+          "completed"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "locked",
+        "available",
+        "current",
+        "completed"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "skillmasterybadge",
+      "name": "SkillMasteryBadge",
+      "group": "04-progression",
+      "states": [
+        "learning",
+        "practiced",
+        "mastered"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "badge",
+      "size": [
+        260,
+        56
+      ],
+      "variantAxes": {
+        "State": [
+          "learning",
+          "practiced",
+          "mastered"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "learning",
+        "practiced",
+        "mastered"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "review-due",
+      "name": "Review/Due",
+      "group": "04-progression",
+      "states": [
+        "due-soon",
+        "due",
+        "overdue",
+        "refreshed"
+      ],
+      "properties": {
+        "value": "NUMBER_CONTRACT",
+        "label": "TEXT",
+        "current": "TEXT",
+        "total": "TEXT",
+        "showLabel": "BOOLEAN",
+        "status": "VARIANT"
+      },
+      "layout": "Track width Fill; label/value in horizontal row, values tabular. Numbers are data; support wrapping long XP. Value0..100 continuous and independent of status.",
+      "renderer": "reviewdue",
+      "size": [
+        360,
+        210
+      ],
+      "variantAxes": {
+        "State": [
+          "due-soon",
+          "due",
+          "overdue",
+          "refreshed"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "Numeric states in specimens are examples only. NEVER create percentage or level variants; use real numeric geometry + label data at runtime. Existing three Progress assets reused as baseline.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "due-soon",
+        "due",
+        "overdue",
+        "refreshed"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "course-card",
+      "name": "Course/Card",
+      "group": "05-domain",
+      "states": [
+        "available",
+        "purchased",
+        "coming-soon"
+      ],
+      "properties": {
+        "artwork": "INSTANCE_SWAP",
+        "icon": "INSTANCE_SWAP",
+        "title": "TEXT",
+        "description": "TEXT",
+        "price": "TEXT",
+        "oldPrice": "TEXT",
+        "discount": "TEXT",
+        "metadata": "SLOT",
+        "access": "VARIANT",
+        "showBadge": "BOOLEAN",
+        "progressState": "not-started|in-progress|completed",
+        "showDiscount": "BOOLEAN",
+        "promotion": "TEXT"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "course",
+      "size": [
+        360,
+        448
+      ],
+      "variantAxes": {
+        "Access": [
+          "available",
+          "purchased",
+          "coming-soon"
+        ],
+        "Interaction": [
+          "default",
+          "hover",
+          "focus",
+          "disabled"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": " Access controls CTA; promotion never overrides purchase state. Nested Progress component carries progress status.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "hover",
+        "purchased",
+        "in-progress",
+        "completed",
+        "discounted",
+        "coming-soon"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "course-progress",
+      "name": "Course/Progress",
+      "group": "05-domain",
+      "states": [
+        "default",
+        "expanded",
+        "completed"
+      ],
+      "properties": {
+        "course": "SLOT",
+        "value": "NUMBER_CONTRACT",
+        "currentModule": "TEXT",
+        "currentLesson": "TEXT",
+        "completed": "TEXT",
+        "total": "TEXT",
+        "xp": "TEXT"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "courseprogress",
+      "size": [
+        420,
+        310
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "expanded",
+          "completed"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "expanded",
+        "completed"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "module-card",
+      "name": "Module/Card",
+      "group": "05-domain",
+      "states": [
+        "not-started",
+        "active",
+        "completed",
+        "locked",
+        "review-due"
+      ],
+      "properties": {
+        "number": "TEXT",
+        "title": "TEXT",
+        "description": "TEXT",
+        "progress": "NUMBER_CONTRACT",
+        "lessons": "SLOT",
+        "expanded": "BOOLEAN"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "module",
+      "size": [
+        440,
+        250
+      ],
+      "variantAxes": {
+        "Status": [
+          "not-started",
+          "active",
+          "completed",
+          "locked",
+          "review-due"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "not-started",
+        "active",
+        "completed",
+        "locked",
+        "review-due",
+        "expanded"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "lesson-row",
+      "name": "Lesson/Row",
+      "group": "05-domain",
+      "states": [
+        "not-started",
+        "current",
+        "completed",
+        "locked",
+        "review-due"
+      ],
+      "properties": {
+        "typeIcon": "INSTANCE_SWAP",
+        "title": "TEXT",
+        "duration": "TEXT",
+        "xp": "TEXT",
+        "value": "NUMBER_CONTRACT"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "lessonrow",
+      "size": [
+        440,
+        110
+      ],
+      "variantAxes": {
+        "State": [
+          "not-started",
+          "current",
+          "completed",
+          "locked",
+          "review-due"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "not-started",
+        "current",
+        "completed",
+        "locked",
+        "review-due"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "activity-card",
+      "name": "Activity/Card",
+      "group": "05-domain",
+      "states": [
+        "lesson",
+        "task",
+        "transfer",
+        "code-review",
+        "incident",
+        "project",
+        "quiz"
+      ],
+      "properties": {
+        "type": "VARIANT",
+        "status": "VARIANT",
+        "icon": "INSTANCE_SWAP",
+        "title": "TEXT",
+        "description": "TEXT",
+        "duration": "TEXT",
+        "xp": "TEXT",
+        "value": "NUMBER_CONTRACT"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "activity",
+      "size": [
+        360,
+        250
+      ],
+      "variantAxes": {
+        "Type": [
+          "lesson",
+          "task",
+          "transfer",
+          "code-review",
+          "incident",
+          "project",
+          "quiz"
+        ],
+        "Status": [
+          "available",
+          "in-progress",
+          "submitted",
+          "completed",
+          "locked",
+          "failed"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "lesson",
+        "task",
+        "transfer",
+        "code-review",
+        "incident",
+        "project",
+        "quiz"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "achievement-card",
+      "name": "Achievement/Card",
+      "group": "05-domain",
+      "states": [
+        "locked",
+        "unlocked",
+        "secret"
+      ],
+      "properties": {
+        "icon": "INSTANCE_SWAP",
+        "title": "TEXT",
+        "description": "TEXT",
+        "rarity": "VARIANT",
+        "progress": "NUMBER_CONTRACT",
+        "current": "TEXT",
+        "target": "TEXT",
+        "date": "TEXT",
+        "xp": "TEXT",
+        "newlyUnlocked": "BOOLEAN",
+        "progressState": "not-started|in-progress|completed"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "achievement",
+      "size": [
+        320,
+        330
+      ],
+      "variantAxes": {
+        "Access": [
+          "locked",
+          "unlocked",
+          "secret"
+        ],
+        "Rarity": [
+          "common",
+          "rare",
+          "legendary"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": " Rarity independent of access. Secret projection never contains hidden criterion/title/progress.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "unlocked",
+        "locked",
+        "secret",
+        "progress",
+        "newly-unlocked",
+        "rare",
+        "legendary",
+        "completed"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "achievement-progress",
+      "name": "Achievement/Progress",
+      "group": "05-domain",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "properties": {
+        "current": "TEXT",
+        "target": "TEXT",
+        "value": "NUMBER_CONTRACT"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "progress",
+      "size": [
+        300,
+        96
+      ],
+      "variantAxes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "completed",
+        "secret"
+      ],
+      "sampleValues": [
+        0,
+        25,
+        37.6,
+        50,
+        72.4,
+        83.7,
+        100
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "achievement-grid",
+      "name": "Achievement/Grid",
+      "group": "05-domain",
+      "states": [
+        "default",
+        "filtered",
+        "empty"
+      ],
+      "properties": {
+        "items": "SLOT",
+        "filter": "TEXT",
+        "total": "TEXT"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "achievementgrid",
+      "size": [
+        680,
+        360
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "filtered",
+          "empty"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "filtered",
+        "empty"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "avatar",
+      "name": "Avatar",
+      "group": "05-domain",
+      "states": [
+        "image",
+        "initials",
+        "empty",
+        "loading"
+      ],
+      "properties": {
+        "image": "IMAGE_FILL",
+        "initials": "TEXT",
+        "size": "24|32|48|64|96"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "avatar",
+      "size": [
+        128,
+        128
+      ],
+      "variantAxes": {
+        "State": [
+          "image",
+          "initials",
+          "empty",
+          "loading"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "image",
+        "initials",
+        "empty",
+        "loading"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "user-miniprofile",
+      "name": "User/MiniProfile",
+      "group": "05-domain",
+      "states": [
+        "default",
+        "compact"
+      ],
+      "properties": {
+        "avatar": "INSTANCE_SWAP",
+        "name": "TEXT",
+        "username": "TEXT",
+        "level": "TEXT"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "miniprofile",
+      "size": [
+        320,
+        88
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "compact"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "compact"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "profile-header",
+      "name": "Profile/Header",
+      "group": "05-domain",
+      "states": [
+        "default",
+        "long-name"
+      ],
+      "properties": {
+        "avatar": "INSTANCE_SWAP",
+        "displayName": "TEXT",
+        "username": "TEXT",
+        "joined": "TEXT",
+        "xp": "INSTANCE_SWAP"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "profile",
+      "size": [
+        640,
+        230
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "long-name"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "long-name"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "profile-stats",
+      "name": "Profile/Stats",
+      "group": "05-domain",
+      "states": [
+        "default",
+        "large-values",
+        "empty"
+      ],
+      "properties": {
+        "items": "SLOT"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "stats",
+      "size": [
+        600,
+        160
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "large-values",
+          "empty"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "large-values",
+        "empty"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "profile-activity",
+      "name": "Profile/Activity",
+      "group": "05-domain",
+      "states": [
+        "default",
+        "empty"
+      ],
+      "properties": {
+        "items": "SLOT"
+      },
+      "layout": "Auto Layout vertical; image fixed ratio32:15; content Hug; metadata wraps; footer action anchored by Fill spacer within equal-height grid. Collections unlimited; paginate.",
+      "renderer": "activitylog",
+      "size": [
+        420,
+        250
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "empty"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "empty"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "content-block",
+      "name": "Content/Block",
+      "group": "06-learning",
+      "states": [
+        "title",
+        "subtitle",
+        "paragraph",
+        "image",
+        "diagram",
+        "code",
+        "table",
+        "list",
+        "quote",
+        "warning",
+        "tip",
+        "note",
+        "details",
+        "checkpoint",
+        "exercise",
+        "embed"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "content",
+      "size": [
+        560,
+        280
+      ],
+      "variantAxes": {
+        "State": [
+          "title",
+          "subtitle",
+          "paragraph",
+          "image",
+          "diagram",
+          "code",
+          "table",
+          "list",
+          "quote",
+          "warning",
+          "tip",
+          "note",
+          "details",
+          "checkpoint",
+          "exercise",
+          "embed"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "title",
+        "subtitle",
+        "paragraph",
+        "image",
+        "diagram",
+        "code",
+        "table",
+        "list",
+        "quote",
+        "warning",
+        "tip",
+        "note",
+        "details",
+        "checkpoint",
+        "exercise",
+        "embed"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "code-block",
+      "name": "Code/Block",
+      "group": "06-learning",
+      "states": [
+        "default",
+        "copied",
+        "overflow"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "code",
+      "size": [
+        560,
+        240
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "copied",
+          "overflow"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "copied",
+        "overflow"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "group": "06-learning",
+      "states": [
+        "default",
+        "loading",
+        "empty",
+        "sorted"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "table",
+      "size": [
+        560,
+        260
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "loading",
+          "empty",
+          "sorted"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "loading",
+        "empty",
+        "sorted"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "divider",
+      "name": "Divider",
+      "group": "06-learning",
+      "states": [
+        "plain",
+        "technical"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "divider",
+      "size": [
+        560,
+        48
+      ],
+      "variantAxes": {
+        "State": [
+          "plain",
+          "technical"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "plain",
+        "technical"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "task-editorshell",
+      "name": "Task/EditorShell",
+      "group": "06-learning",
+      "states": [
+        "idle",
+        "busy",
+        "auth-required"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "editor",
+      "size": [
+        680,
+        420
+      ],
+      "variantAxes": {
+        "State": [
+          "idle",
+          "busy",
+          "auth-required"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "idle",
+        "busy",
+        "auth-required"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "task-status",
+      "name": "Task/Status",
+      "group": "06-learning",
+      "states": [
+        "idle",
+        "submitting",
+        "queued",
+        "compiling",
+        "running",
+        "accepted",
+        "wrong-answer",
+        "runtime-error",
+        "compilation-error",
+        "time-limit",
+        "memory-limit",
+        "output-limit",
+        "network-error",
+        "infrastructure-error",
+        "cancelled",
+        "unknown"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "taskstatus",
+      "size": [
+        440,
+        192
+      ],
+      "variantAxes": {
+        "State": [
+          "idle",
+          "submitting",
+          "queued",
+          "compiling",
+          "running",
+          "accepted",
+          "wrong-answer",
+          "runtime-error",
+          "compilation-error",
+          "time-limit",
+          "memory-limit",
+          "output-limit",
+          "network-error",
+          "infrastructure-error",
+          "cancelled",
+          "unknown"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "idle",
+        "submitting",
+        "queued",
+        "compiling",
+        "running",
+        "accepted",
+        "wrong-answer",
+        "runtime-error",
+        "compilation-error",
+        "time-limit",
+        "memory-limit",
+        "output-limit",
+        "network-error",
+        "infrastructure-error",
+        "cancelled",
+        "unknown"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "task-result",
+      "name": "Task/Result",
+      "group": "06-learning",
+      "states": [
+        "accepted",
+        "wrong-answer",
+        "runtime-error",
+        "compilation-error",
+        "time-limit",
+        "infrastructure-error"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "taskresult",
+      "size": [
+        480,
+        280
+      ],
+      "variantAxes": {
+        "State": [
+          "accepted",
+          "wrong-answer",
+          "runtime-error",
+          "compilation-error",
+          "time-limit",
+          "infrastructure-error"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "accepted",
+        "wrong-answer",
+        "runtime-error",
+        "compilation-error",
+        "time-limit",
+        "infrastructure-error"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "task-transfer",
+      "name": "Task/Transfer",
+      "group": "06-learning",
+      "states": [
+        "available",
+        "in-progress",
+        "submitted",
+        "accepted",
+        "failed",
+        "review"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "transfer",
+      "size": [
+        480,
+        300
+      ],
+      "variantAxes": {
+        "State": [
+          "available",
+          "in-progress",
+          "submitted",
+          "accepted",
+          "failed",
+          "review"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "available",
+        "in-progress",
+        "submitted",
+        "accepted",
+        "failed",
+        "review"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "codereview-finding",
+      "name": "CodeReview/Finding",
+      "group": "06-learning",
+      "states": [
+        "draft",
+        "submitted",
+        "correct",
+        "incorrect",
+        "partial"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "finding",
+      "size": [
+        440,
+        260
+      ],
+      "variantAxes": {
+        "State": [
+          "draft",
+          "submitted",
+          "correct",
+          "incorrect",
+          "partial"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "draft",
+        "submitted",
+        "correct",
+        "incorrect",
+        "partial"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "codereview-result",
+      "name": "CodeReview/Result",
+      "group": "06-learning",
+      "states": [
+        "complete",
+        "partial"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "reviewresult",
+      "size": [
+        440,
+        270
+      ],
+      "variantAxes": {
+        "State": [
+          "complete",
+          "partial"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "complete",
+        "partial"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "codereview-line",
+      "name": "CodeReview/Line",
+      "group": "06-learning",
+      "states": [
+        "default",
+        "selected",
+        "range",
+        "with-finding"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "codeline",
+      "size": [
+        560,
+        116
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "selected",
+          "range",
+          "with-finding"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "selected",
+        "range",
+        "with-finding"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "incident-card",
+      "name": "Incident/Card",
+      "group": "06-learning",
+      "states": [
+        "active",
+        "investigating",
+        "mitigated",
+        "resolved",
+        "failed"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "incident",
+      "size": [
+        400,
+        310
+      ],
+      "variantAxes": {
+        "State": [
+          "active",
+          "investigating",
+          "mitigated",
+          "resolved",
+          "failed"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "active",
+        "investigating",
+        "mitigated",
+        "resolved",
+        "failed"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "incident-evidence",
+      "name": "Incident/Evidence",
+      "group": "06-learning",
+      "states": [
+        "logs",
+        "metrics",
+        "kubernetes",
+        "database",
+        "network",
+        "code",
+        "events"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "evidence",
+      "size": [
+        560,
+        330
+      ],
+      "variantAxes": {
+        "State": [
+          "logs",
+          "metrics",
+          "kubernetes",
+          "database",
+          "network",
+          "code",
+          "events"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "logs",
+        "metrics",
+        "kubernetes",
+        "database",
+        "network",
+        "code",
+        "events"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "incident-diagnosis",
+      "name": "Incident/Diagnosis",
+      "group": "06-learning",
+      "states": [
+        "draft",
+        "submitted",
+        "rejected"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "diagnosis",
+      "size": [
+        480,
+        360
+      ],
+      "variantAxes": {
+        "State": [
+          "draft",
+          "submitted",
+          "rejected"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "draft",
+        "submitted",
+        "rejected"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "incident-result",
+      "name": "Incident/Result",
+      "group": "06-learning",
+      "states": [
+        "resolved",
+        "failed"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "body": "TEXT",
+        "content": "SLOT",
+        "status": "VARIANT",
+        "metadata": "SLOT",
+        "action": "SLOT"
+      },
+      "layout": "Content column min0; text max70ch; internal code/table scroll only. Preserve Monaco and local autosave; editor viewport is integration slot, not new editor.",
+      "renderer": "incidentresult",
+      "size": [
+        480,
+        310
+      ],
+      "variantAxes": {
+        "State": [
+          "resolved",
+          "failed"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "resolved",
+        "failed"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "payment-summary",
+      "name": "Payment/Summary",
+      "group": "07-commerce",
+      "states": [
+        "default",
+        "discount",
+        "promo-valid",
+        "promo-invalid"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "fields": "SLOT",
+        "course": "INSTANCE_SWAP",
+        "price": "TEXT",
+        "orderId": "TEXT",
+        "date": "TEXT",
+        "message": "TEXT"
+      },
+      "layout": "Form vertical gap16; explicit field labels, inline validation, primary48px; summary stacks above pay on mobile. Provider fields placeholders only; never imply paid before backend confirmation.",
+      "renderer": "summary",
+      "size": [
+        360,
+        390
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "discount",
+          "promo-valid",
+          "promo-invalid"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "discount",
+        "promo-valid",
+        "promo-invalid"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "payment-method",
+      "name": "Payment/Method",
+      "group": "07-commerce",
+      "states": [
+        "unselected",
+        "selected",
+        "disabled"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "fields": "SLOT",
+        "course": "INSTANCE_SWAP",
+        "price": "TEXT",
+        "orderId": "TEXT",
+        "date": "TEXT",
+        "message": "TEXT"
+      },
+      "layout": "Form vertical gap16; explicit field labels, inline validation, primary48px; summary stacks above pay on mobile. Provider fields placeholders only; never imply paid before backend confirmation.",
+      "renderer": "paymentmethod",
+      "size": [
+        360,
+        106
+      ],
+      "variantAxes": {
+        "State": [
+          "unselected",
+          "selected",
+          "disabled"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "unselected",
+        "selected",
+        "disabled"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "payment-form",
+      "name": "Payment/Form",
+      "group": "07-commerce",
+      "states": [
+        "default",
+        "validation-error",
+        "processing",
+        "payment-error",
+        "timeout"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "fields": "SLOT",
+        "course": "INSTANCE_SWAP",
+        "price": "TEXT",
+        "orderId": "TEXT",
+        "date": "TEXT",
+        "message": "TEXT"
+      },
+      "layout": "Form vertical gap16; explicit field labels, inline validation, primary48px; summary stacks above pay on mobile. Provider fields placeholders only; never imply paid before backend confirmation.",
+      "renderer": "paymentform",
+      "size": [
+        420,
+        350
+      ],
+      "variantAxes": {
+        "State": [
+          "default",
+          "validation-error",
+          "processing",
+          "payment-error",
+          "timeout"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default",
+        "validation-error",
+        "processing",
+        "payment-error",
+        "timeout"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "payment-success",
+      "name": "Payment/Success",
+      "group": "07-commerce",
+      "states": [
+        "default"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "fields": "SLOT",
+        "course": "INSTANCE_SWAP",
+        "price": "TEXT",
+        "orderId": "TEXT",
+        "date": "TEXT",
+        "message": "TEXT"
+      },
+      "layout": "Form vertical gap16; explicit field labels, inline validation, primary48px; summary stacks above pay on mobile. Provider fields placeholders only; never imply paid before backend confirmation.",
+      "renderer": "paymentsuccess",
+      "size": [
+        480,
+        340
+      ],
+      "variantAxes": {
+        "State": [
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "payment-failed",
+      "name": "Payment/Failed",
+      "group": "07-commerce",
+      "states": [
+        "retry",
+        "change-method",
+        "timeout"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "fields": "SLOT",
+        "course": "INSTANCE_SWAP",
+        "price": "TEXT",
+        "orderId": "TEXT",
+        "date": "TEXT",
+        "message": "TEXT"
+      },
+      "layout": "Form vertical gap16; explicit field labels, inline validation, primary48px; summary stacks above pay on mobile. Provider fields placeholders only; never imply paid before backend confirmation.",
+      "renderer": "paymentfailed",
+      "size": [
+        480,
+        300
+      ],
+      "variantAxes": {
+        "State": [
+          "retry",
+          "change-method",
+          "timeout"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "retry",
+        "change-method",
+        "timeout"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "auth-form",
+      "name": "Auth/Form",
+      "group": "07-commerce",
+      "states": [
+        "login",
+        "register",
+        "forgot-password",
+        "reset-password",
+        "verify-email",
+        "verification-success"
+      ],
+      "properties": {
+        "title": "TEXT",
+        "fields": "SLOT",
+        "course": "INSTANCE_SWAP",
+        "price": "TEXT",
+        "orderId": "TEXT",
+        "date": "TEXT",
+        "message": "TEXT"
+      },
+      "layout": "Form vertical gap16; explicit field labels, inline validation, primary48px; summary stacks above pay on mobile. Provider fields placeholders only; never imply paid before backend confirmation.",
+      "renderer": "auth",
+      "size": [
+        420,
+        430
+      ],
+      "variantAxes": {
+        "State": [
+          "login",
+          "register",
+          "forgot-password",
+          "reset-password",
+          "verify-email",
+          "verification-success"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "login",
+        "register",
+        "forgot-password",
+        "reset-password",
+        "verify-email",
+        "verification-success"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "course-artwork",
+      "name": "Course/Artwork",
+      "group": "00-assets",
+      "states": [
+        "default"
+      ],
+      "properties": {
+        "asset": "INSTANCE_SWAP",
+        "size": "NUMBER_CONTRACT",
+        "tone": "TOKEN"
+      },
+      "layout": "Fixed proportional vector frame; no stretch; swap asset by stable ID. Artwork32:15.",
+      "renderer": "asset",
+      "size": [
+        640,
+        300
+      ],
+      "variantAxes": {
+        "State": [
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "20 known sources or symbols; link manifest. No new Course/Card per asset.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "course-icon",
+      "name": "Course/Icon",
+      "group": "00-assets",
+      "states": [
+        "default"
+      ],
+      "properties": {
+        "asset": "INSTANCE_SWAP",
+        "size": "NUMBER_CONTRACT",
+        "tone": "TOKEN"
+      },
+      "layout": "Fixed proportional vector frame; no stretch; swap asset by stable ID. Transparent background; optical center and consistent size.",
+      "renderer": "asset",
+      "size": [
+        48,
+        48
+      ],
+      "variantAxes": {
+        "State": [
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "20 known sources or symbols; link manifest. No new Course/Card per asset.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "course-symbol",
+      "name": "Course/Symbol",
+      "group": "00-assets",
+      "states": [
+        "default"
+      ],
+      "properties": {
+        "asset": "INSTANCE_SWAP",
+        "size": "NUMBER_CONTRACT",
+        "tone": "TOKEN"
+      },
+      "layout": "Fixed proportional vector frame; no stretch; swap asset by stable ID. Transparent background; optical center and consistent size.",
+      "renderer": "asset",
+      "size": [
+        24,
+        24
+      ],
+      "variantAxes": {
+        "State": [
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "20 known sources or symbols; link manifest. No new Course/Card per asset.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "achievement-icon",
+      "name": "Achievement/Icon",
+      "group": "00-assets",
+      "states": [
+        "default"
+      ],
+      "properties": {
+        "asset": "INSTANCE_SWAP",
+        "size": "NUMBER_CONTRACT",
+        "tone": "TOKEN"
+      },
+      "layout": "Fixed proportional vector frame; no stretch; swap asset by stable ID. Transparent background; optical center and consistent size.",
+      "renderer": "asset",
+      "size": [
+        128,
+        128
+      ],
+      "variantAxes": {
+        "State": [
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "30 known sources or symbols; link manifest. No new Course/Card per asset.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    },
+    {
+      "id": "icon-utility",
+      "name": "Icon/Utility",
+      "group": "00-assets",
+      "states": [
+        "default"
+      ],
+      "properties": {
+        "asset": "INSTANCE_SWAP",
+        "size": "NUMBER_CONTRACT",
+        "tone": "TOKEN"
+      },
+      "layout": "Fixed proportional vector frame; no stretch; swap asset by stable ID. Transparent background; optical center and consistent size.",
+      "renderer": "asset",
+      "size": [
+        24,
+        24
+      ],
+      "variantAxes": {
+        "State": [
+          "default"
+        ]
+      },
+      "bindingRoles": [
+        "color.bg.surface",
+        "color.text.primary",
+        "color.text.secondary",
+        "color.accent.primary",
+        "color.border.subtle",
+        "space.16",
+        "radius.control"
+      ],
+      "accessibility": "Keyboard reachable when interactive; visible 2px focus; actions min44px; status text plus icon, never color alone.",
+      "overflow": "Text wraps; containers grow. Never reduce font to fit. Tooltips expose visually truncated identifiers.",
+      "figmaRecipe": "Auto Layout for content, main component with discrete state variants; text properties and instance swaps for content. SVG is editable visual source, not automatic variable binding.",
+      "notes": "0 known sources or symbols; link manifest. No new Course/Card per asset.",
+      "localStatus": "specified",
+      "figmaStatus": "not-imported",
+      "specimenStates": [
+        "default"
+      ],
+      "contrastContract": "Lime fill → ink text; cobalt fill → paper text. Cobalt decorative only on ink; meaningful outlines use control border. Subtle border is decorative, not the sole input boundary."
+    }
+  ]
+}

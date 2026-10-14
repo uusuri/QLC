@@ -1,0 +1,1569 @@
+{
+  "schemaVersion": 1,
+  "preparedAt": "2026-09-09",
+  "purpose": "Локальные примеры данных для UI/UX. Не реализованная система выдачи и не снимок одного пользователя.",
+  "assetBase": "../../",
+  "fieldNaming": {
+    "XPReward": "xpReward"
+  },
+  "recordCount": 38,
+  "uniqueIconCount": 30,
+  "categoryEnum": [
+    "Learning",
+    "Coding",
+    "Courses",
+    "Incidents",
+    "Reviews",
+    "Streak",
+    "XP",
+    "Special",
+    "Hidden"
+  ],
+  "categories": [
+    {
+      "id": "Learning",
+      "label": "Обучение",
+      "legacy": [
+        "Теория"
+      ]
+    },
+    {
+      "id": "Coding",
+      "label": "Задачи",
+      "legacy": [
+        "Практика"
+      ]
+    },
+    {
+      "id": "Courses",
+      "label": "Курсы",
+      "legacy": [
+        "Курсы"
+      ]
+    },
+    {
+      "id": "Incidents",
+      "label": "Инциденты",
+      "legacy": []
+    },
+    {
+      "id": "Reviews",
+      "label": "Проверка кода",
+      "legacy": []
+    },
+    {
+      "id": "Streak",
+      "label": "Регулярность",
+      "legacy": [
+        "Регулярность"
+      ]
+    },
+    {
+      "id": "XP",
+      "label": "Опыт",
+      "legacy": []
+    },
+    {
+      "id": "Special",
+      "label": "Особые",
+      "legacy": []
+    },
+    {
+      "id": "Hidden",
+      "label": "Скрытые",
+      "legacy": []
+    }
+  ],
+  "stateEnum": [
+    "locked",
+    "in_progress",
+    "unlocked",
+    "secret"
+  ],
+  "rarityEnum": [
+    "common",
+    "uncommon",
+    "rare",
+    "legendary"
+  ],
+  "compatibility": {
+    "legacyCategoryDefaultMap": {
+      "Теория": "Learning",
+      "Практика": "Coding",
+      "Курсы": "Courses",
+      "Регулярность": "Streak"
+    },
+    "recordOverrides": {
+      "Achievement-21": "Special",
+      "Achievement-22": "Hidden"
+    },
+    "stateAliases": {
+      "progress": "in_progress",
+      "newly unlocked": "unlocked + isNewlyUnlocked",
+      "completed": "unlocked"
+    },
+    "categoryLabelsAreSeparateFromStableKeys": true
+  },
+  "schema": {
+    "id": "Стабильный идентификатор определения; не зависит от названия, иконки, сортировки или перевода.",
+    "icon": "Повторно использованный существующий SVG; path относителен qlc-design.",
+    "xpReward": "Неотрицательный целый demo XP. В production сервер присылает точное десятичное значение; большие значения — строкой.",
+    "metricKey": "Ключ подтверждённой серверной метрики, не произвольный код.",
+    "metricScope": "Необязательный course/module/topic scope. Счётчики scoped и global не смешиваются.",
+    "current": "В этих примерах integer. Для огромных счётчиков API использует decimal string.",
+    "target": "Положительное integer определение; zero/null target считается ошибкой/неизвестным, не100%.",
+    "percentage": "0..100 float, производное от current/target; authoritative unlock приходит сервером.",
+    "state": "locked=нулевой известный progress; in_progress=частичный; unlocked=подтверждено сервером; secret=нерекламируемое условие.",
+    "unlockedAt": "UTC ISO8601 только для unlocked; отображение в часовом поясе пользователя.",
+    "secret": "Критерий скрыт до раскрытия; это отдельное правило видимости, не opacity.",
+    "tier": "Необязательные familyId/rank; длина семейства не зафиксирована."
+  },
+  "redactedProjection": {
+    "id": "hidden-slot-opaque-07",
+    "iconId": "generic-hidden",
+    "iconAsset": "achievement-symbols/Achievement-27.svg",
+    "title": "Скрытое достижение",
+    "description": "Подробности появятся после получения.",
+    "category": "Hidden",
+    "state": "secret",
+    "secret": true,
+    "unlockedAt": null,
+    "xpReward": null,
+    "rarity": null,
+    "current": null,
+    "target": null,
+    "percentage": null,
+    "tier": null
+  },
+  "redactedFieldsNeverSent": [
+    "metricKey",
+    "metricScope",
+    "definitionTitle",
+    "definitionDescription",
+    "revealCondition",
+    "trueIconId",
+    "rewardValue",
+    "target",
+    "current",
+    "tierFamily",
+    "internalIdContainingCondition"
+  ],
+  "records": [
+    {
+      "id": "qlc-achievement-001",
+      "legacyIconId": "Achievement-01",
+      "icon": {
+        "id": "Achievement-01",
+        "path": "achievement-symbols/Achievement-01.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Первая тема",
+      "description": "Прочитана первая тема курса.",
+      "category": "Learning",
+      "xpReward": 25,
+      "rarity": "common",
+      "metricKey": "lessons.completed",
+      "metricScope": null,
+      "current": 1,
+      "target": 1,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-03T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Теория"
+    },
+    {
+      "id": "qlc-achievement-002",
+      "legacyIconId": "Achievement-02",
+      "icon": {
+        "id": "Achievement-02",
+        "path": "achievement-symbols/Achievement-02.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Первая задача",
+      "description": "Решена первая задача.",
+      "category": "Coding",
+      "xpReward": 25,
+      "rarity": "common",
+      "metricKey": "coding.uniqueAccepted",
+      "metricScope": null,
+      "current": 1,
+      "target": 1,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-04T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "coding-solutions",
+        "rank": 1
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика"
+    },
+    {
+      "id": "qlc-achievement-003",
+      "legacyIconId": "Achievement-03",
+      "icon": {
+        "id": "Achievement-03",
+        "path": "achievement-symbols/Achievement-03.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Пять решений",
+      "description": "Решены пять разных задач.",
+      "category": "Coding",
+      "xpReward": 40,
+      "rarity": "common",
+      "metricKey": "coding.uniqueAccepted",
+      "metricScope": null,
+      "current": 5,
+      "target": 5,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-05T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "coding-solutions",
+        "rank": 2
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика"
+    },
+    {
+      "id": "qlc-achievement-004",
+      "legacyIconId": "Achievement-04",
+      "icon": {
+        "id": "Achievement-04",
+        "path": "achievement-symbols/Achievement-04.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Десять решений",
+      "description": "Решены десять разных задач.",
+      "category": "Coding",
+      "xpReward": 60,
+      "rarity": "uncommon",
+      "metricKey": "coding.uniqueAccepted",
+      "metricScope": null,
+      "current": 10,
+      "target": 10,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-06T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "coding-solutions",
+        "rank": 3
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика"
+    },
+    {
+      "id": "qlc-achievement-005",
+      "legacyIconId": "Achievement-05",
+      "icon": {
+        "id": "Achievement-05",
+        "path": "achievement-symbols/Achievement-05.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Двадцать пять решений",
+      "description": "Решены двадцать пять разных задач.",
+      "category": "Coding",
+      "xpReward": 90,
+      "rarity": "uncommon",
+      "metricKey": "coding.uniqueAccepted",
+      "metricScope": null,
+      "current": 25,
+      "target": 25,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-07T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "coding-solutions",
+        "rank": 4
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика"
+    },
+    {
+      "id": "qlc-achievement-006",
+      "legacyIconId": "Achievement-06",
+      "icon": {
+        "id": "Achievement-06",
+        "path": "achievement-symbols/Achievement-06.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Пятьдесят решений",
+      "description": "Решены пятьдесят разных задач.",
+      "category": "Coding",
+      "xpReward": 120,
+      "rarity": "rare",
+      "metricKey": "coding.uniqueAccepted",
+      "metricScope": null,
+      "current": 50,
+      "target": 50,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-02T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "coding-solutions",
+        "rank": 5
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика"
+    },
+    {
+      "id": "qlc-achievement-007",
+      "legacyIconId": "Achievement-07",
+      "icon": {
+        "id": "Achievement-07",
+        "path": "achievement-symbols/Achievement-07.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Первый модуль",
+      "description": "Завершён первый модуль курса.",
+      "category": "Courses",
+      "xpReward": 50,
+      "rarity": "common",
+      "metricKey": "modules.completed",
+      "metricScope": null,
+      "current": 1,
+      "target": 1,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-03T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Курсы"
+    },
+    {
+      "id": "qlc-achievement-008",
+      "legacyIconId": "Achievement-08",
+      "icon": {
+        "id": "Achievement-08",
+        "path": "achievement-symbols/Achievement-08.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Три модуля",
+      "description": "Завершены три модуля курса.",
+      "category": "Courses",
+      "xpReward": 90,
+      "rarity": "uncommon",
+      "metricKey": "modules.completed",
+      "metricScope": null,
+      "current": 3,
+      "target": 3,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-04T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Курсы"
+    },
+    {
+      "id": "qlc-achievement-009",
+      "legacyIconId": "Achievement-09",
+      "icon": {
+        "id": "Achievement-09",
+        "path": "achievement-symbols/Achievement-09.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Пять модулей",
+      "description": "Завершены пять модулей курса.",
+      "category": "Courses",
+      "xpReward": 120,
+      "rarity": "rare",
+      "metricKey": "modules.completed",
+      "metricScope": null,
+      "current": 4,
+      "target": 5,
+      "percentage": 80.0,
+      "state": "in_progress",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Курсы"
+    },
+    {
+      "id": "qlc-achievement-010",
+      "legacyIconId": "Achievement-10",
+      "icon": {
+        "id": "Achievement-10",
+        "path": "achievement-symbols/Achievement-10.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Первый курс",
+      "description": "Завершён первый курс.",
+      "category": "Courses",
+      "xpReward": 150,
+      "rarity": "common",
+      "metricKey": "courses.completed",
+      "metricScope": null,
+      "current": 1,
+      "target": 1,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-06T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Курсы"
+    },
+    {
+      "id": "qlc-achievement-011",
+      "legacyIconId": "Achievement-11",
+      "icon": {
+        "id": "Achievement-11",
+        "path": "achievement-symbols/Achievement-11.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Два курса",
+      "description": "Завершены два курса.",
+      "category": "Courses",
+      "xpReward": 200,
+      "rarity": "rare",
+      "metricKey": "courses.completed",
+      "metricScope": null,
+      "current": 1,
+      "target": 2,
+      "percentage": 50.0,
+      "state": "in_progress",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Курсы"
+    },
+    {
+      "id": "qlc-achievement-012",
+      "legacyIconId": "Achievement-12",
+      "icon": {
+        "id": "Achievement-12",
+        "path": "achievement-symbols/Achievement-12.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Десять тем",
+      "description": "Прочитаны десять тем курса.",
+      "category": "Learning",
+      "xpReward": 60,
+      "rarity": "common",
+      "metricKey": "lessons.completed",
+      "metricScope": null,
+      "current": 10,
+      "target": 10,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-02T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Теория"
+    },
+    {
+      "id": "qlc-achievement-013",
+      "legacyIconId": "Achievement-13",
+      "icon": {
+        "id": "Achievement-13",
+        "path": "achievement-symbols/Achievement-13.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Двадцать пять тем",
+      "description": "Прочитаны двадцать пять тем курса.",
+      "category": "Learning",
+      "xpReward": 90,
+      "rarity": "uncommon",
+      "metricKey": "lessons.completed",
+      "metricScope": null,
+      "current": 25,
+      "target": 25,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-03T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Теория"
+    },
+    {
+      "id": "qlc-achievement-014",
+      "legacyIconId": "Achievement-14",
+      "icon": {
+        "id": "Achievement-14",
+        "path": "achievement-symbols/Achievement-14.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Пятьдесят тем",
+      "description": "Прочитаны пятьдесят тем курса.",
+      "category": "Learning",
+      "xpReward": 140,
+      "rarity": "rare",
+      "metricKey": "lessons.completed",
+      "metricScope": null,
+      "current": 32,
+      "target": 50,
+      "percentage": 64.0,
+      "state": "in_progress",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Теория"
+    },
+    {
+      "id": "qlc-achievement-015",
+      "legacyIconId": "Achievement-15",
+      "icon": {
+        "id": "Achievement-15",
+        "path": "achievement-symbols/Achievement-15.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Три дня практики",
+      "description": "Задачи решались три дня подряд.",
+      "category": "Streak",
+      "xpReward": 40,
+      "rarity": "common",
+      "metricKey": "practice.currentStreakDays",
+      "metricScope": null,
+      "current": 3,
+      "target": 3,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-05T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "practice-streak",
+        "rank": 1
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Регулярность"
+    },
+    {
+      "id": "qlc-achievement-016",
+      "legacyIconId": "Achievement-16",
+      "icon": {
+        "id": "Achievement-16",
+        "path": "achievement-symbols/Achievement-16.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Неделя практики",
+      "description": "Задачи решались семь дней подряд.",
+      "category": "Streak",
+      "xpReward": 80,
+      "rarity": "uncommon",
+      "metricKey": "practice.currentStreakDays",
+      "metricScope": null,
+      "current": 7,
+      "target": 7,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-06T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "practice-streak",
+        "rank": 2
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Регулярность"
+    },
+    {
+      "id": "qlc-achievement-017",
+      "legacyIconId": "Achievement-17",
+      "icon": {
+        "id": "Achievement-17",
+        "path": "achievement-symbols/Achievement-17.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Две недели практики",
+      "description": "Задачи решались четырнадцать дней подряд.",
+      "category": "Streak",
+      "xpReward": 120,
+      "rarity": "rare",
+      "metricKey": "practice.currentStreakDays",
+      "metricScope": null,
+      "current": 7,
+      "target": 14,
+      "percentage": 50.0,
+      "state": "in_progress",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "practice-streak",
+        "rank": 3
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Регулярность"
+    },
+    {
+      "id": "qlc-achievement-018",
+      "legacyIconId": "Achievement-18",
+      "icon": {
+        "id": "Achievement-18",
+        "path": "achievement-symbols/Achievement-18.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Месяц практики",
+      "description": "Задачи решались тридцать дней подряд.",
+      "category": "Streak",
+      "xpReward": 200,
+      "rarity": "legendary",
+      "metricKey": "practice.currentStreakDays",
+      "metricScope": null,
+      "current": 7,
+      "target": 30,
+      "percentage": 23.333333333333332,
+      "state": "in_progress",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "practice-streak",
+        "rank": 4
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Регулярность"
+    },
+    {
+      "id": "qlc-achievement-019",
+      "legacyIconId": "Achievement-19",
+      "icon": {
+        "id": "Achievement-19",
+        "path": "achievement-symbols/Achievement-19.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Возвращение к теме",
+      "description": "После изучения темы решена связанная с ней задача.",
+      "category": "Coding",
+      "xpReward": 40,
+      "rarity": "common",
+      "metricKey": "review.returnedTopicAccepted",
+      "metricScope": null,
+      "current": 1,
+      "target": 1,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-03T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика"
+    },
+    {
+      "id": "qlc-achievement-020",
+      "legacyIconId": "Achievement-20",
+      "icon": {
+        "id": "Achievement-20",
+        "path": "achievement-symbols/Achievement-20.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Тема закреплена",
+      "description": "Решены все задачи одной темы.",
+      "category": "Coding",
+      "xpReward": 50,
+      "rarity": "uncommon",
+      "metricKey": "topics.allCodingTasksAccepted",
+      "metricScope": null,
+      "current": 1,
+      "target": 1,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-04T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика"
+    },
+    {
+      "id": "qlc-achievement-021",
+      "legacyIconId": "Achievement-21",
+      "icon": {
+        "id": "Achievement-21",
+        "path": "achievement-symbols/Achievement-21.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Разные темы",
+      "description": "Решены задачи из пяти разных тем.",
+      "category": "Special",
+      "xpReward": 80,
+      "rarity": "uncommon",
+      "metricKey": "topics.withAcceptedTask",
+      "metricScope": null,
+      "current": 5,
+      "target": 5,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-05T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика"
+    },
+    {
+      "id": "qlc-achievement-022",
+      "legacyIconId": "Achievement-22",
+      "icon": {
+        "id": "Achievement-22",
+        "path": "achievement-symbols/Achievement-22.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Послойная практика",
+      "description": "Решены задачи из десяти разных тем.",
+      "category": "Hidden",
+      "xpReward": 120,
+      "rarity": "rare",
+      "metricKey": "topics.withAcceptedTask",
+      "metricScope": null,
+      "current": 0,
+      "target": 10,
+      "percentage": 0.0,
+      "state": "secret",
+      "unlockedAt": null,
+      "secret": true,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика",
+      "exposure": "server_only_until_unlocked; use redactedProjection"
+    },
+    {
+      "id": "qlc-achievement-023",
+      "legacyIconId": "Achievement-23",
+      "icon": {
+        "id": "Achievement-23",
+        "path": "achievement-symbols/Achievement-23.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Последовательность",
+      "description": "Решены все задачи трёх тем подряд.",
+      "category": "Coding",
+      "xpReward": 90,
+      "rarity": "rare",
+      "metricKey": "topics.consecutiveFullyPracticed",
+      "metricScope": null,
+      "current": 2,
+      "target": 3,
+      "percentage": 66.66666666666667,
+      "state": "in_progress",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика"
+    },
+    {
+      "id": "qlc-achievement-024",
+      "legacyIconId": "Achievement-24",
+      "icon": {
+        "id": "Achievement-24",
+        "path": "achievement-symbols/Achievement-24.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Полный обзор",
+      "description": "Прочитаны все темы одного модуля.",
+      "category": "Learning",
+      "xpReward": 80,
+      "rarity": "uncommon",
+      "metricKey": "modules.allRequiredTheoryComplete",
+      "metricScope": null,
+      "current": 1,
+      "target": 1,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-02T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Теория"
+    },
+    {
+      "id": "qlc-achievement-025",
+      "legacyIconId": "Achievement-25",
+      "icon": {
+        "id": "Achievement-25",
+        "path": "achievement-symbols/Achievement-25.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Самостоятельная проверка",
+      "description": "Решение исправлено после неуспешной проверки.",
+      "category": "Coding",
+      "xpReward": 40,
+      "rarity": "common",
+      "metricKey": "coding.acceptedAfterFailure",
+      "metricScope": null,
+      "current": 1,
+      "target": 1,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-03T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": true,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика"
+    },
+    {
+      "id": "qlc-achievement-026",
+      "legacyIconId": "Achievement-26",
+      "icon": {
+        "id": "Achievement-26",
+        "path": "achievement-symbols/Achievement-26.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Пять исправлений",
+      "description": "Пять задач решены после исправления первоначального решения.",
+      "category": "Coding",
+      "xpReward": 80,
+      "rarity": "rare",
+      "metricKey": "coding.acceptedAfterFailure",
+      "metricScope": null,
+      "current": 3,
+      "target": 5,
+      "percentage": 60.0,
+      "state": "in_progress",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика"
+    },
+    {
+      "id": "qlc-achievement-027",
+      "legacyIconId": "Achievement-27",
+      "icon": {
+        "id": "Achievement-27",
+        "path": "achievement-symbols/Achievement-27.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Практика в модуле",
+      "description": "Решены все задачи одного модуля.",
+      "category": "Courses",
+      "xpReward": 120,
+      "rarity": "rare",
+      "metricKey": "modules.allRequiredCodingAccepted",
+      "metricScope": null,
+      "current": 1,
+      "target": 1,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-05T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Курсы"
+    },
+    {
+      "id": "qlc-achievement-028",
+      "legacyIconId": "Achievement-28",
+      "icon": {
+        "id": "Achievement-28",
+        "path": "achievement-symbols/Achievement-28.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Практика в курсе",
+      "description": "Решены все задачи одного курса.",
+      "category": "Courses",
+      "xpReward": 200,
+      "rarity": "legendary",
+      "metricKey": "courses.allRequiredCodingAccepted",
+      "metricScope": null,
+      "current": 0,
+      "target": 1,
+      "percentage": 0.0,
+      "state": "locked",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Курсы"
+    },
+    {
+      "id": "qlc-achievement-029",
+      "legacyIconId": "Achievement-29",
+      "icon": {
+        "id": "Achievement-29",
+        "path": "achievement-symbols/Achievement-29.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Устойчивый ритм",
+      "description": "За семь дней решены не менее десяти разных задач.",
+      "category": "Streak",
+      "xpReward": 70,
+      "rarity": "uncommon",
+      "metricKey": "practice.acceptedInLast7Days",
+      "metricScope": null,
+      "current": 10,
+      "target": 10,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-07T09:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Регулярность"
+    },
+    {
+      "id": "qlc-achievement-030",
+      "legacyIconId": "Achievement-30",
+      "icon": {
+        "id": "Achievement-30",
+        "path": "achievement-symbols/Achievement-30.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Сто решений",
+      "description": "Решены сто разных задач.",
+      "category": "Coding",
+      "xpReward": 250,
+      "rarity": "legendary",
+      "metricKey": "coding.uniqueAccepted",
+      "metricScope": null,
+      "current": 72,
+      "target": 100,
+      "percentage": 72.0,
+      "state": "in_progress",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "coding-solutions",
+        "rank": 6
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": "Практика"
+    },
+    {
+      "id": "qlc-achievement-031",
+      "legacyIconId": "Achievement-25",
+      "icon": {
+        "id": "Achievement-25",
+        "path": "achievement-symbols/Achievement-25.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Первое ревью",
+      "description": "Завершите первую проверку кода.",
+      "category": "Reviews",
+      "xpReward": 80,
+      "rarity": "common",
+      "metricKey": "reviews.completed",
+      "metricScope": null,
+      "current": 0,
+      "target": 1,
+      "percentage": 0.0,
+      "state": "locked",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": null
+    },
+    {
+      "id": "qlc-achievement-032",
+      "legacyIconId": "Achievement-20",
+      "icon": {
+        "id": "Achievement-20",
+        "path": "achievement-symbols/Achievement-20.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Первый инцидент",
+      "description": "Разберите причину и подтвердите решение первого инцидента.",
+      "category": "Incidents",
+      "xpReward": 120,
+      "rarity": "uncommon",
+      "metricKey": "incidents.resolved",
+      "metricScope": null,
+      "current": 1,
+      "target": 1,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-08T10:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": true,
+      "tier": {
+        "familyId": "incident-resolution",
+        "rank": 1
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": null
+    },
+    {
+      "id": "qlc-achievement-033",
+      "legacyIconId": "Achievement-30",
+      "icon": {
+        "id": "Achievement-30",
+        "path": "achievement-symbols/Achievement-30.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Пятьдесят инцидентов",
+      "description": "Разрешите 50 разных инцидентов.",
+      "category": "Incidents",
+      "xpReward": 500,
+      "rarity": "legendary",
+      "metricKey": "incidents.resolved",
+      "metricScope": null,
+      "current": 17,
+      "target": 50,
+      "percentage": 34.0,
+      "state": "in_progress",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "incident-resolution",
+        "rank": 2
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": null
+    },
+    {
+      "id": "qlc-achievement-034",
+      "legacyIconId": "Achievement-13",
+      "icon": {
+        "id": "Achievement-13",
+        "path": "achievement-symbols/Achievement-13.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "10 000 XP",
+      "description": "Получите 10 000 XP за учебные действия.",
+      "category": "XP",
+      "xpReward": 100,
+      "rarity": "uncommon",
+      "metricKey": "xp.eligibleLearningEarned",
+      "metricScope": null,
+      "current": 10000,
+      "target": 10000,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-08T10:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "learning-xp",
+        "rank": 1
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": null
+    },
+    {
+      "id": "qlc-achievement-035",
+      "legacyIconId": "Achievement-17",
+      "icon": {
+        "id": "Achievement-17",
+        "path": "achievement-symbols/Achievement-17.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "100 000 XP",
+      "description": "Получите 100 000 XP за учебные действия.",
+      "category": "XP",
+      "xpReward": 300,
+      "rarity": "rare",
+      "metricKey": "xp.eligibleLearningEarned",
+      "metricScope": null,
+      "current": 18420,
+      "target": 100000,
+      "percentage": 18.42,
+      "state": "in_progress",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": {
+        "familyId": "learning-xp",
+        "rank": 2
+      },
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": null
+    },
+    {
+      "id": "qlc-achievement-036",
+      "legacyIconId": "Achievement-07",
+      "icon": {
+        "id": "Achievement-07",
+        "path": "achievement-symbols/Achievement-07.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Основы Java",
+      "description": "Завершите вводный модуль курса Java.",
+      "category": "Courses",
+      "xpReward": 120,
+      "rarity": "uncommon",
+      "metricKey": "modules.completed",
+      "metricScope": {
+        "courseId": "java",
+        "moduleId": "java-foundation"
+      },
+      "current": 1,
+      "target": 1,
+      "percentage": 100.0,
+      "state": "unlocked",
+      "unlockedAt": "2026-09-08T10:00:00Z",
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": null
+    },
+    {
+      "id": "qlc-achievement-037",
+      "legacyIconId": "Achievement-16",
+      "icon": {
+        "id": "Achievement-16",
+        "path": "achievement-symbols/Achievement-16.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Курс Java завершён",
+      "description": "Завершите все обязательные уроки курса Java.",
+      "category": "Courses",
+      "xpReward": 300,
+      "rarity": "rare",
+      "metricKey": "courses.completed",
+      "metricScope": {
+        "courseId": "java"
+      },
+      "current": 0,
+      "target": 1,
+      "percentage": 0.0,
+      "state": "locked",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": null
+    },
+    {
+      "id": "qlc-achievement-038",
+      "legacyIconId": "Achievement-26",
+      "icon": {
+        "id": "Achievement-26",
+        "path": "achievement-symbols/Achievement-26.svg",
+        "masterSize": [
+          128,
+          128
+        ],
+        "displaySizes": [
+          32,
+          64,
+          128
+        ]
+      },
+      "title": "Десять исправлений",
+      "description": "Решите 10 разных задач после исправления первоначального решения.",
+      "category": "Coding",
+      "xpReward": 120,
+      "rarity": "rare",
+      "metricKey": "coding.acceptedAfterFailure",
+      "metricScope": null,
+      "current": 6,
+      "target": 10,
+      "percentage": 60.0,
+      "state": "in_progress",
+      "unlockedAt": null,
+      "secret": false,
+      "isNewlyUnlocked": false,
+      "tier": null,
+      "definitionVersion": 1,
+      "progressVersion": 1,
+      "fixturePurpose": "independent_component_state",
+      "legacyCategory": null
+    }
+  ]
+}

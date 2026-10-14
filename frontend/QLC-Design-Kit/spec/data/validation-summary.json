@@ -1,0 +1,40 @@
+{
+  "updatedAt": "2026-09-12",
+  "scope": "Local design spec and editable vector elements, no website implementation, no new Figma import this release.",
+  "counts": {
+    "screenSpecs": 34,
+    "requiredMobileSpecs": 17,
+    "componentFamilies": 99,
+    "uiFamilies": 94,
+    "uiSpecimens": 475,
+    "courseConcepts": 20,
+    "reusedArtworks": 20,
+    "newCourseIcons": 20,
+    "newSmallSymbols": 20,
+    "achievementExamples": 38,
+    "reusedAchievementIcons": 30,
+    "utilityIcons": 22,
+    "tokens": 55,
+    "textStyles": 12,
+    "figmaImportFamilies": 94,
+    "previewBoards": 14
+  },
+  "passed": [
+    "475 UI files XML valid, no bitmap/script/external content",
+    "Expected specimen counts per family/size",
+    "All course asset links resolve; original artwork hashes unchanged",
+    "Demo discount calculations",
+    "34 unique screens and17 mobile references",
+    "All named screen compositions resolve to primitive recipes or protected homepage",
+    "Gallery local links resolve",
+    "Measured text boundaries within canvas",
+    "14 representative visual boards reviewed; meaningful defects corrected"
+  ],
+  "limits": [
+    "No live Figma import, variant bindings or Auto Layout test for new475elements",
+    "Not every visual state independently viewed at100%; representative families plus boundary audit",
+    "Local render fonts may use fallback",
+    "Demo content is not a production course catalog or XP economy"
+  ],
+  "errors": []
+}

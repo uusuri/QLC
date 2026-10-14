@@ -1,0 +1,1359 @@
+{
+  "schemaVersion": 1,
+  "dataStatus": "demo",
+  "notice": "Демонстрационный каталог для макетов. Цены, длительности, программы и количество материалов придуманы для проверки интерфейса; это не существующее коммерческое предложение QLC.",
+  "pathBase": "Пути artworkPath/iconPath/symbolPath относительны spec/data/courses.json; оригинальные обложки не копируются.",
+  "discountRule": "discountPercent = round((oldPriceMinor - priceMinor) / oldPriceMinor * 100); при oldPriceMinor=null скидка 0. UI не пересчитывает цену по округлённому проценту.",
+  "collectionPolicy": "20 демонстрационных записей, не ограничение продукта. id стабилен; Course/Card получает контент и asset properties.",
+  "courses": [
+    {
+      "id": "java",
+      "title": "Java",
+      "shortTitle": "Java",
+      "category": "Языки программирования",
+      "description": "Основы Java, работа с коллекциями и решение задач с проверкой.",
+      "difficulty": "Базовый",
+      "duration": {
+        "hours": 42,
+        "display": "42 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 12,
+      "lessonCount": 60,
+      "practiceCount": 36,
+      "currency": "RUB",
+      "priceMinor": 399000,
+      "oldPriceMinor": 499000,
+      "discountPercent": 20,
+      "tags": [
+        "Java 21",
+        "ООП",
+        "Коллекции"
+      ],
+      "whatYouWillLearn": [
+        "Писать небольшие программы на Java",
+        "Работать с коллекциями и исключениями",
+        "Проверять решение на разных входных данных"
+      ],
+      "artworkPath": "../../course-artworks/Course-01-Java.svg",
+      "iconPath": "../assets/course-icons/java.svg",
+      "symbolPath": "../assets/course-symbols/java.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Layered toroidal shell and quiet orbital core",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "16b6125b057beafaccbbca7f9735b064eb5447b9269a967c7671849f6b679eec",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "cpp",
+      "title": "C++",
+      "shortTitle": "C++",
+      "category": "Языки программирования",
+      "description": "Типы, память, стандартная библиотека и практические задачи на C++.",
+      "difficulty": "Базовый",
+      "duration": {
+        "hours": 48,
+        "display": "48 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 9,
+      "lessonCount": 54,
+      "practiceCount": 42,
+      "currency": "RUB",
+      "priceMinor": 449000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "C++23",
+        "STL",
+        "Память"
+      ],
+      "whatYouWillLearn": [
+        "Использовать контейнеры STL",
+        "Управлять ресурсами через RAII",
+        "Находить ошибки работы с памятью"
+      ],
+      "artworkPath": "../../course-artworks/Course-02-Cpp.svg",
+      "iconPath": "../assets/course-icons/cpp.svg",
+      "symbolPath": "../assets/course-symbols/cpp.svg",
+      "accentToken": "color.accent.secondary",
+      "accentHex": "#4433ee",
+      "composition": "Inclined laminar slab with crossing orbital contour",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "1b125097f5122d7fc3c8a22ee35d7bf6930cb414b4b7ba08b179110b2c5e188b",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "python",
+      "title": "Python",
+      "shortTitle": "Python",
+      "category": "Языки программирования",
+      "description": "Основы Python, обработка данных и небольшие прикладные программы.",
+      "difficulty": "Базовый",
+      "duration": {
+        "hours": 32,
+        "display": "32 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 7,
+      "lessonCount": 40,
+      "practiceCount": 30,
+      "currency": "RUB",
+      "priceMinor": 299000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "Python",
+        "Коллекции",
+        "Автоматизация"
+      ],
+      "whatYouWillLearn": [
+        "Работать со списками и словарями",
+        "Разбивать программу на функции и модули",
+        "Автоматизировать обработку файлов"
+      ],
+      "artworkPath": "../../course-artworks/Course-03-Python.svg",
+      "iconPath": "../assets/course-icons/python.svg",
+      "symbolPath": "../assets/course-symbols/python.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Interleaved continuous double-lobe ribbon",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "ea4b599ed38d7d29dd8d1da10c03a360f6f59bb671ecdf2e2c7e9aebd2526832",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "javascript",
+      "title": "JavaScript",
+      "shortTitle": "JavaScript",
+      "category": "Языки программирования",
+      "description": "Язык JavaScript, браузерные события и асинхронная работа с данными.",
+      "difficulty": "Базовый",
+      "duration": {
+        "hours": 36,
+        "display": "36 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 8,
+      "lessonCount": 44,
+      "practiceCount": 34,
+      "currency": "RUB",
+      "priceMinor": 349000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "JavaScript",
+        "DOM",
+        "Async"
+      ],
+      "whatYouWillLearn": [
+        "Понимать области видимости и замыкания",
+        "Обрабатывать события интерфейса",
+        "Работать с Promise и fetch"
+      ],
+      "artworkPath": "../../course-artworks/Course-04-JavaScript.svg",
+      "iconPath": "../assets/course-icons/javascript.svg",
+      "symbolPath": "../assets/course-symbols/javascript.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Radial fan of translucent folded planes",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "fabcfcaf78b3239bb0fd729e59f252d3b34710c3d9d5d5608d38ff8397c54435",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "typescript",
+      "title": "TypeScript",
+      "shortTitle": "TypeScript",
+      "category": "Языки программирования",
+      "description": "Типизация прикладного кода: от моделей данных до обобщённых функций.",
+      "difficulty": "Средний",
+      "duration": {
+        "hours": 24,
+        "display": "24 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 6,
+      "lessonCount": 30,
+      "practiceCount": 24,
+      "currency": "RUB",
+      "priceMinor": 299000,
+      "oldPriceMinor": 399000,
+      "discountPercent": 25,
+      "tags": [
+        "TypeScript",
+        "Типы",
+        "Generics"
+      ],
+      "whatYouWillLearn": [
+        "Моделировать данные типами",
+        "Сужать объединения и проверять входные данные",
+        "Применять generics без избыточных абстракций"
+      ],
+      "artworkPath": "../../course-artworks/Course-05-TypeScript.svg",
+      "iconPath": "../assets/course-icons/typescript.svg",
+      "symbolPath": "../assets/course-symbols/typescript.svg",
+      "accentToken": "color.accent.secondary",
+      "accentHex": "#4433ee",
+      "composition": "Nested faceted shell with folded interior plane",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "d1ef47c8809162acea4e8796e6eeaae1d3f1754e67d40c0ce2c77006e081fea1",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "go",
+      "title": "Go",
+      "shortTitle": "Go",
+      "category": "Языки программирования",
+      "description": "Программы и HTTP-сервисы на Go, конкурентность и обработка ошибок.",
+      "difficulty": "Базовый",
+      "duration": {
+        "hours": 36,
+        "display": "36 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 8,
+      "lessonCount": 42,
+      "practiceCount": 32,
+      "currency": "RUB",
+      "priceMinor": 349000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "Go",
+        "Goroutines",
+        "HTTP"
+      ],
+      "whatYouWillLearn": [
+        "Работать с интерфейсами и ошибками",
+        "Организовать конкурентную обработку",
+        "Создать и проверить HTTP-сервис"
+      ],
+      "artworkPath": "../../course-artworks/Course-06-Go.svg",
+      "iconPath": "../assets/course-icons/go.svg",
+      "symbolPath": "../assets/course-symbols/go.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Parallel flowing channels and local transverse membrane",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "adb5f49b4a16066c0192e342997aebc89f81c1cd7b7695fe2aa633ff935159cb",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "rust",
+      "title": "Rust",
+      "shortTitle": "Rust",
+      "category": "Языки программирования",
+      "description": "Владение данными, безопасная работа с памятью и выразительные модели типов.",
+      "difficulty": "Средний",
+      "duration": {
+        "hours": 48,
+        "display": "48 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 10,
+      "lessonCount": 56,
+      "practiceCount": 44,
+      "currency": "RUB",
+      "priceMinor": 499000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "Rust",
+        "Ownership",
+        "Traits"
+      ],
+      "whatYouWillLearn": [
+        "Применять ownership и borrowing",
+        "Описывать поведение через traits",
+        "Обрабатывать ошибки с Result"
+      ],
+      "artworkPath": "../../course-artworks/Course-07-Rust.svg",
+      "iconPath": "../assets/course-icons/rust.svg",
+      "symbolPath": "../assets/course-symbols/rust.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Scalloped printed annular shell",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "9f7a0b42057eb2206f1f455e01385948f498ae7b0d2626ba9d6a2402e809bdf9",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "spring",
+      "title": "Spring",
+      "shortTitle": "Spring",
+      "category": "Разработка приложений",
+      "description": "Разработка Java-сервисов с Spring: HTTP, данные, транзакции и тесты.",
+      "difficulty": "Средний",
+      "duration": {
+        "hours": 44,
+        "display": "44 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 9,
+      "lessonCount": 50,
+      "practiceCount": 38,
+      "currency": "RUB",
+      "priceMinor": 599000,
+      "oldPriceMinor": 749000,
+      "discountPercent": 20,
+      "tags": [
+        "Spring Boot",
+        "REST",
+        "JPA"
+      ],
+      "whatYouWillLearn": [
+        "Создавать REST API",
+        "Управлять транзакциями и доступом к данным",
+        "Проверять сервис интеграционными тестами"
+      ],
+      "artworkPath": "../../course-artworks/Course-08-Spring.svg",
+      "iconPath": "../assets/course-icons/spring.svg",
+      "symbolPath": "../assets/course-symbols/spring.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Helical translucent contour membrane",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "18e9f1cc2048169c165adf0a755024c0f647c1977416ec09ec7d72f9d7c65b28",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "backend-engineering",
+      "title": "Backend Engineering",
+      "shortTitle": "Backend",
+      "category": "Разработка приложений",
+      "description": "Проектирование серверных систем, надёжность и работа с ограничениями.",
+      "difficulty": "Продвинутый",
+      "duration": {
+        "hours": 64,
+        "display": "64 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 12,
+      "lessonCount": 72,
+      "practiceCount": 52,
+      "currency": "RUB",
+      "priceMinor": 799000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "API",
+        "Очереди",
+        "Архитектура"
+      ],
+      "whatYouWillLearn": [
+        "Выбирать границы сервисов и контрактов",
+        "Разбирать сбои и повторную обработку",
+        "Обосновывать решения по хранению данных"
+      ],
+      "artworkPath": "../../course-artworks/Course-09-Backend.svg",
+      "iconPath": "../assets/course-icons/backend-engineering.svg",
+      "symbolPath": "../assets/course-symbols/backend-engineering.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Three layered volumes joined by curved channels",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "045bf35bff4ec230fb7f1ebc6b7c1d8a5f984b0ddd00166b5865bae8d894457c",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "frontend-engineering",
+      "title": "Frontend Engineering",
+      "shortTitle": "Frontend",
+      "category": "Разработка приложений",
+      "description": "Интерфейсы с понятным состоянием, доступной навигацией и измеримой скоростью.",
+      "difficulty": "Средний",
+      "duration": {
+        "hours": 56,
+        "display": "56 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 11,
+      "lessonCount": 64,
+      "practiceCount": 46,
+      "currency": "RUB",
+      "priceMinor": 699000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "React",
+        "Доступность",
+        "Состояние"
+      ],
+      "whatYouWillLearn": [
+        "Собирать повторно используемые компоненты",
+        "Управлять загрузкой, ошибками и состоянием",
+        "Проверять доступность и производительность"
+      ],
+      "artworkPath": "../../course-artworks/Course-10-Frontend.svg",
+      "iconPath": "../assets/course-icons/frontend-engineering.svg",
+      "symbolPath": "../assets/course-symbols/frontend-engineering.svg",
+      "accentToken": "color.accent.secondary",
+      "accentHex": "#4433ee",
+      "composition": "Tessellated independent glass-like planes",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "9b023bc13bf85c143041a151d023d63f81246ccbd7b4f6c0dec7183fef6ae88e",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "sql",
+      "title": "SQL",
+      "shortTitle": "SQL",
+      "category": "Данные",
+      "description": "Запросы, соединения таблиц и анализ данных на практических примерах.",
+      "difficulty": "Базовый",
+      "duration": {
+        "hours": 24,
+        "display": "24 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 6,
+      "lessonCount": 32,
+      "practiceCount": 28,
+      "currency": "RUB",
+      "priceMinor": 249000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "SQL",
+        "JOIN",
+        "Агрегация"
+      ],
+      "whatYouWillLearn": [
+        "Объединять таблицы через JOIN",
+        "Группировать данные и использовать оконные функции",
+        "Проверять корректность запроса на краевых случаях"
+      ],
+      "artworkPath": "../../course-artworks/Course-11-SQL.svg",
+      "iconPath": "../assets/course-icons/sql.svg",
+      "symbolPath": "../assets/course-symbols/sql.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Stacked concave slices intersected by translucent plane",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "3c7a2918ef5d1f73ba63c9d118ef37c313f3c3900699efdf83bb4ca82136ece3",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "postgresql",
+      "title": "PostgreSQL",
+      "shortTitle": "PostgreSQL",
+      "category": "Данные",
+      "description": "Модель данных, планы запросов, индексы и конкурентный доступ в PostgreSQL.",
+      "difficulty": "Средний",
+      "duration": {
+        "hours": 36,
+        "display": "36 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 8,
+      "lessonCount": 44,
+      "practiceCount": 32,
+      "currency": "RUB",
+      "priceMinor": 449000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "PostgreSQL",
+        "Индексы",
+        "Транзакции"
+      ],
+      "whatYouWillLearn": [
+        "Читать EXPLAIN и находить дорогие операции",
+        "Подбирать индексы под нагрузку",
+        "Понимать блокировки и уровни изоляции"
+      ],
+      "artworkPath": "../../course-artworks/Course-12-PostgreSQL.svg",
+      "iconPath": "../assets/course-icons/postgresql.svg",
+      "symbolPath": "../assets/course-symbols/postgresql.svg",
+      "accentToken": "color.accent.secondary",
+      "accentHex": "#4433ee",
+      "composition": "Double curvature saddle lattice",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "b12be1e09faaf7c4d231ded4c5f6a266bda8c6191e34d639d48240fd083138b2",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "redis",
+      "title": "Redis",
+      "shortTitle": "Redis",
+      "category": "Данные",
+      "description": "Структуры Redis, кеширование и обработка событий с контролем надёжности.",
+      "difficulty": "Средний",
+      "duration": {
+        "hours": 18,
+        "display": "18 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 5,
+      "lessonCount": 24,
+      "practiceCount": 18,
+      "currency": "RUB",
+      "priceMinor": 199000,
+      "oldPriceMinor": 249000,
+      "discountPercent": 20,
+      "tags": [
+        "Redis",
+        "Кеш",
+        "Streams"
+      ],
+      "whatYouWillLearn": [
+        "Выбирать структуры данных Redis",
+        "Управлять сроком жизни и инвалидацией кеша",
+        "Разбирать доставку сообщений через Streams"
+      ],
+      "artworkPath": "../../course-artworks/Course-13-Redis.svg",
+      "iconPath": "../assets/course-icons/redis.svg",
+      "symbolPath": "../assets/course-symbols/redis.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Offset porous rhombi with swept filament trajectories",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "2195b011f0ac4e664de286ea75e922b82f26bc60e0b20e7361ddad6da8a652c5",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "docker",
+      "title": "Docker",
+      "shortTitle": "Docker",
+      "category": "Инфраструктура",
+      "description": "Контейнеризация приложения, сборка образов и локальное окружение.",
+      "difficulty": "Базовый",
+      "duration": {
+        "hours": 20,
+        "display": "20 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 5,
+      "lessonCount": 26,
+      "practiceCount": 20,
+      "currency": "RUB",
+      "priceMinor": 249000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "Docker",
+        "Образы",
+        "Compose"
+      ],
+      "whatYouWillLearn": [
+        "Создать воспроизводимый Dockerfile",
+        "Настроить сеть, тома и переменные",
+        "Запустить несколько сервисов через Compose"
+      ],
+      "artworkPath": "../../course-artworks/Course-14-Docker.svg",
+      "iconPath": "../assets/course-icons/docker.svg",
+      "symbolPath": "../assets/course-symbols/docker.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Nested folded extrusion and orbit",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "443973214ed7ee106d81388b64ac2d210b24728e7941e3af96d6db1c85c1381d",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "kubernetes",
+      "title": "Kubernetes",
+      "shortTitle": "Kubernetes",
+      "category": "Инфраструктура",
+      "description": "Запуск сервисов в кластере, обновления и диагностика проблем окружения.",
+      "difficulty": "Продвинутый",
+      "duration": {
+        "hours": 40,
+        "display": "40 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 9,
+      "lessonCount": 48,
+      "practiceCount": 34,
+      "currency": "RUB",
+      "priceMinor": 549000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "Kubernetes",
+        "Deployments",
+        "Диагностика"
+      ],
+      "whatYouWillLearn": [
+        "Описывать Deployment, Service и конфигурацию",
+        "Проверять готовность и ресурсы приложения",
+        "Разбирать причины сбоев по событиям и логам"
+      ],
+      "artworkPath": "../../course-artworks/Course-15-Kubernetes.svg",
+      "iconPath": "../assets/course-icons/kubernetes.svg",
+      "symbolPath": "../assets/course-symbols/kubernetes.svg",
+      "accentToken": "color.accent.secondary",
+      "accentHex": "#4433ee",
+      "composition": "Polyhedral field with six satellite contour volumes",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "1dd76886c38ecf2dabde968b49c23f90c7473b0855815b74d5cab34ff1aec1b5",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "linux",
+      "title": "Linux",
+      "shortTitle": "Linux",
+      "category": "Инфраструктура",
+      "description": "Командная строка, файловая система, процессы и базовая диагностика Linux.",
+      "difficulty": "Базовый",
+      "duration": {
+        "hours": 24,
+        "display": "24 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 6,
+      "lessonCount": 32,
+      "practiceCount": 26,
+      "currency": "RUB",
+      "priceMinor": 199000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "Linux",
+        "Shell",
+        "Процессы"
+      ],
+      "whatYouWillLearn": [
+        "Находить файлы и обрабатывать текст",
+        "Работать с правами и процессами",
+        "Диагностировать сеть и использование ресурсов"
+      ],
+      "artworkPath": "../../course-artworks/Course-16-Linux.svg",
+      "iconPath": "../assets/course-icons/linux.svg",
+      "symbolPath": "../assets/course-symbols/linux.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Staggered laminar arch and translucent cut plane",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "e65c7f35dda385c0a1b4d86efdcad84ea500a74955005064e2011497fe1377ce",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "git",
+      "title": "Git",
+      "shortTitle": "Git",
+      "category": "Инструменты",
+      "description": "История изменений, ветки и безопасная совместная работа с репозиторием.",
+      "difficulty": "Базовый",
+      "duration": {
+        "hours": 10,
+        "display": "10 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 4,
+      "lessonCount": 18,
+      "practiceCount": 14,
+      "currency": "RUB",
+      "priceMinor": 0,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "Git",
+        "Ветки",
+        "Конфликты"
+      ],
+      "whatYouWillLearn": [
+        "Создавать понятные коммиты",
+        "Разрешать конфликты с сохранением изменений",
+        "Проверять историю и восстанавливать нужное состояние"
+      ],
+      "artworkPath": "../../course-artworks/Course-17-Git.svg",
+      "iconPath": "../assets/course-icons/git.svg",
+      "symbolPath": "../assets/course-symbols/git.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Bifurcating contour ribbon with faceted junctions",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "33db5e1732ceb426e751591db2513f068fc2f762f7fc344f7fba012863269948",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "algorithms",
+      "title": "Алгоритмы и структуры данных",
+      "shortTitle": "Алгоритмы",
+      "category": "Фундаментальные знания",
+      "description": "Выбор структуры данных и алгоритма с учётом ограничений задачи.",
+      "difficulty": "Средний",
+      "duration": {
+        "hours": 52,
+        "display": "52 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 10,
+      "lessonCount": 60,
+      "practiceCount": 50,
+      "currency": "RUB",
+      "priceMinor": 499000,
+      "oldPriceMinor": 599000,
+      "discountPercent": 17,
+      "tags": [
+        "Алгоритмы",
+        "Структуры данных",
+        "Сложность"
+      ],
+      "whatYouWillLearn": [
+        "Оценивать время и память решения",
+        "Использовать деревья, графы и хеш-таблицы",
+        "Объяснять корректность алгоритма"
+      ],
+      "artworkPath": "../../course-artworks/Course-18-Algorithms.svg",
+      "iconPath": "../assets/course-icons/algorithms.svg",
+      "symbolPath": "../assets/course-symbols/algorithms.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Recursive triangular shell with displaced layers",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "5af0f2d901a5bff62a87e144a1e9f37f4fbb804166c653f110f0c7d8c7af3218",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "computer-science",
+      "title": "Computer Science",
+      "shortTitle": "Computer Science",
+      "category": "Фундаментальные знания",
+      "description": "Как программа исполняется: память, процессы, сети и представление данных.",
+      "difficulty": "Базовый",
+      "duration": {
+        "hours": 40,
+        "display": "40 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 8,
+      "lessonCount": 48,
+      "practiceCount": 30,
+      "currency": "RUB",
+      "priceMinor": 399000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "ОС",
+        "Сети",
+        "Представление данных"
+      ],
+      "whatYouWillLearn": [
+        "Понимать взаимодействие процесса и операционной системы",
+        "Прослеживать путь сетевого запроса",
+        "Объяснять ограничения хранения и вычислений"
+      ],
+      "artworkPath": "../../course-artworks/Course-19-Computer-Science.svg",
+      "iconPath": "../assets/course-icons/computer-science.svg",
+      "symbolPath": "../assets/course-symbols/computer-science.svg",
+      "accentToken": "color.accent.secondary",
+      "accentHex": "#4433ee",
+      "composition": "Interwoven orthogonal lattice and deliberate void",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "4f31691febbcad1ea18998cbca0fca068954f915a025a28a085df58b5d051084",
+        "size": [
+          640,
+          300
+        ]
+      }
+    },
+    {
+      "id": "mathematics",
+      "title": "Математика для программирования",
+      "shortTitle": "Математика",
+      "category": "Фундаментальные знания",
+      "description": "Дискретная математика и вероятностные модели для практических задач.",
+      "difficulty": "Базовый",
+      "duration": {
+        "hours": 36,
+        "display": "36 ч",
+        "basis": "Ориентир для макета, не срок прохождения"
+      },
+      "moduleCount": 8,
+      "lessonCount": 44,
+      "practiceCount": 36,
+      "currency": "RUB",
+      "priceMinor": 349000,
+      "oldPriceMinor": null,
+      "discountPercent": 0,
+      "tags": [
+        "Логика",
+        "Комбинаторика",
+        "Вероятность"
+      ],
+      "whatYouWillLearn": [
+        "Работать с логикой, множествами и отношениями",
+        "Считать комбинаторные величины",
+        "Применять вероятность и математическое ожидание"
+      ],
+      "artworkPath": "../../course-artworks/Course-20-Mathematics.svg",
+      "iconPath": "../assets/course-icons/mathematics.svg",
+      "symbolPath": "../assets/course-symbols/mathematics.svg",
+      "accentToken": "color.accent.primary",
+      "accentHex": "#c4ff00",
+      "composition": "Three-lobed continuous knot ribbon",
+      "dataStatus": "demo",
+      "demoFields": [
+        "description",
+        "difficulty",
+        "duration",
+        "moduleCount",
+        "lessonCount",
+        "practiceCount",
+        "priceMinor",
+        "oldPriceMinor",
+        "discountPercent",
+        "tags",
+        "whatYouWillLearn"
+      ],
+      "artworkProvenance": {
+        "action": "reused-unchanged",
+        "sha256": "759f9bf60bff8c80491dd8438c7b2a9f65332f1393cf2b5802445141e109d095",
+        "size": [
+          640,
+          300
+        ]
+      }
+    }
+  ],
+  "validation": {
+    "courseCount": 20,
+    "reusedArtworkCount": 20,
+    "new48pxIconCount": 20,
+    "new24pxSymbolCount": 20,
+    "uniqueIds": 20,
+    "records": [
+      {
+        "id": "java",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "cpp",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "python",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "javascript",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "typescript",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "go",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "rust",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "spring",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "backend-engineering",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "frontend-engineering",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "sql",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "postgresql",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "redis",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "docker",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "kubernetes",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "linux",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "git",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "algorithms",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "computer-science",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      },
+      {
+        "id": "mathematics",
+        "artwork": "reused-unchanged",
+        "artworkTextNodes": 0,
+        "artworkBitmapNodes": 0,
+        "iconSize": 48,
+        "symbolSize": 24,
+        "discountMath": "passed"
+      }
+    ]
+  }
+}

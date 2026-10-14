@@ -1,0 +1,183 @@
+# QLC Frontend
+
+Редактор и проигрыватель графов в теории: [инструкция и проверки](GRAPH-ANIMATIONS.md).
+
+Фронтенд учебной платформы на Next.js, TypeScript и Tailwind CSS. Визуальная концепция: QLC dark UI, сильная типографика, спокойная геометрия и кислотно-зелёный акцент `#b8ff35`.
+
+## Архитектура папки
+
+```text
+frontend/
+  app/                 # Next.js App Router: витрина, checkout, course/lesson, admin/content.
+  components/          # UI-компоненты без прямых сетевых запросов.
+  components/ui/       # Shared UI-kit: Button, Panel, Alert, StatusBadge, Skeleton, Progress, Tabs.
+  services/api.ts      # Единая точка данных: backend fetch-запросы и текущие моки.
+  types/index.ts       # Общие TypeScript DTO/контракты фронтенда.
+  COMPONENT_GUIDE.md   # Короткий контекст для новых компонентов в текущем стиле.
+  tailwind.config.ts   # Дизайн-токены Tailwind: цвета, шрифты, content-пути.
+  next.config.ts       # Конфигурация Next.js.
+  postcss.config.js    # Tailwind + Autoprefixer для CSS.
+```
+
+Компоненты и страницы не должны делать прямой `fetch`/`axios`. Сетевой код находится только в `services/api.ts`, а страницы работают через функции сервиса.
+
+## Статус стыковки с бэкендом
+
+Для главной страницы `/`, страницы курса `/courses/[slug]`, страницы урока `/lessons/[id]` и страницы оплаты `/checkout` подключены backend endpoints:
+
+- `GET /api/courses`
+- `GET /api/courses/{id}`
+- `GET /api/courses/{courseId}/modules`
+- `GET /api/modules/{id}`
+- `GET /api/modules/{moduleId}/lessons`
+- `GET /api/lessons/{id}` — описание без материала урока
+- `GET /api/lessons/{lessonId}/task-outline` — ID и типы задач без условий
+- `GET /api/lessons/{id}/learn` — материалы для вошедшего пользователя с доступом к курсу
+
+Данные из backend `CourseDTO` маппятся в frontend-карточки курса. Если backend возвращает пустой массив, главная и checkout показывают empty state и ссылку на `/admin/content`. Если backend недоступен, страницы показывают понятный error state без stack trace.
+
+Learning path Sprint 2:
+- первый курс из backend-каталога считается доступным и ведет на `/courses/course-{id}`;
+- остальные курсы на витрине маркируются `Скоро` и не ведут в фиктивную оплату;
+- `/courses/[slug]` показывает опубликованные уроки и черновики, но открывает learner content только для `published: true`;
+- `/lessons/[id]` берет материал из `LessonDTO.contentMd` и условие из `TaskDTO.statementMd`;
+- CODE-задача показывает Monaco Editor и submission lifecycle, TEST — публичные варианты, NUMERIC — условие без приватного ответа;
+- Markdown рендерится ограниченным безопасным renderer без `dangerouslySetInnerHTML`;
+- перед передачей learner data в client/RSC frontend физически удаляет `testCases`, `correctOptionIndexes` и `correctNumericAnswer`.
+
+Для внутренней панели `/admin/content` подключены текущие backend endpoints из `CourseController`:
+
+- `GET /api/courses`
+- `POST /api/courses`
+- `PUT /api/courses/{courseId}`
+- `GET /api/courses/{courseId}/modules`
+- `POST /api/courses/{courseId}/modules`
+- `PUT /api/modules/{moduleId}`
+- `GET /api/modules/{moduleId}/lessons`
+- `POST /api/modules/{moduleId}/lessons`
+- `PUT /api/lessons/{lessonId}`
+- `GET /api/lessons/{lessonId}/tasks`
+- `POST /api/lessons/{lessonId}/tasks`
+- `PUT /api/tasks/{taskId}`
+
+Admin workspace хранит в `localStorage` под ключом `qlc:admin-content-workspace:v1`:
+
+- последнюю активную вкладку;
+- выбранные `courseId`, `moduleId`, `lessonId`, `taskId`;
+- последний созданный `taskId`;
+- полный черновик формы Task.
+
+При повторном открытии `/admin/content` путь восстанавливается каскадно через backend. Если сохраненная сущность удалена, UI возвращается на ближайший валидный шаг. Формы соответствуют текущим DTO: Module включает `position`, Lesson включает `position`, `contentMd` и `published`, Task включает все discriminator-поля `CODE`, `TEST` и `NUMERIC`. Выбор существующей сущности заполняет форму; `Create` отправляет POST, а `Update selected` отправляет PUT для выбранного ID.
+
+Task form поддерживает все discriminator-типы актуального `TaskDTO`:
+
+- `CODE` — `starterCode`, legacy `templateCode`, приватные `testCases`, time/memory/output limits и `testSetVersion`;
+- `NUMERIC` — `correctNumericAnswer`;
+- `TEST` — список `options` и один или несколько `correctOptionIndexes` через checkbox;
+- общее поле `statementMd` явно редактируется как Markdown, а поля других типов отправляются как `null`.
+
+Checkout больше не использует статичный каталог как основной источник. Курс выбирается по query-параметру `course`, например `/checkout?course=course-1`, где slug строится из backend `id`. Если курс не найден, checkout показывает not-found state и не fallback-ится на первый курс.
+
+Для submission UI используются фактические текущие endpoints backend `SubmissionController`:
+
+- `POST /api/tasks/{taskId}/submissions`
+- `GET /api/submissions/{id}`
+
+Если backend позже перенесет submission API на `/api/v1`, нужно поменять пути только в `services/api.ts`.
+
+Auth flow:
+- `/login` — username/password form;
+- `/register` — username/email/password/repeatPassword form;
+- frontend отправляет реальные запросы на `POST /api/auth/register`, `POST /api/auth/login` и `GET /api/auth/me`;
+- полученный backend JWT хранится в `localStorage` под ключом `qlc:auth-token`;
+- user summary сохраняется в `localStorage` под ключом `qlc:auth-user` для быстрого отображения в nav;
+- nav после hydration показывает `@username` и `Выйти`;
+- submission UI не отправляет решение без auth state;
+- `createSubmission()` добавляет `Authorization: Bearer {token}` через `apiRequest({ auth: true })`;
+- request body submission содержит только `language` и `sourceCode`, без `userId`.
+
+Monaco Editor подключен через `@monaco-editor/react` client-only. Draft решения хранится в `localStorage` по ключу task ID, последний submission ID тоже хранится локально для повторного polling после refresh.
+
+Текущие моки:
+- `getStaticCourseCatalog()` — статичный каталог только для будущих локальных fallback/debug-сценариев, не основной источник для `/` и `/checkout`.
+- `getStudentProfile()` — анонимный профиль студента, прогресс и купленные/активные курсы.
+- `getPaymentMethods()` — Telegram Stars как основной метод и crypto как будущий шлюз; платежного backend endpoint пока нет.
+- `getLoginNotes()` — тезисы для экрана входа.
+
+Auth (`registerUser`, `loginUser`, `getCurrentUser`) больше не использует frontend-моки: frontend отправляет реальные JWT на `POST /api/auth/register`, `POST /api/auth/login` и `GET /api/auth/me`.
+
+Все места будущей интеграции помечены комментарием:
+
+```ts
+// TODO: Интегрировать с бэком, когда появится эндпоинт...
+```
+
+Как только backend добавит реальные эндпоинты для профиля, оплаты и доступа к купленным курсам, нужно заменить соответствующие моки внутри `services/api.ts`, не размазывая запросы по компонентам.
+
+## Тестовая среда и CI
+
+В `frontend/tests/*.test.cjs` есть модульные проверки Markdown, анимации графов и
+возврата к обучению. Единый workflow `.github/workflows/ci.yml` запускает их и
+собирает production-версию фронтенда:
+
+```bash
+cd frontend
+npm ci
+npm test
+npm run build
+```
+
+Локальная проверка перед пушем:
+
+```bash
+npm ci
+npm test
+npm run build
+```
+
+Сборка Next.js также проверяет TypeScript. Браузерного end-to-end теста пока нет.
+
+## Локальный запуск
+
+Установка зависимостей:
+
+```bash
+npm ci
+```
+
+Dev-сервер:
+
+```bash
+npm run dev
+```
+
+По умолчанию Next.js запускается на `127.0.0.1:3000`. Если порт занят, Next предложит другой порт.
+
+Production-сборка:
+
+```bash
+npm run build
+npm run start
+```
+
+## Переменные окружения
+
+В локальной разработке серверная часть Next.js обращается к backend по адресу:
+
+```bash
+http://127.0.0.1:8080
+```
+
+В production по умолчанию используется `https://api.qlcode.me`. Браузер обращается к `/api` на домене frontend (`https://qlcode.me`), а Next.js проксирует эти запросы на backend. Серверные страницы Next.js обращаются к backend напрямую.
+
+Если backend доступен по другому адресу, задайте серверную переменную:
+
+```bash
+BACKEND_INTERNAL_URL=http://127.0.0.1:8080
+```
+
+`NEXT_PUBLIC_API_BASE_URL` больше не используется: браузер всегда обращается к `/api` через frontend-домен, поэтому отдельная настройка CORS не нужна. Если в окружении хостинга задан старый `BACKEND_INTERNAL_URL`, удалите его или установите `https://api.qlcode.me`; затем пересоберите и разверните frontend.
+
+## Git ignore
+
+В `frontend` отдельного `.gitignore` нет. Используется корневой `.gitignore`, который игнорирует `.env*`, `node_modules/`, `.next/`, `out/`, `dist/`, `.cache/`, `.DS_Store` и локальные build-артефакты. Эти файлы не надо редактировать и добавлять в индекс.

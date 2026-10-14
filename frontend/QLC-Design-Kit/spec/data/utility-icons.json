@@ -1,0 +1,31 @@
+{
+  "count": 22,
+  "size": [
+    24,
+    24
+  ],
+  "files": [
+    "assets/utility-icons/arrow.svg",
+    "assets/utility-icons/chevron.svg",
+    "assets/utility-icons/check.svg",
+    "assets/utility-icons/close.svg",
+    "assets/utility-icons/plus.svg",
+    "assets/utility-icons/minus.svg",
+    "assets/utility-icons/search.svg",
+    "assets/utility-icons/lock.svg",
+    "assets/utility-icons/menu.svg",
+    "assets/utility-icons/filter.svg",
+    "assets/utility-icons/code.svg",
+    "assets/utility-icons/eye.svg",
+    "assets/utility-icons/clock.svg",
+    "assets/utility-icons/warning.svg",
+    "assets/utility-icons/info.svg",
+    "assets/utility-icons/diamond.svg",
+    "assets/utility-icons/play.svg",
+    "assets/utility-icons/copy.svg",
+    "assets/utility-icons/grid.svg",
+    "assets/utility-icons/refresh.svg",
+    "assets/utility-icons/dots.svg",
+    "assets/utility-icons/user.svg"
+  ]
+}

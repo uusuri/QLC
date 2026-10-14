@@ -1,5 +1,7 @@
 # Secrets and environment
 .env
+.env.*
+!.env.example
 .envrc
 *.env.[a-zA-Z]*
 !*.env.example
@@ -55,3 +57,8 @@ Thumbs.db
 *.o
 *.out
 *.exe
+build-*/
+
+# Course content is stored in the database, not in Git
+/courses/algorithms/
+/results/python-from-zero/

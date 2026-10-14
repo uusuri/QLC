@@ -1,0 +1,13 @@
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: qlc_redis_prod
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${REDIS_PORT}:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --save 60 1 --loglevel warning
+
+volumes:
+  redis_data:

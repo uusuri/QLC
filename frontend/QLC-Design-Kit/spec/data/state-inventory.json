@@ -1,0 +1,1826 @@
+{
+  "globalStates": [
+    {
+      "id": "loading",
+      "trigger": "Initial request has no data",
+      "display": "Stable skeleton matching final geometry",
+      "action": "Cancel navigation if desired",
+      "announce": "aria-busy on region; once"
+    },
+    {
+      "id": "refreshing",
+      "trigger": "Existing data + revalidation",
+      "display": "Keep current data; small updating indicator",
+      "action": "Keep normal navigation",
+      "announce": "Do not reannounce each poll"
+    },
+    {
+      "id": "empty",
+      "trigger": "Successful response with no items",
+      "display": "Context-specific message + meaningful CTA",
+      "action": "Browse courses / clear filters",
+      "announce": "Status once"
+    },
+    {
+      "id": "error",
+      "trigger": "Failed request",
+      "display": "Preserve data and draft; readable reason",
+      "action": "Retry idempotent read",
+      "announce": "alert once"
+    },
+    {
+      "id": "offline",
+      "trigger": "Connection lost",
+      "display": "Persistent connection notice",
+      "action": "Keep locally saved draft; reconnect",
+      "announce": "polite once"
+    },
+    {
+      "id": "reconnecting",
+      "trigger": "Connection returned, pending fetch",
+      "display": "One unobtrusive updating line",
+      "action": "Resume status by existing submission/order ID",
+      "announce": "polite"
+    },
+    {
+      "id": "disabled",
+      "trigger": "Action unavailable with known reason",
+      "display": "Disabled action + adjacent explanation",
+      "action": "Never represent entire page as disabled",
+      "announce": "aria-disabled"
+    },
+    {
+      "id": "success",
+      "trigger": "Confirmed result",
+      "display": "Inline durable confirmation plus optional toast",
+      "action": "Continue in flow",
+      "announce": "status"
+    },
+    {
+      "id": "confirm-destructive",
+      "trigger": "Reset/discard/remove requested",
+      "display": "Named affected object and consequences",
+      "action": "Cancel primary focus; confirm explicit",
+      "announce": "modal title"
+    }
+  ],
+  "componentStates": [
+    {
+      "component": "Button/Primary",
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "axes": {
+        "Size": [
+          "S",
+          "M",
+          "L"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      }
+    },
+    {
+      "component": "Button/Secondary",
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "axes": {
+        "Size": [
+          "S",
+          "M",
+          "L"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      }
+    },
+    {
+      "component": "Button/Ghost",
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "axes": {
+        "Size": [
+          "S",
+          "M",
+          "L"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      }
+    },
+    {
+      "component": "Button/Text",
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "axes": {
+        "Size": [
+          "S",
+          "M",
+          "L"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      }
+    },
+    {
+      "component": "Button/Danger",
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "axes": {
+        "Size": [
+          "S",
+          "M",
+          "L"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      }
+    },
+    {
+      "component": "Button/Icon",
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus",
+        "disabled",
+        "loading"
+      ],
+      "axes": {
+        "Size": [
+          "S",
+          "M",
+          "L"
+        ],
+        "State": [
+          "default",
+          "hover",
+          "pressed",
+          "focus",
+          "disabled",
+          "loading"
+        ]
+      }
+    },
+    {
+      "component": "Input/Text",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "axes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "Input/Search",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "axes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "Input/Password",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "axes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "Input/Email",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "axes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "Input/Number",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "axes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "Input/Promo",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "axes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "Input/Code",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "axes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "Textarea",
+      "states": [
+        "default",
+        "focus",
+        "disabled"
+      ],
+      "axes": {
+        "Interaction": [
+          "default",
+          "focus",
+          "disabled"
+        ],
+        "Validation": [
+          "none",
+          "error",
+          "success"
+        ]
+      }
+    },
+    {
+      "component": "Select",
+      "states": [
+        "default",
+        "open",
+        "selected",
+        "error",
+        "disabled"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "open",
+          "selected",
+          "error",
+          "disabled"
+        ]
+      }
+    },
+    {
+      "component": "Checkbox",
+      "states": [
+        "unchecked",
+        "checked",
+        "mixed",
+        "focus",
+        "disabled"
+      ],
+      "axes": {
+        "State": [
+          "unchecked",
+          "checked",
+          "mixed",
+          "focus",
+          "disabled"
+        ]
+      }
+    },
+    {
+      "component": "Radio",
+      "states": [
+        "unselected",
+        "selected",
+        "focus",
+        "disabled"
+      ],
+      "axes": {
+        "State": [
+          "unselected",
+          "selected",
+          "focus",
+          "disabled"
+        ]
+      }
+    },
+    {
+      "component": "Switch",
+      "states": [
+        "off",
+        "on",
+        "focus",
+        "disabled"
+      ],
+      "axes": {
+        "State": [
+          "off",
+          "on",
+          "focus",
+          "disabled"
+        ]
+      }
+    },
+    {
+      "component": "Filter/Chip",
+      "states": [
+        "default",
+        "selected",
+        "removable",
+        "disabled"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "selected",
+          "removable",
+          "disabled"
+        ]
+      }
+    },
+    {
+      "component": "Tabs",
+      "states": [
+        "default",
+        "selected",
+        "disabled"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "selected",
+          "disabled"
+        ]
+      }
+    },
+    {
+      "component": "Accordion",
+      "states": [
+        "collapsed",
+        "expanded",
+        "disabled"
+      ],
+      "axes": {
+        "State": [
+          "collapsed",
+          "expanded",
+          "disabled"
+        ]
+      }
+    },
+    {
+      "component": "Pagination",
+      "states": [
+        "first",
+        "middle",
+        "last",
+        "loading"
+      ],
+      "axes": {
+        "State": [
+          "first",
+          "middle",
+          "last",
+          "loading"
+        ]
+      }
+    },
+    {
+      "component": "LoadMore",
+      "states": [
+        "default",
+        "loading",
+        "end"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "loading",
+          "end"
+        ]
+      }
+    },
+    {
+      "component": "Breadcrumbs",
+      "states": [
+        "default",
+        "collapsed"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "collapsed"
+        ]
+      }
+    },
+    {
+      "component": "Menu",
+      "states": [
+        "default",
+        "selected",
+        "disabled"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "selected",
+          "disabled"
+        ]
+      }
+    },
+    {
+      "component": "Dropdown",
+      "states": [
+        "closed",
+        "open",
+        "empty"
+      ],
+      "axes": {
+        "State": [
+          "closed",
+          "open",
+          "empty"
+        ]
+      }
+    },
+    {
+      "component": "ContextMenu",
+      "states": [
+        "open",
+        "disabled"
+      ],
+      "axes": {
+        "State": [
+          "open",
+          "disabled"
+        ]
+      }
+    },
+    {
+      "component": "Tooltip",
+      "states": [
+        "default",
+        "multiline"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "multiline"
+        ]
+      }
+    },
+    {
+      "component": "Popover",
+      "states": [
+        "default",
+        "with-action"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "with-action"
+        ]
+      }
+    },
+    {
+      "component": "Navigation/Header",
+      "states": [
+        "guest",
+        "authenticated"
+      ],
+      "axes": {
+        "State": [
+          "guest",
+          "authenticated"
+        ]
+      }
+    },
+    {
+      "component": "Navigation/Drawer",
+      "states": [
+        "guest",
+        "authenticated"
+      ],
+      "axes": {
+        "State": [
+          "guest",
+          "authenticated"
+        ]
+      }
+    },
+    {
+      "component": "Navigation/Sidebar",
+      "states": [
+        "expanded",
+        "collapsed"
+      ],
+      "axes": {
+        "State": [
+          "expanded",
+          "collapsed"
+        ]
+      }
+    },
+    {
+      "component": "Section/Header",
+      "states": [
+        "default",
+        "with-action"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "with-action"
+        ]
+      }
+    },
+    {
+      "component": "Modal/Confirm",
+      "states": [
+        "default",
+        "danger",
+        "processing"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "danger",
+          "processing"
+        ]
+      }
+    },
+    {
+      "component": "Modal/Content",
+      "states": [
+        "small",
+        "medium",
+        "large"
+      ],
+      "axes": {
+        "State": [
+          "small",
+          "medium",
+          "large"
+        ]
+      }
+    },
+    {
+      "component": "Drawer",
+      "states": [
+        "default",
+        "loading"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "loading"
+        ]
+      }
+    },
+    {
+      "component": "Toast",
+      "states": [
+        "success",
+        "info",
+        "warning",
+        "error"
+      ],
+      "axes": {
+        "State": [
+          "success",
+          "info",
+          "warning",
+          "error"
+        ]
+      }
+    },
+    {
+      "component": "Alert",
+      "states": [
+        "success",
+        "info",
+        "warning",
+        "error"
+      ],
+      "axes": {
+        "State": [
+          "success",
+          "info",
+          "warning",
+          "error"
+        ]
+      }
+    },
+    {
+      "component": "Badge/Status",
+      "states": [
+        "new",
+        "popular",
+        "sale",
+        "locked",
+        "completed",
+        "in-progress",
+        "review-due"
+      ],
+      "axes": {
+        "State": [
+          "new",
+          "popular",
+          "sale",
+          "locked",
+          "completed",
+          "in-progress",
+          "review-due"
+        ]
+      }
+    },
+    {
+      "component": "Badge/Difficulty",
+      "states": [
+        "easy",
+        "medium",
+        "hard"
+      ],
+      "axes": {
+        "State": [
+          "easy",
+          "medium",
+          "hard"
+        ]
+      }
+    },
+    {
+      "component": "Incident/Severity",
+      "states": [
+        "sev-1",
+        "sev-2",
+        "sev-3"
+      ],
+      "axes": {
+        "State": [
+          "sev-1",
+          "sev-2",
+          "sev-3"
+        ]
+      }
+    },
+    {
+      "component": "Spinner",
+      "states": [
+        "default",
+        "reduced-motion"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "reduced-motion"
+        ]
+      }
+    },
+    {
+      "component": "Skeleton",
+      "states": [
+        "page",
+        "course-card",
+        "lesson",
+        "profile",
+        "achievement",
+        "task"
+      ],
+      "axes": {
+        "State": [
+          "page",
+          "course-card",
+          "lesson",
+          "profile",
+          "achievement",
+          "task"
+        ]
+      }
+    },
+    {
+      "component": "EmptyState",
+      "states": [
+        "no-courses",
+        "no-active-courses",
+        "no-achievements",
+        "no-results",
+        "no-activity",
+        "no-payments"
+      ],
+      "axes": {
+        "State": [
+          "no-courses",
+          "no-active-courses",
+          "no-achievements",
+          "no-results",
+          "no-activity",
+          "no-payments"
+        ]
+      }
+    },
+    {
+      "component": "ErrorState",
+      "states": [
+        "generic",
+        "network",
+        "403",
+        "404",
+        "500",
+        "maintenance",
+        "offline",
+        "reconnecting"
+      ],
+      "axes": {
+        "State": [
+          "generic",
+          "network",
+          "403",
+          "404",
+          "500",
+          "maintenance",
+          "offline",
+          "reconnecting"
+        ]
+      }
+    },
+    {
+      "component": "Progress/Linear",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "axes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Progress/XP",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "axes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Progress/Course",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "axes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Progress/Module",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "axes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Progress/Lesson",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "axes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Progress/Skill",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "axes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Progress/Circular",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "axes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Level/Badge",
+      "states": [
+        "default"
+      ],
+      "axes": {
+        "State": [
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "XP/Reward",
+      "states": [
+        "default",
+        "pending"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "pending"
+        ]
+      }
+    },
+    {
+      "component": "XP/Summary",
+      "states": [
+        "default",
+        "large-values"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "large-values"
+        ]
+      }
+    },
+    {
+      "component": "LevelUp/Modal",
+      "states": [
+        "default",
+        "multiple-levels"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "multiple-levels"
+        ]
+      }
+    },
+    {
+      "component": "SkillProgress/Spiral",
+      "states": [
+        "locked",
+        "available",
+        "current",
+        "completed"
+      ],
+      "axes": {
+        "State": [
+          "locked",
+          "available",
+          "current",
+          "completed"
+        ]
+      }
+    },
+    {
+      "component": "SkillStage",
+      "states": [
+        "locked",
+        "available",
+        "current",
+        "completed"
+      ],
+      "axes": {
+        "State": [
+          "locked",
+          "available",
+          "current",
+          "completed"
+        ]
+      }
+    },
+    {
+      "component": "SkillMasteryBadge",
+      "states": [
+        "learning",
+        "practiced",
+        "mastered"
+      ],
+      "axes": {
+        "State": [
+          "learning",
+          "practiced",
+          "mastered"
+        ]
+      }
+    },
+    {
+      "component": "Review/Due",
+      "states": [
+        "due-soon",
+        "due",
+        "overdue",
+        "refreshed"
+      ],
+      "axes": {
+        "State": [
+          "due-soon",
+          "due",
+          "overdue",
+          "refreshed"
+        ]
+      }
+    },
+    {
+      "component": "Course/Card",
+      "states": [
+        "available",
+        "purchased",
+        "coming-soon"
+      ],
+      "axes": {
+        "Access": [
+          "available",
+          "purchased",
+          "coming-soon"
+        ],
+        "Interaction": [
+          "default",
+          "hover",
+          "focus",
+          "disabled"
+        ]
+      }
+    },
+    {
+      "component": "Course/Progress",
+      "states": [
+        "default",
+        "expanded",
+        "completed"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "expanded",
+          "completed"
+        ]
+      }
+    },
+    {
+      "component": "Module/Card",
+      "states": [
+        "not-started",
+        "active",
+        "completed",
+        "locked",
+        "review-due"
+      ],
+      "axes": {
+        "Status": [
+          "not-started",
+          "active",
+          "completed",
+          "locked",
+          "review-due"
+        ]
+      }
+    },
+    {
+      "component": "Lesson/Row",
+      "states": [
+        "not-started",
+        "current",
+        "completed",
+        "locked",
+        "review-due"
+      ],
+      "axes": {
+        "State": [
+          "not-started",
+          "current",
+          "completed",
+          "locked",
+          "review-due"
+        ]
+      }
+    },
+    {
+      "component": "Activity/Card",
+      "states": [
+        "lesson",
+        "task",
+        "transfer",
+        "code-review",
+        "incident",
+        "project",
+        "quiz"
+      ],
+      "axes": {
+        "Type": [
+          "lesson",
+          "task",
+          "transfer",
+          "code-review",
+          "incident",
+          "project",
+          "quiz"
+        ],
+        "Status": [
+          "available",
+          "in-progress",
+          "submitted",
+          "completed",
+          "locked",
+          "failed"
+        ]
+      }
+    },
+    {
+      "component": "Achievement/Card",
+      "states": [
+        "locked",
+        "unlocked",
+        "secret"
+      ],
+      "axes": {
+        "Access": [
+          "locked",
+          "unlocked",
+          "secret"
+        ],
+        "Rarity": [
+          "common",
+          "rare",
+          "legendary"
+        ]
+      }
+    },
+    {
+      "component": "Achievement/Progress",
+      "states": [
+        "determinate",
+        "indeterminate",
+        "unavailable"
+      ],
+      "axes": {
+        "State": [
+          "determinate",
+          "indeterminate",
+          "unavailable"
+        ],
+        "Size": [
+          "compact",
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Achievement/Grid",
+      "states": [
+        "default",
+        "filtered",
+        "empty"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "filtered",
+          "empty"
+        ]
+      }
+    },
+    {
+      "component": "Avatar",
+      "states": [
+        "image",
+        "initials",
+        "empty",
+        "loading"
+      ],
+      "axes": {
+        "State": [
+          "image",
+          "initials",
+          "empty",
+          "loading"
+        ]
+      }
+    },
+    {
+      "component": "User/MiniProfile",
+      "states": [
+        "default",
+        "compact"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "compact"
+        ]
+      }
+    },
+    {
+      "component": "Profile/Header",
+      "states": [
+        "default",
+        "long-name"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "long-name"
+        ]
+      }
+    },
+    {
+      "component": "Profile/Stats",
+      "states": [
+        "default",
+        "large-values",
+        "empty"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "large-values",
+          "empty"
+        ]
+      }
+    },
+    {
+      "component": "Profile/Activity",
+      "states": [
+        "default",
+        "empty"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "empty"
+        ]
+      }
+    },
+    {
+      "component": "Content/Block",
+      "states": [
+        "title",
+        "subtitle",
+        "paragraph",
+        "image",
+        "diagram",
+        "code",
+        "table",
+        "list",
+        "quote",
+        "warning",
+        "tip",
+        "note",
+        "details",
+        "checkpoint",
+        "exercise",
+        "embed"
+      ],
+      "axes": {
+        "State": [
+          "title",
+          "subtitle",
+          "paragraph",
+          "image",
+          "diagram",
+          "code",
+          "table",
+          "list",
+          "quote",
+          "warning",
+          "tip",
+          "note",
+          "details",
+          "checkpoint",
+          "exercise",
+          "embed"
+        ]
+      }
+    },
+    {
+      "component": "Code/Block",
+      "states": [
+        "default",
+        "copied",
+        "overflow"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "copied",
+          "overflow"
+        ]
+      }
+    },
+    {
+      "component": "Table",
+      "states": [
+        "default",
+        "loading",
+        "empty",
+        "sorted"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "loading",
+          "empty",
+          "sorted"
+        ]
+      }
+    },
+    {
+      "component": "Divider",
+      "states": [
+        "plain",
+        "technical"
+      ],
+      "axes": {
+        "State": [
+          "plain",
+          "technical"
+        ]
+      }
+    },
+    {
+      "component": "Task/EditorShell",
+      "states": [
+        "idle",
+        "busy",
+        "auth-required"
+      ],
+      "axes": {
+        "State": [
+          "idle",
+          "busy",
+          "auth-required"
+        ]
+      }
+    },
+    {
+      "component": "Task/Status",
+      "states": [
+        "idle",
+        "submitting",
+        "queued",
+        "compiling",
+        "running",
+        "accepted",
+        "wrong-answer",
+        "runtime-error",
+        "compilation-error",
+        "time-limit",
+        "memory-limit",
+        "output-limit",
+        "network-error",
+        "infrastructure-error",
+        "cancelled",
+        "unknown"
+      ],
+      "axes": {
+        "State": [
+          "idle",
+          "submitting",
+          "queued",
+          "compiling",
+          "running",
+          "accepted",
+          "wrong-answer",
+          "runtime-error",
+          "compilation-error",
+          "time-limit",
+          "memory-limit",
+          "output-limit",
+          "network-error",
+          "infrastructure-error",
+          "cancelled",
+          "unknown"
+        ]
+      }
+    },
+    {
+      "component": "Task/Result",
+      "states": [
+        "accepted",
+        "wrong-answer",
+        "runtime-error",
+        "compilation-error",
+        "time-limit",
+        "infrastructure-error"
+      ],
+      "axes": {
+        "State": [
+          "accepted",
+          "wrong-answer",
+          "runtime-error",
+          "compilation-error",
+          "time-limit",
+          "infrastructure-error"
+        ]
+      }
+    },
+    {
+      "component": "Task/Transfer",
+      "states": [
+        "available",
+        "in-progress",
+        "submitted",
+        "accepted",
+        "failed",
+        "review"
+      ],
+      "axes": {
+        "State": [
+          "available",
+          "in-progress",
+          "submitted",
+          "accepted",
+          "failed",
+          "review"
+        ]
+      }
+    },
+    {
+      "component": "CodeReview/Finding",
+      "states": [
+        "draft",
+        "submitted",
+        "correct",
+        "incorrect",
+        "partial"
+      ],
+      "axes": {
+        "State": [
+          "draft",
+          "submitted",
+          "correct",
+          "incorrect",
+          "partial"
+        ]
+      }
+    },
+    {
+      "component": "CodeReview/Result",
+      "states": [
+        "complete",
+        "partial"
+      ],
+      "axes": {
+        "State": [
+          "complete",
+          "partial"
+        ]
+      }
+    },
+    {
+      "component": "CodeReview/Line",
+      "states": [
+        "default",
+        "selected",
+        "range",
+        "with-finding"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "selected",
+          "range",
+          "with-finding"
+        ]
+      }
+    },
+    {
+      "component": "Incident/Card",
+      "states": [
+        "active",
+        "investigating",
+        "mitigated",
+        "resolved",
+        "failed"
+      ],
+      "axes": {
+        "State": [
+          "active",
+          "investigating",
+          "mitigated",
+          "resolved",
+          "failed"
+        ]
+      }
+    },
+    {
+      "component": "Incident/Evidence",
+      "states": [
+        "logs",
+        "metrics",
+        "kubernetes",
+        "database",
+        "network",
+        "code",
+        "events"
+      ],
+      "axes": {
+        "State": [
+          "logs",
+          "metrics",
+          "kubernetes",
+          "database",
+          "network",
+          "code",
+          "events"
+        ]
+      }
+    },
+    {
+      "component": "Incident/Diagnosis",
+      "states": [
+        "draft",
+        "submitted",
+        "rejected"
+      ],
+      "axes": {
+        "State": [
+          "draft",
+          "submitted",
+          "rejected"
+        ]
+      }
+    },
+    {
+      "component": "Incident/Result",
+      "states": [
+        "resolved",
+        "failed"
+      ],
+      "axes": {
+        "State": [
+          "resolved",
+          "failed"
+        ]
+      }
+    },
+    {
+      "component": "Payment/Summary",
+      "states": [
+        "default",
+        "discount",
+        "promo-valid",
+        "promo-invalid"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "discount",
+          "promo-valid",
+          "promo-invalid"
+        ]
+      }
+    },
+    {
+      "component": "Payment/Method",
+      "states": [
+        "unselected",
+        "selected",
+        "disabled"
+      ],
+      "axes": {
+        "State": [
+          "unselected",
+          "selected",
+          "disabled"
+        ]
+      }
+    },
+    {
+      "component": "Payment/Form",
+      "states": [
+        "default",
+        "validation-error",
+        "processing",
+        "payment-error",
+        "timeout"
+      ],
+      "axes": {
+        "State": [
+          "default",
+          "validation-error",
+          "processing",
+          "payment-error",
+          "timeout"
+        ]
+      }
+    },
+    {
+      "component": "Payment/Success",
+      "states": [
+        "default"
+      ],
+      "axes": {
+        "State": [
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Payment/Failed",
+      "states": [
+        "retry",
+        "change-method",
+        "timeout"
+      ],
+      "axes": {
+        "State": [
+          "retry",
+          "change-method",
+          "timeout"
+        ]
+      }
+    },
+    {
+      "component": "Auth/Form",
+      "states": [
+        "login",
+        "register",
+        "forgot-password",
+        "reset-password",
+        "verify-email",
+        "verification-success"
+      ],
+      "axes": {
+        "State": [
+          "login",
+          "register",
+          "forgot-password",
+          "reset-password",
+          "verify-email",
+          "verification-success"
+        ]
+      }
+    },
+    {
+      "component": "Course/Artwork",
+      "states": [
+        "default"
+      ],
+      "axes": {
+        "State": [
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Course/Icon",
+      "states": [
+        "default"
+      ],
+      "axes": {
+        "State": [
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Course/Symbol",
+      "states": [
+        "default"
+      ],
+      "axes": {
+        "State": [
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Achievement/Icon",
+      "states": [
+        "default"
+      ],
+      "axes": {
+        "State": [
+          "default"
+        ]
+      }
+    },
+    {
+      "component": "Icon/Utility",
+      "states": [
+        "default"
+      ],
+      "axes": {
+        "State": [
+          "default"
+        ]
+      }
+    }
+  ],
+  "continuousExamplesAreNotVariants": [
+    "Progress/*",
+    "Level/Badge",
+    "XP/Reward"
+  ],
+  "combinationRules": [
+    "Access, progress, promotion, interaction are orthogonal; purchased+discount displays access CTA, price in metadata only.",
+    "Secret achievements suppress hidden title/criterion/count before unlock.",
+    "Loading preserves dimensions and prevents duplicate side effects.",
+    "Activity types can add registry entries without new card layouts."
+  ]
+}

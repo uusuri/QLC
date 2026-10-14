@@ -1,0 +1,831 @@
+{
+  "schemaVersion": 1,
+  "preparedAt": "2026-09-09",
+  "purpose": "Локальные согласованные UI-фикстуры. Числа не означают утверждённую XP-экономику или реализованный API.",
+  "canonicalProfile": {
+    "level": "12",
+    "lifetimeXp": "21840",
+    "levelStartLifetimeXp": "19000",
+    "nextLevelLifetimeXp": "22500",
+    "currentLevelXp": "2840",
+    "xpRequiredForLevel": "3500",
+    "xpRemaining": "660",
+    "percentage": 81.14285714285714,
+    "state": "determinate",
+    "policyId": "qlc-demo-thresholds-v1",
+    "economyStatus": "illustrative_not_product_economy"
+  },
+  "canonicalProfileLabels": {
+    "level": "Уровень 12",
+    "current": "2 840 / 3 500 XP",
+    "remaining": "До следующего уровня 660 XP",
+    "lifetime": "Всего 21 840 XP",
+    "percentage": "81%"
+  },
+  "canonicalCourse": {
+    "id": "java",
+    "title": "Java Backend",
+    "moduleCount": 12,
+    "requiredLessons": 60,
+    "completedLessons": 43,
+    "percentage": 71.66666666666667,
+    "displayPercentage": "72%",
+    "xpEarned": "1840",
+    "learningState": "in_progress",
+    "accessState": "purchased",
+    "currentModuleId": "java-module-09",
+    "currentLessonId": "java-collections-hashmap",
+    "modules": [
+      {
+        "id": "java-module-01",
+        "number": 1,
+        "title": "Начало работы",
+        "requiredLessons": 5,
+        "completedLessons": 5,
+        "percentage": 100.0,
+        "learningState": "completed",
+        "accessState": "available",
+        "expanded": false,
+        "reviewState": "none"
+      },
+      {
+        "id": "java-module-02",
+        "number": 2,
+        "title": "Синтаксис",
+        "requiredLessons": 5,
+        "completedLessons": 5,
+        "percentage": 100.0,
+        "learningState": "completed",
+        "accessState": "available",
+        "expanded": false,
+        "reviewState": "none"
+      },
+      {
+        "id": "java-module-03",
+        "number": 3,
+        "title": "Методы",
+        "requiredLessons": 5,
+        "completedLessons": 5,
+        "percentage": 100.0,
+        "learningState": "completed",
+        "accessState": "available",
+        "expanded": false,
+        "reviewState": "none"
+      },
+      {
+        "id": "java-module-04",
+        "number": 4,
+        "title": "Классы",
+        "requiredLessons": 5,
+        "completedLessons": 5,
+        "percentage": 100.0,
+        "learningState": "completed",
+        "accessState": "available",
+        "expanded": false,
+        "reviewState": "none"
+      },
+      {
+        "id": "java-module-05",
+        "number": 5,
+        "title": "Интерфейсы",
+        "requiredLessons": 5,
+        "completedLessons": 5,
+        "percentage": 100.0,
+        "learningState": "completed",
+        "accessState": "available",
+        "expanded": false,
+        "reviewState": "none"
+      },
+      {
+        "id": "java-module-06",
+        "number": 6,
+        "title": "Исключения",
+        "requiredLessons": 5,
+        "completedLessons": 5,
+        "percentage": 100.0,
+        "learningState": "completed",
+        "accessState": "available",
+        "expanded": false,
+        "reviewState": "none"
+      },
+      {
+        "id": "java-module-07",
+        "number": 7,
+        "title": "Обобщения",
+        "requiredLessons": 5,
+        "completedLessons": 5,
+        "percentage": 100.0,
+        "learningState": "completed",
+        "accessState": "available",
+        "expanded": false,
+        "reviewState": "none"
+      },
+      {
+        "id": "java-module-08",
+        "number": 8,
+        "title": "Работа с объектами",
+        "requiredLessons": 5,
+        "completedLessons": 5,
+        "percentage": 100.0,
+        "learningState": "completed",
+        "accessState": "available",
+        "expanded": false,
+        "reviewState": "none"
+      },
+      {
+        "id": "java-module-09",
+        "number": 9,
+        "title": "Collections",
+        "requiredLessons": 5,
+        "completedLessons": 3,
+        "percentage": 60.0,
+        "learningState": "in_progress",
+        "accessState": "available",
+        "expanded": true,
+        "reviewState": "none"
+      },
+      {
+        "id": "java-module-10",
+        "number": 10,
+        "title": "Потоки данных",
+        "requiredLessons": 5,
+        "completedLessons": 0,
+        "percentage": 0.0,
+        "learningState": "not_started",
+        "accessState": "locked",
+        "expanded": false,
+        "reviewState": "none"
+      },
+      {
+        "id": "java-module-11",
+        "number": 11,
+        "title": "Многопоточность",
+        "requiredLessons": 5,
+        "completedLessons": 0,
+        "percentage": 0.0,
+        "learningState": "not_started",
+        "accessState": "locked",
+        "expanded": false,
+        "reviewState": "none"
+      },
+      {
+        "id": "java-module-12",
+        "number": 12,
+        "title": "Итоговый проект",
+        "requiredLessons": 5,
+        "completedLessons": 0,
+        "percentage": 0.0,
+        "learningState": "not_started",
+        "accessState": "locked",
+        "expanded": false,
+        "reviewState": "none"
+      }
+    ]
+  },
+  "demoThresholdPolicy": {
+    "id": "qlc-demo-thresholds-v1",
+    "scope": "Fixture generation only;API may supply another policy.",
+    "requiredXp": "R(1)=250;R(L)=250L+250 for2<=L<=11;R(L)=3500+250(L-12) forL>=12.",
+    "levelStart": "T(1)=0;T(L)=sum(R(k),k=1..L-1). ForL>=12,n=L-12:T(L)=19000+3500n+125n(n-1).",
+    "invariant": "T(L+1)=T(L)+R(L),R(L)>0. CurrentLevelXP=lifetimeXP-T(L),0<=current<R(L). Exact boundary belongs to next level.",
+    "integerRepresentation": "Decimal strings forlevels/XP;useBigInt/serverintegers,notJS Number for lifetime thresholds beyond2^53-1.",
+    "canonicalRequiredChecks": {
+      "level": "12",
+      "start": "19000",
+      "required": "3500",
+      "next": "22500",
+      "lifetime": "21840",
+      "current": "2840",
+      "remaining": "660"
+    }
+  },
+  "levelStressExamples": [
+    {
+      "level": "1",
+      "lifetimeXp": "0",
+      "levelStartLifetimeXp": "0",
+      "nextLevelLifetimeXp": "250",
+      "currentLevelXp": "0",
+      "xpRequiredForLevel": "250",
+      "xpRemaining": "250",
+      "percentage": 0.0,
+      "state": "determinate",
+      "policyId": "qlc-demo-thresholds-v1",
+      "economyStatus": "illustrative_not_product_economy"
+    },
+    {
+      "level": "1",
+      "lifetimeXp": "125",
+      "levelStartLifetimeXp": "0",
+      "nextLevelLifetimeXp": "250",
+      "currentLevelXp": "125",
+      "xpRequiredForLevel": "250",
+      "xpRemaining": "125",
+      "percentage": 50.0,
+      "state": "determinate",
+      "policyId": "qlc-demo-thresholds-v1",
+      "economyStatus": "illustrative_not_product_economy"
+    },
+    {
+      "level": "10",
+      "lifetimeXp": "14990",
+      "levelStartLifetimeXp": "13250",
+      "nextLevelLifetimeXp": "16000",
+      "currentLevelXp": "1740",
+      "xpRequiredForLevel": "2750",
+      "xpRemaining": "1010",
+      "percentage": 63.27272727272727,
+      "state": "determinate",
+      "policyId": "qlc-demo-thresholds-v1",
+      "economyStatus": "illustrative_not_product_economy"
+    },
+    {
+      "level": "12",
+      "lifetimeXp": "21840",
+      "levelStartLifetimeXp": "19000",
+      "nextLevelLifetimeXp": "22500",
+      "currentLevelXp": "2840",
+      "xpRequiredForLevel": "3500",
+      "xpRemaining": "660",
+      "percentage": 81.14285714285714,
+      "state": "determinate",
+      "policyId": "qlc-demo-thresholds-v1",
+      "economyStatus": "illustrative_not_product_economy"
+    },
+    {
+      "level": "27",
+      "lifetimeXp": "101990",
+      "levelStartLifetimeXp": "97750",
+      "nextLevelLifetimeXp": "105000",
+      "currentLevelXp": "4240",
+      "xpRequiredForLevel": "7250",
+      "xpRemaining": "3010",
+      "percentage": 58.48275862068966,
+      "state": "determinate",
+      "policyId": "qlc-demo-thresholds-v1",
+      "economyStatus": "illustrative_not_product_economy"
+    },
+    {
+      "level": "100",
+      "lifetimeXp": "1288560",
+      "levelStartLifetimeXp": "1284000",
+      "nextLevelLifetimeXp": "1309500",
+      "currentLevelXp": "4560",
+      "xpRequiredForLevel": "25500",
+      "xpRemaining": "20940",
+      "percentage": 17.88235294117647,
+      "state": "determinate",
+      "policyId": "qlc-demo-thresholds-v1",
+      "economyStatus": "illustrative_not_product_economy"
+    },
+    {
+      "level": "999",
+      "lifetimeXp": "125369259",
+      "levelStartLifetimeXp": "125121250",
+      "nextLevelLifetimeXp": "125371500",
+      "currentLevelXp": "248009",
+      "xpRequiredForLevel": "250250",
+      "xpRemaining": "2241",
+      "percentage": 99.1044955044955,
+      "state": "determinate",
+      "policyId": "qlc-demo-thresholds-v1",
+      "economyStatus": "illustrative_not_product_economy"
+    },
+    {
+      "level": "1000",
+      "lifetimeXp": "125371500",
+      "levelStartLifetimeXp": "125371500",
+      "nextLevelLifetimeXp": "125622000",
+      "currentLevelXp": "0",
+      "xpRequiredForLevel": "250500",
+      "xpRemaining": "250500",
+      "percentage": 0.0,
+      "state": "determinate",
+      "policyId": "qlc-demo-thresholds-v1",
+      "economyStatus": "illustrative_not_product_economy"
+    },
+    {
+      "level": "1000000000",
+      "lifetimeXp": "125000000498456785512",
+      "levelStartLifetimeXp": "125000000374999996500",
+      "nextLevelLifetimeXp": "125000000624999997000",
+      "currentLevelXp": "123456789012",
+      "xpRequiredForLevel": "250000000500",
+      "xpRemaining": "126543211488",
+      "percentage": 49.38271550603457,
+      "state": "determinate",
+      "policyId": "qlc-demo-thresholds-v1",
+      "economyStatus": "illustrative_not_product_economy"
+    }
+  ],
+  "learning": {
+    "course": {
+      "id": "java",
+      "title": "Java Backend",
+      "moduleCount": 12,
+      "requiredLessons": 60,
+      "completedLessons": 43,
+      "percentage": 71.66666666666667,
+      "displayPercentage": "72%",
+      "xpEarned": "1840",
+      "learningState": "in_progress",
+      "accessState": "purchased",
+      "currentModuleId": "java-module-09",
+      "currentLessonId": "java-collections-hashmap",
+      "modules": [
+        {
+          "id": "java-module-01",
+          "number": 1,
+          "title": "Начало работы",
+          "requiredLessons": 5,
+          "completedLessons": 5,
+          "percentage": 100.0,
+          "learningState": "completed",
+          "accessState": "available",
+          "expanded": false,
+          "reviewState": "none"
+        },
+        {
+          "id": "java-module-02",
+          "number": 2,
+          "title": "Синтаксис",
+          "requiredLessons": 5,
+          "completedLessons": 5,
+          "percentage": 100.0,
+          "learningState": "completed",
+          "accessState": "available",
+          "expanded": false,
+          "reviewState": "none"
+        },
+        {
+          "id": "java-module-03",
+          "number": 3,
+          "title": "Методы",
+          "requiredLessons": 5,
+          "completedLessons": 5,
+          "percentage": 100.0,
+          "learningState": "completed",
+          "accessState": "available",
+          "expanded": false,
+          "reviewState": "none"
+        },
+        {
+          "id": "java-module-04",
+          "number": 4,
+          "title": "Классы",
+          "requiredLessons": 5,
+          "completedLessons": 5,
+          "percentage": 100.0,
+          "learningState": "completed",
+          "accessState": "available",
+          "expanded": false,
+          "reviewState": "none"
+        },
+        {
+          "id": "java-module-05",
+          "number": 5,
+          "title": "Интерфейсы",
+          "requiredLessons": 5,
+          "completedLessons": 5,
+          "percentage": 100.0,
+          "learningState": "completed",
+          "accessState": "available",
+          "expanded": false,
+          "reviewState": "none"
+        },
+        {
+          "id": "java-module-06",
+          "number": 6,
+          "title": "Исключения",
+          "requiredLessons": 5,
+          "completedLessons": 5,
+          "percentage": 100.0,
+          "learningState": "completed",
+          "accessState": "available",
+          "expanded": false,
+          "reviewState": "none"
+        },
+        {
+          "id": "java-module-07",
+          "number": 7,
+          "title": "Обобщения",
+          "requiredLessons": 5,
+          "completedLessons": 5,
+          "percentage": 100.0,
+          "learningState": "completed",
+          "accessState": "available",
+          "expanded": false,
+          "reviewState": "none"
+        },
+        {
+          "id": "java-module-08",
+          "number": 8,
+          "title": "Работа с объектами",
+          "requiredLessons": 5,
+          "completedLessons": 5,
+          "percentage": 100.0,
+          "learningState": "completed",
+          "accessState": "available",
+          "expanded": false,
+          "reviewState": "none"
+        },
+        {
+          "id": "java-module-09",
+          "number": 9,
+          "title": "Collections",
+          "requiredLessons": 5,
+          "completedLessons": 3,
+          "percentage": 60.0,
+          "learningState": "in_progress",
+          "accessState": "available",
+          "expanded": true,
+          "reviewState": "none"
+        },
+        {
+          "id": "java-module-10",
+          "number": 10,
+          "title": "Потоки данных",
+          "requiredLessons": 5,
+          "completedLessons": 0,
+          "percentage": 0.0,
+          "learningState": "not_started",
+          "accessState": "locked",
+          "expanded": false,
+          "reviewState": "none"
+        },
+        {
+          "id": "java-module-11",
+          "number": 11,
+          "title": "Многопоточность",
+          "requiredLessons": 5,
+          "completedLessons": 0,
+          "percentage": 0.0,
+          "learningState": "not_started",
+          "accessState": "locked",
+          "expanded": false,
+          "reviewState": "none"
+        },
+        {
+          "id": "java-module-12",
+          "number": 12,
+          "title": "Итоговый проект",
+          "requiredLessons": 5,
+          "completedLessons": 0,
+          "percentage": 0.0,
+          "learningState": "not_started",
+          "accessState": "locked",
+          "expanded": false,
+          "reviewState": "none"
+        }
+      ]
+    },
+    "currentModule": {
+      "id": "java-module-09",
+      "title": "Collections",
+      "requiredLessons": 5,
+      "completedLessons": 3,
+      "percentage": 60,
+      "lessons": [
+        {
+          "id": "java-collections-intro",
+          "title": "Коллекции",
+          "type": "THEORY",
+          "earnedUnits": 20,
+          "requiredUnits": 20,
+          "percentage": 100,
+          "learningState": "completed",
+          "accessState": "available",
+          "reviewState": "none",
+          "xpReward": "25"
+        },
+        {
+          "id": "java-collections-arraylist",
+          "title": "ArrayList",
+          "type": "TASK",
+          "earnedUnits": 20,
+          "requiredUnits": 20,
+          "percentage": 100,
+          "learningState": "completed",
+          "accessState": "available",
+          "reviewState": "none",
+          "xpReward": "120"
+        },
+        {
+          "id": "java-collections-hashset",
+          "title": "HashSet",
+          "type": "QUIZ",
+          "earnedUnits": 20,
+          "requiredUnits": 20,
+          "percentage": 100,
+          "learningState": "completed",
+          "accessState": "available",
+          "reviewState": "none",
+          "xpReward": "40"
+        },
+        {
+          "id": "java-collections-hashmap",
+          "title": "HashMap",
+          "type": "THEORY",
+          "earnedUnits": 13,
+          "requiredUnits": 20,
+          "percentage": 65,
+          "learningState": "in_progress",
+          "accessState": "available",
+          "reviewState": "none",
+          "xpReward": "25",
+          "isCurrent": true
+        },
+        {
+          "id": "java-collections-treemap",
+          "title": "TreeMap",
+          "type": "TRANSFER",
+          "earnedUnits": 0,
+          "requiredUnits": 20,
+          "percentage": 0,
+          "learningState": "not_started",
+          "accessState": "locked",
+          "reviewState": "none",
+          "xpReward": "120"
+        }
+      ]
+    },
+    "taskAccepted": {
+      "id": "task-014",
+      "title": "Two Sum",
+      "phase": "accepted",
+      "submissionId": "demo-submission-014",
+      "passedTests": 18,
+      "totalTests": 18,
+      "testPercentage": 100,
+      "runtimeMs": 42,
+      "xpReward": "120",
+      "rewardState": "confirmed",
+      "rewardEventId": "demo-grant-task014-first-ac",
+      "nextActionLabel": "Следующий урок"
+    },
+    "taskRunning": {
+      "id": "task-014",
+      "phase": "running",
+      "passedTests": null,
+      "totalTests": null,
+      "testPercentage": null,
+      "progressState": "indeterminate",
+      "label": "Проверяем решение"
+    },
+    "spiral": {
+      "topicId": "hashmap",
+      "title": "HashMap",
+      "stages": [
+        {
+          "id": "understand",
+          "label": "Разобраться",
+          "technicalLabel": "UNDERSTAND",
+          "state": "completed",
+          "earnedUnits": 1,
+          "requiredUnits": 1,
+          "percentage": 100
+        },
+        {
+          "id": "apply",
+          "label": "Применить",
+          "technicalLabel": "APPLY",
+          "state": "current",
+          "earnedUnits": 18,
+          "requiredUnits": 25,
+          "percentage": 72
+        },
+        {
+          "id": "master",
+          "label": "Освоить глубже",
+          "technicalLabel": "MASTER",
+          "state": "locked",
+          "earnedUnits": 0,
+          "requiredUnits": 1,
+          "percentage": 0
+        }
+      ],
+      "mastery": null,
+      "reviewState": "none"
+    },
+    "reviewDue": {
+      "fixturePurpose": "independent_later_state_for_same_topic",
+      "topicId": "hashmap",
+      "title": "HashMap",
+      "mastery": 84,
+      "masteryMeaning": "оценка освоения по результатам практики, не доля просмотренных уроков",
+      "lastPracticedAt": "2026-07-29T10:00:00Z",
+      "asOf": "2026-09-09T10:00:00Z",
+      "lastPracticedDays": 42,
+      "dueAt": "2026-09-09T10:00:00Z",
+      "reviewState": "due",
+      "courseCompletionUnchanged": true,
+      "actionLabel": "Повторить"
+    }
+  },
+  "rewardAndReconnectExamples": [
+    {
+      "id": "xp-pending-25",
+      "component": "XP/Reward",
+      "amount": "25",
+      "state": "pending",
+      "copy": "Проверяем результат",
+      "changesAuthoritativeTotal": false
+    },
+    {
+      "id": "xp-confirmed-25",
+      "component": "XP/Reward",
+      "amount": "25",
+      "state": "confirmed",
+      "copy": "+25 XP",
+      "changesAuthoritativeTotal": "only authoritative snapshot",
+      "eventId": "demo-grant-lesson-checkpoint"
+    },
+    {
+      "id": "xp-confirmed-120",
+      "component": "XP/Reward",
+      "amount": "120",
+      "state": "confirmed",
+      "copy": "+120 XP",
+      "eventId": "demo-grant-task014-first-ac"
+    },
+    {
+      "id": "xp-duplicate-120",
+      "component": "XP/Reward",
+      "amount": "120",
+      "state": "duplicate_ignored",
+      "copy": null,
+      "eventId": "demo-grant-task014-first-ac",
+      "deltaApplied": "0"
+    },
+    {
+      "id": "level-up",
+      "component": "LevelUp/Modal",
+      "before": {
+        "level": "12",
+        "lifetimeXp": "22400",
+        "levelStartLifetimeXp": "19000",
+        "nextLevelLifetimeXp": "22500",
+        "currentLevelXp": "3400",
+        "xpRequiredForLevel": "3500",
+        "xpRemaining": "100",
+        "percentage": 97.14285714285714,
+        "state": "determinate",
+        "policyId": "qlc-demo-thresholds-v1",
+        "economyStatus": "illustrative_not_product_economy"
+      },
+      "grant": "120",
+      "after": {
+        "level": "13",
+        "lifetimeXp": "22520",
+        "levelStartLifetimeXp": "22500",
+        "nextLevelLifetimeXp": "26250",
+        "currentLevelXp": "20",
+        "xpRequiredForLevel": "3750",
+        "xpRemaining": "3730",
+        "percentage": 0.5333333333333333,
+        "state": "determinate",
+        "policyId": "qlc-demo-thresholds-v1",
+        "economyStatus": "illustrative_not_product_economy"
+      },
+      "copy": {
+        "title": "Уровень 13",
+        "body": "Результат сохранён. Текущий прогресс: 20 / 3 750 XP.",
+        "action": "Продолжить"
+      },
+      "crossedLevels": [
+        "13"
+      ]
+    },
+    {
+      "id": "refund-access",
+      "component": "XP/Summary",
+      "reason": "course_purchase_refunded",
+      "xpDelta": "0",
+      "courseAccess": "revoked",
+      "historicalCompletionRetained": true
+    },
+    {
+      "id": "reward-reversal",
+      "component": "XP/Summary",
+      "reason": "source_result_invalidated",
+      "grantEventId": "demo-grant-task014-first-ac",
+      "reversalEventId": "demo-reversal-task014",
+      "xpDelta": "-120",
+      "copy": "XP пересчитан после изменения результата."
+    },
+    {
+      "id": "reconnect",
+      "component": "XP/Summary",
+      "state": "reconnecting",
+      "lastConfirmedSnapshotRevision": 42,
+      "incomingRevision": 44,
+      "copy": "Обновляем прогресс",
+      "animateOldRewardEvents": false
+    }
+  ],
+  "continuousProgressEdges": [
+    {
+      "id": "zero",
+      "numerator": "0",
+      "denominator": "100",
+      "percentage": 0,
+      "state": "determinate",
+      "display": "0%"
+    },
+    {
+      "id": "fraction",
+      "numerator": "376",
+      "denominator": "1000",
+      "percentage": 37.6,
+      "state": "determinate",
+      "display": "37,6%"
+    },
+    {
+      "id": "complete",
+      "numerator": "100",
+      "denominator": "100",
+      "percentage": 100,
+      "state": "determinate",
+      "display": "100%"
+    },
+    {
+      "id": "rounding-near-complete",
+      "numerator": "99999",
+      "denominator": "100000",
+      "percentage": 99.999,
+      "state": "determinate",
+      "display": "≥99,9%",
+      "completed": false
+    },
+    {
+      "id": "zero-denominator",
+      "numerator": "0",
+      "denominator": "0",
+      "percentage": null,
+      "state": "unavailable",
+      "display": "Нет данных"
+    },
+    {
+      "id": "no-lessons-yet",
+      "numerator": "0",
+      "denominator": "0",
+      "percentage": null,
+      "state": "not_applicable",
+      "display": "Программа готовится"
+    },
+    {
+      "id": "unknown-running",
+      "numerator": null,
+      "denominator": null,
+      "percentage": null,
+      "state": "indeterminate",
+      "display": "Проверяем решение"
+    },
+    {
+      "id": "negative-counter",
+      "numerator": "-1",
+      "denominator": "100",
+      "percentage": null,
+      "state": "invalid_data",
+      "display": "Прогресс временно недоступен"
+    },
+    {
+      "id": "counter-over-target",
+      "numerator": "120",
+      "denominator": "100",
+      "percentage": 100,
+      "state": "determinate",
+      "display": "120 / 100",
+      "note": "Счётчик сохраняется;visualfill clamps100."
+    }
+  ],
+  "achievementCollectionExamples": {
+    "scale": 1000,
+    "pageSize": 24,
+    "totalPagesIfPageNumberUsed": 42,
+    "lastPageSize": 16,
+    "request": {
+      "cursor": null,
+      "limit": 24,
+      "filters": {
+        "state": [
+          "in_progress"
+        ],
+        "category": [
+          "Coding"
+        ],
+        "query": ""
+      },
+      "sort": "progress_desc",
+      "snapshotRevision": "demo-001"
+    },
+    "response": {
+      "items": "up to24 authorized projected achievements",
+      "nextCursor": "opaque-signed-server-cursor",
+      "hasMore": true,
+      "visibleTotal": 1000,
+      "snapshotRevision": "demo-001"
+    },
+    "secretPolicy": "No hidden criteria ortrue IDs in public payload. Seeachievements.json redactedProjection."
+  }
+}

@@ -1,0 +1,1770 @@
+{
+  "schemaVersion": 1,
+  "preparedAt": "2026-09-09",
+  "scope": "Local UI/UX specification. No Figma/browser calls, no application implementation. Existing homepage protected.",
+  "source": "source-inventory.md plus latest attached brief",
+  "canonicalWidths": [
+    1440,
+    768,
+    390,
+    360
+  ],
+  "requiredMobileViewIds": [
+    "public-home",
+    "store-catalog",
+    "course-overview",
+    "profile-overview",
+    "profile-achievements",
+    "profile-progress",
+    "dashboard",
+    "purchased-course",
+    "module-selection",
+    "lesson",
+    "coding-task",
+    "transfer-task",
+    "code-review",
+    "incident-workspace",
+    "checkout",
+    "payment-success",
+    "auth-login"
+  ],
+  "requiredMobileViewCount": 17,
+  "screenCount": 34,
+  "screens": [
+    {
+      "id": "public-home",
+      "title": "Главная",
+      "route": "/",
+      "routeStatus": "existing",
+      "access": "public",
+      "figmaPage": "03 / Public",
+      "kind": "page",
+      "parentId": null,
+      "goal": "Объяснить формат обучения и привести к выбору курса, сохранив согласованную композицию.",
+      "components": [
+        "Navigation/Header",
+        "Home/Hero (protected)",
+        "Discovery/Section",
+        "Course/Card",
+        "HowItWorks/Section",
+        "Footer"
+      ],
+      "desktopLayout": "PROTECTED: существующий desktop 1440×2422 и hero не перестраивать под новую сетку. Сохранить Figma 9:23, hero10:22 и synthetic-art.png. Добавляемые в будущем секции используют Course/Card и принятую ширину 1312 с полями64; не заменять текущие секции автоматически.",
+      "mobileLayout": "PROTECTED: mobile 360×2728 из mobile-layout.json. Заголовок и CTA сверху, неизменённый арт ниже; сохранять его crop и spacing. Будущая лента Course/Card идёт одной колонкой. На390 разрешён только reflow существующего макета.",
+      "primaryAction": "Выбрать курс → /courses",
+      "secondaryActions": [
+        "Как устроено → /#how-it-works",
+        "Войти → /login"
+      ],
+      "contentExample": "«Программирование через практику». «Короткая теория, задачи и проверка решения — в одном рабочем пространстве».",
+      "visibilityAndLogic": "Популярное / Рекомендуем / Новое / Со скидкой — слоты Discovery/Section, а не пять обязательных новых блоков на текущем landing. Продолжить обучение показывать только авторизованному с активным курсом. Персональные рекомендации скрыты, если данных нет.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Курсы грузятся собственными skeleton; hero не скрывается. Ошибка каталога имеет локальный retry. Пустая рекомендация скрывает только секцию. Никаких generated claims о количестве студентов."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "store-catalog",
+      "title": "Магазин курсов",
+      "route": "/courses",
+      "routeStatus": "proposed; current catalog is /#courses",
+      "access": "public",
+      "figmaPage": "04 / Store",
+      "kind": "page",
+      "parentId": "public-home",
+      "goal": "Выбрать курс по теме, уровню, времени и цене без потери контекста фильтров.",
+      "components": [
+        "Navigation/Header",
+        "Section/Header",
+        "Input/Search",
+        "Filter/Group",
+        "Filter/Chip",
+        "Select",
+        "Discovery/Section",
+        "Course/Card",
+        "Pagination",
+        "LoadMore",
+        "Page/State"
+      ],
+      "desktopLayout": "Контент1280, 12колонок. Заголовок и поиск на12; каталог ниже: sidebar296 (3кол) + results960 (9кол), gap24. Results3колонки по304; artwork640:300. До активного поиска — компактные editorial группы «Популярные», «Со скидкой», «Новые», «Рекомендуем» (каждая до3видимых карточек + «Все»). Затем «Все курсы» с20инстансами в fixture. При запросе/фильтре только общий results grid, без дублирующих подборок.",
+      "mobileLayout": "360/390: padding16, поиск328/358, строка «Фильтры (N)» + sort44px, results1колонка. Фильтры в полноэкранном drawer с независимым скроллом, закреплёнными «Сбросить» / «Показать N курсов». Выбранные chips переносятся на строки. Подборки вертикальные, не скрытый горизонтальный carousel.",
+      "primaryAction": "Открыть курс",
+      "secondaryActions": [
+        "Очистить фильтры",
+        "Показать ещё",
+        "Перейти к странице"
+      ],
+      "contentExample": "Курсы / «Практика по языкам, инструментам и инженерным задачам». Search «Найти курс». Заголовок results «Найдено 20 курсов».",
+      "visibilityAndLogic": "8групп фильтров: category multi, difficulty multi, technology multi, duration ranges, price min/max, free/paid, new boolean, discounted boolean. 5sort: popular,newest,price_asc,price_desc,difficulty. URL хранит query/filter/sort/page; возврат из курса восстанавливает скролл. OR внутри группы, AND между группами. Пользовательская сортировка не сбрасывается на ввод. Search debounce250ms, Enter немедленно. Доступность и прогресс независимы от sale/new/popular. Discount только приoldPrice>price; free=0 не «Скидка100%».",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Loading первой страницы:6skeleton. Следующая страница: footer loader, старые карточки доступны. No search «По запросу “ruts” курсов нет» + «Очистить поиск». Filters empty «Нет курсов с такими условиями» + сброс. Pagination и Load more — альтернативные presentation одного контракта, не два конкурирующих набора сразу. Page size20, totalдинамический; snapshot содержит20, не limitсистемы."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "course-overview",
+      "title": "Курс до покупки",
+      "route": "/courses/[slug]",
+      "routeStatus": "existing route; expanded view proposed",
+      "access": "public",
+      "figmaPage": "04 / Store",
+      "kind": "page",
+      "parentId": "store-catalog",
+      "goal": "Понять результат курса, программу и цену до покупки.",
+      "components": [
+        "Breadcrumbs",
+        "Course/Artwork",
+        "Course/Icon",
+        "Course/Meta",
+        "Payment/Price",
+        "Button/Primary",
+        "Accordion",
+        "Module/Card",
+        "Learning/Format",
+        "Course/Requirements"
+      ],
+      "desktopLayout": "Hero: 7кол описание + 5кол artwork и purchase panel; контент1280. Купить не скрывать ниже fold: название≤3строк, facts одной переносимой строкой, CTA48. Ниже основная колонка840 и sticky aside416 с ценой после выходаhero. Секции01About,02Skills,03Program,04Format,05Included,06Requirements,07ForWhom,08FinalCTA. Module accordion строка96min, expanded lessons без искусственного ограничения.",
+      "mobileLayout": "Artwork перед короткими facts, H132/38, покупка после описания. Summary без sticky sidebar. Нижняя sticky CTA допустима только после hero и не закрывает контент: safe-area+72pxreserve; рядом полная текущая цена, полная цена также у кнопки.",
+      "primaryAction": "Купить курс → /checkout?course=slug",
+      "secondaryActions": [
+        "Открыть вводный урок",
+        "К программе"
+      ],
+      "contentExample": "«Java Backend». «Коллекции, HTTP, работа с данными и проверка решений на практических задачах». «Что вы освоите»: выбирать коллекции, строить API, находить причины ошибок.",
+      "visibilityAndLogic": "При access=owned primary «Продолжить обучение», цена остаётся только в истории заказа, вторичная «Программа». Preview доступен только у отмеченных lesson. Locked показывает причину и цену, но раскрытие названий программы разрешено. Rating slot скрыт до реальных оценок; нет выдуманных рейтингов.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Loading сохраняетheroheight. Coming soon: «Курс готовится», purchase disabled + фактическая доступная альтернатива. 404 неизвестныйslug. Ошибка цены/доступа не показывает ложное «Купить»: retry соответствующего блока. Free CTA «Начать бесплатно» с безопасной authredirect."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "auth-login",
+      "title": "Вход",
+      "route": "/login",
+      "routeStatus": "existing; current identifier username",
+      "access": "public",
+      "figmaPage": "05 / Auth",
+      "kind": "page",
+      "parentId": "public-home",
+      "goal": "Войти и вернуться к сохранённой цели.",
+      "components": [
+        "Auth/Shell",
+        "Input/Text",
+        "Input/Password",
+        "Button/Primary",
+        "Alert",
+        "SocialAuth/Slot"
+      ],
+      "desktopLayout": "Форма448px на левой6кол, справа статическая фрагментарная coursegeometry; панель почти чёрная без glass. Верх logo + «На главную». Заголовок32. Поля48, gap20.",
+      "mobileLayout": "Одноколоночная форма328/358, без декоративной колонны. Кнопка48fullwidth. Password toggle44. Клавиатура не перекрывает сообщение; submit не fixed.",
+      "primaryAction": "Войти",
+      "secondaryActions": [
+        "Создать аккаунт",
+        "Забыли пароль?"
+      ],
+      "contentExample": "«Вход в QLC». Label «Имя пользователя» в совместимом режиме; «Email» только в будущем authvariant. «Пароль».",
+      "visibilityAndLogic": "Сохранить текущий username login, не заменить его молча email. Будущий identifier=email|username параметр. Password visibility не очищает значение. Google/GitHub только optionaldisabledslots до подключения; существующий Telegram — отдельный supportedslot. Return URL только внутренний allowlisted, ошибка не раскрывает существование аккаунта.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Invalid credentials: «Не удалось войти. Проверьте данные». Processing блокирует повторную отправку, поля остаются читаемы. Network error сretry без потериidentifier, пароль не логируется. Успешный вход→safe return или/my-learning. Signed-in visits→dashboard."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "auth-register",
+      "title": "Регистрация",
+      "route": "/register",
+      "routeStatus": "existing",
+      "access": "public",
+      "figmaPage": "05 / Auth",
+      "kind": "page",
+      "parentId": "auth-login",
+      "goal": "Создать учётную запись без потери выбранного курса.",
+      "components": [
+        "Auth/Shell",
+        "Input/Text",
+        "Input/Email",
+        "Input/Password",
+        "Checkbox",
+        "Form/Errors",
+        "SocialAuth/Slot"
+      ],
+      "desktopLayout": "Authform480px, поля username,email,password,confirmation. Passwordhelpпередsubmit, условия одной компактной группой. Не добавлять необоснованные профилирующие поля.",
+      "mobileLayout": "Какlogin; длинные legal labels переносятся, checkbox имеет44target. Ошибки резервируют строку без перекрытия соседнего поля.",
+      "primaryAction": "Создать аккаунт",
+      "secondaryActions": [
+        "Уже есть аккаунт? Войти"
+      ],
+      "contentExample": "«Создать аккаунт». «Имя пользователя», «Email», «Пароль», «Повторите пароль».",
+      "visibilityAndLogic": "Validation onblur/submit, не кричатьerrorнапервомнажатии. Правила пароля братьизbackendpolicy. Поддержать pending emailverification какбудущийсценарий. Подписка нарассылку не предвыбрана и не нужнапоумолчанию.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Fieldinvalid показываетсяпо месту+focusfirstinvalid. Emailconflictтекстпоauthpolicy. Submitbusy+повторблокирован. Успехлибоloginreturn,либоверификациявзависимостиотреальногопотока."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "auth-forgot",
+      "title": "Восстановление пароля",
+      "route": "/forgot-password",
+      "routeStatus": "proposed",
+      "access": "public",
+      "figmaPage": "05 / Auth",
+      "kind": "page",
+      "parentId": "auth-login",
+      "goal": "Запросить письмо для восстановления.",
+      "components": [
+        "Auth/Shell",
+        "Input/Email",
+        "Button/Primary",
+        "Alert"
+      ],
+      "desktopLayout": "Центрированнаяформа448, logoиback, короткоепояснение.",
+      "mobileLayout": "328/358ширина; всеэлементывпотоке, экраннефиксируетсяпоheight.",
+      "primaryAction": "Отправить письмо",
+      "secondaryActions": [
+        "Вернуться ко входу"
+      ],
+      "contentExample": "«Восстановить пароль». «Укажите email, который использовали при регистрации».",
+      "visibilityAndLogic": "Ответнеподтверждаетналичиеemail. Rate-limitпоказываетвремяразрешённойповторнойотправкибезфальшивоготаймера.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Послеотправки: «Если аккаунт с таким адресом есть, мы отправили письмо». Retryпослекулдауна; networkfailureсохраняетemail."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "auth-reset",
+      "title": "Новый пароль",
+      "route": "/reset-password?token=…",
+      "routeStatus": "proposed",
+      "access": "public",
+      "figmaPage": "05 / Auth",
+      "kind": "page",
+      "parentId": "auth-forgot",
+      "goal": "Безопасно завершить восстановление.",
+      "components": [
+        "Auth/Shell",
+        "Input/Password",
+        "Alert",
+        "Page/State"
+      ],
+      "desktopLayout": "Форма448; дваполяпароля; пояснениевыходаизстарыхсессийеслиподдержано.",
+      "mobileLayout": "Одноколоночно; toggle44; нетавтофокусаоткрывающегоклавиатурубезнеобходимости.",
+      "primaryAction": "Сохранить пароль",
+      "secondaryActions": [
+        "Запросить новую ссылку"
+      ],
+      "contentExample": "«Новый пароль». «Повторите новый пароль». Успех «Пароль обновлён. Теперь можно войти».",
+      "visibilityAndLogic": "Tokenобрабатываетсяприложением,непоказываетсявтекстах/логах. Недействительнаяилиистёкшаяссылкаведётнаforgot. Сохранениенезначитавтоматическийвходеслиbackendтакнерасположен.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Tokenloading; expired/invalidstate+requestnew. SuccessсCTA«Войти». Formerrorнеобнуляетполя."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "auth-verification",
+      "title": "Подтверждение email",
+      "route": "/verify-email",
+      "routeStatus": "proposed",
+      "access": "public",
+      "figmaPage": "05 / Auth",
+      "kind": "page",
+      "parentId": "auth-register",
+      "goal": "Объяснить следующее действие после регистрации.",
+      "components": [
+        "Auth/Shell",
+        "Verification/Status",
+        "Button",
+        "Alert"
+      ],
+      "desktopLayout": "Колонка480смалойгеометрическойметкой; emailмаскируетсяпри необходимости.",
+      "mobileLayout": "ПояснениеиCTAвпотоке, «Отправить ещё раз»44target.",
+      "primaryAction": "Отправить письмо ещё раз",
+      "secondaryActions": [
+        "Изменить email",
+        "Вернуться ко входу"
+      ],
+      "contentExample": "«Подтвердите email». «Откройте ссылку в письме, чтобы завершить регистрацию».",
+      "visibilityAndLogic": "ResendкулдаунсserverretryAfter, nohardcoded60еслиAPIдругое. Изменитьemailтолькоприавторизованномpendingаккаунте.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Pending,resent,expired,ratelimited,networkerror. КодовыйinputoptionalтолькоприOTPbackend; основнойflowlink."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "auth-verification-success",
+      "title": "Email подтверждён",
+      "route": "/verify-email/success",
+      "routeStatus": "proposed",
+      "access": "public",
+      "figmaPage": "05 / Auth",
+      "kind": "page",
+      "parentId": "auth-verification",
+      "goal": "Понятно завершить верификацию.",
+      "components": [
+        "Auth/Shell",
+        "Verification/Status",
+        "Button/Primary"
+      ],
+      "desktopLayout": "Небольшойорбитальныйсимволсинтетическойсистемы, текстикнопка; неогромнаязелёнаягалка.",
+      "mobileLayout": "Центрированныйконтентсвыравниваниемтекставлево, CTAfullwidth.",
+      "primaryAction": "Продолжить",
+      "secondaryActions": [
+        "Выбрать курс"
+      ],
+      "contentExample": "«Email подтверждён». «Можно продолжить обучение в QLC».",
+      "visibilityAndLogic": "Перейтиксохранённойцелиеслионасуществует; guest→loginсreturn; signed-in→dashboard.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Повторнопосещённаяссылканеошибкаеслиужеverified. Failedtoken→verificationwithreason."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "dashboard",
+      "title": "Моё обучение",
+      "route": "/my-learning",
+      "routeStatus": "proposed; current progress entry /profile",
+      "access": "authenticated",
+      "figmaPage": "07 / Learning",
+      "kind": "page",
+      "parentId": "public-home",
+      "goal": "Показать следующее осмысленное действие и состояние активного обучения.",
+      "components": [
+        "Navigation/Header",
+        "Profile/UserMini",
+        "Level/Badge",
+        "Progress/XP",
+        "Course/Progress",
+        "Activity/Card",
+        "Review/Card",
+        "Achievement/Card",
+        "Activity/Timeline"
+      ],
+      "desktopLayout": "1280, 8колleft +4colsummary, gap24. ContinueLearningглавныйблок; справаXP/уровень. Ниже Today2×2activity; ReviewDue; ActiveCoursesлист; NearAchievementsкомпактногалереей; RecentActivity. Sectiontitles24–28; однамаленькаятехническаяметканасекцию, нешумвкаждойстроке.",
+      "mobileLayout": "Order: greetingcompact→continue→XPsummary→today→reviewdue→activecourses→nearachievements→recentactivity. Карточкиполнойширины; summaryможносвернутьпослепервогопосещенияявнойкнопкой.",
+      "primaryAction": "Продолжить HashMap",
+      "secondaryActions": [
+        "Все мои курсы",
+        "Открыть повторение"
+      ],
+      "contentExample": "«Продолжить: Java Backend / Коллекции / HashMap». «Сегодня»: HashMap·12мин; «Сводка заказов»·TRANSFER; «equals и hashCode»·Повторить; «Рост задержки API»·INCIDENT.",
+      "visibilityAndLogic": "Continueосновываетсянапоследнейдоступнойактивности, ненарандомномкурсе. Todayнеобязательныйпланбезштрафа. Streakпоказыватьтолькоприналичииданных. Недоступныеfutureactivitiesскрыватьfeatureflag. Каждыйразделимеетнезависимыеданные.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Новыйпрофиль: «Вы ещё не начали обучение» +catalog; XP0свалиднымпорогом. Noreviewскрываетreviewsectionспокойным«Повторений пока нет»вдетальнойочереди. Activityerrorнеблокируетcontinue. Конфликтдоступавcontinue→coursewithaccessnotice."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "profile-overview",
+      "title": "Профиль / Обзор",
+      "route": "/profile?tab=overview",
+      "routeStatus": "existing route; tab proposed",
+      "access": "authenticated",
+      "figmaPage": "06 / Profile",
+      "kind": "page",
+      "parentId": "dashboard",
+      "goal": "Увидеть профиль, уровень и общую статистику без соревнования за интерфейсное место.",
+      "components": [
+        "Profile/Header",
+        "Avatar",
+        "Level/Badge",
+        "Progress/XP",
+        "Profile/Stats",
+        "Tabs",
+        "Course/Progress",
+        "Achievement/Card"
+      ],
+      "desktopLayout": "Profileheader12кол: avatar88,name/username/date6кол, XP5кол. Ниже5tabs, далее8колoverview+4колsummary. Statsшестьравныхячееквслабойлинейнойсетке, незелёныеогромныеплашки.",
+      "mobileLayout": "Avatar64сnameпотомXPfullwidth. 5tabsоднаскроллируемаястрокасвидимымкраемследующего, доступнатакжекнопка«Разделы профиля». Stats2колонки; цифрырастутвертикально, нелезутзаэкран.",
+      "primaryAction": "Продолжить обучение",
+      "secondaryActions": [
+        "Редактировать профиль",
+        "Все достижения"
+      ],
+      "contentExample": "«Алексей», @alexdev, «В QLC с 12 апреля 2026». LEVEL12. 2840 /3500XP; всего21840XP. 2курса,43урока,86задач,4инцидента,12достижений — независимыйdemoнабор.",
+      "visibilityAndLogic": "5tabs: «Обзор», «Мой прогресс», «Достижения», «Активность», «Настройки». TabURLиBackсохраняются. Registrationdate/XP/avatarновые поля. Usernameвыводитсяцеликомилипереноситсясbreak-anywhere, ненакладываетсянаlevel.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Loadingprofileheaderструктурный; statsunknown«—», ненеобоснованный0. Emptyoverviewпредлагаетпервыйкурс. Avatarerror→initials. 401→loginwithreturn. Privateprofileневыдаётчужиеданные."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "profile-progress",
+      "title": "Мой прогресс",
+      "route": "/profile?tab=progress",
+      "routeStatus": "existing progress surface; expanded tab proposed",
+      "access": "authenticated",
+      "figmaPage": "06 / Profile",
+      "kind": "page",
+      "parentId": "profile-overview",
+      "goal": "Найти активный курс и понять, что уже завершено и что требует внимания.",
+      "components": [
+        "Profile/Header",
+        "Tabs",
+        "Course/Progress",
+        "Module/Card",
+        "Lesson/Row",
+        "Progress/Course",
+        "Progress/Module",
+        "Progress/Lesson",
+        "Select"
+      ],
+      "desktopLayout": "Основнойлисткурсшириной1280; collapsedcard: thumbnail160,bodyflex,progress224,CTA144. Expandedмодулиподкурсомвотдельномвложенномстеке. Толькокурссодержитart, lessonrowsспокойные.",
+      "mobileLayout": "Coursecardстек: icon/title→currentlesson→progress→counts+XP→CTA44. Expansionмодулейоднаколонка, lessonrow2lineсметаданными. Триуровнявложенностинеобозначать32pxотступомкаждый: max16pxсветкаялиния.",
+      "primaryAction": "Продолжить",
+      "secondaryActions": [
+        "Развернуть модули",
+        "Все курсы"
+      ],
+      "contentExample": "«Java Backend», 43/60 завершено,72%label, fill71.6667%. «Коллекции / HashMap».1840XP. Вложенные «Основы Java»100%; «Коллекции»72%; «Работа с API»31% — процентыдемоматрицы.",
+      "visibilityAndLogic": "Courseprogressиlessonreadingнеравнозначны. ExistingDTOсчитаетacceptedtasks; дорасширенияпродуктовыхданныхподпись«Решено X из Y задач». Lessoncompletedcurrentlockedreviewdueимеютиконку+текст. Collapseхранитсостояниевсессии; страницыпагинируютсяпосле20курсов, expandedchildrenlazyloaded.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Noactive: «Активных курсов пока нет» +catalog, completedтаб/фильтрдоступен. Errorchildrenлокальнаяretryrow. Потерядоступаобъясняетlocked, невыдаётпотерянныйпрогресс. Resetprogressнепредусмотренбезявнойфункции."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "profile-achievements",
+      "title": "Достижения",
+      "route": "/profile?tab=achievements",
+      "routeStatus": "proposed",
+      "access": "authenticated",
+      "figmaPage": "06 / Profile",
+      "kind": "page",
+      "parentId": "profile-overview",
+      "goal": "Просматривать коллекцию любого размера и понимать путь к следующему достижению.",
+      "components": [
+        "Profile/Header",
+        "Tabs",
+        "Achievement/Card",
+        "Achievement/Grid",
+        "Achievement/Progress",
+        "Filter/Chip",
+        "Select",
+        "Pagination",
+        "Achievement/Detail"
+      ],
+      "desktopLayout": "1280,headercount+filters+sort, grid4кол по302gap24. Символ128вкарточке, текст16, описание2–3строки. Rarityмикробейдж, нецелаяцветнаяподложка. Передспискомoptional2близкихкзавершению; списокнеfixedlength.",
+      "mobileLayout": "Grid2колонкина360покомпактномуAchievement/Card(min156), либоlisttoggleдляподробностей. Вcompactиконка64,title14≤3строк, reward/числопрогрессавидимо; описаниевdetaildrawer. Фильтрыdrawer; карточкався44minclickarea.",
+      "primaryAction": "Открыть достижение",
+      "secondaryActions": [
+        "Показать полученные",
+        "Сбросить фильтры"
+      ],
+      "contentExample": "«Достижения»,12получено. «Поиск причины»: исправить10ошибок;7/10,70%,+120XP. «Первое решение»: получено8сентября2026.",
+      "visibilityAndLogic": "CategoriesLearning,Coding,Courses,Incidents,Reviews,Streak,XP,Special,Hidden — реестр, неварианткартынатег. Statusall/unlocked/locked/inprogress+categorymulti; sortrecent/progress/rarity. Secretпоказываетнейтральныйglyph/title«Скрытое достижение», безспойлерацели/наградыеслиониsecret. Tierтекстовыйslotбезmax. Pagination24cursor, тысячиitemsнеодновременновDOM.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Нетполученных: «Здесь появятся ваши достижения» +первыйурок; списокдоступныхцелейостаётся. Emptyfilterclear. Newlyunlockedкороткийконтур+toast, затемunlocked; reduce-motionстатично. Lockedнеdisabledcard: условияоткрываются. Необъявлятьредкостьгарантиейуспеха."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "profile-activity",
+      "title": "Профиль / Активность",
+      "route": "/profile?tab=activity",
+      "routeStatus": "proposed",
+      "access": "authenticated",
+      "figmaPage": "06 / Profile",
+      "kind": "page",
+      "parentId": "profile-overview",
+      "goal": "Просмотреть факты учебной активности и начисления XP.",
+      "components": [
+        "Profile/Header",
+        "Tabs",
+        "Activity/Timeline",
+        "Filter/Chip",
+        "XP/Reward",
+        "LoadMore"
+      ],
+      "desktopLayout": "Timeline8кол, справа4colпериод+summary. Группыдня, строки64min:typeicon32,описаниеflex,time+XPright. Деталинебольшимраскрытием, неновымиплашками.",
+      "mobileLayout": "Однаколонка, датакакsectionlabel, времяиXPвторойстрокой. Фильтры2контроланаоднойстроке.",
+      "primaryAction": "Открыть активность",
+      "secondaryActions": [
+        "Загрузить ещё",
+        "Изменить период"
+      ],
+      "contentExample": "«Сегодня, 9 сентября». «Решена задача “Две суммы”» +120XP. «Завершён урок “HashMap”» +25XP.",
+      "visibilityAndLogic": "Нисходящийcursorпоtime+id, неoffsetприпоступленииновыхсобытий. XPrefund/correctionотдельноописан, нескрыт. Персональнаяисторияпоauth. Текущаядатаfixtureфиксирована, невыдаётсязаливеданные.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Noactivity→«История пока пуста» +continue. Pagederrorretryfooter. Удалённаяактивностьостаётсяфактомбезбитоголинка: «Материал недоступен»."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "profile-settings",
+      "title": "Настройки профиля",
+      "route": "/profile?tab=settings",
+      "routeStatus": "existing identity display; editing proposed",
+      "access": "authenticated",
+      "figmaPage": "06 / Profile",
+      "kind": "page",
+      "parentId": "profile-overview",
+      "goal": "Управлять личными данными и предпочтениями с понятным сохранением.",
+      "components": [
+        "Profile/Header",
+        "Tabs",
+        "Avatar/Upload",
+        "Input",
+        "Switch",
+        "Select",
+        "Button",
+        "Modal/Confirm",
+        "Payment/History"
+      ],
+      "desktopLayout": "Форма7кол, справа5colкороткиепояснения. Секции«Профиль»,«Уведомления»,«Доступность»,«Безопасность»; paymenthistoryoptionalcollapse. КаждаясекцияссобственнымsaveеслиAPIчастичное.",
+      "mobileLayout": "Fullwidthform, действиявпотоке. Avatarpickeropensnativeflowlater. Dangersectionвконцептеотсутствуетеслинетbackenddeletion.",
+      "primaryAction": "Сохранить изменения",
+      "secondaryActions": [
+        "Отменить изменения",
+        "Изменить пароль"
+      ],
+      "contentExample": "«Отображаемое имя», «Имя пользователя», «Email». «Уменьшить анимацию». «Письма о повторении».",
+      "visibilityAndLogic": "Нередактироватьemailбезverificationflow. Unsavedchangesпринавигации→discardconfirm; кнопкаОтменаоткатываетлокально. Имя/аватар/preferenceAPIsбудущие. Paymenthistoryнетзаказов→«Покупок пока нет», но этоoptionalподсекция.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Savebusy, fieldvalidation, serverconflict, success«Изменения сохранены». Failedsaveсохраняетввод. Discardconfirm«Отменить изменения?» +«Продолжить редактирование». Offlineсохранениеdisabledсвидимойпричиной."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "purchased-course",
+      "title": "Купленный курс",
+      "route": "/courses/[slug]?view=learning",
+      "routeStatus": "existing /courses/[slug] access branch; query proposed",
+      "access": "authenticated/access",
+      "figmaPage": "07 / Learning",
+      "kind": "page",
+      "parentId": "course-overview",
+      "goal": "Продолжить курс и видеть всю учебную программу.",
+      "components": [
+        "Course/Header",
+        "Course/Icon",
+        "Progress/Course",
+        "XP/Summary",
+        "Module/Card",
+        "Lesson/Row",
+        "Review/Card"
+      ],
+      "desktopLayout": "Courseheader12колсartthumbnailсправа4; summaryprogressinline. Списокmodules8кол, aside4сcontinue/currentpath/skills. Не повторятьмаркетинговыйheroсценойспокупкой.",
+      "mobileLayout": "Headericon48,title28,progress/counts,continuefullwidth; modulesоднаколонка. Asideпереноситсявпорядокпослеsummary; skilldetailscollapse.",
+      "primaryAction": "Продолжить текущий урок",
+      "secondaryActions": [
+        "Программа курса",
+        "Повторить тему"
+      ],
+      "contentExample": "«Java Backend» /43из60 завершено /1840XP. «Следующий урок: HashMap».",
+      "visibilityAndLogic": "При100%primary«Повторить материал»или«Открыть итоговый проект»еслионещёнезавершён; неложныйcontinue. Modulelockнезначитнельзяпосмотретьсодержание. Enrollmentдоступпроверяетсяbackend. Viewrouteproposalнеобязательнаприинтеграции.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Loadingпрограммы; nocontent«Программа готовится»; expiredaccessnoticeссохранённымпрогрессом. Reviewdueвмодулеможетсосуществоватьсcompleted; splitstatus/accessнеоднаперечислимаяось."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "module-selection",
+      "title": "Модуль / Список занятий",
+      "route": "/courses/[slug]?module=[moduleId]",
+      "routeStatus": "proposed deep link on existing course route",
+      "access": "authenticated/access",
+      "figmaPage": "07 / Learning",
+      "kind": "page",
+      "parentId": "purchased-course",
+      "goal": "Выбрать занятие внутри модуля и понять порядок доступности.",
+      "components": [
+        "Breadcrumbs",
+        "Module/Header",
+        "Progress/Module",
+        "Lesson/Row",
+        "Activity/Card",
+        "Module/Navigation"
+      ],
+      "desktopLayout": "Навигация288слева+968контент; moduleheaderprogress; lessonsтабличныйсписоксколонкамиtype/title,duration,XP,status. Rowmin72; текстможетувеличитьвысоту.",
+      "mobileLayout": "Кнопка«Модули»drawer; headerиlessonrowsstack. Type16icon+label, titleflex;duration/XPниже. Нетсжатойdesktopтаблицы.",
+      "primaryAction": "Открыть занятие",
+      "secondaryActions": [
+        "Предыдущий модуль",
+        "Следующий модуль"
+      ],
+      "contentExample": "«Модуль 05 / Коллекции». «Списки, множества и соответствие ключей значениям». «HashMap»·Теория·12мин·25XP·В процессе.",
+      "visibilityAndLogic": "TypesTHEORY/TASK/QUIZ/TRANSFER/CODE_REVIEW/INCIDENT/PROJECTизреестра. Последовательностьспроектирована,нопереходмеждуразблокированнымиурокамисвободный. Currentstatusтолькодлятекущеговучебномконтексте, ненавсехпосещённых.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Lockedlessonпоказывает«Завершите …»ссылку; недоступностьнепоцвету. Emptyprogram/errorretry. Reorderingотbackendстабильнопоid; текущийурокненазначаетсяиндексом."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "lesson",
+      "title": "Урок / Материал",
+      "route": "/lessons/[id]",
+      "routeStatus": "existing; block library expanded",
+      "access": "authenticated/access or allowed preview",
+      "figmaPage": "07 / Learning",
+      "kind": "page",
+      "parentId": "module-selection",
+      "goal": "Спокойно прочитать материал и перейти к связанной практике.",
+      "components": [
+        "Breadcrumbs",
+        "Learning/Sidebar",
+        "Lesson/Header",
+        "Lesson/Block",
+        "Code/Block",
+        "Lesson/Navigation",
+        "Progress/Lesson",
+        "XP/Reward"
+      ],
+      "desktopLayout": "1280:sidebar264+gap32+readingmax760+остатокполя. Body17/28,max75знаковстрока. H132/40. 16типовблоковописанывcontent-examples.md. Topstickybreadcrumbнеболее56; sidebarимеетсобственныйscrollприviewportheight.",
+      "mobileLayout": "Padding16; навигациячерез«Содержание модуля»drawer. Readingwidth328/358,body16/26. Кодитаблицыскроллятсятольковнутриблока. Footer«Назад»и«Далее»в2колонки44, «Завершить»отдельнойстрокойеслиявнонеобходим.",
+      "primaryAction": "Перейти к практике / Завершить урок",
+      "secondaryActions": [
+        "Предыдущий урок",
+        "Следующий урок",
+        "Содержание модуля"
+      ],
+      "contentExample": "«HashMap: ключи и значения». «HashMap хранит значение по ключу. Когда ключ уже есть, put заменяет связанное значение». +25XP,12мин.",
+      "visibilityAndLogic": "Completionявноеилиподтверждённоеactivityrule, неавтоматический100%отscroll. Readprogressиtaskprogressразделены. Exercise linkназадачуэтогоурока. Previewневыдаётзакрытыйконтент. Reviewdueнеобнуляетcompletion. Positionвозвратапослезадачисохраняется.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Loadingcontentзаголовоксkeleton, sidebarнезависим. Notfound,locked403собъяснением, contenterrorretry. Offlinecachedcontentтолькосмаркером. Markcompletedbusyидемпотентный; failedостаётсявпредыдущемсостоянии. Embedblockedимеетссылкуилитекстовыйfallback."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "coding-task",
+      "title": "Задача / Код",
+      "route": "/lessons/[id]?tab=practice&task=[taskId]",
+      "routeStatus": "existing lesson practice; query convention proposed",
+      "access": "guest editor; authenticated submit/access",
+      "figmaPage": "08 / Tasks",
+      "kind": "page",
+      "parentId": "lesson",
+      "goal": "Решить задачу в существующем Monaco и получить честный результат проверки.",
+      "components": [
+        "Breadcrumbs",
+        "Task/Brief",
+        "Editor/ExistingMonacoShell",
+        "Task/Toolbar",
+        "Task/Status",
+        "Task/Result",
+        "Code/Block",
+        "Tabs",
+        "Modal/Confirm"
+      ],
+      "desktopLayout": "1280workspace:brief475(38%послеgap)+gap24+editor781(62%). Перетаскиваемыйsplitoptionalбудущий, minbrief360/mineditor600, fallbacktabsниже1100. Monacoсуществующий; filebar48,toolbar48,editorнепересоздаётсяприlayoutchange. Console/resultslotнижесfixedmin160, workspaceverticalscrollосмысленный.",
+      "mobileLayout": "Табы «Задача / Код / Результат»44, stickyподheader56. Monaco min-width0,width100%,heightclamp340..640 или50dvhпо существующемуповедению. Сменаtabнеразмонтируетeditorиdraft. Кодмонопространственный14/23; неужиматьшрифт. ФайлMain.java,фиксированныйязык21.",
+      "primaryAction": "Проверить решение (existing)",
+      "secondaryActions": [
+        "Сбросить код (confirm)",
+        "Обновить статус (existing)",
+        "Запустить (future)",
+        "Полный экран (future)"
+      ],
+      "contentExample": "«Задача014 / Две суммы». «Верните индексы двух различных элементов, сумма которых равна target». Средняя·25мин·120XP. Accepted: «Решение принято»,18/18tests,+120XP.",
+      "visibilityAndLogic": "Existing:Java21/C++23позадаче,localdrafttaskId+testversion,resetstarter,bytecap65535,submit+polling/resume,runtime/memory/safelog. Run/stdin/fullscreen/tabsConsoleTestsиindividualexpectedactual — planned optionalslots, скрытывcompatibilitymode. Никакихprivatejudgefixtures. FutureRunнедаётXP/accepted; толькоSubmit. Прохождениепроцессаqueued→compiling→runningобновляетсяпоserver, непридумываетсятаймером.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Всефазы:idle,submitting,queued,compiling,running,accepted,wrong_answer,compilation_error,runtime_error,time_limit,memory_limit,output_limit,network_error,infrastructure_error,cancelled,unknown. Busyзапрещаетповторsubmit/reset, codeeditingсохраняетновыйdraftнезависимоотsnapshotпроверки. Networkpollfail«Связь прервана — проверить статус»неозначаетwronganswer. GuestCTAloginreturn; resetconfirmпредупреждаетзаменукода. Unknownsafeописание+submissionid."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "transfer-task",
+      "title": "Перенос навыка",
+      "route": "/activities/transfer/[id]",
+      "routeStatus": "proposed, no current DTO",
+      "access": "authenticated/access",
+      "figmaPage": "08 / Tasks",
+      "kind": "page",
+      "parentId": "module-selection",
+      "goal": "Применить знания к незнакомой ситуации без подсказки технологии.",
+      "components": [
+        "Activity/Header",
+        "Transfer/Brief",
+        "Transfer/Constraints",
+        "Submission/Composer",
+        "Task/Result",
+        "Details/Explanation"
+      ],
+      "desktopLayout": "Brief5кол, workspace7кол. MarkerTRANSFER / UNGUIDED — единичныйmicrolabel. Ситуация, результат, ограничения, optionalenvironment; submissionвидзависитотданных(code/text/link/files).",
+      "mobileLayout": "Ситуациявпервомtab, «Решение»вторым; длякороткойтекстовойформыоднастраница. Результатпослеsubmitотдельныйtabсbadge.",
+      "primaryAction": "Отправить решение",
+      "secondaryActions": [
+        "Сохранить черновик",
+        "Посмотреть условия"
+      ],
+      "contentExample": "«Сводка заказов». «Сервис получает повторяющиеся события об оплате. Подготовьте обработку, при которой заказ учитывается один раз». Результат: корректная сумма за день; ограничения: порядок событий произвольный.",
+      "visibilityAndLogic": "Неозвучивать«используйтеHashMap/Redis»дозавершения. Expectedresultописываетнаблюдаемоеповедение. Rubricчастичнооткрываетсяпослеsubmittedпоpolicy; reviewпоказываетобратнуюсвязьнеполныйответприограниченныхattempts. Dataslottechnologyhintотсутствует.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "available,in_progress,submitted,accepted,failed,review. Emptydraftнеотправляетсясобъяснением. Submittedзамораживаетпроверяемыйsnapshot; draftможноскопироватьдляновойпопытки. Upload/neterrorсохраняетлокальноеслиподдержано. Reset/discardconfirm."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "code-review",
+      "title": "Ревью кода",
+      "route": "/activities/review/[id]",
+      "routeStatus": "proposed, no current DTO",
+      "access": "authenticated/access",
+      "figmaPage": "08 / Tasks",
+      "kind": "page",
+      "parentId": "module-selection",
+      "goal": "Найти проблему, объяснить влияние и предложить исправление с привязкой к коду.",
+      "components": [
+        "Activity/Header",
+        "Review/Code",
+        "Review/Finding",
+        "Review/FindingComposer",
+        "Review/Summary",
+        "Task/Result",
+        "Tabs"
+      ],
+      "desktopLayout": "Code8кол, findings4кол. Headerпостановка≤4строк, codearealinenumbersсвыборомдиапазона. Кнопка«Добавить замечание»привязана к selection, но дублируетсявtoolbarдляклавиатуры. Findingsстек, неаннотацииповерхкода.",
+      "mobileLayout": "Tabs«Код / Замечания / Результат». Выбранныйдиапазонфиксируетсяcompactbar«Строки18–21». Composerfullscreen/длинныйdrawer; полявертикально. Вкодедопустимгоризонтальныйвнутреннийscroll.",
+      "primaryAction": "Отправить ревью",
+      "secondaryActions": [
+        "Добавить замечание",
+        "Сохранить черновик"
+      ],
+      "contentExample": "«Проверка обработки платежа». Строки18–21: «Повтор события может увеличить сумму заказа второй раз». КатегорияКорректность, severityHigh, suggestion«Проверять идентификатор события до применения изменения».",
+      "visibilityAndLogic": "Finding{id,file,fromLine,toLine,category,severity,explanation,suggestion?}. Диапазонстабиленкнеизменяемойверсииsnippet. Severityиcategoryнезависятотправильностиfinding. SelectionсShift+стрелкиилидоступнымrangeinput; min44rowinteraction. Missedissuesтолькопослеsubmissionпоpolicy.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "draft/submitted +findingcorrect/incorrect/partially_correct. Result«Найдено3из4проблем»сотдельнойвкладкой«Пропущено»безустногоукора. Duplicatefindingwarnнесilentdelete. Removefindingconfirmеслиестьтекст; submitbusyсохраняетdraft. Backendfailureнетнулевогооценивания."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "incident-list",
+      "title": "Практика / Инциденты",
+      "route": "/incidents",
+      "routeStatus": "proposed, optional hub",
+      "access": "authenticated/access",
+      "figmaPage": "09 / Incidents",
+      "kind": "page",
+      "parentId": "dashboard",
+      "goal": "Найти доступный учебный инцидент и его сложность.",
+      "components": [
+        "Section/Header",
+        "Incident/Card",
+        "Filter/Chip",
+        "Select",
+        "Pagination",
+        "Page/State"
+      ],
+      "desktopLayout": "1280, filterrow, grid3cols; artworkмалыйсинтетическийрагментвверхукарты, dominanttextинцидента. Severityвверхсправа, service/environmentвметаданных.",
+      "mobileLayout": "Одноколонныйлист;filterdrawer,sortelect. CardCTA«Разобрать инцидент»внизу.",
+      "primaryAction": "Разобрать инцидент",
+      "secondaryActions": [
+        "Фильтры",
+        "Вернуться к обучению"
+      ],
+      "contentExample": "INCIDENT0042 / «Рост задержки API заказов». SEV-2,orders-api,учебнаяproductionсреда,35мин,180XP.",
+      "visibilityAndLogic": "Учебнаясредаобозначенаодинразявно; ненастоящийсистемныйинцидентQLC. Severityнеdifficulty. Evidence/actioncontentизfixture. Hubнеобязателендлявходаизурока.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Emptyavailable«Доступных инцидентов пока нет»,filtersclear. Inprogresscard«Продолжить расследование». Completedcardсresultshortcut. Noentitlementlockreason."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "incident-workspace",
+      "title": "Инцидент / Рабочая область",
+      "route": "/incidents/[id]",
+      "routeStatus": "proposed, no current DTO",
+      "access": "authenticated/access",
+      "figmaPage": "09 / Incidents",
+      "kind": "page",
+      "parentId": "incident-list",
+      "goal": "Сопоставить свидетельства, сформулировать гипотезу и диагноз.",
+      "components": [
+        "Incident/Header",
+        "Incident/Brief",
+        "Incident/EvidenceTabs",
+        "Evidence/Viewer",
+        "Terminal/Placeholder",
+        "Incident/Hypothesis",
+        "Textarea",
+        "Task/Status"
+      ],
+      "desktopLayout": "1280:brief3кол296,evidence6кол628,notes3кол296,gap16междумодулямивнутриworkspace. Допускаетсяwideworkspaceдо1600приlargescreenноcanonical1280. Headerid/severity/service/environment/start/statusв2строки. Evidence-tabsна7источниковсoverflowmenu. Notesссекциямиhypothesis/proposedfix. Terminalнижевидимойevidenceвотдельномcollapsiblepane.",
+      "mobileLayout": "Tabsверхнегоуровня «Условия / Данные / Диагноз». В«Данные»selectиз7источниковиviewer, не14узкихtabsscroll. Notes/draftживётмеждусменойtab. Terminalplaceholderreadonly; softkeyboardнеперекрываетsubmit.",
+      "primaryAction": "Отправить диагноз",
+      "secondaryActions": [
+        "Сохранить заметки",
+        "Открыть журнал событий"
+      ],
+      "contentExample": "INCIDENT0042;SEV-2;orders-api;Production (учебная среда);начало14:32;РАССЛЕДОВАНИЕ. «p95 вырос с120мсдо2.4с послерелиза». Гипотеза: «Рост числа запросов к БД на каждый заказ».",
+      "visibilityAndLogic": "7evidenceреестр:Logs,Metrics,Kubernetes,Database,Network,Code,Events. Каждаяимеетloading/empty/error/permission. StatusACTIVE→INVESTIGATING→MITIGATED→RESOLVED;FAILEDтерминалныйрезультатпопытки. НиUIничатнеисполняютреальныеоперационныекоманды;terminalplaceholder. Таймеручебный, сервернаяelapsedtimeнеускоряетсяотtab.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Evidenceempty«В этом сценарии данных нет». Loadingоднойвкладкинезатираетnotes. Submitteddiagnosisfreeze, networkfailurecanretryidempotent. Resetinvestigationтолькосconfirm. Offlineпоказываетcachedfixtures,draftлокальнобеззаявленияcloudsave."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "incident-result",
+      "title": "Инцидент / Разбор",
+      "route": "/incidents/[id]/result/[attemptId]",
+      "routeStatus": "proposed",
+      "access": "authenticated/access",
+      "figmaPage": "09 / Incidents",
+      "kind": "page",
+      "parentId": "incident-workspace",
+      "goal": "Понять причину, оценку диагноза и переносимый навык.",
+      "components": [
+        "Incident/Result",
+        "Task/Status",
+        "XP/Summary",
+        "Skill/Progress",
+        "Evidence/Reference",
+        "Button"
+      ],
+      "desktopLayout": "1280:headerresult,8колrootcause/fix/evidence,4колtime/attempts/XP/skills. Связанныестрокилоговиmetricsссылкивозвращаютвevidencecontext.",
+      "mobileLayout": "Стекresult→rootcause→fix→evidence→numbers→skills→actions. Таблицырезультата2coldefinitionlist.",
+      "primaryAction": "Продолжить обучение",
+      "secondaryActions": [
+        "Вернуться к данным",
+        "Повторить сценарий"
+      ],
+      "contentExample": "«Диагноз подтверждён». Причина: «После релиза список заказов стал делать отдельный запрос для каждой позиции». Исправление: «Загрузить связанные данные одним запросом». 18мин,2попытки,+180XP.",
+      "visibilityAndLogic": "Сравнениеоцениваетsubmittedsnapshot, неподменяетпользовательскийdraft. Rootcauseфиксированныйсценарныйответдоступенпослеусловияраскрытия. XPserverawardedonce, повторныйпросмотрненачисляет. Skillsimprovedобъясняетконкретныетемы.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Resolved/partial/failed, pendingreview. Failedprimary«Повторить попытку», ноавторскийразборпоказываетсяпоattemptpolicy. Неполныеметрики«—», ненеобоснованные0. Resultfetcherrorretry."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "skill-detail",
+      "title": "Навык / Освоение",
+      "route": "/skills/[skillId]",
+      "routeStatus": "proposed",
+      "access": "authenticated",
+      "figmaPage": "07 / Learning",
+      "kind": "page",
+      "parentId": "dashboard",
+      "goal": "Понять текущий этап навыка и доступную практику.",
+      "components": [
+        "SkillProgress/Spiral",
+        "SkillStage",
+        "SkillMasteryBadge",
+        "Review/Card",
+        "Activity/Card"
+      ],
+      "desktopLayout": "HeaderHashMapиmastery, трёхстадийнаягоризонтальнаясхема8кол, aside4сreviewdue. Нижеactivitylistнаследующийэтап. Графикасвязи тонкаялиния, несхематичныйтребовательныйигровойtree.",
+      "mobileLayout": "UNDERSTAND/APPLY/MASTERвертикальныестроки, русскиепояснения. Lockedreasonссылкойнакритерий, неtooltip-only.",
+      "primaryAction": "Продолжить практику",
+      "secondaryActions": [
+        "Открыть материал",
+        "Повторить навык"
+      ],
+      "contentExample": "«HashMap». «Понимание»✓, «Применение»72%, «Самостоятельное решение»Закрыто. Mastery84%, последняяпрактика42дняназад.",
+      "visibilityAndLogic": "Stageslocked/available/current/completed, completioncriteriaизbackend. UIнеобъясняет«пройти три раза»; каждаястадияимеетразныерезультаты. Masteryнеcourseprogressи может снижаться отдавностипоучебноймодели, ноcompletedматериалнеисчезает.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Unknownmastery«Оценка появится после практики». Noactivity«Новая практика пока не назначена». Reviewrefreshedобновляетдатуиmasteryтолькосserverответом. Никакихпустыхlocked безпричины."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "review-queue",
+      "title": "Повторение",
+      "route": "/review",
+      "routeStatus": "proposed",
+      "access": "authenticated",
+      "figmaPage": "07 / Learning",
+      "kind": "page",
+      "parentId": "dashboard",
+      "goal": "Выбрать короткую практику для освежения знаний.",
+      "components": [
+        "Section/Header",
+        "Review/Card",
+        "Filter/Chip",
+        "Activity/Card",
+        "SkillMasteryBadge",
+        "Page/State"
+      ],
+      "desktopLayout": "1280:8колсписок,4колcompactsummary. Itemsимеютskill,mastery,lastpracticed,due,date,duration; избытокдекораубран.",
+      "mobileLayout": "Однаколонка;summaryкороткойстрокой. Кнопка«Повторить»44, длинныеназвания2строки.",
+      "primaryAction": "Повторить тему",
+      "secondaryActions": [
+        "Показать все навыки",
+        "Отложить (optional)"
+      ],
+      "contentExample": "«HashMap»·Освоение84%·Практика42дняназад·Пораповторить·8мин.",
+      "visibilityAndLogic": "due_soon/due/overdue/refreshed — временнаяось, accessотдельно. Sortdueseveritythenplannedtime. Отложитьoptionalеслиbackendподдерживает; никакоговечногосбросаобязательнойработыкнопкой.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Empty«На сегодня повторений нет»+continuecourse. Duecountunknown«—». Refreshedrowврезультатепоказываетдатупрактики. Errorretryбезисчезновенияcachedqueue."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "checkout",
+      "title": "Оформление покупки",
+      "route": "/checkout?course=[slug]",
+      "routeStatus": "existing test flow; real payment designed only",
+      "access": "authenticated or guest contact with auth step",
+      "figmaPage": "10 / Checkout",
+      "kind": "page",
+      "parentId": "course-overview",
+      "goal": "Проверить состав заказа и оплатить понятную итоговую сумму.",
+      "components": [
+        "Checkout/Header",
+        "Input/Email",
+        "Input/Text",
+        "Payment/Method",
+        "Payment/ProviderSlot",
+        "Input/Promo",
+        "Checkbox",
+        "Payment/Summary",
+        "Alert",
+        "Button/Primary"
+      ],
+      "desktopLayout": "1280:form7кол737,summary5кол519;maxform640. Summarystickyподheader80, artwork160×75+icon/title, price/old/discount/promo/totalстроки. Группыcustomer,payment,agreements;providerfieldsизproviderSDKвбудущем, несобственныйсборкарточныхданных.",
+      "mobileLayout": "Порядокcompactorder→contact→method/provider→promo→total→agreement→pay. Summaryнаверхуможетсвернутьсяв«Заказ: Java Backend», полнаясуммаобязательнопередCTA. Нестикиpayпокане проверена высотасофт-клавиатуры; предпочтительнопоток.",
+      "primaryAction": "Оплатить {total} ₽",
+      "secondaryActions": [
+        "Вернуться к курсу",
+        "Изменить способ оплаты"
+      ],
+      "contentExample": "«Оформление покупки». «Java Backend». Email«alex@example.com»,имя«Алексей». «Промокод». «Я принимаю условия покупки».",
+      "visibilityAndLogic": "Текущийrepoтестоваяпокупка, distinctcompatibilitymode«Получить тестовый доступ»безмимикриирелальнойоплаты. Futureemail/name/billingplaceholder/providerсогласоватьсинтеграцией. Promoappliedпересчитываетсервернаяцена; не trustclient. Ценаизменилась→сообщитьиповторноподтвердитьновуюсумму. Processingблокируетduplicatepayments.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Default,validationerror,promovalid,promoinvalid,processing,paymenterror,timeout. Promoinvalid«Промокод не найден»неттостаединственным. Timeout«Статус оплаты уточняется»+checkstatus, не мгновеннаяповторнаяоплатадопроверки. Formvalidationfocusfirst. Cancelnavigationwhileprocessingобъясняетсостояние, но не удерживает пользователянавечно."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "payment-success",
+      "title": "Покупка подтверждена",
+      "route": "/checkout/success?order=[id]",
+      "routeStatus": "proposed; current test purchase redirects profile",
+      "access": "authenticated/order owner",
+      "figmaPage": "10 / Checkout",
+      "kind": "page",
+      "parentId": "checkout",
+      "goal": "Подтвердить оплату и сразу открыть приобретённый курс.",
+      "components": [
+        "Payment/Success",
+        "Course/Icon",
+        "Course/Artwork",
+        "Payment/Receipt",
+        "Button"
+      ],
+      "desktopLayout": "Содержательнаяколонка800сасимметричнымglyph/receipt, black+paper+малыйlime. HeaderPAYMENT / CONFIRMED12mono, H136«Курс доступен». Receiptтаблица2колонки,необщаязелёнаягалочка.",
+      "mobileLayout": "Padding16,иконка64,курсовойart320:150optionalпослеreceipt. Receiptdefinitionlistсwraporderid;CTA48fullwidth, secondary44.",
+      "primaryAction": "Начать обучение",
+      "secondaryActions": [
+        "Мои курсы",
+        "Детали заказа"
+      ],
+      "contentExample": "«Курс успешно куплен». Java Backend. ЗаказQLC-2026-0042. Дата9сентября2026. Ценаизorderfixture,немоковыйсуммарныйподсчёт.",
+      "visibilityAndLogic": "Страницатолькопослеподтверждениясервером, querysuccessнесвидетельствооплаты. Pendingverificationпоказываетprocessingвариант. Receiptполученпоauthowner. Reward+XPзаоплатунепоказыватьбезпродуктовогорешения.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Confirmed,pending,errorfetch,alreadyaccess. Retryloadingreceiptнеповторяетпокупку. Invalidorder404/403. Revisitуспехаидемпотентен."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "payment-failed",
+      "title": "Оплата не завершена",
+      "route": "/checkout/failed?order=[id]",
+      "routeStatus": "proposed",
+      "access": "authenticated/order owner",
+      "figmaPage": "10 / Checkout",
+      "kind": "page",
+      "parentId": "checkout",
+      "goal": "Объяснить подтверждённую ошибку оплаты и безопасные следующие действия.",
+      "components": [
+        "Payment/Failed",
+        "Alert",
+        "Payment/Summary",
+        "Button"
+      ],
+      "desktopLayout": "Колонка800смалойtechnicalstatusметкой; errorсемантическийакцентлокален. Courseinfoисуммаостаются, причинаподзаголовком.",
+      "mobileLayout": "Стекпричина→заказ→retry→changemethod→course; кнопки44+, нетхаотическогоредиректа.",
+      "primaryAction": "Повторить оплату",
+      "secondaryActions": [
+        "Выбрать другой способ",
+        "Вернуться к курсу"
+      ],
+      "contentExample": "PAYMENT / FAILED. «Оплата не прошла». «Банк отклонил операцию. Попробуйте другой способ оплаты».",
+      "visibilityAndLogic": "Retryтолькоприconfirmedfailed/cancelled, аunknown/pending→checkstatus. Reasonбезсырогоstack/providersecret. Необещать«деньги не списаны»безподтвержденияпровайдером.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Failed,cancelled,timeoutunknown. Priceexpired→checkoutсrevalidation. Retrybusyзащищаетотduplicate; authloss→loginreturnsameorder."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "project-task",
+      "title": "Проект",
+      "route": "/activities/project/[id]",
+      "routeStatus": "proposed reusable future extension",
+      "access": "authenticated/access",
+      "figmaPage": "08 / Tasks",
+      "kind": "page",
+      "parentId": "module-selection",
+      "goal": "Собрать самостоятельный результат с критериями и этапами.",
+      "components": [
+        "Activity/Card",
+        "Project/Brief",
+        "Project/Milestone",
+        "Submission/Composer",
+        "Task/Result"
+      ],
+      "desktopLayout": "Brief8кол+rubrex4;milestonesкакaccordion,finalsubmissionвконце. Нетновогонавигационногокаркаса.",
+      "mobileLayout": "Однаколонка,criteriaскладнойdetails;submissionполя48.",
+      "primaryAction": "Отправить проект",
+      "secondaryActions": [
+        "Сохранить черновик",
+        "Открыть критерии"
+      ],
+      "contentExample": "«Сервис каталога». Результат:APIсо списком, фильтромипагинацией. «Критерии: корректные ответы, валидация, обработка ошибок».",
+      "visibilityAndLogic": "НовыйtypeизActivityregistry, неновыйsingle-purposecard. Submissiontext/link/archiveпоcapability, размеры/типыявны. Privacyrepoдоступпроверяетсяпонятносостоянием.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Notstarted,inprogress,submitted,reviewneeded,accepted,changesrequested; uploaderrorсretry. Удалениеfileсconfirmationеслипотеряетсязагрузка."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "quiz-task",
+      "title": "Проверка понимания",
+      "route": "/lessons/[id]?task=[quizId]",
+      "routeStatus": "existing TEST practice; richer quiz proposed",
+      "access": "authenticated/access or preview",
+      "figmaPage": "08 / Tasks",
+      "kind": "page",
+      "parentId": "lesson",
+      "goal": "Проверить понимание небольшими вопросами с объяснением.",
+      "components": [
+        "Activity/Header",
+        "Quiz/Question",
+        "Radio",
+        "Checkbox",
+        "Task/Result",
+        "Lesson/Navigation"
+      ],
+      "desktopLayout": "Основнаяколонка760,sidebarпрогрессвопросовесли>1. Вариантыс48minконтроломиwrapтекста.",
+      "mobileLayout": "Одноколонно; длинныеcodeanswersвконтейнереscroll. Кнопкапроверкидоступнабезугаданнойвысоты.",
+      "primaryAction": "Проверить ответ",
+      "secondaryActions": [
+        "Следующий вопрос",
+        "К материалу"
+      ],
+      "contentExample": "«Что произойдёт, если вызвать put с уже существующим ключом?» Ответ: «Значение будет заменено».",
+      "visibilityAndLogic": "ExistingTESTпоказатьодинвопрос/нескольковариантовкакbackendподдерживает. Numericбудущийcontrolledfieldсобъяснениемформата. Неотмечатьcorrectдопроверки; answersversionstable.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Emptyselectionhelper; submitting; correct; incorrectwithexplanation;partialеслиmulti; networkfailureнеисчерпываетпопыткубезсервернойфиксации."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "achievement-detail",
+      "title": "Достижение / Детали",
+      "route": "/profile?tab=achievements&achievement=[id]",
+      "routeStatus": "proposed deep link overlay",
+      "access": "authenticated",
+      "figmaPage": "06 / Profile",
+      "kind": "overlay",
+      "parentId": "profile-achievements",
+      "goal": "Прочитать условия, прогресс и историю конкретного достижения.",
+      "components": [
+        "Achievement/Icon",
+        "Achievement/Progress",
+        "Modal",
+        "Drawer",
+        "XP/Reward",
+        "Badge"
+      ],
+      "desktopLayout": "Modal640max:icon128left,title/detailsright;progressbelow;relatedactivityCTAoptional. Неотдельнаякопиякарточкинатип.",
+      "mobileLayout": "Drawerполнойширинысmax-heightcalc100dvh-safearea;icon96,scrollbody,close44. Backзакрываетdrawer, неуходитизпрофиля.",
+      "primaryAction": "Перейти к подходящей практике",
+      "secondaryActions": [
+        "Закрыть"
+      ],
+      "contentExample": "«Поиск причины». «Исправьте10ошибок в проверяемых задачах».7/10,+120XP,categoryCoding,rarityRare.",
+      "visibilityAndLogic": "Secretскрываетцель/награду/dateдоunlockеслиpolicy. Dateполноценнаялокализованная. Tierunboundedstring. Mainiconinstance128slotпередмасштабированиемдолженбытьнормализован.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Unknownid→локальная«Достижение недоступно». Unlockedполнаядата; newoptionalafteranimation→steady. Relatedactivitylockedобъяснить."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "level-up",
+      "title": "Новый уровень",
+      "route": "event://level-up",
+      "routeStatus": "proposed transient overlay",
+      "access": "authenticated",
+      "figmaPage": "11 / States",
+      "kind": "overlay",
+      "parentId": "dashboard",
+      "goal": "Коротко сообщить о новом уровне, не прерывая учебную работу.",
+      "components": [
+        "LevelUp/Modal",
+        "Level/Badge",
+        "XP/Summary",
+        "Button",
+        "Toast"
+      ],
+      "desktopLayout": "Modal560, уровень64цифрыадаптируютсяк999+,summaryxp12/16. Artнебольше160и расположенпозадипустойобластибезперекрытиятекста.",
+      "mobileLayout": "Drawer/centeredmodal328,close44;maxheightcalc100dvh-32,content scroll. ПрипечатаниивMonacoавтоматическиmodalнеоткрывать, использоватьtoastс«Подробнее».",
+      "primaryAction": "Продолжить",
+      "secondaryActions": [
+        "Посмотреть прогресс"
+      ],
+      "contentExample": "«Новый уровень:13». «За эту активность:120XP». «До следующего уровня:3380XP».",
+      "visibilityAndLogic": "Хранитьlevelcurrent,nextthreshold,currentlevelxp,totalxpраздельно. Rewardсserveridempotency, повышениенаNуровнейможетоднимсообщением«Уровень12→15». Level999+нелимит; числавfulltext/tooltipдоступныполностью.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Reward+25micro,+120summary;multi-levelup;xpmaxrangeunavailable. Reducedmotionбезчастиц/счётчика, screenreaderоднократно. Dismissнеотменяетнаграду."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    },
+    {
+      "id": "global-states",
+      "title": "Системные страницы и общий сбой",
+      "route": "state://global",
+      "routeStatus": "system templates; implementation varies",
+      "access": "public/authenticated",
+      "figmaPage": "11 / States",
+      "kind": "template",
+      "parentId": null,
+      "goal": "Дать понятный выход при отсутствии данных, доступа или соединения.",
+      "components": [
+        "Page/State",
+        "Skeleton",
+        "Spinner",
+        "Alert",
+        "Toast",
+        "Button",
+        "Modal/Confirm"
+      ],
+      "desktopLayout": "Контейнер720центрв1280сshellсохранённым; значок64сгеометрическойсистемой. Ошибкакоротка, correlationidoptionalcopy, nofullstack.",
+      "mobileLayout": "Padding16,контентестественнойвысоты, CTAfullwidthилидо2stacked. Ошибка—немодальныйэкраннакаждыйfailedrequest.",
+      "primaryAction": "Повторить / Вернуться",
+      "secondaryActions": [
+        "На главную",
+        "Выбрать курс"
+      ],
+      "contentExample": "403:«Этот материал пока недоступен».404:«Страница не найдена».500:«Не удалось загрузить страницу».Maintenance:«QLC временно недоступен».Offline:«Нет соединения».",
+      "visibilityAndLogic": "Pageemptyотдельноотnetworkerror. Disabledlogicвозлеcontrol; successnoextrafullpageкромепокупки/verification. Destructiveconfirmationконкретноописываетпотерюданных. Пользовательскиеданныевerrorsнеотправляютсявтретьистороны.",
+      "states": {
+        "loading": "Скелет повторяет размеры основного содержимого; навигация и заголовок остаются доступны.",
+        "empty": "Показывать объяснение отсутствия данных и одно доступное следующее действие; не подменять ошибку пустым списком.",
+        "error": "Сообщение рядом с затронутой областью, «Повторить»; введённые данные и уже загруженный контент сохраняются.",
+        "offline": "Ненавязчивая полоса «Нет соединения». Данные показываются с пометкой об актуальности; сетевые действия ждут восстановления.",
+        "disabled": "Причина недоступности видна текстом; zero progress сам по себе не означает locked.",
+        "success": "Подтверждение по месту изменения; без неожиданной навигации.",
+        "destructive": "Подтверждение только действия, которое удаляет или заменяет пользовательские данные.",
+        "specific": "Loading/skeleton/empty/error/disabled/offline/reconnecting/success/destructive. Emptyvariants:nocourses,noactivecourses,noachievements,nosearchresults,noactivity,nopayments. Errorgeneric/network/403/404/500/maintenance. Retryboundedmanual, нетбесконечнойанимациибезвыхода."
+      },
+      "designStatus": "specified_locally",
+      "implementationStatus": "not_implemented_by_this_spec"
+    }
+  ],
+  "sitemap": {
+    "nodes": [
+      {
+        "id": "public-home",
+        "label": "Главная",
+        "parentId": null,
+        "route": "/",
+        "routeStatus": "existing",
+        "kind": "page",
+        "access": "public"
+      },
+      {
+        "id": "store-catalog",
+        "label": "Магазин курсов",
+        "parentId": "public-home",
+        "route": "/courses",
+        "routeStatus": "proposed; current catalog is /#courses",
+        "kind": "page",
+        "access": "public"
+      },
+      {
+        "id": "course-overview",
+        "label": "Курс до покупки",
+        "parentId": "store-catalog",
+        "route": "/courses/[slug]",
+        "routeStatus": "existing route; expanded view proposed",
+        "kind": "page",
+        "access": "public"
+      },
+      {
+        "id": "auth-login",
+        "label": "Вход",
+        "parentId": "public-home",
+        "route": "/login",
+        "routeStatus": "existing; current identifier username",
+        "kind": "page",
+        "access": "public"
+      },
+      {
+        "id": "auth-register",
+        "label": "Регистрация",
+        "parentId": "auth-login",
+        "route": "/register",
+        "routeStatus": "existing",
+        "kind": "page",
+        "access": "public"
+      },
+      {
+        "id": "auth-forgot",
+        "label": "Восстановление пароля",
+        "parentId": "auth-login",
+        "route": "/forgot-password",
+        "routeStatus": "proposed",
+        "kind": "page",
+        "access": "public"
+      },
+      {
+        "id": "auth-reset",
+        "label": "Новый пароль",
+        "parentId": "auth-forgot",
+        "route": "/reset-password?token=…",
+        "routeStatus": "proposed",
+        "kind": "page",
+        "access": "public"
+      },
+      {
+        "id": "auth-verification",
+        "label": "Подтверждение email",
+        "parentId": "auth-register",
+        "route": "/verify-email",
+        "routeStatus": "proposed",
+        "kind": "page",
+        "access": "public"
+      },
+      {
+        "id": "auth-verification-success",
+        "label": "Email подтверждён",
+        "parentId": "auth-verification",
+        "route": "/verify-email/success",
+        "routeStatus": "proposed",
+        "kind": "page",
+        "access": "public"
+      },
+      {
+        "id": "dashboard",
+        "label": "Моё обучение",
+        "parentId": "public-home",
+        "route": "/my-learning",
+        "routeStatus": "proposed; current progress entry /profile",
+        "kind": "page",
+        "access": "authenticated"
+      },
+      {
+        "id": "profile-overview",
+        "label": "Профиль / Обзор",
+        "parentId": "dashboard",
+        "route": "/profile?tab=overview",
+        "routeStatus": "existing route; tab proposed",
+        "kind": "page",
+        "access": "authenticated"
+      },
+      {
+        "id": "profile-progress",
+        "label": "Мой прогресс",
+        "parentId": "profile-overview",
+        "route": "/profile?tab=progress",
+        "routeStatus": "existing progress surface; expanded tab proposed",
+        "kind": "page",
+        "access": "authenticated"
+      },
+      {
+        "id": "profile-achievements",
+        "label": "Достижения",
+        "parentId": "profile-overview",
+        "route": "/profile?tab=achievements",
+        "routeStatus": "proposed",
+        "kind": "page",
+        "access": "authenticated"
+      },
+      {
+        "id": "profile-activity",
+        "label": "Профиль / Активность",
+        "parentId": "profile-overview",
+        "route": "/profile?tab=activity",
+        "routeStatus": "proposed",
+        "kind": "page",
+        "access": "authenticated"
+      },
+      {
+        "id": "profile-settings",
+        "label": "Настройки профиля",
+        "parentId": "profile-overview",
+        "route": "/profile?tab=settings",
+        "routeStatus": "existing identity display; editing proposed",
+        "kind": "page",
+        "access": "authenticated"
+      },
+      {
+        "id": "purchased-course",
+        "label": "Купленный курс",
+        "parentId": "course-overview",
+        "route": "/courses/[slug]?view=learning",
+        "routeStatus": "existing /courses/[slug] access branch; query proposed",
+        "kind": "page",
+        "access": "authenticated/access"
+      },
+      {
+        "id": "module-selection",
+        "label": "Модуль / Список занятий",
+        "parentId": "purchased-course",
+        "route": "/courses/[slug]?module=[moduleId]",
+        "routeStatus": "proposed deep link on existing course route",
+        "kind": "page",
+        "access": "authenticated/access"
+      },
+      {
+        "id": "lesson",
+        "label": "Урок / Материал",
+        "parentId": "module-selection",
+        "route": "/lessons/[id]",
+        "routeStatus": "existing; block library expanded",
+        "kind": "page",
+        "access": "authenticated/access or allowed preview"
+      },
+      {
+        "id": "coding-task",
+        "label": "Задача / Код",
+        "parentId": "lesson",
+        "route": "/lessons/[id]?tab=practice&task=[taskId]",
+        "routeStatus": "existing lesson practice; query convention proposed",
+        "kind": "page",
+        "access": "guest editor; authenticated submit/access"
+      },
+      {
+        "id": "transfer-task",
+        "label": "Перенос навыка",
+        "parentId": "module-selection",
+        "route": "/activities/transfer/[id]",
+        "routeStatus": "proposed, no current DTO",
+        "kind": "page",
+        "access": "authenticated/access"
+      },
+      {
+        "id": "code-review",
+        "label": "Ревью кода",
+        "parentId": "module-selection",
+        "route": "/activities/review/[id]",
+        "routeStatus": "proposed, no current DTO",
+        "kind": "page",
+        "access": "authenticated/access"
+      },
+      {
+        "id": "incident-list",
+        "label": "Практика / Инциденты",
+        "parentId": "dashboard",
+        "route": "/incidents",
+        "routeStatus": "proposed, optional hub",
+        "kind": "page",
+        "access": "authenticated/access"
+      },
+      {
+        "id": "incident-workspace",
+        "label": "Инцидент / Рабочая область",
+        "parentId": "incident-list",
+        "route": "/incidents/[id]",
+        "routeStatus": "proposed, no current DTO",
+        "kind": "page",
+        "access": "authenticated/access"
+      },
+      {
+        "id": "incident-result",
+        "label": "Инцидент / Разбор",
+        "parentId": "incident-workspace",
+        "route": "/incidents/[id]/result/[attemptId]",
+        "routeStatus": "proposed",
+        "kind": "page",
+        "access": "authenticated/access"
+      },
+      {
+        "id": "skill-detail",
+        "label": "Навык / Освоение",
+        "parentId": "dashboard",
+        "route": "/skills/[skillId]",
+        "routeStatus": "proposed",
+        "kind": "page",
+        "access": "authenticated"
+      },
+      {
+        "id": "review-queue",
+        "label": "Повторение",
+        "parentId": "dashboard",
+        "route": "/review",
+        "routeStatus": "proposed",
+        "kind": "page",
+        "access": "authenticated"
+      },
+      {
+        "id": "checkout",
+        "label": "Оформление покупки",
+        "parentId": "course-overview",
+        "route": "/checkout?course=[slug]",
+        "routeStatus": "existing test flow; real payment designed only",
+        "kind": "page",
+        "access": "authenticated or guest contact with auth step"
+      },
+      {
+        "id": "payment-success",
+        "label": "Покупка подтверждена",
+        "parentId": "checkout",
+        "route": "/checkout/success?order=[id]",
+        "routeStatus": "proposed; current test purchase redirects profile",
+        "kind": "page",
+        "access": "authenticated/order owner"
+      },
+      {
+        "id": "payment-failed",
+        "label": "Оплата не завершена",
+        "parentId": "checkout",
+        "route": "/checkout/failed?order=[id]",
+        "routeStatus": "proposed",
+        "kind": "page",
+        "access": "authenticated/order owner"
+      },
+      {
+        "id": "project-task",
+        "label": "Проект",
+        "parentId": "module-selection",
+        "route": "/activities/project/[id]",
+        "routeStatus": "proposed reusable future extension",
+        "kind": "page",
+        "access": "authenticated/access"
+      },
+      {
+        "id": "quiz-task",
+        "label": "Проверка понимания",
+        "parentId": "lesson",
+        "route": "/lessons/[id]?task=[quizId]",
+        "routeStatus": "existing TEST practice; richer quiz proposed",
+        "kind": "page",
+        "access": "authenticated/access or preview"
+      },
+      {
+        "id": "achievement-detail",
+        "label": "Достижение / Детали",
+        "parentId": "profile-achievements",
+        "route": "/profile?tab=achievements&achievement=[id]",
+        "routeStatus": "proposed deep link overlay",
+        "kind": "overlay",
+        "access": "authenticated"
+      },
+      {
+        "id": "level-up",
+        "label": "Новый уровень",
+        "parentId": "dashboard",
+        "route": "event://level-up",
+        "routeStatus": "proposed transient overlay",
+        "kind": "overlay",
+        "access": "authenticated"
+      },
+      {
+        "id": "global-states",
+        "label": "Системные страницы и общий сбой",
+        "parentId": null,
+        "route": "state://global",
+        "routeStatus": "system templates; implementation varies",
+        "kind": "template",
+        "access": "public/authenticated"
+      }
+    ],
+    "navigation": {
+      "public": [
+        {
+          "label": "Курсы",
+          "target": "store-catalog"
+        },
+        {
+          "label": "Как устроено",
+          "route": "/#how-it-works"
+        },
+        {
+          "label": "Войти",
+          "target": "auth-login"
+        }
+      ],
+      "authenticated": [
+        {
+          "label": "Моё обучение",
+          "target": "dashboard"
+        },
+        {
+          "label": "Курсы",
+          "target": "store-catalog"
+        },
+        {
+          "label": "Прогресс",
+          "target": "profile-progress"
+        },
+        {
+          "label": "Достижения",
+          "target": "profile-achievements"
+        },
+        {
+          "label": "Профиль",
+          "target": "profile-overview"
+        }
+      ],
+      "userControl": [
+        "Avatar",
+        "Level/Badge",
+        "Progress/XP compact",
+        "account menu"
+      ]
+    }
+  }
+}
