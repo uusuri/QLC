@@ -60,7 +60,7 @@ Thumbs.db
 build-*/
 
 # Load testing
-load-tesing/
+/load-testing/
 
 # Course content is stored in the database, not in Git
 /courses/algorithms/
