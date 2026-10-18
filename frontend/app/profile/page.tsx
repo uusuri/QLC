@@ -12,7 +12,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { ContinueLearningCard } from "@/components/ContinueLearning";
 import { PageState } from "@/components/PageState";
 import { Alert, ButtonLink, Progress } from "@/components/ui";
-import { deleteMyAvatar, formatRussianCountWord, getMyAvatar, getMyLearningCourses, uploadMyAvatar } from "@/services/api";
+import { deleteMyAvatar, formatRussianCountWord, getMyAvatar, getMyLearningCourses, requestEmailVerification, uploadMyAvatar } from "@/services/api";
 import { getLearningHref, getNextLearningLesson } from "@/services/learningProgress";
 import type { MyCourseProgressDto } from "@/types";
 
@@ -28,6 +28,8 @@ export default function ProfilePage() {
   const [avatarSaving, setAvatarSaving] = useState(false);
   const [avatarMessage, setAvatarMessage] = useState("");
   const [avatarError, setAvatarError] = useState("");
+  const [emailNotice, setEmailNotice] = useState("");
+  const [emailSending, setEmailSending] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -97,6 +99,20 @@ export default function ProfilePage() {
       setAvatarError(err instanceof Error ? err.message : "Не удалось удалить аватарку.");
     } finally {
       setAvatarSaving(false);
+    }
+  }
+
+  async function resendVerification() {
+    if (!user) return;
+    setEmailSending(true);
+    setEmailNotice("");
+    try {
+      await requestEmailVerification(user.email);
+      setEmailNotice("Проверьте почту. Повторное письмо отправляется не чаще раза в минуту.");
+    } catch (err) {
+      setEmailNotice(err instanceof Error ? err.message : "Не удалось запросить письмо.");
+    } finally {
+      setEmailSending(false);
     }
   }
 
@@ -187,6 +203,13 @@ export default function ProfilePage() {
         </div>
       </div>
     </header>
+    {user.emailVerified === false && <Alert title="Подтвердите почту" tone="warning">
+      <p>Проверьте {user.email} или запросите письмо. Подтверждённый адрес поможет восстановить доступ.</p>
+      <button className="mt-4 text-sm font-semibold text-acid hover:text-white" disabled={emailSending} onClick={() => void resendVerification()} type="button">
+        {emailSending ? "Отправляем…" : "Отправить письмо повторно →"}
+      </button>
+      {emailNotice && <p className="mt-2 text-sm" role="status">{emailNotice}</p>}
+    </Alert>}
     <dl className="kit-stats"><div><dt>Мои курсы</dt><dd>{courseList.length}</dd></div><div><dt>Решено задач</dt><dd>{solvedTasks}</dd></div><div><dt>Прогресс по задачам</dt><dd>{totalTasks > 0 ? `${overallProgress}%` : "—"}</dd></div></dl>
     <Progress label={`Решено ${solvedTasks} из ${totalTasks} задач`} value={totalTasks > 0 ? overallProgress : null} />
     {nextLesson && <ContinueLearningCard nextLesson={nextLesson} />}

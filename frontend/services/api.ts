@@ -418,6 +418,38 @@ export async function loginWithTelegram(payload: TelegramAuthPayload): Promise<A
   return response;
 }
 
+export async function requestEmailVerification(email: string): Promise<void> {
+  await apiFetch("/api/auth/email-verification/request", {
+    method: "POST",
+    body: JSON.stringify({ email: email.trim().toLowerCase() })
+  });
+}
+
+export async function confirmEmailVerification(token: string): Promise<void> {
+  await apiFetch("/api/auth/email-verification/confirm", {
+    method: "POST",
+    body: JSON.stringify({ token })
+  });
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
+  }
+}
+
+export async function requestPasswordReset(email: string): Promise<void> {
+  await apiFetch("/api/auth/password-reset/request", {
+    method: "POST",
+    body: JSON.stringify({ email: email.trim().toLowerCase() })
+  });
+}
+
+export async function confirmPasswordReset(token: string, password: string): Promise<void> {
+  await apiFetch("/api/auth/password-reset/confirm", {
+    method: "POST",
+    body: JSON.stringify({ token, password })
+  });
+  clearAuthToken();
+}
+
 // Возвращает текущего пользователя через GET /api/auth/me с реальным JWT.
 export async function getCurrentUser(): Promise<AuthUserDto | null> {
   if (!getAuthToken()) {

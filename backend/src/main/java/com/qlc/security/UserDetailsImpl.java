@@ -17,9 +17,12 @@ public class UserDetailsImpl implements UserDetails {
   private final String email;
   private final String password;
   private final String role;
+  private final int authVersion;
+  private final boolean emailVerified;
   private final Collection<? extends GrantedAuthority> authorities;
 
   public UserDetailsImpl(Long id, Long tgId, String username, String email, String password, String role,
+                         int authVersion, boolean emailVerified,
                          Collection<? extends GrantedAuthority> authorities) {
     this.id = id;
     this.tgId = tgId;
@@ -27,6 +30,8 @@ public class UserDetailsImpl implements UserDetails {
     this.email = email;
     this.password = password;
     this.role = role;
+    this.authVersion = authVersion;
+    this.emailVerified = emailVerified;
     this.authorities = authorities;
   }
 
@@ -34,18 +39,20 @@ public class UserDetailsImpl implements UserDetails {
     String roleName = user.getRole() != null ? user.getRole().name() : "ROLE_USER";
     List<GrantedAuthority> auth = List.of(new SimpleGrantedAuthority(roleName));
     return new UserDetailsImpl(user.getId(), user.getTgId(), user.getUsername(), user.getEmail(), user.getPassword(),
-        roleName, auth);
+        roleName, user.getAuthVersion(), user.isEmailVerified(), auth);
   }
 
   public static UserDetailsImpl fromToken(Long id, String username, String email, String role) {
     List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
-    return new UserDetailsImpl(id, null, username, email, "", role, authorities);
+    return new UserDetailsImpl(id, null, username, email, "", role, 0, false, authorities);
   }
 
   public Long getId() { return id; }
   public Long getTgId() { return tgId; }
   public String getEmail() { return email; }
   public String getRole() { return role; }
+  public int getAuthVersion() { return authVersion; }
+  public boolean isEmailVerified() { return emailVerified; }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() { return authorities; }

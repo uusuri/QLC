@@ -35,6 +35,12 @@ public class User {
   @Column(nullable = false, unique = true)
   private String email;
 
+  @Column(name = "email_verified", nullable = false)
+  private boolean emailVerified;
+
+  @Column(name = "auth_version", nullable = false)
+  private int authVersion;
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private Role role;

@@ -25,6 +25,8 @@ export interface AuthUserDto {
   email: string;
   // Роль пользователя.
   role: AuthUserRole;
+  // Сброс пароля разрешён только после подтверждения адреса.
+  emailVerified: boolean;
 }
 
 // Payload регистрации.

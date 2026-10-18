@@ -268,6 +268,12 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         value={fields.password}
       />
 
+      {!isRegister && (
+        <Link className="-mt-3 w-fit text-sm text-white/60 transition hover:text-acid" href="/forgot-password">
+          Забыли пароль?
+        </Link>
+      )}
+
       {isRegister && (
         <InputField
           autoComplete="new-password"

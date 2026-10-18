@@ -23,6 +23,8 @@ jwt:
   expiration: 600000
 
 app:
+  mail:
+    enabled: false
   submissions:
     recovery:
       enabled: false

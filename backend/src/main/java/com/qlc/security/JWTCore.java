@@ -44,6 +44,7 @@ public class JWTCore {
         .claim("role", role)
         .claim("userId", userId)
         .claim("email", userDetails != null ? userDetails.getEmail() : null)
+        .claim("authVersion", userDetails != null ? userDetails.getAuthVersion() : null)
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
         .signWith(signingKey, Jwts.SIG.HS512)
