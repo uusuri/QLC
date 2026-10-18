@@ -21,11 +21,14 @@ spring:
     enabled: true
     locations: classpath:db/migration
 
-  management:
-    prometheus:
-      metrics:
-        export:
-          enabled: true
+management:
+  server:
+    port: ${MANAGEMENT_LOCAL_PORT:9092}
+    address: 127.0.0.1
+  prometheus:
+    metrics:
+      export:
+        enabled: true
   endpoints:
     web:
       exposure:
