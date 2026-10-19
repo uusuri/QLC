@@ -11,6 +11,7 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -53,7 +54,7 @@ public class AccountEmailService {
 
   @Transactional
   public void issueVerification(User user) {
-    if (user.isEmailVerified() || user.getTgId() != null) {
+    if (user.isEmailVerified() || !hasRealEmail(user)) {
       return;
     }
     issue(user, AccountEmailTokenPurpose.VERIFY_EMAIL, 24 * 60,
@@ -73,7 +74,7 @@ public class AccountEmailService {
   @Transactional
   public void requestPasswordReset(String email) {
     users.findByEmailIgnoreCase(email.trim()).ifPresent(user -> {
-      if (user.getTgId() != null) {
+      if (!hasRealEmail(user)) {
         return;
       }
       issue(user, AccountEmailTokenPurpose.RESET_PASSWORD, 30,
@@ -87,7 +88,7 @@ public class AccountEmailService {
     AccountEmailToken token = findValidToken(rawToken, AccountEmailTokenPurpose.RESET_PASSWORD);
     User user = users.findById(token.getUserId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ссылка недействительна"));
-    if (user.getTgId() != null) {
+    if (!hasRealEmail(user)) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ссылка недействительна");
     }
     user.setPassword(passwordEncoder.encode(newPassword));
@@ -141,6 +142,11 @@ public class AccountEmailService {
     return tokens.findByTokenHashAndPurpose(sha256(rawToken), purpose)
         .filter(token -> token.getExpiresAt().isAfter(LocalDateTime.now()))
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ссылка недействительна или устарела"));
+  }
+
+  private static boolean hasRealEmail(User user) {
+    String email = user.getEmail();
+    return email != null && !email.toLowerCase(Locale.ROOT).endsWith("@telegram.local");
   }
 
   private static String sha256(String value) {

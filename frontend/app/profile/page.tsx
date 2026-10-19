@@ -180,6 +180,7 @@ export default function ProfilePage() {
   const solvedTasks = courseList.reduce((total, course) => total + course.solvedTasks, 0);
   const totalTasks = courseList.reduce((total, course) => total + course.totalTasks, 0);
   const overallProgress = totalTasks > 0 ? Math.floor((solvedTasks / totalTasks) * 100) : 0;
+  const hasRealEmail = !user.email.toLowerCase().endsWith("@telegram.local");
 
   return <div className="kit-shell"><SiteHeader /><main className="kit-page" id="main-content" tabIndex={-1}>
     <header className="kit-profile-header">
@@ -188,7 +189,7 @@ export default function ProfilePage() {
         <div>
           <p className="qlc-eyebrow">Личный кабинет</p>
           <h1>@{user.username}</h1>
-          <p className="kit-profile-email">{user.email}</p>
+          <p className="kit-profile-email">{hasRealEmail ? user.email : "Почта не привязана"}</p>
         </div>
         <input ref={avatarInput} accept="image/jpeg,image/png" className="sr-only" onChange={(event) => void handleAvatarChange(event)} tabIndex={-1} type="file" />
         <div className="kit-profile-avatar-controls">
@@ -203,7 +204,7 @@ export default function ProfilePage() {
         </div>
       </div>
     </header>
-    {user.emailVerified === false && <Alert title="Подтвердите почту" tone="warning">
+    {hasRealEmail && user.emailVerified === false && <Alert title="Подтвердите почту" tone="warning">
       <p>Проверьте {user.email} или запросите письмо. Подтверждённый адрес поможет восстановить доступ.</p>
       <button className="mt-4 text-sm font-semibold text-acid hover:text-white" disabled={emailSending} onClick={() => void resendVerification()} type="button">
         {emailSending ? "Отправляем…" : "Отправить письмо повторно →"}

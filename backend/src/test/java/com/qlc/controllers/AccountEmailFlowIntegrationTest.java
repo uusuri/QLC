@@ -144,6 +144,68 @@ class AccountEmailFlowIntegrationTest {
   }
 
   @Test
+  void telegramLinkedAccountCanVerifyItsRealEmail() throws Exception {
+    User user = createUser("linkedverify", "linked-verify@example.com", false);
+    user.setTgId(123456L);
+    users.save(user);
+
+    mvc.perform(post("/api/auth/email-verification/request")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"email\":\"linked-verify@example.com\"}"))
+        .andExpect(status().isNoContent());
+    assertThat(users.findById(user.getId()).orElseThrow().isEmailVerified()).isFalse();
+    String rawToken = sentToken();
+
+    mvc.perform(post("/api/auth/email-verification/confirm")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"token\":\"" + rawToken + "\"}"))
+        .andExpect(status().isNoContent());
+    assertThat(users.findById(user.getId()).orElseThrow().isEmailVerified()).isTrue();
+  }
+
+  @Test
+  void telegramLinkedAccountCanResetPasswordThroughItsRealEmail() throws Exception {
+    User user = createUser("linkedreset", "linked-reset@example.com", false);
+    user.setTgId(654321L);
+    users.save(user);
+
+    mvc.perform(post("/api/auth/password-reset/request")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"email\":\"linked-reset@example.com\"}"))
+        .andExpect(status().isNoContent());
+    String rawToken = sentToken();
+
+    mvc.perform(post("/api/auth/password-reset/confirm")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"token\":\"" + rawToken + "\",\"password\":\"new-password-123\"}"))
+        .andExpect(status().isNoContent());
+    User updated = users.findById(user.getId()).orElseThrow();
+    assertThat(updated.getTgId()).isEqualTo(654321L);
+    assertThat(updated.isEmailVerified()).isTrue();
+    assertThat(encoder.matches("new-password-123", updated.getPassword())).isTrue();
+  }
+
+  @Test
+  void telegramPlaceholderEmailCannotReceiveAccountLinks() throws Exception {
+    User user = createUser("telegramonly", "telegram-987654@telegram.local", false);
+    user.setTgId(987654L);
+    users.save(user);
+
+    mvc.perform(post("/api/auth/email-verification/request")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"email\":\"telegram-987654@telegram.local\"}"))
+        .andExpect(status().isNoContent());
+    mvc.perform(post("/api/auth/password-reset/request")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"email\":\"telegram-987654@telegram.local\"}"))
+        .andExpect(status().isNoContent());
+
+    assertThat(users.findById(user.getId()).orElseThrow().isEmailVerified()).isFalse();
+    assertThat(tokens.count()).isZero();
+    verify(sender, never()).send(anyString(), anyString(), anyString());
+  }
+
+  @Test
   void repeatRequestWithinOneMinuteDoesNotSendAnotherEmail() throws Exception {
     createUser("limited", "limited@example.com", true);
     for (int i = 0; i < 2; i++) {

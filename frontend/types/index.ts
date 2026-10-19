@@ -25,7 +25,7 @@ export interface AuthUserDto {
   email: string;
   // Роль пользователя.
   role: AuthUserRole;
-  // Сброс пароля разрешён только после подтверждения адреса.
+  // Подтверждение адреса не зависит от привязки Telegram.
   emailVerified: boolean;
 }
 
