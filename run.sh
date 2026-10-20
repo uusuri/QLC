@@ -9,7 +9,7 @@ die() {
   exit 1
 }
 
-if [[ $# -ne 1 || ( "$MODE" != dev && "$MODE" != prod ) ]]; then
+if [[ $# -ne 1 || ("$MODE" != dev && "$MODE" != prod) ]]; then
   printf 'Использование: ./run.sh dev | ./run.sh prod\n' >&2
   exit 2
 fi
