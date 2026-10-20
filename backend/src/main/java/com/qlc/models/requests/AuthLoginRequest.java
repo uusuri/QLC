@@ -3,7 +3,7 @@ package com.qlc.models.requests;
 import jakarta.validation.constraints.NotBlank;
 
 public record AuthLoginRequest(
-    @NotBlank(message = "Username is required")
+    @NotBlank(message = "Username or email is required")
     String username,
 
     @NotBlank(message = "Password is required")

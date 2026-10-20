@@ -41,7 +41,7 @@ export interface RegisterUserPayload {
 
 // Payload входа.
 export interface LoginUserPayload {
-  // Username пользователя.
+  // Логин или email пользователя (ключ username сохранён для совместимости с API).
   username: string;
   // Пароль нужен только для запроса login и не сохраняется.
   password: string;

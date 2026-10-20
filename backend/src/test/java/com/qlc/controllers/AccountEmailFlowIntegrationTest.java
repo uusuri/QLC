@@ -57,6 +57,28 @@ class AccountEmailFlowIntegrationTest {
   }
 
   @Test
+  void loginAcceptsUsernameOrEmailWithoutChangingTheAccountIdentity() throws Exception {
+    createUser("loginuser", "login@example.com", true);
+
+    mvc.perform(post("/api/auth/login")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"username\":\"loginuser\",\"password\":\"password123\"}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.user.username").value("loginuser"));
+
+    mvc.perform(post("/api/auth/login")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"username\":\" LOGIN@EXAMPLE.COM \",\"password\":\"password123\"}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.user.username").value("loginuser"));
+
+    mvc.perform(post("/api/auth/login")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"username\":\"login@example.com\",\"password\":\"wrong-password\"}"))
+        .andExpect(status().isUnauthorized());
+  }
+
+  @Test
   void registrationVerificationIsSingleUseAndDoesNotStoreRawToken() throws Exception {
     String response = mvc.perform(post("/api/auth/register")
         .contentType(MediaType.APPLICATION_JSON)

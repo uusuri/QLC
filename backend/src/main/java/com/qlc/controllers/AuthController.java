@@ -93,9 +93,9 @@ public class AuthController {
     Authentication auth;
     try {
       auth = authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(request.username(), request.password()));
+          new UsernamePasswordAuthenticationToken(request.username().trim(), request.password()));
     } catch (BadCredentialsException e) {
-      throw new BadCredentialsException("Invalid username or password");
+      throw new BadCredentialsException("Invalid login or password");
     }
 
     String jwt = jwtCore.generateToken(auth);
