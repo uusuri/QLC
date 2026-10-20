@@ -13,3 +13,12 @@ spring:
 
   flyway:
     enabled: true
+
+management:
+  server:
+    port: ${MANAGEMENT_LOCAL_PORT:9091}
+    address: 127.0.0.1
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus

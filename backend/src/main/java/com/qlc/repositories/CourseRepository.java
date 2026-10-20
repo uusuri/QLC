@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.qlc.models.entities.Course;
+import com.qlc.monitoring.MonitoringTimed;
 import com.qlc.models.dtos.CourseCatalogDTO;
 import com.qlc.models.dtos.CourseDTO;
 
@@ -14,9 +15,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 @Repository
+@MonitoringTimed
 public interface CourseRepository extends JpaRepository<Course, Long> {
   Optional<Course> findByName(String name);
+
   List<Course> findAllByPublishedTrue();
+
   Optional<Course> findByIdAndPublishedTrue(Long id);
 
   boolean existsByIdAndStudents_Id(Long courseId, Long userId);

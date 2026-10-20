@@ -87,6 +87,7 @@ public class TelegramAuthService {
     user.setTgId(request.id());
     user.setUsername(nextUsername(request));
     user.setEmail("telegram-" + request.id() + "@telegram.local");
+    user.setEmailVerified(false);
     user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
     user.setRole(Role.ROLE_USER);
     user.setRegistrationDate(java.time.LocalDateTime.now());

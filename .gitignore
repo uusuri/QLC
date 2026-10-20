@@ -59,6 +59,9 @@ Thumbs.db
 *.exe
 build-*/
 
+# Load testing
+/load-testing/
+
 # Course content is stored in the database, not in Git
 /courses/algorithms/
 /results/python-from-zero/

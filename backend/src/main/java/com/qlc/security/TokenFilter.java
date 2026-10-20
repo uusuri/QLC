@@ -1,13 +1,13 @@
 package com.qlc.security;
 
+import com.qlc.models.entities.User;
+import com.qlc.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -18,11 +18,11 @@ import io.jsonwebtoken.Claims;
 public class TokenFilter extends OncePerRequestFilter {
 
   private final JWTCore jwtCore;
-  private final UserDetailsService userDetailsService;
+  private final UserRepository users;
 
-  public TokenFilter(JWTCore jwtCore, UserDetailsService userDetailsService) {
+  public TokenFilter(JWTCore jwtCore, UserRepository users) {
     this.jwtCore = jwtCore;
-    this.userDetailsService = userDetailsService;
+    this.users = users;
   }
 
   @Override
@@ -40,13 +40,19 @@ public class TokenFilter extends OncePerRequestFilter {
           String role = claims.get("role", String.class);
           String email = claims.get("email", String.class);
           Number rawUserId = claims.get("userId", Number.class);
-          if (role == null || rawUserId == null) {
+          Number rawAuthVersion = claims.get("authVersion", Number.class);
+          if (role == null || email == null || rawUserId == null || rawAuthVersion == null) {
             throw new IllegalArgumentException("Token is missing required claims");
           }
 
-          UserDetails userDetails = email == null
-              ? userDetailsService.loadUserByUsername(username)
-              : UserDetailsImpl.fromToken(rawUserId.longValue(), username, email, role);
+          User user = users.findById(rawUserId.longValue())
+              .orElseThrow(() -> new IllegalArgumentException("User no longer exists"));
+          if (!user.getUsername().equals(username) || !user.getEmail().equals(email)
+              || !user.getRole().name().equals(role)
+              || user.getAuthVersion() != rawAuthVersion.intValue()) {
+            throw new IllegalArgumentException("Token was revoked");
+          }
+          UserDetailsImpl userDetails = UserDetailsImpl.build(user);
           UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
               userDetails, null, userDetails.getAuthorities());
           SecurityContextHolder.getContext().setAuthentication(auth);

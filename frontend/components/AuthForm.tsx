@@ -73,8 +73,13 @@ function getErrorState(error: unknown): { message: string; status: AuthFormStatu
 }
 
 function validateFields(mode: AuthFormMode, fields: AuthFields): { field: keyof AuthFields; message: string } | null {
-  if (!USERNAME_PATTERN.test(fields.username.trim())) {
+  const login = fields.username.trim();
+  if (mode === "register" && !USERNAME_PATTERN.test(login)) {
     return { field: "username", message: "Логин: 3–32 символа, латиница, цифры или _." };
+  }
+
+  if (mode === "login" && !USERNAME_PATTERN.test(login) && !EMAIL_PATTERN.test(login)) {
+    return { field: "username", message: "Введите логин или корректный email." };
   }
 
   if (mode === "register" && !EMAIL_PATTERN.test(fields.email.trim())) {
@@ -220,18 +225,18 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         <p className="mt-4 text-sm leading-relaxed text-white/60">
           {isRegister
             ? "Один аккаунт для курсов, практики и вашего прогресса."
-            : "Введите логин и пароль, чтобы продолжить обучение."}
+            : "Введите логин или почту и пароль, чтобы продолжить обучение."}
         </p>
       </div>
 
       <InputField
         autoComplete="username"
         error={fieldErrors.username}
-        label="Логин"
-        maxLength={32}
+        label={isRegister ? "Логин" : "Логин или почта"}
+        maxLength={isRegister ? 32 : 254}
         name="username"
         onChange={(value) => updateField("username", value)}
-        placeholder="your_name"
+        placeholder={isRegister ? "your_name" : "your_name или you@example.com"}
         value={fields.username}
       />
 
@@ -267,6 +272,12 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
         type="password"
         value={fields.password}
       />
+
+      {!isRegister && (
+        <Link className="-mt-3 w-fit text-sm text-white/60 transition hover:text-acid" href="/forgot-password">
+          Забыли пароль?
+        </Link>
+      )}
 
       {isRegister && (
         <InputField

@@ -35,6 +35,11 @@ telegram:
   bot-token: ${TELEGRAM_BOT_TOKEN:}
 
 app:
+  frontend-url: ${FRONTEND_PUBLIC_URL:https://qlcode.me}
+  mail:
+    enabled: ${APP_MAIL_ENABLED:true}
+    from: ${MAIL_FROM:no-reply@mail.qlcode.me}
+    resend-api-key: ${RESEND_API_KEY:}
   submissions:
     max-size: 65535
     max-log-length: 10000

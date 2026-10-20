@@ -25,6 +25,8 @@ export interface AuthUserDto {
   email: string;
   // Роль пользователя.
   role: AuthUserRole;
+  // Подтверждение адреса не зависит от привязки Telegram.
+  emailVerified: boolean;
 }
 
 // Payload регистрации.
@@ -39,7 +41,7 @@ export interface RegisterUserPayload {
 
 // Payload входа.
 export interface LoginUserPayload {
-  // Username пользователя.
+  // Логин или email пользователя (ключ username сохранён для совместимости с API).
   username: string;
   // Пароль нужен только для запроса login и не сохраняется.
   password: string;
