@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { CourseList } from "@/components/CourseList";
 import { HomeContinueLearning } from "@/components/ContinueLearning";
 import { LearningOverviewProvider } from "@/components/LearningOverviewProvider";
@@ -34,7 +35,8 @@ export default async function HomePage() {
               <ButtonLink href="#courses">Выбрать курс <span aria-hidden="true">↗</span></ButtonLink>
               <a className="qlc-text-link" href="#how">Как устроено обучение ↓</a>
             </div>
-            <img alt="" className="kit-hero-art" fetchPriority="high" height={622} src="/design/synthetic-art.png" width={898} />
+            <Image alt="" className="kit-hero-art" priority height={1024} src="/design/synthetic-art.png" width={1536}
+              sizes="(max-width: 767px) 100vw, (max-width: 1439px) 65vw, 895px" />
           </section>
           <div className="kit-home-content">
             <div aria-hidden="true" className="kit-registration-line"><span>+</span><span>+</span><span>+</span></div>

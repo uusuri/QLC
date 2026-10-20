@@ -324,6 +324,11 @@ export function getAuthChangeEventName() {
   return AUTH_CHANGE_EVENT;
 }
 
+// Cached user summaries and drafts do not change the session. null means storage.clear().
+export function isAuthStorageKey(key: string | null): boolean {
+  return key === null || key === AUTH_TOKEN_STORAGE_KEY;
+}
+
 // Возвращает текущий access token из localStorage.
 export function getAuthToken(): string | null {
   if (!canUseLocalStorage()) {
@@ -645,8 +650,8 @@ export async function updateAdminModule(
 }
 
 // Загружает уроки только для выбранного модуля.
-export async function getAdminLessons(moduleId: number): Promise<AdminLessonDto[]> {
-  return apiRequest<AdminLessonDto[]>(`/api/modules/${moduleId}/lessons`);
+export async function getAdminLessons(moduleId: number, signal?: AbortSignal): Promise<AdminLessonDto[]> {
+  return apiRequest<AdminLessonDto[]>(`/api/modules/${moduleId}/lessons`, { signal });
 }
 
 // Загружает один урок для админки (полные данные независимо от доступа).

@@ -9,7 +9,7 @@ import {
   type ReactNode
 } from "react";
 
-import { getAuthChangeEventName, getCurrentUser } from "@/services/api";
+import { getAuthChangeEventName, getCurrentUser, isAuthStorageKey } from "@/services/api";
 import type { AuthUserDto } from "@/types";
 
 type AuthContextValue = {
@@ -33,11 +33,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     let mounted = true;
+    let verification = 0;
 
     const verify = async () => {
+      const currentVerification = ++verification;
       const nextUser = await getCurrentUser();
 
-      if (!mounted) {
+      if (!mounted || currentVerification !== verification) {
         return;
       }
 
@@ -51,12 +53,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       void verify();
     };
 
-    window.addEventListener("storage", handleChange);
+    const handleStorage = (event: StorageEvent) => {
+      if (event.storageArea === window.localStorage && isAuthStorageKey(event.key)) handleChange();
+    };
+
+    window.addEventListener("storage", handleStorage);
     window.addEventListener(getAuthChangeEventName(), handleChange);
 
     return () => {
       mounted = false;
-      window.removeEventListener("storage", handleChange);
+      window.removeEventListener("storage", handleStorage);
       window.removeEventListener(getAuthChangeEventName(), handleChange);
     };
   }, []);
