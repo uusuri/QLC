@@ -1,0 +1,2 @@
+server:
+  port: ${WORKER_MANAGEMENT_PORT:9093}

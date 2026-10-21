@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-test-report
-          path: backend/build/reports/tests/test/
+          path: backend/*/build/reports/tests/test/
           if-no-files-found: ignore
           retention-days: 7
 
@@ -72,6 +72,9 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - name: Install dependencies
         run: npm ci
+      - name: Test launcher lifecycle without real infrastructure
+        working-directory: .
+        run: node --test scripts/tests/run-lifecycle.test.cjs
       - name: Run frontend tests
         run: npm test
       - name: Build frontend
@@ -107,12 +110,12 @@ jobs:
       - name: Run code in real containers
         env:
           QLC_DOCKER_TESTS: 'true'
-        run: ./gradlew test --no-daemon --tests 'com.qlc.runners.DockerCodeRunnerIntegrationTest'
+        run: ./gradlew :worker:test --no-daemon --tests 'com.qlc.worker.runners.DockerCodeRunnerIntegrationTest'
       - name: Upload failed judge test report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: judge-test-report
-          path: backend/build/reports/tests/test/
+          path: backend/worker/build/reports/tests/test/
           if-no-files-found: ignore
           retention-days: 7

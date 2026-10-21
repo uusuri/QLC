@@ -1,0 +1,11 @@
+plugins { id 'java-library' }
+
+description = 'Shared persistence model, submission contract and language profiles'
+
+dependencies {
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    api 'org.springframework.boot:spring-boot-starter-data-redis'
+    api 'io.micrometer:micrometer-core'
+    implementation 'jakarta.validation:jakarta.validation-api'
+    implementation 'tools.jackson.core:jackson-databind'
+}
