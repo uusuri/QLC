@@ -1,0 +1,15 @@
+plugins { id 'org.springframework.boot' }
+
+description = 'QLC Redis submission consumer and Docker judge execution'
+
+dependencies {
+    implementation project(':shared')
+    // HTTP serves local Actuator only; there are no business endpoints in this module.
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation 'com.h2database:h2'
+}
+
+tasks.named('bootJar') { archiveFileName = 'qlc-worker.jar' }

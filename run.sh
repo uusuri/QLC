@@ -48,6 +48,7 @@ if [[ "$MODE" == dev ]]; then
   [[ "${POSTGRES_HOST:-}" == localhost || "${POSTGRES_HOST:-}" == 127.0.0.1 ]] || die 'Dev должен использовать локальный PostgreSQL'
   [[ -z "${SPRING_DATASOURCE_URL:-}" ]] || die 'В dev не должен быть задан SPRING_DATASOURCE_URL'
   FRONTEND_PORT=3001
+  WORKER_PORT="${WORKER_MANAGEMENT_PORT:-9094}"
   KUBE_PROFILE=minikube
   KUBE_NAMESPACE=qlc-dev
   COMPOSE_FILE="$ROOT/docker-compose.dev.yml"
@@ -57,6 +58,7 @@ else
   [[ "$SPRING_DATASOURCE_URL" == *sslmode=require* ]] || die 'В JDBC URL требуется sslmode=require'
   [[ -n "${POSTGRES_PASSWORD:-}" && "$POSTGRES_PASSWORD" != __SET_NEON_PASSWORD__ ]] || die 'Укажи пароль Neon в .env.prod'
   FRONTEND_PORT=3000
+  WORKER_PORT="${WORKER_MANAGEMENT_PORT:-9093}"
   KUBE_PROFILE=qlc-prod
   KUBE_NAMESPACE=qlc-prod
 fi
@@ -94,6 +96,7 @@ redis_ready() {
 }
 
 backend_pid=''
+worker_pid=''
 frontend_pid=''
 redis_forward_pid=''
 startup_pid=''
@@ -131,6 +134,7 @@ cleanup() {
   trap '' INT TERM
   stop_process "$startup_pid"
   stop_process "$frontend_pid"
+  stop_process "$worker_pid"
   stop_process "$backend_pid"
   stop_process "$redis_forward_pid"
   if [[ "$stop_minikube" == true ]]; then
@@ -149,6 +153,20 @@ check_redis_forward() {
 
 port_available "$BACKEND_PORT" || die "Порт backend $BACKEND_PORT уже занят; существующий процесс не трогаю"
 port_available "$FRONTEND_PORT" || die "Порт frontend $FRONTEND_PORT уже занят; существующий процесс не трогаю"
+port_available "$WORKER_PORT" || die "Порт метрик worker $WORKER_PORT уже занят; существующий процесс не трогаю"
+
+API_MANAGEMENT_PORT="${MANAGEMENT_LOCAL_PORT:-9092}"
+if [[ "$MODE" == prod ]]; then
+  API_MANAGEMENT_PORT="${MANAGEMENT_LOCAL_PORT:-9091}"
+fi
+port_available "$API_MANAGEMENT_PORT" || die "Порт метрик API $API_MANAGEMENT_PORT уже занят; существующий процесс не трогаю"
+
+ports=("$BACKEND_PORT" "$FRONTEND_PORT" "$REDIS_PORT" "$WORKER_PORT" "$API_MANAGEMENT_PORT")
+for ((i = 0; i < ${#ports[@]}; i++)); do
+  for ((j = i + 1; j < ${#ports[@]}; j++)); do
+    [[ "${ports[i]}" != "${ports[j]}" ]] || die 'Порты API, frontend, Redis и метрик должны различаться'
+  done
+done
 
 [[ "$REDIS_PORT" != "$BACKEND_PORT" && "$REDIS_PORT" != "$FRONTEND_PORT" ]] || die 'Порты Redis, backend и frontend должны различаться'
 port_available "$REDIS_PORT" || die "Порт Redis $REDIS_PORT уже занят. Если открыт ручной port-forward, останови его через Ctrl+C"
@@ -157,10 +175,12 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-printf 'Собираю backend...\n'
-(cd "$ROOT/backend" && ./gradlew bootJar --no-daemon)
-JAR="$ROOT/backend/build/libs/QLC-0.0.1-SNAPSHOT.jar"
-[[ -f "$JAR" ]] || die "Не найден собранный backend: $JAR"
+printf 'Собираю API и worker...\n'
+(cd "$ROOT/backend" && ./gradlew :api:bootJar :worker:bootJar --no-daemon)
+API_JAR="$ROOT/backend/api/build/libs/qlc-api.jar"
+WORKER_JAR="$ROOT/backend/worker/build/libs/qlc-worker.jar"
+[[ -f "$API_JAR" ]] || die "Не найден собранный API: $API_JAR"
+[[ -f "$WORKER_JAR" ]] || die "Не найден собранный worker: $WORKER_JAR"
 
 if [[ ! -d "$ROOT/frontend/node_modules" ]]; then
   printf 'Устанавливаю зависимости frontend...\n'
@@ -206,8 +226,8 @@ for ((attempt = 0; attempt < 30; attempt++)); do
 done
 [[ "$ready" == true ]] || die 'PostgreSQL или Redis не успели запуститься'
 
-printf 'Запускаю backend (%s)...\n' "$MODE"
-java -jar "$JAR" &
+printf 'Запускаю API (%s); он применит миграции перед стартом worker...\n' "$MODE"
+java -jar "$API_JAR" &
 backend_pid=$!
 
 for ((attempt = 0; attempt < 120; attempt++)); do
@@ -220,9 +240,28 @@ for ((attempt = 0; attempt < 120; attempt++)); do
 done
 port_open "$BACKEND_PORT" || die 'Backend не начал слушать порт за 120 секунд'
 
+# Worker shares DB/Redis settings, but has no need for API authentication/mail secrets.
+printf 'Запускаю worker (%s)...\n' "$MODE"
+(
+  unset JWT_SECRET JWT_EXPIRATION TELEGRAM_BOT_TOKEN RESEND_API_KEY
+  export WORKER_MANAGEMENT_PORT="$WORKER_PORT"
+  exec java -jar "$WORKER_JAR"
+) &
+worker_pid=$!
+for ((attempt = 0; attempt < 120; attempt++)); do
+  check_redis_forward
+  kill -0 "$backend_pid" 2>/dev/null || die 'API завершился до запуска worker'
+  kill -0 "$worker_pid" 2>/dev/null || die 'Worker завершился при запуске'
+  if port_open "$WORKER_PORT"; then
+    break
+  fi
+  sleep 1
+done
+port_open "$WORKER_PORT" || die 'Worker не начал слушать порт за 120 секунд'
+
 printf 'Запускаю frontend (%s)...\n' "$MODE"
 (
-  unset POSTGRES_PASSWORD JWT_SECRET TELEGRAM_BOT_TOKEN
+  unset POSTGRES_PASSWORD SPRING_DATASOURCE_PASSWORD JWT_SECRET TELEGRAM_BOT_TOKEN RESEND_API_KEY
   export BACKEND_INTERNAL_URL="http://127.0.0.1:$BACKEND_PORT"
   cd "$ROOT/frontend"
   if [[ "$MODE" == dev ]]; then
@@ -235,6 +274,8 @@ frontend_pid=$!
 
 for ((attempt = 0; attempt < 60; attempt++)); do
   check_redis_forward
+  kill -0 "$backend_pid" 2>/dev/null || die 'API завершился до готовности frontend'
+  kill -0 "$worker_pid" 2>/dev/null || die 'Worker завершился до готовности frontend'
   kill -0 "$frontend_pid" 2>/dev/null || die 'Frontend завершился при запуске'
   if port_open "$FRONTEND_PORT"; then
     break
@@ -244,9 +285,11 @@ done
 port_open "$FRONTEND_PORT" || die 'Frontend не начал слушать порт за 60 секунд'
 
 printf '\n%s готов: http://127.0.0.1:%s\n' "$MODE" "$FRONTEND_PORT"
-printf 'Ctrl+C остановит backend, frontend, port-forward и профиль %s. PostgreSQL и данные останутся.\n\n' "$KUBE_PROFILE"
+printf 'Метрики API: http://127.0.0.1:%s/actuator/prometheus\n' "$API_MANAGEMENT_PORT"
+printf 'Метрики worker: http://127.0.0.1:%s/actuator/prometheus\n' "$WORKER_PORT"
+printf 'Ctrl+C остановит API, worker, frontend, port-forward и профиль %s. PostgreSQL и данные останутся.\n\n' "$KUBE_PROFILE"
 
-while kill -0 "$backend_pid" 2>/dev/null && kill -0 "$frontend_pid" 2>/dev/null; do
+while kill -0 "$backend_pid" 2>/dev/null && kill -0 "$worker_pid" 2>/dev/null && kill -0 "$frontend_pid" 2>/dev/null; do
   check_redis_forward
   sleep 1
 done

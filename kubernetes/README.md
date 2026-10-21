@@ -1,6 +1,6 @@
 # Запуск с локальным Kubernetes
 
-Redis работает в Kubernetes, backend и frontend пока запускаются на хосте
+Redis работает в Kubernetes, API, worker и frontend пока запускаются на хосте
 через `run.sh`. Dev использует PostgreSQL из Compose, prod подключается к Neon.
 Окружения запускаются в разных профилях minikube: остановка dev не выключает prod.
 
@@ -41,7 +41,13 @@ REDIS_PORT=16379
 1. Запускает профиль выбранного окружения, если кластер ещё не работает.
 2. Применяет `kubernetes/<режим>/redis.yaml` и ждёт готовности Redis.
 3. Создаёт фоновый port-forward на локальный `REDIS_PORT` и проверяет Redis через PING.
-4. Для dev поднимает PostgreSQL через Compose, затем запускает backend и frontend.
+4. Для dev поднимает PostgreSQL через Compose.
+5. Запускает API (применяет миграции), затем отдельный worker и frontend.
+
+`backend/api` и `backend/worker` — отдельные Java-приложения; manifests их
+деплоя пока не добавлены. Worker продолжает запускать judge через Docker CLI.
+Его метрики доступны локально на `9094` в dev и `9093` в prod, API — на `9092`/`9091`.
+Переопределение порта worker: `WORKER_MANAGEMENT_PORT`.
 
 ## Prod
 
@@ -67,7 +73,7 @@ Compose для prod больше не используется. Первый з�
 
 ## Остановка
 
-Ctrl+C завершает frontend, backend и port-forward, затем выполняет
+Ctrl+C завершает frontend, worker, API и port-forward, затем выполняет
 `minikube --profile=<профиль окружения> stop --keep-context-active`.
 Выбранный профиль останавливается даже если работал до запуска скрипта;
 его остальные нагрузки тоже остановятся. PVC и данные сохраняются. Другой
@@ -106,7 +112,7 @@ node --test scripts/tests/run-lifecycle.test.cjs
 ```
 
 Проверки запускают `run.sh` во временной папке с подставными командами.
-Они проверяют очистку процессов при Ctrl+C, ошибках запуска и потере
-port-forward, отдельные профили/контексты/namespace и порты dev и prod,
-а также запрет запуска prod из develop или с незакоммиченными изменениями. Настоящие
-Docker, minikube, backend и frontend в этих проверках не запускаются.
+Они проверяют порядок запуска API/worker, остановку процессов по сигналу,
+разные порты метрик dev/prod, отсутствие почтовых/JWT-секретов в worker,
+а также очистку при ошибке старта и последующем падении worker. Настоящие
+Docker, minikube, API, worker и frontend в этих проверках не запускаются.

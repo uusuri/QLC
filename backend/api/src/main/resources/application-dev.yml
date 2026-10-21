@@ -1,0 +1,23 @@
+server:
+  port: ${SPRING_LOCAL_PORT:8080}
+
+spring:
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+app:
+  frontend-url: ${FRONTEND_PUBLIC_URL:http://127.0.0.1:3001}
+
+management:
+  server:
+    port: ${MANAGEMENT_LOCAL_PORT:9092}
+    address: 127.0.0.1
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus

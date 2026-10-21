@@ -1,43 +1,83 @@
-# Запуск backend
+# Backend: API, worker и shared
 
-Секреты хранятся в корневом `.env`, который исключён из Git. Для новой установки
-скопируйте `.env.example` в `.env` и заполните `POSTGRES_PASSWORD` и `JWT_SECRET`.
-Не перезаписывайте существующий `.env`: он содержит локальные настройки.
+Это три Gradle-модуля, а не три копии backend:
 
-Оба профиля, `dev` и `prod`, используют `POSTGRES_DB`, `POSTGRES_USER`,
-`POSTGRES_PASSWORD`, `POSTGRES_HOST`, `POSTGRES_PORT`. Docker Compose использует
-те же переменные. Для существующей БД пароль в `.env` должен совпадать с паролем
-роли PostgreSQL; редактирование `.env` само по себе пароль в БД не меняет.
-
-`JWT_SECRET` обязателен и должен содержать не менее 64 байт UTF-8.
-Создать случайное значение можно командой `openssl rand -hex 64`; запишите
-результат в `.env`, не в репозиторий. Смена ключа делает старые JWT недействительными.
-
-Из каталога `backend` в **fish**, как в текущем способе запуска:
-
-```fish
-export (string match -rv '^\s*(#|$)' < ../.env)
-./gradlew bootRun
+```text
+backend/
+  api/      HTTP, авторизация, курсы, почта, отправка решений и recovery
+  worker/   Redis consumer → короткая транзакция → Docker judge → сохранение вердикта
+  shared/   JPA-модель, SubmissionRepository, контракт сообщения, языки и метрики
 ```
 
-Для этого способа в `.env` нужны строки `KEY=value` без кавычек, без `export`
-и без комментариев после значения. Для zsh/bash синтаксис другой:
+API и worker — два независимых исполняемых приложения. Каждый зависит от `shared`,
+но **не зависит от другого приложения в runtime**. Зависимость API-тестов от worker
+нужна только для проверки совместной работы recovery и транзакций исполнения.
+У worker нет JWT, почтовых ключей и бизнес-контроллеров. HTTP в нём служит только
+для локального Actuator. Сущности БД общие: например, `Submission` связан с `Task`
+и `User`, поэтому разрезать их на копии моделей сейчас означало бы усложнить JPA.
+
+Flyway-миграции принадлежат API. Сначала запускается API и применяет миграции,
+затем worker проверяет схему через `ddl-auto=validate`. Изменений структуры БД
+в рамках этого разделения нет. Recovery остался в API, но вынесен из
+`SubmissionService` в отдельные `SubmissionRecoveryService` и `SubmissionRecoveryJob`.
+Доставка остаётся at-least-once; блокировка записи и `execution_token` защищают
+от повторного исполнения/записи устаревшего результата.
+
+## Запуск
+
+Из корня QLC, в том числе из fish:
 
 ```sh
-set -a
-source ../.env
-set +a
-./gradlew bootRun
+./run.sh dev
+# либо из чистой ветки main:
+./run.sh prod
 ```
 
-Для профиля `prod` установите `SPRING_PROFILES_ACTIVE=prod` в окружении.
-Тесты используют отдельную H2-базу и временный случайный JWT-ключ; `.env` им не нужен.
+Секреты остаются в игнорируемых `.env.dev` и `.env.prod`, их формат не меняется.
+Скрипт собирает оба JAR, запускает инфраструктуру, API, worker и frontend.
+Ctrl+C завершает оба Java-процесса и frontend, закрывает port-forward и останавливает
+профиль minikube. Если один из процессов упадёт, остальные тоже будут остановлены.
+Это пока запуск **на хосте**, не деплой API/worker в Kubernetes.
+PostgreSQL dev и данные не удаляются. Подробнее — `kubernetes/README.md`.
+
+| Метрики | dev | prod |
+| --- | --- | --- |
+| API | `127.0.0.1:9092/actuator/prometheus` | `127.0.0.1:9091/actuator/prometheus` |
+| worker: queue wait, runner, end-to-end | `127.0.0.1:9094/actuator/prometheus` | `127.0.0.1:9093/actuator/prometheus` |
+
+Порты можно переопределить через `MANAGEMENT_LOCAL_PORT` и `WORKER_MANAGEMENT_PORT`.
+Метрики теперь принадлежат двум разным JVM: их нужно собирать с обеих.
+При ручном запуске нескольких worker у каждого должны быть отдельные порт метрик
+и consumer-name (без `WORKER_ID` генерируется уникальное имя); stream и consumer-group общие.
+Recovery пока запускается одной API-инстанцией. Это не изменение способа запуска judge:
+worker всё ещё требует Docker CLI, доступный daemon и собранные образы языков из `sandbox/`.
+Kubernetes Job вместо DockerRunner — отдельный следующий этап.
+
+## Сборка и тесты
+
+Из `backend/`:
+
+```sh
+./gradlew build                  # все модули и тесты, нужен локальный Redis :6379
+./gradlew build -PskipRedisTests  # H2/mock-тесты без настоящего Redis
+./gradlew :api:bootJar :worker:bootJar
+```
+
+Артефакты: `api/build/libs/qlc-api.jar` и `worker/build/libs/qlc-worker.jar`.
+При ручном запуске с уже загруженным окружением: `./gradlew :api:bootRun`,
+затем в другом терминале `./gradlew :worker:bootRun`.
+Старой команды root `bootRun` больше нет: явно выбирайте приложение.
+`./gradlew bootJar` по-прежнему собирает оба исполняемых JAR.
+`backend/Dockerfile` теперь упаковывает только API (build context — `backend/`);
+он не является образом worker и не используется `run.sh`.
+Контейнерные тесты judge по умолчанию пропускаются, включаются `QLC_DOCKER_TESTS=true`.
+Тесты используют H2 и временный случайный JWT-ключ; `.env` им не нужен.
 
 ## Подтверждение почты и сброс пароля
 
 Для отправки писем через Resend добавьте в игнорируемые `.env.dev` и `.env.prod`
 `RESEND_API_KEY` (ключ с правом отправки) и `MAIL_FROM=no-reply@mail.qlcode.me`.
-Укажите `FRONTEND_PUBLIC_URL=http://127.0.0.1:3000` для dev и
+Укажите `FRONTEND_PUBLIC_URL=http://127.0.0.1:3001` для dev и
 `FRONTEND_PUBLIC_URL=https://qlcode.me` для prod. Не переносите ключ в Git.
 Если отправку намеренно нужно отключить, установите `APP_MAIL_ENABLED=false`;
 при включённой отправке без ключа backend не стартует.
@@ -207,5 +247,5 @@ C++, Java, Python, JavaScript, TypeScript, C#, C, Go, PHP и Rust. Это раб
 
 Черновики и последняя отправка разделены по пользователю, задаче, версии тестов и языку.
 Старый черновик подхватывается только для исходного языка задачи; его запись не удаляется.
-Проверка: `./gradlew test --tests '*CourseLanguageIntegrationTest'` — 14 сценариев,
+Проверка: `./gradlew :api:test --tests '*CourseLanguageIntegrationTest'` — 14 сценариев,
 включая все 10 языков, повторный выбор, изоляцию пользователей и контроль доступа.

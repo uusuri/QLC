@@ -10,9 +10,9 @@ docker build -f sandbox/Dockerfile.java21 -t qlc-java21-runner:dev .
 ```
 
 Образ Java наследует общий sandbox/judge из C++-образа, поэтому собирается после него.
-Из `backend/` можно запустить контейнерные тесты с `QLC_DOCKER_TESTS=true ./gradlew test --tests com.qlc.runners.DockerCodeRunnerIntegrationTest`.
+Из `backend/` можно запустить контейнерные тесты с `QLC_DOCKER_TESTS=true ./gradlew :worker:test --tests com.qlc.worker.runners.DockerCodeRunnerIntegrationTest`.
 
-Профили находятся в `backend/src/main/java/com/qlc/runners/LanguageProfile.java`.
+Профили находятся в `backend/shared/src/main/java/com/qlc/shared/language/LanguageProfile.java`.
 Лимиты задачи считаются базой для C++: C++ получает 1× время и 1× память;
 CPython 3.12 — 3× время и не менее 128 МиБ (обычно 2× память);
 PyPy 3.12 — 3× время и не менее 256 МиБ (обычно 4× память);
