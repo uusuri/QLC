@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 import { CourseLanguageControl } from "@/components/CourseLanguageControl";
 import { codeExecutionLimits } from "@/components/courseLanguages";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { InstantAnswerWorkspace } from "@/components/InstantAnswerWorkspace";
-import { CodeLessonWorkspace } from "@/components/CodeLessonWorkspace";
 import { PageState } from "@/components/PageState";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -19,6 +19,18 @@ import { Alert, Button, ButtonLink } from "@/components/ui";
 import { getAdminLessons, getLessonLearningView, parseCourseIdFromSlug, getAuthToken, rememberLearningTask } from "@/services/api";
 import { Tabs } from "@/components/ui";
 import type { SubmissionLanguage, AdminLessonDto, LearnerTaskDto, LessonLearningViewDto } from "@/types";
+
+const CodeLessonWorkspace = dynamic(() => import("@/components/CodeLessonWorkspace").then(module => module.CodeLessonWorkspace), {
+  ssr: false,
+  loading: () => <p role="status" className="p-6 text-muted">Загружаем редактор…</p>
+});
+
+// Mount on first use, then retain the editor, draft and submission polling between tabs.
+function PracticeContent({ active, children }: { active: boolean; children: ReactNode }) {
+  const [opened, setOpened] = useState(active);
+  useEffect(() => { if (active) setOpened(true); }, [active]);
+  return active || opened ? children : null;
+}
 
 function getTaskTitle(task: LearnerTaskDto, index: number) {
   const heading = task.statementMd
@@ -48,6 +60,7 @@ export default function LessonPage() {
     setAcceptedTaskIds(previous => previous.includes(taskId) ? previous : [...previous, taskId]);
   }, []);
   const [siblingLessons, setSiblingLessons] = useState<AdminLessonDto[]>([]);
+  const [siblingsLoading, setSiblingsLoading] = useState(false);
   const [view, setView] = useState<LessonLearningViewDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
@@ -88,10 +101,6 @@ export default function LessonPage() {
           setActiveSection(requestedTask ? "practice" : "theory");
           setTaskView("task");
         }
-        if (data) {
-          const lessons = await getAdminLessons(data.module.id).catch(() => []);
-          if (!ignore) setSiblingLessons(lessons.filter(item => item.published));
-        }
       } catch (err) {
         if (!ignore) {
           setLoadError(err instanceof Error ? err.message : "Не удалось загрузить урок.");
@@ -109,6 +118,23 @@ export default function LessonPage() {
       ignore = true;
     };
   }, [lessonId, requestedTaskId, router]);
+
+  useEffect(() => {
+    if (!view || view.lesson.id !== lessonId) return;
+    const controller = new AbortController();
+    setSiblingsLoading(true);
+    void getAdminLessons(view.module.id, controller.signal)
+      .then(lessons => {
+        if (!controller.signal.aborted) setSiblingLessons(lessons.filter(item => item.published));
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setSiblingLessons([]);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setSiblingsLoading(false);
+      });
+    return () => controller.abort();
+  }, [lessonId, view]);
 
   useEffect(() => {
     if (loading || view?.lesson.id !== lessonId || selectedTaskId === null) return;
@@ -184,10 +210,11 @@ export default function LessonPage() {
     {positionError && <Alert title="Место не сохранено" tone="warning">{positionError}</Alert>}
     <Tabs activeValue={activeSection} items={[{value:"theory",label:"Материал"},{value:"practice",label:`Практика · ${view.tasks.length}`}]} onChange={setActiveSection} />
     <section className={activeSection === "theory" ? "kit-reading" : "hidden"} aria-label="Материал урока">
-      <aside><p className="qlc-eyebrow">Модуль</p><h2 className="mb-4 text-xl">{view.module.name}</h2><details className="kit-lesson-outline" open><summary>Уроки модуля</summary><nav aria-label="Уроки модуля">{siblingLessons.map(item => <Link aria-current={item.id === lessonId ? "page" : undefined} className={`flex min-h-11 items-center border-l-2 px-3 py-3 text-sm ${item.id === lessonId ? "border-acid text-acid" : "border-line text-muted hover:text-paper"}`} href={`/lessons/${item.id}`} key={item.id}>{item.name}</Link>)}</nav></details><Link className="qlc-text-link text-muted" href={`/courses/${courseSlug}#curriculum`}>Программа курса →</Link><button className="qlc-text-link text-acid" onClick={() => setActiveSection("practice")} type="button">Перейти к практике →</button></aside>
+      <aside><p className="qlc-eyebrow">Модуль</p><h2 className="mb-4 text-xl">{view.module.name}</h2><details className="kit-lesson-outline" open><summary>Уроки модуля</summary>{siblingsLoading && <p role="status" className="p-3 text-sm text-muted">Загружаем список уроков…</p>}<nav aria-label="Уроки модуля">{siblingLessons.map(item => <Link aria-current={item.id === lessonId ? "page" : undefined} className={`flex min-h-11 items-center border-l-2 px-3 py-3 text-sm ${item.id === lessonId ? "border-acid text-acid" : "border-line text-muted hover:text-paper"}`} href={`/lessons/${item.id}`} key={item.id}>{item.name}</Link>)}</nav></details><Link className="qlc-text-link text-muted" href={`/courses/${courseSlug}#curriculum`}>Программа курса →</Link><button className="qlc-text-link text-acid" onClick={() => setActiveSection("practice")} type="button">Перейти к практике →</button></aside>
       <article>{view.course.multilingual ? <AdaptiveTheory lessonId={lessonId} language={selectedLanguage} /> : <SafeMarkdown markdown={view.lesson.contentMd || view.lesson.description || "Материал урока пока пуст."} />}<div className="mt-10 border-t border-line pt-6">{view.tasks.length ? <button className="kit-outline-link w-full" onClick={() => setActiveSection("practice")} type="button">Перейти к практике <span aria-hidden="true">→</span></button> : <ButtonLink href={`/courses/${courseSlug}`}>К программе курса →</ButtonLink>}</div></article>
     </section>
     <section className={activeSection === "practice" ? "py-6" : "hidden"} aria-label="Практика урока">
+      <PracticeContent key={view.lesson.id} active={activeSection === "practice"}>
       {!primaryTask ? <Alert title="Задачи скоро появятся" tone="neutral">К этому уроку пока не добавлены задачи. Материал доступен для изучения.</Alert> : <>
         {view.tasks.length > 1 && <nav aria-label="Выбор задачи" className="mb-6 flex flex-wrap gap-2">{view.tasks.map((task, i) => <button key={task.id} className={`flex min-h-11 max-w-full items-center gap-3 rounded-sm border px-4 py-2 text-sm ${primaryTask.id === task.id ? "border-acid text-acid" : "border-[#66705D] text-muted"}`} aria-pressed={primaryTask.id === task.id} onClick={() => { setSelectedTaskId(task.id); setTaskView("task"); }} type="button"><span className="leading-none">{getTaskTitle(task, i)}</span><TaskDifficulty value={task.difficulty ?? 1} />{acceptedTaskIds.includes(task.id) && <span className="leading-none text-acid" aria-label="Решено">✓</span>}</button>)}</nav>}
         {primaryTask.taskType === "CODE" && <Tabs className="kit-mobile-task-tabs" activeValue={taskView} onChange={setTaskView} items={[{value:"task",label:"Задача"},{value:"code",label:"Код"},{value:"result",label:"Результат"}]} />}
@@ -204,6 +231,7 @@ export default function LessonPage() {
             : <ButtonLink href={`/courses/${courseSlug}`}>К программе курса →</ButtonLink>}
         </div>}
       </>}
+      </PracticeContent>
     </section>
   </main><SiteFooter /></div>;
 }
