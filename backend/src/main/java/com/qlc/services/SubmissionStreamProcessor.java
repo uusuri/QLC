@@ -1,8 +1,10 @@
 package com.qlc.services;
 
 import com.qlc.models.messages.SubmissionStreamMessage;
+import com.qlc.monitoring.SubmissionMetrics;
 import com.qlc.runners.DockerCodeRunner;
 import com.qlc.runners.DockerRunnerResult;
+import com.qlc.runners.RunRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +22,15 @@ public class SubmissionStreamProcessor {
 
   private final SubmissionExecutionTransactions transactions;
   private final DockerCodeRunner dockerCodeRunner;
+  private final SubmissionMetrics metrics;
 
   public SubmissionStreamProcessor(
       SubmissionExecutionTransactions transactions,
-      DockerCodeRunner dockerCodeRunner) {
+      DockerCodeRunner dockerCodeRunner,
+      SubmissionMetrics metrics) {
     this.transactions = transactions;
     this.dockerCodeRunner = dockerCodeRunner;
+    this.metrics = metrics;
   }
 
   @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -37,7 +42,7 @@ public class SubmissionStreamProcessor {
 
     DockerRunnerResult runnerResult;
     try {
-      runnerResult = dockerCodeRunner.run(preparation.runRequest());
+      runnerResult = runTimed(preparation.runRequest());
     } catch (InterruptedException exception) {
       transactions.retryExecution(preparation.submissionId(), preparation.executionToken());
       Thread.currentThread().interrupt();
@@ -63,6 +68,22 @@ public class SubmissionStreamProcessor {
         preparation.submissionId(),
         preparation.taskId(),
         preparation.sourceSizeBytes());
+  }
+
+  private DockerRunnerResult runTimed(RunRequest request) throws IOException, InterruptedException {
+    long startedAt = System.nanoTime();
+    String outcome = "success";
+    try {
+      return dockerCodeRunner.run(request);
+    } catch (InterruptedException exception) {
+      outcome = "interrupted";
+      throw exception;
+    } catch (IOException | RuntimeException exception) {
+      outcome = "error";
+      throw exception;
+    } finally {
+      metrics.runnerDuration(request.toolchain().name(), outcome, System.nanoTime() - startedAt);
+    }
   }
 
   public boolean markInfrastructureFailure(UUID submissionId, String safeMessage) {

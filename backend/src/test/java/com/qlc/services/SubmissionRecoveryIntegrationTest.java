@@ -8,8 +8,10 @@ import com.qlc.models.entities.Submission;
 import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.models.enums.Verdict;
 import com.qlc.models.messages.SubmissionStreamMessage;
+import com.qlc.monitoring.SubmissionMetrics;
 import com.qlc.repositories.SubmissionRepository;
 import com.qlc.runners.DockerRunnerResult;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +48,8 @@ class SubmissionRecoveryIntegrationTest {
   @Autowired SubmissionRepository repository;
   @Autowired SubmissionExecutionTransactions executions;
   @Autowired SubmissionService service;
+  @Autowired SubmissionMetrics metrics;
+  @Autowired MeterRegistry registry;
   @MockitoBean RedisQueueService queue;
 
   TransactionTemplate tx;
@@ -154,6 +158,16 @@ class SubmissionRecoveryIntegrationTest {
   }
 
   @Test
+  void rolledBackTransactionDoesNotRecordRetry() {
+    double retriesBefore = staleRecoveryCount();
+    tx.executeWithoutResult(status -> {
+      metrics.retryAfterCommit("CPP23", "stale_execution");
+      status.setRollbackOnly();
+    });
+    assertThat(staleRecoveryCount()).isEqualTo(retriesBefore);
+  }
+
+  @Test
   void recoversCompilingRunningAndLegacyAttemptsButLeavesFreshAndTerminalOnes() {
     UUID compiling = queued();
     UUID running = queued();
@@ -176,7 +190,9 @@ class SubmissionRecoveryIntegrationTest {
       s.setVerdict(Verdict.AC);
       s.setStartedAt(LocalDateTime.now().minusMinutes(20));
     });
+    double retriesBefore = staleRecoveryCount();
     service.recoverStuckSubmissions();
+    assertThat(staleRecoveryCount()).isEqualTo(retriesBefore + 3);
     for (UUID id : List.of(compiling, running, legacy)) {
       assertThat(read(id).getStatus()).isEqualTo(SubmissionStatus.QUEUED);
       assertThat(read(id).getStartedAt()).isNull();
@@ -258,5 +274,10 @@ class SubmissionRecoveryIntegrationTest {
 
   DockerRunnerResult result(Verdict verdict) {
     return new DockerRunnerResult(verdict, 1, 1, 5, 2048L, "OK");
+  }
+
+  double staleRecoveryCount() {
+    var counter = registry.find("qlc.submission.retries").tag("reason", "stale_execution").counter();
+    return counter == null ? 0 : counter.count();
   }
 }

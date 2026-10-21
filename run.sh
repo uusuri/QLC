@@ -18,7 +18,7 @@ ENV_FILE="$ROOT/.env.$MODE"
 [[ -f "$ENV_FILE" ]] || die "Не найден $ENV_FILE"
 bash -n "$ENV_FILE" >/dev/null 2>&1 || die "Ошибка синтаксиса в $ENV_FILE"
 
-for program in docker java node npm; do
+for program in docker java node npm kubectl minikube; do
   command -v "$program" >/dev/null 2>&1 || die "Не найден $program"
 done
 docker info >/dev/null 2>&1 || die 'Docker не запущен'
@@ -41,12 +41,15 @@ set +a
 [[ -n "${SPRING_LOCAL_PORT:-}" ]] || die 'Не задан SPRING_LOCAL_PORT'
 [[ -n "${REDIS_PORT:-}" ]] || die 'Не задан REDIS_PORT'
 [[ "${SPRING_PROFILES_ACTIVE:-}" == "$MODE" ]] || die "В $ENV_FILE указан неверный Spring-профиль"
+[[ "${REDIS_HOST:-}" == localhost || "${REDIS_HOST:-}" == 127.0.0.1 ]] || die "Redis $MODE должен использовать локальный port-forward"
 
 BACKEND_PORT="$SPRING_LOCAL_PORT"
 if [[ "$MODE" == dev ]]; then
   [[ "${POSTGRES_HOST:-}" == localhost || "${POSTGRES_HOST:-}" == 127.0.0.1 ]] || die 'Dev должен использовать локальный PostgreSQL'
   [[ -z "${SPRING_DATASOURCE_URL:-}" ]] || die 'В dev не должен быть задан SPRING_DATASOURCE_URL'
   FRONTEND_PORT=3001
+  KUBE_PROFILE=minikube
+  KUBE_NAMESPACE=qlc-dev
   COMPOSE_FILE="$ROOT/docker-compose.dev.yml"
   COMPOSE_ARGS=(--env-file "$ENV_FILE" -f "$COMPOSE_FILE")
 else
@@ -54,8 +57,8 @@ else
   [[ "$SPRING_DATASOURCE_URL" == *sslmode=require* ]] || die 'В JDBC URL требуется sslmode=require'
   [[ -n "${POSTGRES_PASSWORD:-}" && "$POSTGRES_PASSWORD" != __SET_NEON_PASSWORD__ ]] || die 'Укажи пароль Neon в .env.prod'
   FRONTEND_PORT=3000
-  COMPOSE_FILE="$ROOT/docker-compose.prod.yml"
-  COMPOSE_ARGS=(--env-file "$ENV_FILE" -f "$COMPOSE_FILE" -p qlc-prod)
+  KUBE_PROFILE=qlc-prod
+  KUBE_NAMESPACE=qlc-prod
 fi
 
 port_available() {
@@ -75,8 +78,84 @@ port_open() {
   ' "$1"
 }
 
+redis_ready() {
+  node -e '
+    const socket = require("node:net").connect(Number(process.argv[2]), process.argv[1]);
+    let reply = "";
+    socket.once("connect", () => socket.write("PING\r\n"));
+    socket.on("data", (chunk) => {
+      reply += chunk.toString();
+      if (reply.includes("\r\n")) process.exit(reply === "+PONG\r\n" ? 0 : 1);
+    });
+    socket.once("error", () => process.exit(1));
+    socket.once("end", () => process.exit(1));
+    socket.setTimeout(1000, () => process.exit(1));
+  ' "${REDIS_HOST:-127.0.0.1}" "$REDIS_PORT"
+}
+
+backend_pid=''
+frontend_pid=''
+redis_forward_pid=''
+startup_pid=''
+stop_minikube=false
+
+run_step() {
+  local status=0
+  "$@" &
+  startup_pid=$!
+  wait "$startup_pid" || status=$?
+  startup_pid=''
+  return "$status"
+}
+
+stop_process() {
+  local pid="$1"
+  local attempt
+  [[ -n "$pid" ]] || return 0
+  if kill -0 "$pid" 2>/dev/null; then
+    kill "$pid" 2>/dev/null || true
+    for ((attempt = 0; attempt < 15; attempt++)); do
+      kill -0 "$pid" 2>/dev/null || break
+      sleep 1
+    done
+    if kill -0 "$pid" 2>/dev/null; then
+      kill -KILL "$pid" 2>/dev/null || true
+    fi
+  fi
+  wait "$pid" 2>/dev/null || true
+}
+
+cleanup() {
+  local exit_status=$?
+  trap - EXIT
+  trap '' INT TERM
+  stop_process "$startup_pid"
+  stop_process "$frontend_pid"
+  stop_process "$backend_pid"
+  stop_process "$redis_forward_pid"
+  if [[ "$stop_minikube" == true ]]; then
+    printf 'Останавливаю Kubernetes %s (профиль %s)...\n' "$MODE" "$KUBE_PROFILE"
+    minikube --profile="$KUBE_PROFILE" stop --keep-context-active \
+      || printf 'Не удалось остановить кластер; выполни minikube --profile=%s stop вручную.\n' "$KUBE_PROFILE" >&2
+  fi
+  return "$exit_status"
+}
+
+check_redis_forward() {
+  if ! kill -0 "$redis_forward_pid" 2>/dev/null; then
+    die "Redis port-forward завершился; останавливаю $MODE"
+  fi
+}
+
 port_available "$BACKEND_PORT" || die "Порт backend $BACKEND_PORT уже занят; существующий процесс не трогаю"
 port_available "$FRONTEND_PORT" || die "Порт frontend $FRONTEND_PORT уже занят; существующий процесс не трогаю"
+
+[[ "$REDIS_PORT" != "$BACKEND_PORT" && "$REDIS_PORT" != "$FRONTEND_PORT" ]] || die 'Порты Redis, backend и frontend должны различаться'
+port_available "$REDIS_PORT" || die "Порт Redis $REDIS_PORT уже занят. Если открыт ручной port-forward, останови его через Ctrl+C"
+
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 printf 'Собираю backend...\n'
 (cd "$ROOT/backend" && ./gradlew bootJar --no-daemon)
@@ -94,19 +173,32 @@ if [[ "$MODE" == prod ]]; then
 fi
 
 printf 'Поднимаю инфраструктуру %s...\n' "$MODE"
+# После начала этого этапа run.sh управляет остановкой выбранного профиля.
+# Dev и prod используют разные кластеры; stop сохраняет PVC и данные.
+stop_minikube=true
+if ! run_step minikube --profile="$KUBE_PROFILE" status >/dev/null 2>&1; then
+  printf 'Запускаю Kubernetes %s (профиль %s)...\n' "$MODE" "$KUBE_PROFILE"
+  run_step minikube --profile="$KUBE_PROFILE" start --driver=docker --keep-context
+fi
+run_step kubectl --context="$KUBE_PROFILE" --request-timeout=15s apply -f "$ROOT/kubernetes/$MODE/redis.yaml"
+run_step kubectl --context="$KUBE_PROFILE" -n "$KUBE_NAMESPACE" rollout status statefulset/redis --timeout=180s
+
+printf 'Открываю Redis port-forward на 127.0.0.1:%s...\n' "$REDIS_PORT"
+kubectl --context="$KUBE_PROFILE" -n "$KUBE_NAMESPACE" port-forward service/redis \
+  "$REDIS_PORT:6379" --address=127.0.0.1 &
+redis_forward_pid=$!
 if [[ "$MODE" == dev ]]; then
-  docker compose "${COMPOSE_ARGS[@]}" up -d postgres redis
-else
-  docker compose "${COMPOSE_ARGS[@]}" up -d redis
+  run_step docker compose "${COMPOSE_ARGS[@]}" up -d postgres
 fi
 
 ready=false
 for ((attempt = 0; attempt < 30; attempt++)); do
+  check_redis_forward
   if [[ "$MODE" == dev ]] && ! docker compose "${COMPOSE_ARGS[@]}" exec -T postgres pg_isready -q >/dev/null 2>&1; then
     sleep 1
     continue
   fi
-  if docker compose "${COMPOSE_ARGS[@]}" exec -T redis redis-cli ping 2>/dev/null | grep -qx PONG; then
+  if redis_ready; then
     ready=true
     break
   fi
@@ -114,28 +206,12 @@ for ((attempt = 0; attempt < 30; attempt++)); do
 done
 [[ "$ready" == true ]] || die 'PostgreSQL или Redis не успели запуститься'
 
-backend_pid=''
-frontend_pid=''
-cleanup() {
-  trap - EXIT
-  if [[ -n "$frontend_pid" ]]; then
-    kill "$frontend_pid" 2>/dev/null || true
-    wait "$frontend_pid" 2>/dev/null || true
-  fi
-  if [[ -n "$backend_pid" ]]; then
-    kill "$backend_pid" 2>/dev/null || true
-    wait "$backend_pid" 2>/dev/null || true
-  fi
-}
-trap cleanup EXIT
-trap 'exit 130' INT
-trap 'exit 143' TERM
-
 printf 'Запускаю backend (%s)...\n' "$MODE"
 java -jar "$JAR" &
 backend_pid=$!
 
 for ((attempt = 0; attempt < 120; attempt++)); do
+  check_redis_forward
   kill -0 "$backend_pid" 2>/dev/null || die 'Backend завершился до запуска frontend'
   if port_open "$BACKEND_PORT"; then
     break
@@ -158,6 +234,7 @@ printf 'Запускаю frontend (%s)...\n' "$MODE"
 frontend_pid=$!
 
 for ((attempt = 0; attempt < 60; attempt++)); do
+  check_redis_forward
   kill -0 "$frontend_pid" 2>/dev/null || die 'Frontend завершился при запуске'
   if port_open "$FRONTEND_PORT"; then
     break
@@ -167,9 +244,10 @@ done
 port_open "$FRONTEND_PORT" || die 'Frontend не начал слушать порт за 60 секунд'
 
 printf '\n%s готов: http://127.0.0.1:%s\n' "$MODE" "$FRONTEND_PORT"
-printf 'Ctrl+C остановит backend и frontend. Контейнеры и данные останутся.\n\n'
+printf 'Ctrl+C остановит backend, frontend, port-forward и профиль %s. PostgreSQL и данные останутся.\n\n' "$KUBE_PROFILE"
 
 while kill -0 "$backend_pid" 2>/dev/null && kill -0 "$frontend_pid" 2>/dev/null; do
+  check_redis_forward
   sleep 1
 done
 die 'Один из процессов завершился; второй будет остановлен'

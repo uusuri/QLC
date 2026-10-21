@@ -3,6 +3,7 @@ package com.qlc.services;
 import com.qlc.exceptions.ResourceNotFoundException;
 
 import com.qlc.models.requests.SubmissionRequest;
+import com.qlc.monitoring.SubmissionMetrics;
 import com.qlc.models.responses.SubmissionCreatedResponse;
 import com.qlc.models.responses.SubmissionResponse;
 import com.qlc.models.dtos.SubmissionResultDTO;
@@ -43,6 +44,7 @@ public class SubmissionService {
   private final UserRepository userRepository;
   private final TaskAccessService taskAccess;
   private final CourseLanguageService courseLanguages;
+  private final SubmissionMetrics metrics;
 
   @Value("${app.submissions.max-size:65535}")
   private int maxSourceSize;
@@ -54,13 +56,15 @@ public class SubmissionService {
   private long executionTimeoutMs = 900000;
 
   public SubmissionService(SubmissionRepository submissionRepository, TaskRepository taskRepository,
-      RedisQueueService redisQueueService, UserRepository userRepository, TaskAccessService taskAccess, CourseLanguageService courseLanguages) {
+      RedisQueueService redisQueueService, UserRepository userRepository, TaskAccessService taskAccess,
+      CourseLanguageService courseLanguages, SubmissionMetrics metrics) {
     this.taskAccess = taskAccess;
     this.courseLanguages = courseLanguages;
     this.submissionRepository = submissionRepository;
     this.taskRepository = taskRepository;
     this.redisQueueService = redisQueueService;
     this.userRepository = userRepository;
+    this.metrics = metrics;
   }
 
   public SubmissionCreatedResponse createSubmission(Long taskId, SubmissionRequest request, String idempotencyKey) {
@@ -178,6 +182,7 @@ public class SubmissionService {
         submission.setExecutionToken(null);
         submission.setQueuedAt(null);
         submissionRepository.save(submission);
+        metrics.retryAfterCommit(submission.getLanguage(), "stale_execution");
       }
     }
 

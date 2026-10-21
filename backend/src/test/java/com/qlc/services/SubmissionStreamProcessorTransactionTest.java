@@ -5,10 +5,12 @@ import com.qlc.models.entities.Submission;
 import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.models.enums.Verdict;
 import com.qlc.models.messages.SubmissionStreamMessage;
+import com.qlc.monitoring.SubmissionMetrics;
 import com.qlc.repositories.SubmissionRepository;
 import com.qlc.runners.DockerCodeRunner;
 import com.qlc.runners.DockerRunnerResult;
 import org.junit.jupiter.api.Test;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -97,15 +99,21 @@ class SubmissionStreamProcessorTransactionTest {
     }
 
     @Bean
-    SubmissionExecutionTransactions submissionExecutionTransactions(SubmissionRepository repository) {
-      return new SubmissionExecutionTransactions(repository);
+    SubmissionExecutionTransactions submissionExecutionTransactions(
+        SubmissionRepository repository, SubmissionMetrics metrics) {
+      return new SubmissionExecutionTransactions(repository, metrics);
+    }
+
+    @Bean
+    SubmissionMetrics submissionMetrics() {
+      return new SubmissionMetrics(new SimpleMeterRegistry());
     }
 
     @Bean
     SubmissionStreamProcessor submissionStreamProcessor(
         SubmissionExecutionTransactions transactions,
-        DockerCodeRunner runner) {
-      return new SubmissionStreamProcessor(transactions, runner);
+        DockerCodeRunner runner, SubmissionMetrics metrics) {
+      return new SubmissionStreamProcessor(transactions, runner, metrics);
     }
   }
 
