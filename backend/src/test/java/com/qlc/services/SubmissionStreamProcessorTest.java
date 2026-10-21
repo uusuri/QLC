@@ -5,12 +5,14 @@ import com.qlc.models.entities.Submission;
 import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.models.enums.Verdict;
 import com.qlc.models.messages.SubmissionStreamMessage;
+import com.qlc.monitoring.SubmissionMetrics;
 import com.qlc.repositories.SubmissionRepository;
 import com.qlc.runners.DockerCodeRunner;
 import com.qlc.runners.DockerRunnerResult;
 import com.qlc.runners.RunRequest;
 import com.qlc.runners.Toolchain;
 import org.junit.jupiter.api.BeforeEach;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -19,12 +21,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -41,11 +46,14 @@ class SubmissionStreamProcessorTest {
   private DockerCodeRunner dockerCppRunner;
 
   private SubmissionStreamProcessor processor;
+  private SimpleMeterRegistry registry;
 
   @BeforeEach
   void setUp() {
-    SubmissionExecutionTransactions transactions = new SubmissionExecutionTransactions(submissionRepository);
-    processor = new SubmissionStreamProcessor(transactions, dockerCppRunner);
+    registry = new SimpleMeterRegistry();
+    SubmissionMetrics metrics = new SubmissionMetrics(registry);
+    SubmissionExecutionTransactions transactions = new SubmissionExecutionTransactions(submissionRepository, metrics);
+    processor = new SubmissionStreamProcessor(transactions, dockerCppRunner, metrics);
   }
 
   @Test
@@ -83,6 +91,15 @@ class SubmissionStreamProcessorTest {
     assertEquals(Duration.ofMillis(2_000), runRequest.timeLimit());
     assertEquals(4_096, runRequest.outputLimitInKb());
     assertEquals(Toolchain.CPP23, runRequest.toolchain());
+    assertEquals(1, registry.find("qlc.submission.queue.wait").tag("language", "CPP23").timer().count());
+    assertTrue(registry.find("qlc.submission.queue.wait").tag("language", "CPP23").timer()
+        .totalTime(TimeUnit.SECONDS) >= 4);
+    assertEquals(1, registry.find("qlc.submission.runner").tag("outcome", "success").timer().count());
+    assertEquals(1, registry.find("qlc.submission.end.to.end").tag("result", "AC").timer().count());
+
+    assertEquals(SubmissionStreamProcessor.ProcessingOutcome.ALREADY_TERMINAL,
+        processor.process(message(submission)).outcome());
+    assertEquals(1, registry.find("qlc.submission.end.to.end").tag("result", "AC").timer().count());
     verify(submissionRepository, times(2)).save(submission);
   }
 
@@ -99,6 +116,8 @@ class SubmissionStreamProcessorTest {
 
     assertEquals("Failed to execute judge container", exception.getMessage());
     assertEquals(SubmissionStatus.QUEUED, submission.getStatus());
+    assertEquals(1, registry.find("qlc.submission.runner").tag("outcome", "error").timer().count());
+    assertEquals(1, registry.find("qlc.submission.retries").tag("reason", "runner_error").counter().count());
     verify(submissionRepository, times(2)).save(submission);
   }
 
@@ -152,6 +171,8 @@ class SubmissionStreamProcessorTest {
 
     assertEquals(SubmissionStreamProcessor.ProcessingOutcome.CONTRACT_MISMATCH, processor.process(message(submission)).outcome());
     assertEquals(SubmissionStatus.INFRA_ERROR, submission.getStatus());
+    assertEquals(1, registry.find("qlc.submission.infra.errors").counter().count());
+    assertEquals(1, registry.find("qlc.submission.end.to.end").tag("result", "INFRA_ERROR").timer().count());
   }
 
   @Test
@@ -219,6 +240,8 @@ class SubmissionStreamProcessorTest {
     submission.setLanguage("CPP23");
     submission.setSourceCode(sourceCode);
     submission.setStatus(status);
+    submission.setCreatedAt(LocalDateTime.now().minusSeconds(5));
+    submission.setQueuedAt(LocalDateTime.now().minusSeconds(3));
     return submission;
   }
 

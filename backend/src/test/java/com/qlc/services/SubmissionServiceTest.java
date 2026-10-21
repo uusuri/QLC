@@ -1,6 +1,7 @@
 package com.qlc.services;
 
 import com.qlc.models.requests.SubmissionRequest;
+import com.qlc.monitoring.SubmissionMetrics;
 import com.qlc.models.responses.SubmissionCreatedResponse;
 import com.qlc.models.responses.SubmissionResponse;
 import com.qlc.models.dtos.SubmissionResultDTO;
@@ -48,6 +49,9 @@ class SubmissionServiceTest {
 
   @Mock
   private TaskAccessService taskAccess;
+
+  @Mock
+  private SubmissionMetrics metrics;
 
   @InjectMocks
   private SubmissionService submissionService;

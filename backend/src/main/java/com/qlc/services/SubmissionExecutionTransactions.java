@@ -5,6 +5,7 @@ import com.qlc.models.entities.Submission;
 import com.qlc.models.entities.Task;
 import com.qlc.models.enums.SubmissionStatus;
 import com.qlc.models.messages.SubmissionStreamMessage;
+import com.qlc.monitoring.SubmissionMetrics;
 import com.qlc.repositories.SubmissionRepository;
 import com.qlc.runners.DockerRunnerResult;
 import com.qlc.runners.RunRequest;
@@ -26,9 +27,11 @@ public class SubmissionExecutionTransactions {
   private static final int MAX_EXECUTION_ATTEMPTS = 3;
 
   private final SubmissionRepository submissionRepository;
+  private final SubmissionMetrics metrics;
 
-  public SubmissionExecutionTransactions(SubmissionRepository submissionRepository) {
+  public SubmissionExecutionTransactions(SubmissionRepository submissionRepository, SubmissionMetrics metrics) {
     this.submissionRepository = submissionRepository;
+    this.metrics = metrics;
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -72,12 +75,7 @@ public class SubmissionExecutionTransactions {
       return reject(submission, SubmissionStreamProcessor.MALFORMED_MESSAGE);
     }
     if (!Objects.equals(taskId, message.taskId()) || !sourceCode.equals(message.sourceCode())) {
-      submission.setStatus(SubmissionStatus.INFRA_ERROR);
-      submission.setVerdict(null);
-      submission.setExecutionTime(null);
-      submission.setMemoryUsed(null);
-      submission.setSafeMessage(SubmissionStreamProcessor.CONTRACT_MISMATCH_MESSAGE);
-      submissionRepository.save(submission);
+      fail(submission, SubmissionStreamProcessor.CONTRACT_MISMATCH_MESSAGE);
       return new Preparation(
           PreparationOutcome.CONTRACT_MISMATCH,
           submissionId,
@@ -108,11 +106,19 @@ public class SubmissionExecutionTransactions {
         codeTask.getOutputLimitKb(),
         toolchain);
 
+    LocalDateTime startedAt = LocalDateTime.now();
+    LocalDateTime queuedAt = submission.getQueuedAt() == null
+        ? submission.getCreatedAt() : submission.getQueuedAt();
+    if (submission.getRetryCount() == 0 && submission.getCreatedAt() != null) {
+      // Recovery can republish the first attempt and move queuedAt forward.
+      queuedAt = submission.getCreatedAt();
+    }
     submission.setStatus(SubmissionStatus.COMPILING);
-    submission.setStartedAt(LocalDateTime.now());
+    submission.setStartedAt(startedAt);
     submission.setExecutionToken(UUID.randomUUID());
     submission.setRetryCount(submission.getRetryCount() + 1);
     submissionRepository.save(submission);
+    metrics.queueWaitAfterCommit(submission.getLanguage(), queuedAt, startedAt);
     return new Preparation(
         PreparationOutcome.READY,
         submissionId,
@@ -141,6 +147,8 @@ public class SubmissionExecutionTransactions {
     submission.setSafeMessage(runnerResult.safeMessage());
     submission.setStatus(SubmissionStatus.FINISHED);
     submissionRepository.save(submission);
+    metrics.completedAfterCommit(submission.getLanguage(), submission.getCreatedAt(),
+        runnerResult.verdict() == null ? "UNKNOWN" : runnerResult.verdict().name());
     return CompletionOutcome.COMPLETED;
   }
 
@@ -170,6 +178,7 @@ public class SubmissionExecutionTransactions {
       submission.setExecutionToken(null);
       submission.setQueuedAt(LocalDateTime.now());
       submissionRepository.save(submission);
+      metrics.retryAfterCommit(submission.getLanguage(), "runner_error");
     }
   }
 
@@ -191,6 +200,7 @@ public class SubmissionExecutionTransactions {
     submission.setMemoryUsed(null);
     submission.setSafeMessage(safeMessage);
     submissionRepository.save(submission);
+    metrics.completedAfterCommit(submission.getLanguage(), submission.getCreatedAt(), "INFRA_ERROR");
   }
 
   private boolean isTerminal(SubmissionStatus status) {
