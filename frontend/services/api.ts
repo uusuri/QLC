@@ -16,6 +16,12 @@ import type {
   CourseLearningViewDto,
   CourseStructureResponseDto,
   MyCourseProgressDto,
+  ExperienceSummaryDto,
+  FriendUserDto,
+  FriendRequestsDto,
+  UserProfileDto,
+  UserActivityDto,
+  DailySubmissionsDto,
   CourseAccessCopyDto,
   CourseAccessStatus,
   CourseDto,
@@ -29,8 +35,12 @@ import type {
   SubmissionCreatePayload,
   SubmissionCreatedResponseDto,
   SubmissionResponseDto,
+  SubmissionHistoryPageDto,
+  SubmissionHistoryDetailDto,
   TelegramAuthPayload
 } from "@/types";
+import { parseExperienceSummary } from "./experience";
+import { groupCourseModules } from "./courseLevels";
 
 const API_BASE_URL = (
   typeof window === "undefined"
@@ -496,6 +506,69 @@ export async function deleteMyAvatar(): Promise<void> {
   await apiFetch("/api/users/me/avatar", { auth: true, method: "DELETE" });
 }
 
+// Optional bearer is intentional: public profiles work for guests, private ones only for the owner.
+export async function getPublicProfile(username: string, signal?: AbortSignal): Promise<UserProfileDto> {
+  return apiRequest<UserProfileDto>(`/api/users/profiles/${encodeURIComponent(username)}`, { auth: true, signal });
+}
+
+export async function getUserActivity(username: string, signal?: AbortSignal): Promise<UserActivityDto> {
+  return apiRequest<UserActivityDto>(`/api/users/profiles/${encodeURIComponent(username)}/activity`, { auth: true, signal });
+}
+
+export async function getMyDailySubmissions(date: string, page = 0, signal?: AbortSignal): Promise<DailySubmissionsDto> {
+  return apiRequest(`/api/users/me/activity?date=${encodeURIComponent(date)}&page=${page}`, { auth: true, signal });
+}
+
+export async function getUserFriends(username: string, signal?: AbortSignal): Promise<FriendUserDto[]> {
+  return apiRequest<FriendUserDto[]>(`/api/users/profiles/${encodeURIComponent(username)}/friends`, { auth: true, signal });
+}
+
+export function publicAvatarUrl(username: string): string {
+  return `${API_BASE_URL}/api/users/profiles/${encodeURIComponent(username)}/avatar`;
+}
+
+export async function getUserAvatar(username: string, signal?: AbortSignal): Promise<Blob | null> {
+  try {
+    const response = await apiFetch(`/api/users/profiles/${encodeURIComponent(username)}/avatar`, { auth: true, signal });
+    return response.blob();
+  } catch (error) {
+    if (error instanceof ApiClientError && error.status === 404) return null;
+    throw error;
+  }
+}
+
+export async function updateProfilePrivacy(privateProfile: boolean): Promise<{ privateProfile: boolean }> {
+  return apiRequest("/api/users/me/privacy", { auth: true, method: "PUT", body: JSON.stringify({ privateProfile }) });
+}
+
+export async function searchUsers(query: string, signal?: AbortSignal): Promise<FriendUserDto[]> {
+  return apiRequest(`/api/users/search?q=${encodeURIComponent(query.trim())}`, { auth: true, signal });
+}
+
+export async function getMyFriends(signal?: AbortSignal): Promise<FriendUserDto[]> {
+  return apiRequest("/api/friends", { auth: true, signal });
+}
+
+export async function getFriendRequests(signal?: AbortSignal): Promise<FriendRequestsDto> {
+  return apiRequest("/api/friends/requests", { auth: true, signal });
+}
+
+export async function sendFriendRequest(userId: number): Promise<void> {
+  await apiFetch(`/api/friends/requests/${userId}`, { auth: true, method: "POST" });
+}
+
+export async function acceptFriendRequest(userId: number): Promise<void> {
+  await apiFetch(`/api/friends/requests/${userId}/accept`, { auth: true, method: "PUT" });
+}
+
+export async function dismissFriendRequest(userId: number): Promise<void> {
+  await apiFetch(`/api/friends/requests/${userId}`, { auth: true, method: "DELETE" });
+}
+
+export async function removeFriend(userId: number): Promise<void> {
+  await apiFetch(`/api/friends/${userId}`, { auth: true, method: "DELETE" });
+}
+
 // Выполняет logout на фронте.
 export function logoutUser() {
   clearAuthToken();
@@ -527,7 +600,7 @@ export async function getCourseLearningView(slug: string): Promise<CourseLearnin
     throw error;
   }
 
-  const modulesWithLessons = structure.modules;
+  const modulesWithLessons = groupCourseModules(structure.modules).flatMap(group => group.modules);
   // Главная CTA открывает только опубликованный урок, содержимое которого backend не скрывает.
   const firstLesson =
     modulesWithLessons.flatMap((item) => item.lessons).find((lesson) => lesson.published) ?? null;
@@ -750,6 +823,24 @@ export async function getSubmission(
   });
 }
 
+export async function createCodeRun(taskId: number, payload: {
+  language: import("@/types").SubmissionLanguage; sourceCode: string; tests: import("./codeRuns").RunTest[];
+}, signal?: AbortSignal): Promise<import("./codeRuns").CodeRunResult> {
+  return apiRequest(`/api/tasks/${taskId}/runs`, { auth: true, method: "POST", body: JSON.stringify(payload), signal });
+}
+
+export async function getCodeRun(id: string, signal?: AbortSignal): Promise<import("./codeRuns").CodeRunResult> {
+  return apiRequest(`/api/runs/${encodeURIComponent(id)}`, { auth: true, signal });
+}
+
+export async function getSubmissionHistory(taskId: number, page = 0, signal?: AbortSignal): Promise<SubmissionHistoryPageDto> {
+  return apiRequest<SubmissionHistoryPageDto>(`/api/tasks/${taskId}/submissions?page=${page}`, { auth: true, signal });
+}
+
+export async function getSubmissionHistoryDetail(taskId: number, id: string, signal?: AbortSignal): Promise<SubmissionHistoryDetailDto> {
+  return apiRequest<SubmissionHistoryDetailDto>(`/api/tasks/${taskId}/submissions/${encodeURIComponent(id)}`, { auth: true, signal });
+}
+
 // Добавляет курс в корзину текущего пользователя.
 export async function addCourseToCart(courseId: number): Promise<CartResponseDto> {
   return apiRequest<CartResponseDto>("/api/cart/items", {
@@ -776,6 +867,10 @@ export async function purchaseCart(): Promise<AdminCourseDto[]> {
 export async function getMyLearningCourses(): Promise<MyCourseProgressDto[]> {
   await learningPositionWrite.catch(() => undefined);
   return apiRequest<MyCourseProgressDto[]>("/api/users/me/learning-courses", { auth: true });
+}
+
+export async function getMyExperience(signal?: AbortSignal): Promise<ExperienceSummaryDto> {
+  return parseExperienceSummary(await apiRequest<unknown>("/api/users/me/experience", { auth: true, signal }));
 }
 
 // Serialize position writes so fast task switching cannot restore an older task.

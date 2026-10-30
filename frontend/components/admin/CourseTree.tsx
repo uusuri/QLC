@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { AdminCourseDto, AdminModuleDto, AdminLessonDto, AdminTaskDto } from "@/types";
 import type { Branch, useAdminTreeData } from "./useAdminTreeData";
+import { taskDifficultyLabel } from "@/services/courseLevels";
 
 export type EditorSelection = {
   step: "course" | "module" | "lesson" | "task";
@@ -99,7 +100,7 @@ export function CourseTree({ courses, selection, data, busy, loading, onNavigate
               {[...(data.modules.branches[course.id]?.items ?? [])].sort(byPosition).map(moduleItem => {
                 const modulePath = { ...path, moduleId: moduleItem.id };
                 return <li key={moduleItem.id}>
-                  <Node label={moduleItem.name} kind="Модуль" expanded={openModules.has(moduleItem.id)} onToggle={() => toggleModule(moduleItem.id)}
+                  <Node label={moduleItem.name} kind={moduleItem.level ? `Уровень ${moduleItem.level} · Модуль` : "Модуль"} expanded={openModules.has(moduleItem.id)} onToggle={() => toggleModule(moduleItem.id)}
                     active={selection.step === "module" && selection.moduleId === moduleItem.id} inPath={selection.moduleId === moduleItem.id} disabled={busy}
                     onSelect={() => navigate({ ...modulePath, step: "module" })} addLabel={`Добавить урок в «${moduleItem.name}»`} onAdd={() => navigate({ ...modulePath, step: "lesson" })} />
                   {openModules.has(moduleItem.id) && <div className="ml-4 border-l border-line pl-2">
@@ -114,7 +115,7 @@ export function CourseTree({ courses, selection, data, busy, loading, onNavigate
                             {openLessons.has(lesson.id) && <div className="ml-4 border-l border-line pl-2">
                               <BranchContent branch={data.tasks.branches[lesson.id]} empty="В уроке пока нет задач." retry={() => void loadTasks(lesson.id, true).catch(() => {})}>
                                 <ul className="space-y-1">{(data.tasks.branches[lesson.id]?.items ?? []).map(task => <li key={task.id}>
-                                  <Node label={taskTitle(task)} kind={<>{task.taskType === "CODE" ? "Код" : task.taskType === "TEST" ? "Тест" : "Числовой ответ"}<span aria-label={`Сложность: ${task.difficulty ?? 1} из 3`} className="ml-2 inline-block align-middle font-mono text-[1.55rem] leading-none tracking-[0.05em] text-acid">{"★".repeat(task.difficulty ?? 1)}</span></>} active={selection.step === "task" && selection.taskId === task.id} disabled={busy}
+                                  <Node label={taskTitle(task)} kind={<>{task.taskType === "CODE" ? "Код" : task.taskType === "TEST" ? "Тест" : "Числовой ответ"}<span aria-label={taskDifficultyLabel(task.difficulty ?? 1, moduleItem.level)} title={taskDifficultyLabel(task.difficulty ?? 1, moduleItem.level)} className="ml-2 inline-block align-middle font-mono text-[1.55rem] leading-none tracking-[0.05em] text-acid">{"★".repeat(task.difficulty ?? 1)}</span></>} active={selection.step === "task" && selection.taskId === task.id} disabled={busy}
                                     onSelect={() => navigate({ ...lessonPath, taskId: task.id, step: "task" })} />
                                 </li>)}</ul>
                               </BranchContent>

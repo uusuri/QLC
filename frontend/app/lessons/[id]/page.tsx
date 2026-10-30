@@ -15,6 +15,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { AdaptiveTheory } from "@/components/AdaptiveTheory";
 import { SafeMarkdown } from "@/components/SafeMarkdown";
 import { TaskHints } from "@/components/TaskHints";
+import { taskDifficultyLabel } from "@/services/courseLevels";
 import { Alert, Button, ButtonLink } from "@/components/ui";
 import { getAdminLessons, getLessonLearningView, parseCourseIdFromSlug, getAuthToken, rememberLearningTask } from "@/services/api";
 import { Tabs } from "@/components/ui";
@@ -42,9 +43,10 @@ function getTaskTitle(task: LearnerTaskDto, index: number) {
   return heading || `Задача ${index + 1}`;
 }
 
-function TaskDifficulty({ value }: { value: number }) {
+function TaskDifficulty({ value, level }: { value: number; level?: 1 | 2 | 3 | null }) {
   const difficulty = value >= 1 && value <= 3 ? value : 1;
-  return <span aria-label={`Сложность: ${difficulty} из 3`} className="inline-block -translate-y-[0.12em] font-mono text-[1.875rem] leading-none tracking-[0.08em] text-acid">{"★".repeat(difficulty)}{"☆".repeat(3 - difficulty)}</span>;
+  const label = taskDifficultyLabel(difficulty, level);
+  return <span aria-label={label} title={label} className="inline-block -translate-y-[0.12em] font-mono text-[1.875rem] leading-none tracking-[0.08em] text-acid">{"★".repeat(difficulty)}{"☆".repeat(3 - difficulty)}</span>;
 }
 
 export default function LessonPage() {
@@ -205,7 +207,7 @@ export default function LessonPage() {
 
   return <div className="kit-shell"><SiteHeader compact /><main className="kit-page" id="main-content" tabIndex={-1}>
     <nav aria-label="Навигация по уроку" className="flex flex-wrap justify-between gap-4 text-sm text-muted"><Link className="qlc-text-link" href={`/courses/${courseSlug}`}>← {view.course.name}</Link><Link className="qlc-text-link" href="/profile">Моё обучение ↗</Link></nav>
-    <header className="kit-lesson-header"><p className="qlc-eyebrow text-muted">{view.module.name} / Урок {lessonCode}</p><h1 className="break-words">{view.lesson.name}</h1><p>{view.lesson.description || "Изучите материал, затем закрепите его на практике."}</p></header>
+    <header className="kit-lesson-header"><p className="qlc-eyebrow text-muted">{view.module.level ? `Уровень ${view.module.level} / ` : ""}{view.module.name} / Урок {lessonCode}</p><h1 className="break-words">{view.lesson.name}</h1><p>{view.lesson.description || "Изучите материал, затем закрепите его на практике."}</p></header>
     {view.course.multilingual && <CourseLanguageControl key={view.course.id} courseId={view.course.id} onChange={setSelectedLanguage} />}
     {positionError && <Alert title="Место не сохранено" tone="warning">{positionError}</Alert>}
     <Tabs activeValue={activeSection} items={[{value:"theory",label:"Материал"},{value:"practice",label:`Практика · ${view.tasks.length}`}]} onChange={setActiveSection} />
@@ -216,10 +218,10 @@ export default function LessonPage() {
     <section className={activeSection === "practice" ? "py-6" : "hidden"} aria-label="Практика урока">
       <PracticeContent key={view.lesson.id} active={activeSection === "practice"}>
       {!primaryTask ? <Alert title="Задачи скоро появятся" tone="neutral">К этому уроку пока не добавлены задачи. Материал доступен для изучения.</Alert> : <>
-        {view.tasks.length > 1 && <nav aria-label="Выбор задачи" className="mb-6 flex flex-wrap gap-2">{view.tasks.map((task, i) => <button key={task.id} className={`flex min-h-11 max-w-full items-center gap-3 rounded-sm border px-4 py-2 text-sm ${primaryTask.id === task.id ? "border-acid text-acid" : "border-[#66705D] text-muted"}`} aria-pressed={primaryTask.id === task.id} onClick={() => { setSelectedTaskId(task.id); setTaskView("task"); }} type="button"><span className="leading-none">{getTaskTitle(task, i)}</span><TaskDifficulty value={task.difficulty ?? 1} />{acceptedTaskIds.includes(task.id) && <span className="leading-none text-acid" aria-label="Решено">✓</span>}</button>)}</nav>}
+        {view.tasks.length > 1 && <nav aria-label="Выбор задачи" className="mb-6 flex flex-wrap gap-2">{view.tasks.map((task, i) => <button key={task.id} className={`flex min-h-11 max-w-full items-center gap-3 rounded-sm border px-4 py-2 text-sm ${primaryTask.id === task.id ? "border-acid text-acid" : "border-[#66705D] text-muted"}`} aria-pressed={primaryTask.id === task.id} onClick={() => { setSelectedTaskId(task.id); setTaskView("task"); }} type="button"><span className="leading-none">{getTaskTitle(task, i)}</span><TaskDifficulty value={task.difficulty ?? 1} level={view.module.level} />{acceptedTaskIds.includes(task.id) && <span className="leading-none text-acid" aria-label="Решено">✓</span>}</button>)}</nav>}
         {primaryTask.taskType === "CODE" && <Tabs className="kit-mobile-task-tabs" activeValue={taskView} onChange={setTaskView} items={[{value:"task",label:"Задача"},{value:"code",label:"Код"},{value:"result",label:"Результат"}]} />}
         <div className={primaryTask.taskType === "CODE" ? "kit-task-grid" : "grid gap-6"} data-view={taskView}>
-          <section className="kit-task-statement"><header className="flex items-center justify-between gap-4 border-b border-line p-5"><h2 className="text-xl">Условие задачи</h2><TaskDifficulty value={primaryTask.difficulty ?? 1} /></header><div className="grid gap-6 p-5"><SafeMarkdown markdown={primaryTask.statementMd || "Условие задачи пока пусто."} />
+          <section className="kit-task-statement"><header className="flex items-center justify-between gap-4 border-b border-line p-5"><h2 className="text-xl">Условие задачи</h2><TaskDifficulty value={primaryTask.difficulty ?? 1} level={view.module.level} /></header><div className="grid gap-6 p-5"><SafeMarkdown markdown={primaryTask.statementMd || "Условие задачи пока пусто."} />
           {primaryTask.taskType === "CODE" && codeLimits && <dl className="grid gap-3 border-t border-line pt-5 text-xs text-muted">{codeLimits.timeMs !== null && <div className="flex justify-between gap-3"><dt>Время</dt><dd>{codeLimits.timeMs} мс</dd></div>}{codeLimits.memoryKb !== null && <div className="flex justify-between gap-3"><dt>Память</dt><dd>{codeLimits.memoryKb} КБ</dd></div>}{primaryTask.outputLimitKb !== null && <div className="flex justify-between gap-3"><dt>Размер вывода</dt><dd>{primaryTask.outputLimitKb} КБ</dd></div>}</dl>}
           {primaryTask.taskType !== "CODE" && <TaskHints key={primaryTask.id} taskId={primaryTask.id} hints={primaryTask.hints ?? []} />}
           </div></section>

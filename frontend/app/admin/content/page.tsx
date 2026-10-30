@@ -59,6 +59,7 @@ type CourseFormState = {
 };
 
 type ModuleFormState = {
+  level: "" | "1" | "2" | "3";
   name: string;
   description: string;
   position: string;
@@ -121,6 +122,7 @@ const initialCourseForm: CourseFormState = {
 };
 
 const initialModuleForm: ModuleFormState = {
+  level: "",
   name: "",
   description: "",
   position: "0"
@@ -340,6 +342,7 @@ function buildModulePayload(form: ModuleFormState): AdminModuleCreatePayload {
   }
 
   return {
+    level: form.level ? Number(form.level) as 1 | 2 | 3 : null,
     name: form.name.trim(),
     description: form.description.trim(),
     position: parseNonNegativeInteger(form.position, "position")
@@ -451,6 +454,7 @@ function courseDtoToForm(course: AdminCourseDto): CourseFormState {
 
 function moduleDtoToForm(moduleItem: AdminModuleDto): ModuleFormState {
   return {
+    level: moduleItem.level ? String(moduleItem.level) as "1" | "2" | "3" : "",
     name: moduleItem.name,
     description: moduleItem.description,
     position: String(moduleItem.position)
@@ -1297,6 +1301,15 @@ export default function AdminContentPage() {
                         setModuleForm((current) => ({ ...current, position: value }))
                       }
                     />
+                    <label className="grid gap-2 text-xs text-muted">Уровень курса
+                      <select className="min-h-11 border border-line bg-ink px-3 text-sm text-paper" value={moduleForm.level}
+                        onChange={event => setModuleForm(current => ({ ...current, level: event.target.value as ModuleFormState["level"] }))}>
+                        <option value="">Без уровня</option>
+                        <option value="1">Уровень 1</option>
+                        <option value="2">Уровень 2</option>
+                        <option value="3">Уровень 3</option>
+                      </select>
+                    </label>
                     <FormActions
                       busy={moduleState.loading}
                       createLabel="Создать новый модуль"
@@ -1371,6 +1384,7 @@ export default function AdminContentPage() {
                       }
                     />
                     <TaskDifficultySelector
+                      courseLevel={selectedModule?.level}
                       value={taskForm.difficulty}
                       onChange={(difficulty) =>
                         setTaskForm((current) => ({ ...current, difficulty }))
@@ -1742,9 +1756,11 @@ function TaskTypeSelector({
 }
 
 function TaskDifficultySelector({
+  courseLevel,
   onChange,
   value
 }: {
+  courseLevel?: 1 | 2 | 3 | null;
   onChange: (value: 1 | 2 | 3) => void;
   value: 1 | 2 | 3;
 }) {
@@ -1752,11 +1768,11 @@ function TaskDifficultySelector({
 
   return (
     <fieldset className="grid gap-2">
-      <legend className="font-mono text-[11px] text-white/65">Сложность</legend>
+      <legend className="font-mono text-[11px] text-white/65">{courseLevel ? `Сложность внутри уровня ${courseLevel}` : "Сложность"}</legend>
       <div className="grid gap-2 sm:grid-cols-3">
         {levels.map((level) => (
           <button
-            aria-label={`${level} ${level === 1 ? "звезда" : level === 2 ? "звезды" : "звезды"}`}
+            aria-label={courseLevel ? `Сложность внутри уровня ${courseLevel}: ${level} из 3` : `Сложность: ${level} из 3`}
             aria-pressed={value === level}
             className={`min-h-16 border px-3 font-mono text-[2.2rem] leading-none tracking-[0.12em] transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-acid ${
               value === level
@@ -1772,7 +1788,7 @@ function TaskDifficultySelector({
         ))}
       </div>
       <p className="text-xs leading-relaxed text-white/48">
-        Пока это только метка. Позже она сможет влиять на опыт и достижения.
+        {courseLevel ? "Звёзды сравнивают задачи только внутри этого уровня курса." : "Сложность задачи: от 1 до 3 звёзд."}
       </p>
     </fieldset>
   );

@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from "@/components/AuthProvider";
 
 // Подключаем глобальные стили один раз на все приложение.
+import "katex/dist/katex.min.css";
 import "./globals.css";
 
 // Metadata используется Next.js для title/description.

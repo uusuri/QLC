@@ -3,6 +3,7 @@ package com.qlc.worker.runners;
 import com.qlc.shared.language.LanguageProfile;
 
 import com.qlc.shared.model.enums.Verdict;
+import com.qlc.shared.runs.CodeRunResult.CaseResult;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.time.Duration;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -100,6 +102,8 @@ public class DockerCodeRunner {
           "QLC_RUN_COMMAND=" + objectMapper.writeValueAsString(profile.runCommandForMemory(effectiveMemoryKb)),
           "--env",
           "QLC_ADDRESS_SPACE_LIMIT=" + (profile.useAddressSpaceLimit() ? "true" : "false"),
+          "--env",
+          "QLC_CUSTOM_RUN=" + request.customRun(),
           profile.image());
 
       processBuilder.redirectOutput(judgeOutputFile.toFile());
@@ -110,7 +114,8 @@ public class DockerCodeRunner {
         containerInput.write(request.testCasesJson().getBytes(StandardCharsets.UTF_8));
       }
 
-      boolean finished = runnerProcess.waitFor(outerTimeout(effectiveTime).toMillis(), TimeUnit.MILLISECONDS);
+      boolean finished = runnerProcess.waitFor(
+          (request.customRun() ? Duration.ofSeconds(200) : outerTimeout(effectiveTime)).toMillis(), TimeUnit.MILLISECONDS);
       if (!finished) {
         runnerProcess.destroyForcibly();
         runnerProcess.waitFor();
@@ -144,13 +149,18 @@ public class DockerCodeRunner {
         throw new IOException("Judge returned unsupported verdict: " + payload.verdict(), exception);
       }
 
+      if (request.customRun() && verdict != Verdict.CE && payload.tests() == null) {
+        throw new IOException("Runner image does not support custom runs; rebuild the image");
+      }
+
       return new DockerRunnerResult(
           verdict,
           payload.passedTests(),
           payload.totalTests(),
           payload.executionTimeMs(),
           payload.memoryUsedKb(),
-          payload.safeMessage());
+          payload.safeMessage(),
+          request.customRun() && payload.tests() != null ? payload.tests() : List.of());
     } finally {
       if (runnerProcess != null && runnerProcess.isAlive()) {
         runnerProcess.destroyForcibly();
@@ -298,6 +308,7 @@ public class DockerCodeRunner {
       int totalTests,
       long executionTimeMs,
       Long memoryUsedKb,
-      String safeMessage) {
+      String safeMessage,
+      List<CaseResult> tests) {
   }
 }

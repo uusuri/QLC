@@ -50,6 +50,9 @@ class SubmissionServiceTest {
   @Mock
   private TaskAccessService taskAccess;
 
+  @Mock
+  private com.qlc.shared.services.ExperienceService experience;
+
   @InjectMocks
   private SubmissionService submissionService;
 

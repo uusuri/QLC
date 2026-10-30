@@ -7,6 +7,11 @@ spring:
     default: dev
   flyway:
     enabled: false
+  task:
+    scheduling:
+      pool:
+        # One graded-job poller and one custom-run poller; neither can starve the other.
+        size: 2
 
 # No application HTTP API here: this listener exposes local health and metrics only.
 server:

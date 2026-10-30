@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Alert, Button } from "@/components/ui";
+import { Alert, Button, Tabs } from "@/components/ui";
+import { SubmissionHistory } from "@/components/SubmissionHistory";
 import { submitAnswer } from "@/services/api";
+import { formatAcceptedAnswer } from "@/services/experience";
 import type { LearnerTaskDto } from "@/types";
 
 export function InstantAnswerWorkspace({ task, onAccepted }: {
@@ -12,8 +14,11 @@ export function InstantAnswerWorkspace({ task, onAccepted }: {
   const [numericAnswer, setNumericAnswer] = useState("");
   const [selected, setSelected] = useState<number[]>([]);
   const [verdict, setVerdict] = useState<"AC" | "WA" | null>(null);
+  const [rewardLabel, setRewardLabel] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [workspaceView, setWorkspaceView] = useState<"answer" | "history">("answer");
+  const [lastAttempt, setLastAttempt] = useState("");
   const request = useRef<AbortController | null>(null);
   const isNumeric = task.taskType === "NUMERIC";
   const multiple = Boolean(task.multipleAnswersAllowed);
@@ -23,6 +28,7 @@ export function InstantAnswerWorkspace({ task, onAccepted }: {
 
   function edited() {
     setVerdict(null);
+    setRewardLabel(null);
     setError("");
   }
 
@@ -43,6 +49,7 @@ export function InstantAnswerWorkspace({ task, onAccepted }: {
     setBusy(true);
     setError("");
     setVerdict(null);
+    setRewardLabel(null);
     try {
       const response = await submitAnswer(task.id, isNumeric
         ? { numericAnswer: normalized }
@@ -52,6 +59,8 @@ export function InstantAnswerWorkspace({ task, onAccepted }: {
         throw new Error("Не удалось получить результат. Попробуйте ещё раз.");
       }
       setVerdict(response.verdict === "AC" ? "AC" : "WA");
+      setLastAttempt(response.id);
+      setRewardLabel(response.verdict === "AC" ? formatAcceptedAnswer(response.awardedXp) : null);
       if (response.verdict === "AC") {
         onAccepted(task.id);
         window.dispatchEvent(new Event("qlc:learning-updated"));
@@ -68,7 +77,11 @@ export function InstantAnswerWorkspace({ task, onAccepted }: {
     }
   }
 
-  return <section className="border border-line bg-surface p-5 sm:p-6" aria-label="Проверка ответа">
+  return <div className="grid min-w-0 gap-6">
+    <Tabs<"answer" | "history"> activeValue={workspaceView} onChange={setWorkspaceView}
+      items={[{ value: "answer", label: "Ответ" }, { value: "history", label: "Мои попытки" }]} />
+    <div className={workspaceView === "answer" ? undefined : "hidden"}>
+    <section className="border border-line bg-surface p-5 sm:p-6" aria-label="Проверка ответа">
     <form onSubmit={checkAnswer} className="grid gap-5">
       <fieldset disabled={busy} className="min-w-0">
         <legend className="mb-2 text-lg font-semibold">{isNumeric ? "Ваш ответ" : multiple ? "Выберите все верные варианты" : "Выберите один вариант"}</legend>
@@ -97,9 +110,12 @@ export function InstantAnswerWorkspace({ task, onAccepted }: {
         {busy ? "Проверяем…" : "Проверить"}
       </Button></div>
       {error && <Alert title="Не удалось проверить ответ" tone="danger">{error}</Alert>}
-      {verdict && <Alert title={verdict === "AC" ? "Верно" : "Неверно"} tone={verdict === "AC" ? "success" : "warning"}>
-        {verdict === "AC" ? "Ответ принят. Прогресс сохранён." : "Попробуйте ещё раз. Можно вернуться к материалу урока."}
+      {verdict === "AC" && <Alert title={rewardLabel ?? "Верно"} tone="success" />}
+      {verdict === "WA" && <Alert title="Неверно" tone="warning">
+        Попробуйте ещё раз. Можно вернуться к материалу урока.
       </Alert>}
     </form>
-  </section>;
+    </section></div>
+    {workspaceView === "history" && <SubmissionHistory task={task} refreshKey={lastAttempt} />}
+  </div>;
 }

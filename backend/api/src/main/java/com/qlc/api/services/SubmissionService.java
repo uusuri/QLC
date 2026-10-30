@@ -12,6 +12,7 @@ import com.qlc.shared.model.entities.Task;
 import com.qlc.shared.model.entities.User;
 import com.qlc.shared.model.enums.SubmissionStatus;
 import com.qlc.shared.repositories.SubmissionRepository;
+import com.qlc.shared.services.ExperienceService;
 import com.qlc.api.repositories.TaskRepository;
 import com.qlc.api.repositories.UserRepository;
 import com.qlc.shared.language.LanguageProfile;
@@ -40,6 +41,7 @@ public class SubmissionService {
   private final UserRepository userRepository;
   private final TaskAccessService taskAccess;
   private final CourseLanguageService courseLanguages;
+  private final ExperienceService experience;
 
   @Value("${app.submissions.max-size:65535}")
   private int maxSourceSize;
@@ -49,13 +51,14 @@ public class SubmissionService {
 
   public SubmissionService(SubmissionRepository submissionRepository, TaskRepository taskRepository,
       RedisQueueService redisQueueService, UserRepository userRepository, TaskAccessService taskAccess,
-      CourseLanguageService courseLanguages) {
+      CourseLanguageService courseLanguages, ExperienceService experience) {
     this.taskAccess = taskAccess;
     this.courseLanguages = courseLanguages;
     this.submissionRepository = submissionRepository;
     this.taskRepository = taskRepository;
     this.redisQueueService = redisQueueService;
     this.userRepository = userRepository;
+    this.experience = experience;
   }
 
   public SubmissionCreatedResponse createSubmission(Long taskId, SubmissionRequest request, String idempotencyKey) {
@@ -187,7 +190,9 @@ public class SubmissionService {
         submission.executionTime(),
         submission.memoryUsed(),
         safe,
-        submission.createdAt());
+        submission.createdAt(),
+        submission.status() == SubmissionStatus.FINISHED && submission.verdict() == com.qlc.shared.model.enums.Verdict.AC
+            ? experience.awardedForSubmission(submission.userId(), submission.taskId(), submission.id()) : 0);
   }
 
   private boolean isSupportedLanguage(String language) {

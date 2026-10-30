@@ -17,6 +17,9 @@ import {
 import { useAuth } from "@/components/AuthProvider";
 import { courseLanguage } from "@/components/courseLanguages";
 import { TaskHints } from "@/components/TaskHints";
+import { CodeRunPanel } from "@/components/CodeRunPanel";
+import { SubmissionHistory } from "@/components/SubmissionHistory";
+import { canRestoreSubmission } from "@/services/submissionHistory";
 
 // UI-kit компоненты фиксируют общий визуальный язык Sprint 2.
 import {
@@ -25,11 +28,12 @@ import {
   ButtonLink,
   Panel,
   PanelBody,
-  PanelHeader
+  PanelHeader,
+  Tabs
 } from "@/components/ui";
 
 // Типы backend DTO и submission response.
-import type { SubmissionLanguage, LearnerTaskDto, SubmissionResponseDto } from "@/types";
+import type { SubmissionLanguage, LearnerTaskDto, SubmissionResponseDto, SubmissionHistoryDetailDto } from "@/types";
 
 // Monaco загружается client-only, чтобы production build не падал на SSR.
 // Локальная сборка редактора не зависит от доступности внешнего CDN.
@@ -467,6 +471,10 @@ export function CodeLessonWorkspace({ task, selectedLanguage, demo = false, onSu
   const [lastSubmissionId, setLastSubmissionId] = useState<string | null>(null);
   const [submission, setSubmission] = useState<SubmissionUiState>({ phase: "idle" });
   const resetDialogRef = useRef<HTMLDialogElement>(null);
+  const restoreDialogRef = useRef<HTMLDialogElement>(null);
+  const restoreDraftKeyRef = useRef<string | null>(null);
+  const [restoreCandidate, setRestoreCandidate] = useState<SubmissionHistoryDetailDto | null>(null);
+  const [workspaceView, setWorkspaceView] = useState<"editor" | "history">("editor");
   const abortRef = useRef<AbortController | null>(null);
   const timeoutRef = useRef<number | null>(null);
 
@@ -488,6 +496,10 @@ export function CodeLessonWorkspace({ task, selectedLanguage, demo = false, onSu
       ?? (legacyDraftKey ? window.localStorage.getItem(legacyDraftKey) : null);
     const savedSubmissionId = window.localStorage.getItem(lastSubmissionKey);
 
+    restoreDialogRef.current?.close();
+    restoreDraftKeyRef.current = null;
+    setRestoreCandidate(null);
+    setWorkspaceView("editor");
     setSource(savedDraft ?? initialCode);
     setLastSubmissionId(savedSubmissionId);
     setSubmission({ phase: "idle", submissionId: savedSubmissionId ?? undefined });
@@ -635,7 +647,29 @@ export function CodeLessonWorkspace({ task, selectedLanguage, demo = false, onSu
     window.localStorage.setItem(draftKey, initialCode);
   };
 
+  const requestRestore = (detail: SubmissionHistoryDetailDto) => {
+    if (!authUser || isBusy || !draftLoaded || !canRestoreSubmission(detail, task.id, language)) return;
+    restoreDraftKeyRef.current = draftKey;
+    setRestoreCandidate(detail);
+    restoreDialogRef.current?.showModal();
+  };
+
+  const handleRestore = () => {
+    if (!authUser || !restoreCandidate || restoreDraftKeyRef.current !== draftKey || isBusy
+        || !canRestoreSubmission(restoreCandidate, task.id, language)) return;
+    const restored = restoreCandidate.sourceCode!;
+    stopPolling();
+    setSource(restored);
+    window.localStorage.setItem(draftKey, restored);
+    setSubmission({ phase: "idle", submissionId: lastSubmissionId ?? undefined });
+    restoreDialogRef.current?.close();
+    setWorkspaceView("editor");
+  };
+
   return <div className="kit-workspace grid min-w-0 gap-6">
+    <Tabs<"editor" | "history"> activeValue={workspaceView} onChange={setWorkspaceView}
+      items={[{ value: "editor", label: "Решение" }, { value: "history", label: "Мои попытки" }]} />
+    <div className={workspaceView === "editor" ? "grid min-w-0 gap-6" : "hidden"}>
     <Panel className="kit-editor-panel">
       <PanelHeader><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-xl">Ваше решение</h2><span className="font-mono text-xs text-muted">{languageInfo.label} · {languageInfo.file}</span></div><div className="mt-2 flex flex-wrap items-center justify-between gap-2"><p className="text-xs text-muted">Черновик сохраняется на этом устройстве</p><button className="min-h-11 text-xs text-muted hover:text-paper" disabled={isBusy} onClick={() => resetDialogRef.current?.showModal()} type="button">Сбросить код</button></div></PanelHeader>
       <PanelBody className="!pt-0">
@@ -646,7 +680,11 @@ export function CodeLessonWorkspace({ task, selectedLanguage, demo = false, onSu
         <p className="mt-4 text-xs text-muted">{sourceSize.toLocaleString("ru-RU")} / {MAX_SOURCE_SIZE.toLocaleString("ru-RU")} байт</p>
         {sourceTooLarge && <p className="mt-2 text-sm text-[#FF8074]" role="alert">Код превышает допустимый размер.</p>}
         {!trimmedSource && <p className="mt-2 text-xs text-muted">Введите решение перед отправкой.</p>}
-        <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-5">{authUser ? <Button disabled={!canSubmit} loading={submission.phase === "submitting"} onClick={handleSubmit}>{isBusy ? "Отправляем решение" : demo ? "Отправить демо" : "Проверить решение"} →</Button> : <ButtonLink href={loginHref}>Войти и отправить решение →</ButtonLink>}{lastSubmissionId && <Button disabled={!authUser || isBusy} onClick={handleResume} variant="secondary">Обновить статус</Button>}</div>
+        <CodeRunPanel key={draftKey} taskId={task.id} statement={task.statementMd ?? ""} language={language}
+          source={source} disabled={!canSubmit || !draftLoaded || demo}>
+          {authUser ? <Button disabled={!canSubmit} loading={submission.phase === "submitting"} onClick={handleSubmit}>{isBusy ? "Отправляем решение" : demo ? "Отправить демо" : "Проверить решение"} →</Button> : <ButtonLink href={loginHref}>Войти и отправить решение →</ButtonLink>}
+          {lastSubmissionId && <Button disabled={!authUser || isBusy} onClick={handleResume} variant="secondary">Обновить статус</Button>}
+        </CodeRunPanel>
         <p className="mt-5 text-xs text-muted">Проверка решения не удаляет черновик.</p>
       </PanelBody>
     </Panel>
@@ -656,5 +694,14 @@ export function CodeLessonWorkspace({ task, selectedLanguage, demo = false, onSu
     </section>}
     <TaskHints taskId={task.id} hints={task.hints ?? []} layout="panel" />
     <dialog className="kit-dialog" ref={resetDialogRef}><h2>Сбросить код?</h2><p>Текущий черновик будет заменён стартовым кодом задачи. Это действие нельзя отменить.</p><div className="flex flex-wrap gap-3"><Button autoFocus onClick={() => resetDialogRef.current?.close()} variant="secondary">Сохранить черновик</Button><Button onClick={handleResetDraft} variant="danger">Сбросить код</Button></div></dialog>
+    </div>
+    {workspaceView === "history" && <SubmissionHistory task={task} language={language}
+      refreshKey={`${submission.submissionId ?? ""}:${submission.phase}`} restoreDisabled={isBusy || !draftLoaded} onRestore={requestRestore} />}
+    <dialog ref={restoreDialogRef} className="kit-dialog" aria-labelledby="restore-draft-title" onClose={() => setRestoreCandidate(null)}>
+      <h2 id="restore-draft-title">Заменить текущий код?</h2>
+      <p>Черновик будет заменён кодом выбранной попытки. Решение не отправится на проверку автоматически.</p>
+      <div className="flex flex-wrap gap-3"><Button autoFocus variant="secondary" onClick={() => restoreDialogRef.current?.close()}>Отмена</Button>
+        <Button disabled={isBusy || !restoreCandidate} onClick={handleRestore}>Заменить код</Button></div>
+    </dialog>
   </div>;
 }

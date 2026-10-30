@@ -29,6 +29,52 @@ export interface AuthUserDto {
   emailVerified: boolean;
 }
 
+export type FriendshipRelationship = "SELF" | "NONE" | "FRIENDS" | "INCOMING" | "OUTGOING";
+
+export interface FriendUserDto {
+  id: number;
+  username: string;
+  hasAvatar: boolean;
+}
+
+export interface FriendRequestsDto {
+  incoming: FriendUserDto[];
+  outgoing: FriendUserDto[];
+}
+
+// Private profiles return only their identity/relationship; statistics stay on the server.
+export interface UserProfileDto extends FriendUserDto {
+  privateProfile: boolean;
+  accessible: boolean;
+  registeredAt: string | null;
+  experience: ExperienceSummaryDto | null;
+  solvedTasks: number | null;
+  submissionCount: number | null;
+  friendCount: number | null;
+  relationship: FriendshipRelationship;
+}
+
+export interface UserActivityDto {
+  from: string;
+  to: string;
+  timeZone: "Europe/Moscow";
+  totalSubmissions: number;
+  days: { date: string; count: number }[];
+}
+
+export interface DailySubmissionDto extends SubmissionHistoryItemDto {
+  lessonId: number;
+  lessonName: string;
+  taskType: AdminTaskType;
+}
+
+export interface DailySubmissionsDto {
+  date: string;
+  page: number;
+  hasNext: boolean;
+  items: DailySubmissionDto[];
+}
+
 // Payload регистрации.
 export interface RegisterUserPayload {
   // Username: 3-32 символа, латиница/цифры/_.
@@ -199,6 +245,8 @@ export interface AdminCourseCreatePayload {
 
 // DTO модуля из backend ModuleDTO.
 export interface AdminModuleDto {
+  // Optional course level; task difficulty stars are interpreted inside this level.
+  level?: 1 | 2 | 3 | null;
   // ID модуля из базы.
   id: number;
   // ID родительского курса.
@@ -213,6 +261,7 @@ export interface AdminModuleDto {
 
 // Payload для POST /api/courses/{courseId}/modules.
 export interface AdminModuleCreatePayload {
+  level?: 1 | 2 | 3 | null;
   // Название модуля.
   name: string;
   // Описание модуля.
@@ -464,6 +513,8 @@ export interface SubmissionCreatedResponseDto {
 
 // Полный ответ backend на GET /api/submissions/{id}.
 export interface SubmissionResponseDto {
+  // XP actually granted to this submission; absent on older backend versions.
+  awardedXp?: number;
   // UUID submission.
   id: string;
   // ID задачи, к которой относится submission.
@@ -484,6 +535,23 @@ export interface SubmissionResponseDto {
   createdAt: string;
 }
 
+export type SubmissionHistoryItemDto = Pick<SubmissionResponseDto,
+  "id" | "taskId" | "language" | "status" | "verdict" | "executionTime" | "memoryUsed" | "createdAt">;
+
+export type SubmissionHistoryPageDto = {
+  items: SubmissionHistoryItemDto[];
+  page: number;
+  hasNext: boolean;
+};
+
+export type SubmissionHistoryDetailDto = {
+  id: string;
+  taskId: number;
+  language?: string | null;
+  sourceCode?: string | null;
+  submittedAnswer?: string | null;
+};
+
 export type AnswerPayload =
   | { numericAnswer: string; selectedOptionIndexes?: never }
   | { selectedOptionIndexes: number[]; numericAnswer?: never };
@@ -493,3 +561,11 @@ export interface CourseLanguageSettingsDto {
   availableLanguages: SubmissionLanguage[];
   selectedLanguage: SubmissionLanguage | null;
 }
+
+export type ExperienceSummaryDto = {
+  level: number;
+  totalXp: number;
+  currentLevelXp: number;
+  xpRequiredForLevel: number;
+  xpRemaining: number;
+};

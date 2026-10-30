@@ -53,7 +53,8 @@ class SubmissionStreamProcessorTest {
   void setUp() {
     registry = new SimpleMeterRegistry();
     SubmissionMetrics metrics = new SubmissionMetrics(registry);
-    SubmissionExecutionTransactions transactions = new SubmissionExecutionTransactions(submissionRepository, metrics);
+    SubmissionExecutionTransactions transactions = new SubmissionExecutionTransactions(submissionRepository, metrics,
+        org.mockito.Mockito.mock(com.qlc.shared.services.ExperienceService.class));
     processor = new SubmissionStreamProcessor(transactions, dockerCppRunner, metrics);
   }
 

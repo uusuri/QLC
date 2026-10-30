@@ -4,6 +4,7 @@ import com.qlc.api.exceptions.ResourceNotFoundException;
 import com.qlc.shared.model.entities.*;
 import com.qlc.shared.model.enums.SubmissionStatus;
 import com.qlc.shared.model.enums.Verdict;
+import com.qlc.shared.services.ExperienceService;
 import com.qlc.api.models.requests.AnswerRequest;
 import com.qlc.api.models.responses.SubmissionResponse;
 import com.qlc.shared.repositories.SubmissionRepository;
@@ -24,13 +25,15 @@ public class InstantAnswerService {
   private final UserRepository users;
   private final SubmissionRepository submissions;
   private final TaskAccessService access;
+  private final ExperienceService experience;
 
   public InstantAnswerService(TaskRepository tasks, UserRepository users,
-      SubmissionRepository submissions, TaskAccessService access) {
+      SubmissionRepository submissions, TaskAccessService access, ExperienceService experience) {
     this.tasks = tasks;
     this.users = users;
     this.submissions = submissions;
     this.access = access;
+    this.experience = experience;
   }
 
   public SubmissionResponse submit(Long taskId, AnswerRequest request, Long userId) {
@@ -77,7 +80,8 @@ public class InstantAnswerService {
     submission.setStatus(SubmissionStatus.FINISHED);
     submission.setVerdict(accepted ? Verdict.AC : Verdict.WA);
     submissions.save(submission);
+    int awardedXp = experience.awardAccepted(submission);
     return new SubmissionResponse(submission.getId(), taskId, null, "FINISHED", submission.getVerdict().name(),
-        null, null, null, submission.getCreatedAt());
+        null, null, null, submission.getCreatedAt(), awardedXp);
   }
 }

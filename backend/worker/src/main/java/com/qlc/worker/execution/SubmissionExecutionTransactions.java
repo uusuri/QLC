@@ -6,6 +6,7 @@ import com.qlc.shared.model.entities.Task;
 import com.qlc.shared.model.enums.SubmissionStatus;
 import com.qlc.shared.messages.SubmissionStreamMessage;
 import com.qlc.shared.monitoring.SubmissionMetrics;
+import com.qlc.shared.services.ExperienceService;
 import com.qlc.shared.repositories.SubmissionRepository;
 import com.qlc.worker.runners.DockerRunnerResult;
 import com.qlc.worker.runners.RunRequest;
@@ -28,10 +29,13 @@ public class SubmissionExecutionTransactions {
 
   private final SubmissionRepository submissionRepository;
   private final SubmissionMetrics metrics;
+  private final ExperienceService experience;
 
-  public SubmissionExecutionTransactions(SubmissionRepository submissionRepository, SubmissionMetrics metrics) {
+  public SubmissionExecutionTransactions(SubmissionRepository submissionRepository, SubmissionMetrics metrics,
+      ExperienceService experience) {
     this.submissionRepository = submissionRepository;
     this.metrics = metrics;
+    this.experience = experience;
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -147,6 +151,7 @@ public class SubmissionExecutionTransactions {
     submission.setSafeMessage(runnerResult.safeMessage());
     submission.setStatus(SubmissionStatus.FINISHED);
     submissionRepository.save(submission);
+    experience.awardAccepted(submission);
     metrics.completedAfterCommit(submission.getLanguage(), submission.getCreatedAt(),
         runnerResult.verdict() == null ? "UNKNOWN" : runnerResult.verdict().name());
     return CompletionOutcome.COMPLETED;

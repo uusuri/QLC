@@ -7,8 +7,10 @@ import type { SubmissionLanguage } from "@/types";
 import dynamic from "next/dynamic";
 import { findGraphBlocks, insertGraphBlock, parseGraphAnimation, type GraphAnimation, type GraphBlockRange } from "../../services/graphAnimation";
 import { graphPreset } from "../../services/graphPresets";
+import { blankArrayAnimation, findArrayBlocks, insertArrayBlock, parseArrayAnimation, type ArrayAnimation, type ArrayBlockRange } from "../../services/arrayAnimation";
 
 const GraphAnimationEditor = dynamic(() => import("../graph/GraphAnimationEditor").then(module => module.GraphAnimationEditor), { loading: () => <p className="p-4">Открываем редактор анимации…</p> });
+const ArrayAnimationEditor = dynamic(() => import("../array/ArrayAnimationEditor").then(module => module.ArrayAnimationEditor), { loading: () => <p className="p-4">Открываем редактор массива…</p> });
 
 export type TheoryVersion = SubmissionLanguage | "base";
 export type TheoryContent = { contentMd: string; contentByLanguage: Partial<Record<SubmissionLanguage, string>> };
@@ -37,6 +39,7 @@ export function LessonTheoryEditor({ value, saved, languages, multilingual, vers
   const [view, setView] = useState<View>("split");
   const [copyFrom, setCopyFrom] = useState<TheoryVersion>("base");
   const [graph, setGraph] = useState<{ start: number; end: number; original: string; version: TheoryVersion; animation: GraphAnimation } | null>(null);
+  const [array, setArray] = useState<{ start: number; end: number; original: string; version: TheoryVersion; animation: ArrayAnimation } | null>(null);
   const [graphError, setGraphError] = useState("");
   const versions = multilingual
     ? [...COURSE_LANGUAGES.filter(language => languages.includes(language.id)).map(language => ({ id: language.id as TheoryVersion, label: language.label })), { id: "base" as const, label: "Общий текст" }]
@@ -45,8 +48,9 @@ export function LessonTheoryEditor({ value, saved, languages, multilingual, vers
   const text = content(value, active.id);
   const preview = useDeferredValue(text);
   const graphBlocks = useMemo(() => findGraphBlocks(text), [text]);
-  const locked = busy || graph !== null;
-  const editingAnimation = graph !== null;
+  const arrayBlocks = useMemo(() => findArrayBlocks(text), [text]);
+  const locked = busy || graph !== null || array !== null;
+  const editingAnimation = graph !== null || array !== null;
   const completed = languages.filter(language => value.contentByLanguage[language]?.trim()).length;
   const sources = versions.filter(item => item.id !== active.id && content(value, item.id).trim());
   const source = sources.find(item => item.id === copyFrom) ?? sources[0];
@@ -96,6 +100,20 @@ export function LessonTheoryEditor({ value, saved, languages, multilingual, vers
     } catch (error) { setGraphError(error instanceof Error ? error.message : "Не удалось открыть блок."); }
   }
 
+  function openArray(block?: ArrayBlockRange) {
+    try {
+      const cursor = textarea.current?.selectionStart ?? text.length;
+      const existing = block ?? arrayBlocks.find(item => cursor >= item.start && cursor <= item.end);
+      const start = existing?.start ?? cursor;
+      if (!existing && text.slice(0, start).split("\n").filter(line => line.trim().startsWith("```")).length % 2) {
+        throw new Error("Поставьте курсор вне блока кода, чтобы вставить массив.");
+      }
+      setArray({ start, end: existing?.end ?? start, original: text, version: active.id,
+        animation: existing ? parseArrayAnimation(existing.source) : blankArrayAnimation() });
+      setGraphError("");
+    } catch (error) { setGraphError(error instanceof Error ? error.message : "Не удалось открыть массив."); }
+  }
+
   return <section className="min-w-0 overflow-hidden rounded-sm border border-line bg-ink" aria-label="Редактор теории">
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
       <div><h3 className="font-semibold">Теория урока</h3><p className="mt-1 text-xs text-muted">{multilingual ? `${completed} из ${languages.length} языковых версий заполнено. Изменения сохраняются вместе.` : "Markdown и предпросмотр, как в уроке."}</p></div>
@@ -138,13 +156,20 @@ export function LessonTheoryEditor({ value, saved, languages, multilingual, vers
     </div>}
     <div className="flex flex-wrap gap-2 border-b border-line p-3">
       <button type="button" disabled={locked} onClick={() => openGraph()} className="min-h-10 rounded-sm border border-line px-3 text-sm text-acid disabled:opacity-40">Анимация</button>
+      <button type="button" disabled={locked} onClick={() => openArray()} className="min-h-10 rounded-sm border border-line px-3 text-sm text-acid disabled:opacity-40">Массив</button>
       {graphBlocks.map((block, index) => <button key={block.start} type="button" disabled={locked} onClick={() => openGraph(block)} className="min-h-10 px-3 text-sm disabled:opacity-40">Изменить анимацию {index + 1}</button>)}
+      {arrayBlocks.map((block, index) => <button key={block.start} type="button" disabled={locked} onClick={() => openArray(block)} className="min-h-10 px-3 text-sm disabled:opacity-40">Изменить массив {index + 1}</button>)}
     </div>
     {graphError && <p role="alert" className="p-3 text-sm text-red-300">{graphError}</p>}
     {graph && <GraphAnimationEditor initial={graph.animation} onCancel={() => setGraph(null)} onApply={animation => {
       if (busy || text !== graph.original || active.id !== graph.version) throw new Error("Теория изменилась. Закройте редактор анимации и откройте его заново, чтобы не потерять изменения.");
       update(insertGraphBlock(text, graph.start, graph.end, animation));
       setGraph(null);
+    }} />}
+    {array && <ArrayAnimationEditor initial={array.animation} onCancel={() => setArray(null)} onApply={animation => {
+      if (busy || text !== array.original || active.id !== array.version) throw new Error("Теория изменилась. Закройте редактор массива и откройте его заново, чтобы не потерять изменения.");
+      update(insertArrayBlock(text, array.start, array.end, animation));
+      setArray(null);
     }} />}
     <div className={`grid min-w-0 ${view === "split" ? "xl:grid-cols-2" : ""}`}>
       {view !== "preview" && <div className="min-w-0">
