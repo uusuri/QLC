@@ -5,7 +5,8 @@ import com.qlc.api.models.dtos.MyCourseProgressDTO;
 import com.qlc.api.security.UserDetailsImpl;
 import com.qlc.api.services.LearningProgressService;
 import com.qlc.api.services.PurchaseService;
-import com.qlc.api.services.UserAvatarService;
+import com.qlc.api.services.UserPersonalizationService;
+import com.qlc.shared.model.entities.Personalization;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,10 +31,10 @@ public class UserController {
 
   private final LearningProgressService learningProgressService;
   private final PurchaseService purchaseService;
-  private final UserAvatarService userAvatarService;
+  private final UserPersonalizationService userAvatarService;
 
   public UserController(LearningProgressService learningProgressService, PurchaseService purchaseService,
-      UserAvatarService userAvatarService) {
+      UserPersonalizationService userAvatarService) {
     this.learningProgressService = learningProgressService;
     this.purchaseService = purchaseService;
     this.userAvatarService = userAvatarService;
@@ -42,13 +43,13 @@ public class UserController {
   @GetMapping("/me/avatar")
   @PreAuthorize("isAuthenticated()")
   public ResponseEntity<byte[]> getMyAvatar(@AuthenticationPrincipal UserDetailsImpl principal) {
-    UserAvatarService.Avatar avatar = userAvatarService.findByUserId(principal.getId())
+    Personalization avatar = userAvatarService.findAvatarByUserId(principal.getId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Аватарка не загружена"));
     return ResponseEntity.ok()
-        .contentType(MediaType.parseMediaType(avatar.contentType()))
+        .contentType(MediaType.parseMediaType(avatar.getContentType()))
         .cacheControl(CacheControl.noStore())
         .header("X-Content-Type-Options", "nosniff")
-        .body(avatar.image());
+        .body(avatar.getContentData());
   }
 
   @PutMapping(value = "/me/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -62,7 +63,20 @@ public class UserController {
   @DeleteMapping("/me/avatar")
   @PreAuthorize("isAuthenticated()")
   public ResponseEntity<Void> deleteMyAvatar(@AuthenticationPrincipal UserDetailsImpl principal) {
-    userAvatarService.delete(principal.getId());
+    userAvatarService.deleteAvatar(principal.getId());
+    return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/me/avatar-frame")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<byte[]> getMyAvatarFrame(@AuthenticationPrincipal  UserDetailsImpl principal) {
+    return new ResponseEntity<>(null);
+  }
+
+  @DeleteMapping("/me/avatar-frame")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<Void> deleteMyAvatarFrame(@AuthenticationPrincipal UserDetailsImpl principal) {
+    userAvatarService.deleteAvatarFrame(principal.getId());
     return ResponseEntity.noContent().build();
   }
 

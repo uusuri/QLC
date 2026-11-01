@@ -1,6 +1,9 @@
 package com.qlc.api.services;
 
 import com.qlc.api.repositories.UserRepository;
+import com.qlc.shared.model.entities.Personalization;
+import com.qlc.shared.model.enums.PersonalizationType;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Iterator;
@@ -15,14 +18,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class UserAvatarService {
+public class UserPersonalizationService {
   private static final int MAX_BYTES = 2 * 1024 * 1024;
   private static final int MAX_DIMENSION = 4096;
 
   private final JdbcTemplate jdbcTemplate;
   private final UserRepository userRepository;
 
-  public UserAvatarService(JdbcTemplate jdbcTemplate, UserRepository userRepository) {
+  public UserPersonalizationService(JdbcTemplate jdbcTemplate, UserRepository userRepository) {
     this.jdbcTemplate = jdbcTemplate;
     this.userRepository = userRepository;
   }
@@ -58,17 +61,21 @@ public class UserAvatarService {
         """, userId, contentType, image);
   }
 
-  public Optional<Avatar> findByUserId(Long userId) {
+  public Optional<Personalization> findAvatarByUserId(Long userId) {
     return jdbcTemplate.query(
         "SELECT content_type, image_data FROM user_avatars WHERE user_id = ?",
         result -> result.next()
-            ? Optional.of(new Avatar(result.getString("content_type"), result.getBytes("image_data")))
+            ? Optional.of(new Personalization(PersonalizationType.AVATAR, result.getString("content_type"), result.getBytes("image_data")))
             : Optional.empty(),
         userId);
   }
 
-  public void delete(Long userId) {
+  public void deleteAvatar(Long userId) {
     jdbcTemplate.update("DELETE FROM user_avatars WHERE user_id = ?", userId);
+  }
+
+  public void deleteAvatarFrame(Long userId) {
+    jdbcTemplate.update("DELETE FROM users_avatar_frames WHERE user_id = ?", userId);
   }
 
   private String validateImage(byte[] image) {
@@ -111,8 +118,5 @@ public class UserAvatarService {
   private ResponseStatusException invalidImage() {
     return new ResponseStatusException(HttpStatus.BAD_REQUEST,
         "Загрузите корректное изображение JPG или PNG размером не больше 4096 × 4096 пикселей");
-  }
-
-  public record Avatar(String contentType, byte[] image) {
   }
 }

@@ -2,8 +2,10 @@ package com.qlc.api.controllers;
 
 import com.qlc.api.models.dtos.FriendUser;
 import com.qlc.api.security.UserDetailsImpl;
-import com.qlc.api.services.UserAvatarService;
+import com.qlc.api.services.UserPersonalizationService;
 import com.qlc.api.services.UserProfileService;
+import com.qlc.shared.model.entities.Personalization;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -21,11 +23,11 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/users")
 public class UserProfileController {
   private final UserProfileService profiles;
-  private final UserAvatarService avatars;
+  private final UserPersonalizationService userPersonalizationService;
 
-  public UserProfileController(UserProfileService profiles, UserAvatarService avatars) {
+  public UserProfileController(UserProfileService profiles, UserPersonalizationService userPersonalizationService) {
     this.profiles = profiles;
-    this.avatars = avatars;
+    this.userPersonalizationService = userPersonalizationService;
   }
 
   @GetMapping("/profiles/{username}")
@@ -50,11 +52,11 @@ public class UserProfileController {
   public ResponseEntity<byte[]> avatar(@PathVariable String username,
       @AuthenticationPrincipal UserDetailsImpl principal) {
     Long userId = profiles.visibleUserId(username, viewer(principal));
-    var avatar = avatars.findByUserId(userId)
+    Personalization avatar = userPersonalizationService.findAvatarByUserId(userId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Аватарка не загружена"));
-    return ResponseEntity.ok().contentType(MediaType.parseMediaType(avatar.contentType()))
+    return ResponseEntity.ok().contentType(MediaType.parseMediaType(avatar.getContentType()))
         .cacheControl(CacheControl.noStore()).varyBy("Authorization")
-        .header("X-Content-Type-Options", "nosniff").body(avatar.image());
+        .header("X-Content-Type-Options", "nosniff").body(avatar.getContentData());
   }
 
   @GetMapping("/search")

@@ -69,7 +69,12 @@ def parse_test_cases(raw_test_cases: str, custom_run: bool = False) -> list[dict
             raise JudgeConfigurationError(
                 f"Test case {index} must contain string fields 'input' and 'output'"
             )
-        test_cases.append({"input": test_input, "output": expected_output})
+        case = {"input": test_input, "output": expected_output}
+        if "checker" in test_case:
+            if custom_run or test_case["checker"] != "cyclic_game_catalog":
+                raise JudgeConfigurationError(f"Unsupported checker in test case {index}")
+            case["checker"] = test_case["checker"]
+        test_cases.append(case)
     if custom_run and any(len((case[field] or "").encode("utf-8")) > 16384
                           for case in test_cases for field in ("input", "output")):
         raise JudgeConfigurationError("Custom test is too large")
@@ -86,6 +91,39 @@ def normalize_output(output: str) -> str:
 
 def outputs_equal(actual: str, expected: str) -> bool:
     return normalize_output(actual) == normalize_output(expected)
+
+
+def check_test_output(test_case: dict, actual: str) -> bool:
+    if test_case.get("checker") != "cyclic_game_catalog":
+        return outputs_equal(actual, test_case["output"])
+    tokens = actual.split()
+    if not tokens:
+        return False
+    # Existence of a solution is verified when the private case is authored.
+    if tokens[0] == "NO":
+        return len(tokens) == 1 and test_case["output"].split() == ["NO"]
+    if tokens[0] != "YES":
+        return False
+    fields = test_case["input"].split()
+    try:
+        n, k = int(fields[0]), int(fields[1])
+        text, g = fields[2], int(fields[3])
+        catalog = fields[4:]
+        if n < 1 or k < 1 or len(text) != n * k or len(catalog) != g or any(len(w) != k for w in catalog):
+            raise JudgeConfigurationError("Invalid cyclic catalog test input")
+    except (ValueError, IndexError) as error:
+        raise JudgeConfigurationError("Invalid cyclic catalog test input") from error
+    if len(tokens) != n + 1:
+        return False
+    try:
+        indices = [int(token) for token in tokens[1:]]
+    except ValueError:
+        return False
+    if len(set(indices)) != n or any(i < 1 or i > g for i in indices):
+        return False
+    cycle = "".join(catalog[i - 1] for i in indices)
+    return text in cycle + cycle
+
 
 
 def read_diagnostic(path: Path) -> str:
@@ -346,7 +384,7 @@ def main() -> int:
                 )
                 return 0
 
-            if not outputs_equal(output_or_message, test_case["output"]):
+            if not check_test_output(test_case, output_or_message):
                 emit_result(
                     "WA",
                     index - 1,

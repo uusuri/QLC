@@ -13,6 +13,7 @@ import com.qlc.api.repositories.UserRepository;
 import java.util.List;
 import java.util.Set;
 import org.springframework.http.HttpStatus;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.stereotype.Service;
@@ -65,7 +66,8 @@ public class LearningProgressService {
     userRepository.updateLastLearningTask(userId, task);
   }
 
-  private MyCourseProgressDTO mapCourse(Course course, Set<Long> acceptedTaskIds, Task lastTask, String selectedLanguage) {
+  @SuppressWarnings("null")
+  private MyCourseProgressDTO mapCourse(Course course, Set<Long> acceptedTaskIds, @NonNull Task lastTask, String selectedLanguage) {
     List<ModuleProgressDTO> modules = course.getModules().stream()
         .map(module -> new ModuleProgressDTO(
             module.getId(), module.getName(), module.getDescription(), module.getPosition(),
