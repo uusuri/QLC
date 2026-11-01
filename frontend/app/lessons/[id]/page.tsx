@@ -199,7 +199,6 @@ export default function LessonPage() {
   const nextTask = view.tasks[taskIndex + 1];
   const taskAccepted = primaryTask != null && acceptedTaskIds.includes(primaryTask.id);
   const courseSlug = `course-${view.course.id}`;
-  const lessonCode = String(lessonId).padStart(3, "0");
   const codeLimits = primaryTask?.taskType === "CODE"
     ? codeExecutionLimits(view.course.multilingual ? selectedLanguage : (primaryTask.language ?? "CPP23"),
         primaryTask.timeLimitMs, primaryTask.memoryLimitKb)
@@ -207,7 +206,10 @@ export default function LessonPage() {
 
   return <div className="kit-shell"><SiteHeader compact /><main className="kit-page" id="main-content" tabIndex={-1}>
     <nav aria-label="Навигация по уроку" className="flex flex-wrap justify-between gap-4 text-sm text-muted"><Link className="qlc-text-link" href={`/courses/${courseSlug}`}>← {view.course.name}</Link><Link className="qlc-text-link" href="/profile">Моё обучение ↗</Link></nav>
-    <header className="kit-lesson-header"><p className="qlc-eyebrow text-muted">{view.module.level ? `Уровень ${view.module.level} / ` : ""}{view.module.name} / Урок {lessonCode}</p><h1 className="break-words">{view.lesson.name}</h1><p>{view.lesson.description || "Изучите материал, затем закрепите его на практике."}</p></header>
+    <header className="kit-lesson-header">
+      <h1 className="break-words">{view.lesson.name}</h1>
+      {view.lesson.description && <p>{view.lesson.description}</p>}
+    </header>
     {view.course.multilingual && <CourseLanguageControl key={view.course.id} courseId={view.course.id} onChange={setSelectedLanguage} />}
     {positionError && <Alert title="Место не сохранено" tone="warning">{positionError}</Alert>}
     <Tabs activeValue={activeSection} items={[{value:"theory",label:"Материал"},{value:"practice",label:`Практика · ${view.tasks.length}`}]} onChange={setActiveSection} />

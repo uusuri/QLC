@@ -162,8 +162,22 @@ async function apiRequest<TResponse>(
   path: string,
   options: ApiRequestOptions = {}
 ): Promise<TResponse> {
-  const response = await apiFetch(path, options);
-  return (await response.json()) as TResponse;
+  const canRetry = (options.method ?? "GET").toUpperCase() === "GET";
+  for (let attempt = 0; ; attempt++) {
+    const response = await apiFetch(path, attempt === 0 ? options : { ...options, cache: "no-store" });
+    try {
+      return (await response.json()) as TResponse;
+    } catch (error) {
+      if (!(error instanceof SyntaxError)) throw error;
+      // A cached empty/truncated response must not trap the page until a restart.
+      // Only repeat reads: a mutation may already have succeeded on the server.
+      if (canRetry && attempt === 0) {
+        options.signal?.throwIfAborted();
+        continue;
+      }
+      throw new Error("Сервер вернул неполный или некорректный ответ.");
+    }
+  }
 }
 
 // Приводит backend BigDecimal/number к безопасной сумме для карточки.
