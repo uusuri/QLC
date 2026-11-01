@@ -51,6 +51,7 @@ Thumbs.db
 # Docker and local data
 *postgres_data/
 *redis_data/
+*tools/
 
 # Sandbox C++ temporary files
 /tmp/sandbox/
