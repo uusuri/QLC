@@ -2,6 +2,7 @@ package com.qlc.api.controllers;
 
 import com.qlc.api.models.dtos.*;
 import com.qlc.api.models.responses.LessonLearnResponse;
+import com.qlc.api.models.requests.ModuleWriteRequest;
 import com.qlc.api.security.UserDetailsImpl;
 import com.qlc.api.services.CourseService;
 import org.springframework.http.ResponseEntity;
@@ -93,14 +94,14 @@ public class CourseController {
 
   @PostMapping("/courses/{courseId}/modules")
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<ModuleDTO> createModule(@PathVariable Long courseId, @RequestBody ModuleDTO moduleDTO) {
-    return ResponseEntity.ok(courseService.createModule(courseId, moduleDTO));
+  public ResponseEntity<ModuleDTO> createModule(@PathVariable Long courseId, @RequestBody ModuleWriteRequest request) {
+    return ResponseEntity.ok(courseService.createModule(courseId, request.toDto()));
   }
 
   @PutMapping("/modules/{id}")
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<ModuleDTO> updateModule(@PathVariable Long id, @RequestBody ModuleDTO moduleDTO) {
-    return ResponseEntity.ok(courseService.updateModule(id, moduleDTO));
+  public ResponseEntity<ModuleDTO> updateModule(@PathVariable Long id, @RequestBody ModuleWriteRequest request) {
+    return ResponseEntity.ok(courseService.updateModule(id, request.toDto(), request.hasLevel()));
   }
 
   @DeleteMapping("/modules/{id}")

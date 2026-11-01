@@ -102,7 +102,8 @@ class SubmissionStreamProcessorTransactionTest {
     @Bean
     SubmissionExecutionTransactions submissionExecutionTransactions(
         SubmissionRepository repository, SubmissionMetrics metrics) {
-      return new SubmissionExecutionTransactions(repository, metrics);
+      return new SubmissionExecutionTransactions(repository, metrics,
+          mock(com.qlc.shared.services.ExperienceService.class));
     }
 
     @Bean

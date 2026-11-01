@@ -121,6 +121,7 @@ class CourseServiceTest {
     @Test
     void getCourseStructure_LoadsAllLessonsInOneRepositoryCall() {
       sampleModule.setPosition(0);
+      sampleModule.setLevel(1);
       sampleLesson.setPosition(0);
       when(courseRepository.findByIdAndPublishedTrue(1L)).thenReturn(Optional.of(sampleCourse));
       when(moduleRepository.findByCourseIdOrderByPositionAsc(1L)).thenReturn(List.of(sampleModule));
@@ -129,6 +130,7 @@ class CourseServiceTest {
       CourseStructureDTO result = courseService.getCourseStructure(1L);
 
       assertEquals(1, result.modules().size());
+      assertEquals(1, result.modules().get(0).module().level());
       assertEquals(1, result.modules().get(0).lessons().size());
       assertNull(result.modules().get(0).lessons().get(0).contentMd());
       verify(lessonRepository, times(1)).findByCourseIdOrdered(1L);
@@ -209,9 +211,11 @@ class CourseServiceTest {
 
     @Test
     void getModuleById_Success() {
+      sampleModule.setLevel(2);
       when(moduleRepository.findById(10L)).thenReturn(Optional.of(sampleModule));
       ModuleDTO result = courseService.getModuleById(10L);
       assertEquals("OOP", result.name());
+      assertEquals(2, result.level());
     }
 
     @Test
@@ -238,6 +242,39 @@ class CourseServiceTest {
 
       ModuleDTO result = courseService.updateModule(10L, dto);
       assertEquals("New OOP", result.name());
+    }
+
+    @Test
+    void createModule_AssignsLevelWithoutChangingUnrelatedModules() {
+      when(courseRepository.findById(1L)).thenReturn(Optional.of(sampleCourse));
+      when(moduleRepository.save(any(Module.class))).thenAnswer(i -> i.getArgument(0));
+      ModuleDTO result = courseService.createModule(1L,
+          new ModuleDTO(null, null, "Basics", "Basics", 0, 1));
+      assertEquals(1, result.level());
+      assertNull(sampleModule.getLevel());
+    }
+
+    @Test
+    void updateModule_OldEditorPreservesLevelAndExplicitNullCanClearIt() {
+      sampleModule.setLevel(3);
+      when(moduleRepository.findById(10L)).thenReturn(Optional.of(sampleModule));
+      when(moduleRepository.save(any(Module.class))).thenAnswer(i -> i.getArgument(0));
+      ModuleDTO oldPayload = new ModuleDTO(null, null, "Name", "Description", 0);
+      assertEquals(3, courseService.updateModule(10L, oldPayload).level());
+      assertEquals(3, courseService.updateModule(10L, oldPayload, false).level());
+      assertEquals(2, courseService.updateModule(10L,
+          new ModuleDTO(null, null, "Name", "Description", 0, 2), true).level());
+      assertNull(courseService.updateModule(10L, oldPayload, true).level());
+    }
+
+    @Test
+    void moduleLevel_RejectsOutOfRangeBeforeSaving() {
+      for (int level : new int[] { -1, 0, 4, 99 }) {
+        ModuleDTO invalid = new ModuleDTO(null, null, "Name", "Description", 0, level);
+        assertThrows(IllegalArgumentException.class, () -> courseService.createModule(1L, invalid));
+        assertThrows(IllegalArgumentException.class, () -> courseService.updateModule(10L, invalid, true));
+      }
+      verifyNoInteractions(moduleRepository);
     }
 
     @Test

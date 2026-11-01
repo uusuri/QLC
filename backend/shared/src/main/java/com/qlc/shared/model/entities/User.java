@@ -41,6 +41,9 @@ public class User {
   @Column(name = "auth_version", nullable = false)
   private int authVersion;
 
+  @Column(name = "private_profile", nullable = false)
+  private boolean privateProfile;
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private Role role;

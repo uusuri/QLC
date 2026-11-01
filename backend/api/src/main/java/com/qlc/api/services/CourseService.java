@@ -162,24 +162,39 @@ public class CourseService {
 
   @Transactional
   public ModuleDTO createModule(Long courseId, ModuleDTO dto) {
+    validateModuleLevel(dto.level());
     Course course = courseRepository.findById(courseId)
         .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
     com.qlc.shared.model.entities.Module module = new com.qlc.shared.model.entities.Module();
     module.setName(dto.name());
     module.setDescription(dto.description());
     module.setPosition(dto.position() != null ? dto.position() : 0);
+    module.setLevel(dto.level());
     module.setCourse(course);
     return mapToModuleDTO(moduleRepository.save(module));
   }
 
   @Transactional
   public ModuleDTO updateModule(Long moduleId, ModuleDTO dto) {
+    return updateModule(moduleId, dto, dto.level() != null);
+  }
+
+  @Transactional
+  public ModuleDTO updateModule(Long moduleId, ModuleDTO dto, boolean levelProvided) {
+    if (levelProvided) validateModuleLevel(dto.level());
     com.qlc.shared.model.entities.Module module = moduleRepository.findById(moduleId)
         .orElseThrow(() -> new ResourceNotFoundException("Module not found"));
     module.setName(dto.name());
     module.setDescription(dto.description());
     module.setPosition(dto.position() != null ? dto.position() : module.getPosition());
+    if (levelProvided) module.setLevel(dto.level());
     return mapToModuleDTO(moduleRepository.save(module));
+  }
+
+  private void validateModuleLevel(Integer level) {
+    if (level != null && (level < 1 || level > 3)) {
+      throw new IllegalArgumentException("Module level must be between 1 and 3");
+    }
   }
 
   @Transactional
@@ -193,7 +208,8 @@ public class CourseService {
         m.getCourse().getId(),
         m.getName(),
         m.getDescription(),
-        m.getPosition());
+        m.getPosition(),
+        m.getLevel());
   }
 
   // --- Lesson CRUD ---

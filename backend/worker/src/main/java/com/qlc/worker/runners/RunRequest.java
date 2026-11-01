@@ -10,5 +10,10 @@ public record RunRequest(
     long memoryLimitInKb,
     Duration timeLimit,
     long outputLimitInKb,
-    Toolchain toolchain) {
+    Toolchain toolchain,
+    boolean customRun) {
+  public RunRequest(String sourceCode, String testCasesJson, long memoryLimitInKb,
+      Duration timeLimit, long outputLimitInKb, Toolchain toolchain) {
+    this(sourceCode, testCasesJson, memoryLimitInKb, timeLimit, outputLimitInKb, toolchain, false);
+  }
 }

@@ -20,6 +20,7 @@ public class CartService {
     this.redisTemplate = redisTemplate;
   }
 
+  @SuppressWarnings("deprecation")
   public void addCourse(Long userId, Long courseId) {
     String key = cartKey(userId);
     redisTemplate.opsForSet().add(key, String.valueOf(courseId));

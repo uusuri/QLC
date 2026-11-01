@@ -12,5 +12,6 @@ public record SubmissionResponse(
     Long executionTime,
     Long memoryUsed,
     String safeMessage,
-    LocalDateTime createdAt) {
+    LocalDateTime createdAt,
+    int awardedXp) {
 }

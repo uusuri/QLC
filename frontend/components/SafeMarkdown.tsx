@@ -1,10 +1,28 @@
 import { memo, type ReactNode } from "react";
 import { GraphAnimationBlock } from "./graph/GraphAnimationPlayer";
 import { GRAPH_FENCE } from "../services/graphAnimation";
+import { ArrayAnimationBlock } from "./array/ArrayAnimationPlayer";
+import { ARRAY_FENCE } from "../services/arrayAnimation";
+import { readProblemStatement, type ProblemStatement } from "../services/problemStatement";
+import { ProblemStatementCard } from "./ProblemStatementCard";
+import { MathFormula } from "./MathFormula";
+import { readInlineMath, readDisplayMath } from "../services/mathMarkup";
 
 type TableAlignment = "left" | "center" | "right";
 
 type MarkdownBlock =
+  | {
+      kind: "math";
+      source: string;
+    }
+  | {
+      kind: "problem";
+      statement: ProblemStatement;
+    }
+  | {
+      kind: "literal";
+      text: string;
+    }
   | {
       code: string;
       kind: "code";
@@ -92,6 +110,17 @@ function renderInlineMarkdown(text: string, tone: MarkdownTone = "dark"): ReactN
 
   while (cursor < text.length) {
     const rest = text.slice(cursor);
+    if (rest.startsWith("\\$")) {
+      appendText("$");
+      cursor += 2;
+      continue;
+    }
+    const math = readInlineMath(text, cursor);
+    if (math) {
+      nodes.push(<MathFormula key={key++} source={math.source} />);
+      cursor += math.length;
+      continue;
+    }
     const link = rest.match(/^\[([^\]\n]+)\]\((https?:\/\/[^\s)]+|\/(?![\/\\])[^\s)\\]*)\)/);
     if (link) {
       const external = /^https?:\/\//.test(link[2]);
@@ -167,6 +196,12 @@ function splitTableRow(line: string) {
   let cursor = 0;
 
   while (cursor < text.length) {
+    const math = readInlineMath(text, cursor);
+    if (math) {
+      cell += text.slice(cursor, cursor + math.length);
+      cursor += math.length;
+      continue;
+    }
     if (text[cursor] === "\\" && (text[cursor + 1] === "|" || text[cursor + 1] === "\\")) {
       cell += text[cursor + 1];
       cursor += 2;
@@ -201,7 +236,7 @@ function splitTableRow(line: string) {
   return { cells, hasSeparator: lastSeparator >= 0 };
 }
 
-function parseMarkdown(markdown: string): MarkdownBlock[] {
+function parseMarkdown(markdown: string, allowProblems = true): MarkdownBlock[] {
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
   const blocks: MarkdownBlock[] = [];
   let paragraph: string[] = [];
@@ -210,6 +245,7 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
   let listStart = 1;
   let code: string[] | null = null;
   let codeLanguage = "";
+  let codeFence = { marker: "`", length: 3 };
 
   const flushTextBlocks = () => {
     if (paragraph.length > 0) {
@@ -238,8 +274,9 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
     const line = rawLine.trimEnd();
     const trimmed = line.trim();
 
-    if (trimmed.startsWith("```")) {
-      if (code) {
+    const fence = trimmed.match(/^(`{3,}|~{3,})(.*)$/);
+    if (code) {
+      if (fence && fence[1][0] === codeFence.marker && fence[1].length >= codeFence.length && !fence[2].trim()) {
         blocks.push({
           code: code.join("\n"),
           kind: "code",
@@ -248,15 +285,33 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
         code = null;
         codeLanguage = "";
       } else {
-        flushTextBlocks();
-        code = [];
-        codeLanguage = trimmed.replace(/^```/, "").trim();
+        code.push(rawLine);
       }
       continue;
     }
+    if (fence) {
+      flushTextBlocks();
+      code = [];
+      codeFence = { marker: fence[1][0], length: fence[1].length };
+      codeLanguage = fence[2].trim();
+      continue;
+    }
 
-    if (code) {
-      code.push(rawLine);
+    const problem = allowProblems ? readProblemStatement(lines, lineIndex) : null;
+    if (problem) {
+      flushTextBlocks();
+      blocks.push(problem.kind === "problem"
+        ? { kind: "problem", statement: problem.statement }
+        : { kind: "literal", text: problem.source });
+      lineIndex = problem.nextLine - 1;
+      continue;
+    }
+
+    const math = readDisplayMath(lines, lineIndex);
+    if (math) {
+      flushTextBlocks();
+      blocks.push({ kind: "math", source: math.source });
+      lineIndex = math.nextLine - 1;
       continue;
     }
 
@@ -345,6 +400,25 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
 }
 
 function renderBlock(block: MarkdownBlock, index: number, tone: MarkdownTone): ReactNode {
+  if (block.kind === "math") {
+    return <MathFormula key={index} source={block.source} display />;
+  }
+  if (block.kind === "problem") {
+    const { title, condition, input, output, constraints } = block.statement;
+    const renderSection = (markdown: string) => (
+      <div className="kit-markdown grid min-w-0 gap-3">
+        {parseMarkdown(markdown, false).map((child, childIndex) => renderBlock(child, childIndex, tone))}
+      </div>
+    );
+    return <ProblemStatementCard key={index} label={title} title={renderInlineMarkdown(title, tone)}
+      tone={tone} condition={renderSection(condition)} input={renderSection(input)}
+      output={renderSection(output)} constraints={renderSection(constraints)} />;
+  }
+
+  if (block.kind === "literal") {
+    return <p className={`whitespace-pre-wrap [overflow-wrap:anywhere] text-base leading-7 ${tone === "paper" ? "text-ink/75" : "text-white/70"}`} key={index}>{block.text}</p>;
+  }
+
   if (block.kind === "table") {
     const border = tone === "paper" ? "border-ink/15" : "border-white/15";
     return (
@@ -383,6 +457,7 @@ function renderBlock(block: MarkdownBlock, index: number, tone: MarkdownTone): R
 
   if (block.kind === "code") {
     if (block.language === GRAPH_FENCE) return <GraphAnimationBlock key={index} source={block.code} />;
+    if (block.language === ARRAY_FENCE) return <ArrayAnimationBlock key={index} source={block.code} />;
     return (
       <pre
         aria-label={block.language ? `Код: ${block.language}` : "Код"}

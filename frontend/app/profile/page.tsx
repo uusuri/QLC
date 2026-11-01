@@ -10,6 +10,8 @@ import { useAuth } from "@/components/AuthProvider";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ContinueLearningCard } from "@/components/ContinueLearning";
+import { ExperienceProgress } from "@/components/ExperienceProgress";
+import { ProfileSocial } from "@/components/ProfileSocial";
 import { PageState } from "@/components/PageState";
 import { Alert, ButtonLink, Progress } from "@/components/ui";
 import { deleteMyAvatar, formatRussianCountWord, getMyAvatar, getMyLearningCourses, requestEmailVerification, uploadMyAvatar } from "@/services/api";
@@ -204,6 +206,8 @@ export default function ProfilePage() {
         </div>
       </div>
     </header>
+    <ExperienceProgress key={user.id} userId={user.id} />
+    <ProfileSocial key={`social:${user.id}`} user={user} />
     {hasRealEmail && user.emailVerified === false && <Alert title="Подтвердите почту" tone="warning">
       <p>Проверьте {user.email} или запросите письмо. Подтверждённый адрес поможет восстановить доступ.</p>
       <button className="mt-4 text-sm font-semibold text-acid hover:text-white" disabled={emailSending} onClick={() => void resendVerification()} type="button">

@@ -26,6 +26,10 @@ public class Module {
   @Column(nullable = false)
   private int position = 0;
 
+  // Optional course level; task stars are relative to this level, not to other courses.
+  @Column(name = "learning_level")
+  private Integer level;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "course_id", nullable = false)
   private Course course;

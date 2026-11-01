@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+@SuppressWarnings("unused")
 @Service
 @Transactional
 public class TelegramAuthService {

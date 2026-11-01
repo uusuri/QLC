@@ -12,6 +12,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { CourseArtwork, KitIcon } from "@/components/DesignKit";
 import { Alert, ButtonLink } from "@/components/ui";
+import { courseLevelTitle, groupCourseModules, taskDifficultyLabel } from "@/services/courseLevels";
 import {
   formatRussianCountWord,
   getAuthToken,
@@ -147,7 +148,10 @@ export default function CoursePage() {
         {view.course.multilingual && canStudy && <CourseLanguageControl key={view.course.id} courseId={view.course.id} />}
         <section id="curriculum">
           <div className="kit-program-heading"><h2>Программа курса</h2>{view.modules.length > 0 && <button className="qlc-text-link text-muted" type="button" onClick={() => setExpandedModuleIds(expandedModuleIds.length === view.modules.length ? [] : view.modules.map(item => item.module.id))}>{expandedModuleIds.length === view.modules.length ? "Свернуть всё −" : "Раскрыть все модули +"}</button>}</div>
-          {!view.modules.length ? <Alert title="Программа готовится" tone="neutral">В курсе пока нет модулей.</Alert> : view.modules.map((item, moduleIndex) => {
+          {!view.modules.length ? <Alert title="Программа готовится" tone="neutral">В курсе пока нет модулей.</Alert> : groupCourseModules(view.modules).map(group => <div key={group.level ?? "unassigned"}>
+          {group.level !== null && <h3 className="mt-10 border-b border-line pb-4 text-xl">{courseLevelTitle(group.level)}</h3>}
+          {group.level === null && view.modules.some(item => item.module.level) && <h3 className="mt-10 border-b border-line pb-4 text-xl">Другие модули</h3>}
+          {group.modules.map((item, moduleIndex) => {
             const publishedLessons = item.lessons.filter(lesson => lesson.published);
             const expanded = expandedModuleIds.includes(item.module.id);
             return <section className="kit-module" key={item.module.id}>
@@ -162,14 +166,14 @@ export default function CoursePage() {
                     <div className="kit-lesson-line"><KitIcon name={canStudy ? "play" : "diamond"} className="text-muted" />{canStudy ? <Link href={`/lessons/${lesson.id}`}>{lesson.name}</Link> : <span>{lesson.name}</span>}<button className="min-h-11 min-w-11 text-muted" aria-label={`${lessonExpanded ? "Скрыть" : "Показать"} содержание урока «${lesson.name}»`} aria-expanded={lessonExpanded} aria-controls={`lesson-outline-${lesson.id}`} onClick={() => void toggleLesson(lesson.id)} type="button">{lessonExpanded ? "−" : "+"}</button></div>
                     {lessonExpanded && <div className="kit-outline" id={`lesson-outline-${lesson.id}`}>
                       {lesson.description && <p className="mb-4">{lesson.description}</p>}
-                      {taskOutlineLoadingId === lesson.id ? <p role="status">Загружаем задачи…</p> : taskOutlineError[lesson.id] ? <p role="alert" className="text-[#FF8074]">{taskOutlineError[lesson.id]}</p> : outlines.length ? outlines.map((task, taskIndex) => <div key={task.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-line py-3"><span>Задача {taskIndex + 1}</span><span className="flex items-center gap-3 text-xs"><span>{task.taskType === "CODE" ? "Код" : task.taskType === "TEST" ? "Тест" : "Число"}</span><span aria-label={`Сложность: ${task.difficulty ?? 1} из 3`} className="font-mono text-[1.875rem] leading-none tracking-[0.08em] text-acid">{"★".repeat(task.difficulty ?? 1)}{"☆".repeat(3 - (task.difficulty ?? 1))}</span></span></div>) : <p>Задачи к уроку скоро появятся.</p>}
+                      {taskOutlineLoadingId === lesson.id ? <p role="status">Загружаем задачи…</p> : taskOutlineError[lesson.id] ? <p role="alert" className="text-[#FF8074]">{taskOutlineError[lesson.id]}</p> : outlines.length ? outlines.map((task, taskIndex) => <div key={task.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-line py-3"><span>Задача {taskIndex + 1}</span><span className="flex items-center gap-3 text-xs"><span>{task.taskType === "CODE" ? "Код" : task.taskType === "TEST" ? "Тест" : "Число"}</span><span aria-label={taskDifficultyLabel(task.difficulty ?? 1, item.module.level)} title={taskDifficultyLabel(task.difficulty ?? 1, item.module.level)} className="font-mono text-[1.875rem] leading-none tracking-[0.08em] text-acid">{"★".repeat(task.difficulty ?? 1)}{"☆".repeat(3 - (task.difficulty ?? 1))}</span></span></div>) : <p>Задачи к уроку скоро появятся.</p>}
                       {!canStudy && <a className="qlc-text-link text-acid" href="#purchase">Открыть доступ к урокам ↑</a>}
                     </div>}
                   </article>;
                 })}
               </div>}
             </section>;
-          })}
+          })}</div>)}
         </section>
       </main><SiteFooter />
     </div>

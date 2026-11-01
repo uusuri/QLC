@@ -38,13 +38,15 @@ def positive_limit(name: str) -> int:
     return value
 
 
-def parse_test_cases(raw_test_cases: str) -> list[dict[str, str]]:
+def parse_test_cases(raw_test_cases: str, custom_run: bool = False) -> list[dict[str, str | None]]:
     if not raw_test_cases.strip():
         raise JudgeConfigurationError("Test cases are empty")
 
     try:
         parsed = json.loads(raw_test_cases)
     except json.JSONDecodeError as exception:
+        if custom_run:
+            raise JudgeConfigurationError("Custom tests must be JSON") from exception
         if raw_test_cases.lstrip().startswith(("[", "{")):
             raise JudgeConfigurationError("Test cases contain malformed JSON") from exception
         # Compatibility with the first C++ tasks, which stored only expected stdout.
@@ -52,7 +54,7 @@ def parse_test_cases(raw_test_cases: str) -> list[dict[str, str]]:
 
     if not isinstance(parsed, list) or not parsed:
         raise JudgeConfigurationError("Test cases must be a non-empty JSON array")
-    if len(parsed) > MAX_TEST_CASES:
+    if len(parsed) > (10 if custom_run else MAX_TEST_CASES):
         raise JudgeConfigurationError(f"Too many test cases: maximum is {MAX_TEST_CASES}")
 
     test_cases: list[dict[str, str]] = []
@@ -61,11 +63,21 @@ def parse_test_cases(raw_test_cases: str) -> list[dict[str, str]]:
             raise JudgeConfigurationError(f"Test case {index} must be an object")
         test_input = test_case.get("input")
         expected_output = test_case.get("output")
-        if not isinstance(test_input, str) or not isinstance(expected_output, str):
+        if not isinstance(test_input, str) or not (
+            isinstance(expected_output, str) or (custom_run and expected_output is None)
+        ):
             raise JudgeConfigurationError(
                 f"Test case {index} must contain string fields 'input' and 'output'"
             )
-        test_cases.append({"input": test_input, "output": expected_output})
+        case = {"input": test_input, "output": expected_output}
+        if "checker" in test_case:
+            if custom_run or test_case["checker"] != "cyclic_game_catalog":
+                raise JudgeConfigurationError(f"Unsupported checker in test case {index}")
+            case["checker"] = test_case["checker"]
+        test_cases.append(case)
+    if custom_run and any(len((case[field] or "").encode("utf-8")) > 16384
+                          for case in test_cases for field in ("input", "output")):
+        raise JudgeConfigurationError("Custom test is too large")
     return test_cases
 
 
@@ -81,6 +93,39 @@ def outputs_equal(actual: str, expected: str) -> bool:
     return normalize_output(actual) == normalize_output(expected)
 
 
+def check_test_output(test_case: dict, actual: str) -> bool:
+    if test_case.get("checker") != "cyclic_game_catalog":
+        return outputs_equal(actual, test_case["output"])
+    tokens = actual.split()
+    if not tokens:
+        return False
+    # Existence of a solution is verified when the private case is authored.
+    if tokens[0] == "NO":
+        return len(tokens) == 1 and test_case["output"].split() == ["NO"]
+    if tokens[0] != "YES":
+        return False
+    fields = test_case["input"].split()
+    try:
+        n, k = int(fields[0]), int(fields[1])
+        text, g = fields[2], int(fields[3])
+        catalog = fields[4:]
+        if n < 1 or k < 1 or len(text) != n * k or len(catalog) != g or any(len(w) != k for w in catalog):
+            raise JudgeConfigurationError("Invalid cyclic catalog test input")
+    except (ValueError, IndexError) as error:
+        raise JudgeConfigurationError("Invalid cyclic catalog test input") from error
+    if len(tokens) != n + 1:
+        return False
+    try:
+        indices = [int(token) for token in tokens[1:]]
+    except ValueError:
+        return False
+    if len(set(indices)) != n or any(i < 1 or i > g for i in indices):
+        return False
+    cycle = "".join(catalog[i - 1] for i in indices)
+    return text in cycle + cycle
+
+
+
 def read_diagnostic(path: Path) -> str:
     if not path.exists():
         return ""
@@ -89,6 +134,14 @@ def read_diagnostic(path: Path) -> str:
     if path.stat().st_size > MAX_DIAGNOSTIC_BYTES:
         text += "\n[diagnostic truncated]"
     return text
+
+
+def read_custom_output(path: Path) -> tuple[str, bool]:
+    if not path.exists():
+        return "", False
+    with path.open("rb") as stream:
+        data = stream.read(MAX_DIAGNOSTIC_BYTES + 1)
+    return data[:MAX_DIAGNOSTIC_BYTES].decode("utf-8", errors="replace"), len(data) > MAX_DIAGNOSTIC_BYTES
 
 
 def read_peak_memory_kb(path: Path) -> int | None:
@@ -125,6 +178,7 @@ def emit_result(
     execution_time_ms: int,
     memory_used_kb: int | None,
     message: str,
+    tests: list[dict] | None = None,
 ) -> None:
     result = {
         "verdict": verdict,
@@ -134,6 +188,8 @@ def emit_result(
         "memoryUsedKb": memory_used_kb,
         "safeMessage": message,
     }
+    if tests is not None:
+        result["tests"] = tests
     sys.stdout.write(json.dumps(result, ensure_ascii=False))
     sys.stdout.flush()
 
@@ -278,15 +334,17 @@ def main() -> int:
         ], allow_empty=True)
         run_command = command_from_env("QLC_RUN_COMMAND", ["/work/main"])
         address_space_limit = os.environ.get("QLC_ADDRESS_SPACE_LIMIT", "true") == "true"
-        test_cases = parse_test_cases(sys.stdin.read())
+        custom_run = os.environ.get("QLC_CUSTOM_RUN", "false") == "true"
+        test_cases = parse_test_cases(sys.stdin.read(), custom_run)
 
         compiled, compiler_message = compile_source(compile_command)
         if not compiled:
-            emit_result("CE", 0, len(test_cases), 0, None, compiler_message)
+            emit_result("CE", 0, len(test_cases), 0, None, compiler_message, [] if custom_run else None)
             return 0
 
         total_execution_time_ms = 0
         peak_memory_kb = 0
+        custom_results = []
         for index, test_case in enumerate(test_cases, start=1):
             status, output_or_message, elapsed_ms, test_memory_kb = run_test_case(
                 index,
@@ -301,6 +359,20 @@ def main() -> int:
             if test_memory_kb is not None:
                 peak_memory_kb = max(peak_memory_kb, test_memory_kb)
 
+            if custom_run:
+                stdout, stdout_truncated = read_custom_output(WORK_DIRECTORY / f"test-{index:03d}.stdout")
+                stderr, stderr_truncated = read_custom_output(WORK_DIRECTORY / f"test-{index:03d}.stderr")
+                case_status = status
+                if status == "OK" and test_case["output"] is not None:
+                    case_status = "AC" if outputs_equal(output_or_message, test_case["output"]) else "WA"
+                custom_results.append({
+                    "status": case_status, "stdout": stdout, "stderr": stderr,
+                    "executionTimeMs": elapsed_ms, "memoryUsedKb": test_memory_kb,
+                    "outputTruncated": stdout_truncated or stderr_truncated,
+                    "message": output_or_message if status != "OK" else None,
+                })
+                continue
+
             if status != "OK":
                 emit_result(
                     status,
@@ -312,7 +384,7 @@ def main() -> int:
                 )
                 return 0
 
-            if not outputs_equal(output_or_message, test_case["output"]):
+            if not check_test_output(test_case, output_or_message):
                 emit_result(
                     "WA",
                     index - 1,
@@ -322,6 +394,11 @@ def main() -> int:
                     f"Неверный ответ на тесте {index}.",
                 )
                 return 0
+
+        if custom_run:
+            emit_result("AC", sum(test["status"] in ("OK", "AC") for test in custom_results),
+                        len(test_cases), total_execution_time_ms, peak_memory_kb, "Запуск завершён.", custom_results)
+            return 0
 
         emit_result(
             "AC",
