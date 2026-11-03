@@ -7,9 +7,10 @@ import { COURSE_LANGUAGES, courseLanguage } from "@/components/courseLanguages";
 import { getCourseLanguage, selectCourseLanguage } from "@/services/api";
 import type { CourseLanguageSettingsDto, SubmissionLanguage } from "@/types";
 
-export function CourseLanguageControl({ courseId, onChange }: {
+export function CourseLanguageControl({ courseId, onChange, compact = false }: {
   courseId: number;
   onChange?: (language: SubmissionLanguage) => void;
+  compact?: boolean;
 }) {
   const { user } = useAuth();
   const [settings, setSettings] = useState<CourseLanguageSettingsDto | null>(null);
@@ -71,16 +72,18 @@ export function CourseLanguageControl({ courseId, onChange }: {
   }
 
   if (!user) return null;
-  return <div className="my-5">
-    <div className="flex flex-wrap items-center gap-4">
+  const openSettings = () => {
+    if (!settings) { void load(); return; }
+    setChoice(settings.selectedLanguage); setError(""); setOpen(true);
+  };
+  return <div className={compact ? "" : "my-5"}>
+    {compact ? <button type="button" className="min-h-10 px-2 text-sm text-muted hover:text-paper" disabled={busy} onClick={openSettings}
+      aria-label={`Язык решений: ${settings?.selectedLanguage ? courseLanguage(settings.selectedLanguage).label : "выбрать"}`}>
+      {settings?.selectedLanguage ? courseLanguage(settings.selectedLanguage).label : "Выбрать язык"} <span aria-hidden="true">⌄</span>
+    </button> : <div className="flex flex-wrap items-center gap-4">
       <span className="text-sm text-muted">Язык решений: {settings?.selectedLanguage ? courseLanguage(settings.selectedLanguage).label : "не выбран"}</span>
-      <Button variant="secondary" disabled={busy} onClick={() => {
-        if (!settings) { void load(); return; }
-        setChoice(settings.selectedLanguage);
-        setError("");
-        setOpen(true);
-      }}>{settings?.selectedLanguage ? "Сменить язык" : "Выбрать язык"}</Button>
-    </div>
+      <Button variant="secondary" disabled={busy} onClick={openSettings}>{settings?.selectedLanguage ? "Сменить язык" : "Выбрать язык"}</Button>
+    </div>}
     {error && !open && <p className="mt-3 text-sm text-[#FF8074]" role="alert">{error}</p>}
     <dialog className="kit-dialog w-[min(560px,calc(100%-32px))]" ref={dialog} aria-labelledby={`language-title-${courseId}`}
       onCancel={event => { if (busy) event.preventDefault(); else setOpen(false); }} onClose={() => setOpen(false)}>
